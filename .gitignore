@@ -1,0 +1,9 @@
+/*~
+**/*~
+**/*__*
+/*.epub
+/*.mobi
+**/epub
+**/epub/*
+/ant.log
+/course.info.tex

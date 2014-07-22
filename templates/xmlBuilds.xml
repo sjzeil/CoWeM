@@ -1,0 +1,334 @@
+<project>
+
+  <property name="xml.macros.file" location="../../templates/macros.md"/>
+
+  <macrodef name="preprocessXML">
+    <attribute name="format"/>
+    <element name="defined" optional="yes"/> 
+    <sequential>
+      <echo file="${doc}.properties">doc.title=@Course@ Outline and Topics</echo>
+      <echo file="titleTable0.xml">&lt;table&gt;</echo>
+      <concat destFile="titleTable.xml">
+	<fileset dir=".">
+	  <include name="titleTable0.xml"/>
+	</fileset>
+	<fileset dir="../..">
+	  <include name="*/*/title.xml"/>
+	</fileset>
+      </concat>
+      <echo file="titleTable.xml" append="true">&lt;/table&gt;</echo>
+      <delete>
+	<fileset file="titleTable0.xml"/>
+      </delete>
+    </sequential>
+  </macrodef>
+
+
+  <makeurl file="." property="xml.pwdURL"/>
+  <macrodef name="postprocessXMLHTML">
+    <attribute name="format"/>
+    <sequential>
+      <xslt in="${doc}.xml" 
+	    out="${doc}__@{format}.xml"
+	    style="../../templates/xml-@{format}.xsl">
+	<param name="pwdURL" expression="${xml.pwdURL}"/>
+	<param name="courseName" expression="${courseName}"/>
+	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
+	<param name="graphicsDir" expression="${graphicsURL}" if="graphicsURL"/>
+	<param name="homeURL" expression="${homeurl}" if="homeurl"/>
+	<param name="email" expression="${email}" if="email"/>
+	<param name="forum" expression="${forum}" if="forum"/>
+	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
+	<param name="highlightjsURL" expression="${highlightjsURL}" 
+	       if="highlightjsURL"/> 
+	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
+      </xslt>
+      <echo>about to copy</echo>
+      <copy file="${doc}__@{format}.xml" tofile="${doc}__@{format}.html"  
+	    overwrite="yes">
+	<filterset>
+	  <filtersfile file="../../course.properties"/>
+	  <filtersfile file="${doc}.properties"/>
+	  <filter token="docModDate" value="${docModDate}"/>
+	</filterset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+
+  <dependset>
+    <srcfileset dir=".">
+      <include name="${doc}.xml"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__*.html"/>
+    </targetfileset>
+  </dependset>
+
+
+  <available property="topics.xml.exists" file="${doc}__topics.html"/>
+  <target name="xml2topics" unless="topics.xml.exists">
+    <preprocessXML format="topics">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessXML>
+    <postprocessXMLHTML format="topics"/>
+  </target>
+
+  <available property="modules.xml.exists" file="${doc}__modules.html"/>
+  <target name="xml2modules" unless="modules.xml.exists">
+    <preprocessXML format="modules">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessXML>
+    <postprocessXMLHTML format="modules"/>
+  </target>
+
+
+  <available property="epubOverview.xml.exists" file="${doc}__epubOverview.html"/>
+  <target name="xml2epubOverview" unless="epubOverview.xml.exists">
+    <preprocessXML format="epubOverview">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessXML>
+    <postprocessXMLHTML format="epubOverview"/>
+  </target>
+
+
+
+  <uptodate property="epub.xml.exists" targetfile="${courseName}.epub">
+    <srcfiles dir="../../Public" includes="**/*.epub"/>
+  </uptodate>
+  <target name="xml2epub" depends="xml2epubOverview" unless="epub.xml.exists">
+  </target>
+
+<target name="temp-separated">
+    <delete dir="epub"/>
+    <mkdir dir="epub/META-INF"/>
+    <mkdir dir="epub/OEPBS"/>
+
+    <copy todir="epub/OEPBS">
+      <fileset dir="../../Public">
+	<include name="*/epub/**/*"/>
+	<exclude name="**/mimetype"/>
+	<exclude name="**/META-INF"/>
+	<exclude name="**/META-INF/*"/>
+	<exclude name="**/cover.*"/>
+	<exclude name="**/*.opf"/>
+	<exclude name="**/*.ncx"/>
+	<exclude name="**/epub-appendix.html"/>
+      </fileset>
+      <regexpmapper from=".*/epub/(.*)" to="\1"/>
+    </copy>
+    <copy tofile="epub/OEPBS/modules.css" file="../../styles/epub-modules.css"/>
+    <echo file="epub/mimetype">application/epub+zip</echo>
+
+    <fileset id="epub.contents.set" dir="epub/OEPBS">
+	<include name="**/*.png"/>
+	<include name="**/*.html"/>
+	<include name="**/*.css"/>
+	<exclude name="**/cover.html"/>
+    </fileset>
+    <pathconvert pathsep="${line.separator}" 
+		 property="epub.contents" 
+		 refid="epub.contents.set">
+      <mapper>
+	<regexpmapper from=".*/OEPBS/(.*)" to="\1"/>
+      </mapper>
+    </pathconvert>
+    <echo file="epub.contents" append="false">${epub.contents}</echo>
+    <replaceregexp file="epub.contents"
+		   flags="m"
+		   byline="true"
+		   match="^"
+		   replace="&lt;file&gt;"/>
+    <replaceregexp file="epub.contents"
+		   flags="m"
+		   byline="true"
+		   match="$"
+		   replace="&lt;/file&gt;"/>
+    <echo file="epub.contents.xml">&lt;epub&gt;
+            &lt;sem&gt;${sem}&lt;/sem&gt;
+            &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+            &lt;author&gt;${courseName}&lt;/author&gt;
+            &lt;courseName&gt;${courseName}&lt;/courseName&gt;
+	    &lt;files&gt;
+    </echo>
+    <concat destfile="epub.contents.xml" append="yes">
+      <filelist dir="." files="epub.contents"/> 
+    </concat>
+    <echo file="epub.contents.xml" append="true">&lt;/files&gt;</echo>
+    <concat destfile="epub.contents.xml" append="true">
+      <fileset dir="." includes="outline.xml"/>
+      <filterchain>
+	<headfilter lines="-1" skip="1"/>
+      </filterchain>
+    </concat>
+    <concat destfile="epub.contents.xml" append="true">
+      <fileset dir="." includes="titleTable.xml"/>
+    </concat>
+    <echo file="epub.contents.xml" append="true">&lt;/epub&gt;</echo>
+	
+    <xslt in="epub.contents.xml"
+	  out="epub/OEPBS/content.opf"
+	  style="../../templates/book-opf.xsl"
+	  >
+      <classpath location="../../templates/saxon.jar" />
+      <param name="doc" expression="OEPBS"/>
+      <param name="baseURL" expression="${baseurl}"/>
+    </xslt>
+
+    <copy file="../../templates/epub-container.xml"
+	  tofile="epub/META-INF/container.xml"
+	  >
+      <filterset>
+	<filter token="contentFile" value="OEPBS/content.opf"/>
+      </filterset>
+    </copy> 
+
+    <xslt in="epub.contents.xml"
+	  out="epub/OEPBS/toc.ncx"
+	  style="../../templates/book-ncx.xsl"
+	  >
+      <classpath location="../../templates/saxon.jar" />
+      <param name="doc" expression="OEPBS"/>
+      <param name="baseURL" expression="${baseurl}"/>
+    </xslt>
+
+    <copy file="../../styles/epub-cover.html"
+	  tofile="epub/OEPBS/cover.html">
+      <filterset>
+	<filtersfile file="../../course.properties"/>
+	<filter token="doc.title" value="${courseTitle}"/>
+	<filter token="doc.author" value="Dept. of Computer Science"/>
+	<filter token="docModDate" value="${semester}"/>
+      </filterset>
+    </copy>
+    <copy file="outline__epubOverview.html"
+	  tofile="epub/OEPBS/epub-overview.html">
+      <filterset>
+	<filtersfile file="../../course.properties"/>
+      </filterset>
+    </copy>
+    <copy file="../../templates/epub-appendix.html"
+	  tofile="epub/OEPBS/epub-appendix.html">
+      <filterset>
+	<filtersfile file="../../course.properties"/>
+      </filterset>
+    </copy>
+    <copy file="../../styles/epub-cover.png"
+	  tofile="epub/OEPBS/cover.png"/>
+    
+    <replaceregexp match="xmlns=.http://www.w3.org/1999/xhtml."
+		   replace="">
+      <fileset dir="epub">
+	<include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="&lt;html"
+		   replace="&lt;html xmlns='http://www.w3.org/1999/xhtml'">
+      <fileset dir="epub">
+	<include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp flags="m"
+		   byline="true"
+		   match='&lt;meta charset='
+		   replace='&lt;meta name="charset" content='>
+      <fileset dir="epub">
+	<include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='&lt;link.*?highlight[.]js.*?/&gt;'
+		   replace=''
+		   flags="sg">
+      <fileset dir="epub">
+	<include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='&lt;script.*?&lt;/script&gt;'
+		   replace=''
+		   flags="sg">
+      <fileset dir="epub">
+	<include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='href="../../styles/'
+		   replace='href="'
+		   flags="sg">
+      <fileset dir="epub">
+	<include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+
+    <delete file="${courseName}.epub"/>
+    <exec executable="zip" dir="epub">
+      <arg value="-0Xq"/>
+      <arg value="${courseName}.epub"/>
+      <arg value="mimetype"/>
+    </exec>
+    <exec executable="zip" dir="epub">
+      <arg value="-Xr9Dq"/>
+      <arg value="${courseName}.epub"/>
+      <arg value="META-INF"/>
+      <arg value="OEPBS"/>
+    </exec>
+
+    <move file="epub/${courseName}.epub" tofile="${courseName}.epub"/>
+    <java jar="../../templates/epubcheck.jar" fork="true">
+      <arg value="${courseName}.epub"/>
+    </java>
+  </target>
+
+
+
+  <condition property="do.xmobi1">
+    <and>
+      <not>
+	  <available file="${courseName}.mobi"/>
+      </not>
+      <available file="ebook-convert"
+		 filepath="${env.PATH}"/>
+    </and>
+  </condition>
+  <condition property="do.xmobi2">
+    <and>
+      <not>
+	  <available file="${courseName}.mobi"/>
+      </not>
+      <not>
+	<available file="ebook-convert"
+		   filepath="${env.PATH}"/>
+      </not>
+      <available file="kindlegen"
+		 filepath="${env.PATH}"/>
+    </and>
+  </condition>
+
+  <target name="xml2mobi1" depends="xml2epub" 
+	  if="do.xmobi1"> 
+    <exec executable="ebook-convert">
+      <arg value="${courseName}.epub"/>
+      <arg value="${doc}.mobi"/>
+    </exec>
+  </target>
+
+  <target name="xml2mobi2" depends="xml2epub" 
+	  if="do.xmobi2"> 
+    <exec executable="kindlegen">
+      <arg value="${courseName}.epub"/>
+    </exec>
+  </target>
+
+  <target name="xml2mobi" depends="xml2mobi1, xml2mobi2"> 
+  </target>
+
+
+
+
+
+</project>

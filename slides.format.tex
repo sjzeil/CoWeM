@@ -1,0 +1,124 @@
+%
+%  Beamer slide styles
+%    See the gallery at http://deic.uab.es/~iblanes/beamer_gallery/
+%    (There is a default if you don't choose any of these)
+
+
+%
+% Major styles are named for citiesd.
+% These control the overall layout and appearance. In particular,
+% the major style determines defaults for what appears in headers,
+% footers, and sidebars.
+% 
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{boxes}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+%\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+%
+%  Color themes control color titles, frames, bullets, ...
+%
+%  Animal names indicate themes affecting the major
+%  structural elements. Plant names indicate themes
+%  affecting internal elements.  Animals and
+%  plants can be combined.
+%
+% Some themes can be modified by naming a dominant color
+%    \usecolortheme[named=Blue]{albatross}
+%    \usecolortheme[RGB={255,255,128}]{albatross}
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{default}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{sidebartab}
+%\usecolortheme{structure}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+\usecolortheme[named=brown]{structure}
+\usecolortheme{dolphin}
+%\usecolortheme{seahorse}
+\usecolortheme{rose}
+
+
+%
+% Outer themes control decorations
+%\useoutertheme{infolines}
+%\useoutertheme{miniframes}
+%\useoutertheme{shadow}
+%\useoutertheme{sidebar}
+%\useoutertheme{smoothbars}
+%\useoutertheme{smoothtree}
+%\useoutertheme{split}
+%\useoutertheme{tree}
+
+%
+% Inner themes control text appearance
+%\useinnertheme{circles}
+%\useinnertheme{inmargin}
+%\useinnertheme{rounded}
+%\useinnertheme{rectangles}
+
+%
+% Font themes
+%\usefonttheme{professionalfonts}
+%\usefonttheme{serif}
+\usefonttheme{structurebold}
+%\usefonttheme{structureitalicserif}
+%\usefonttheme{structuresmallcapsserif}
+
+%
+% Itemization markers
+\setbeamertemplate{items}[ball]
+%\setbeamertemplate{items}[circle]
+%\setbeamertemplate{items}[default] % triangles
+%\setbeamertemplate{items}[ball]
+
+%
+% Suppress navigation symbols
+\setbeamertemplate{navigation symbols}{\navigationSymbols} 
+
+
+
+%\setbeamertemplate{navigation symbols}{}
+%\setbeamertemplate{footline}{\hfill\insertframenumber }
+
+% Automatically add section-level tables of contents
+\AtBeginSection[]
+{
+   \begin{frame}[allowframebreaks,squeeze]{Outline}
+       \tableofcontents[currentsection]
+   \end{frame}
+}

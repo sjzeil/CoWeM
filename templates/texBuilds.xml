@@ -1,0 +1,326 @@
+<project>
+
+
+  <macrodef name="getTexSkeleton">
+    <attribute name="format"/>
+    <sequential>
+      <copy file="../../templates/@{format}.tex" 
+	    tofile="${doc}__@{format}.ltx">
+	<filterset>
+	  <filter token="doc" value="${doc}"/>
+	  <filter token="relPath" value="${relPath}"/>
+	  <filter token="format" value="@{format}"/>
+	  <filtersfile file="${doc}.properties"/>
+	</filterset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="runTex">
+    <attribute name="format"/>
+    <sequential>
+      <exec executable="latexmk">
+	<arg value="-pdf"/>
+	<arg value="${doc}__@{format}.ltx"/>
+	<env key="TEXMFHOME" value="../../templates//"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <target name="chkTex2printable">
+    <dependset >
+      <srcfileset dir=".">
+	<include name="${doc}.*.tex"/>
+	<include name="${doc}__printable.ltx"/>
+      </srcfileset>
+      <targetfileset dir=".">
+	<include name="${doc}__printable.pdf"/>
+	<include name="${doc}__printable*.html"/>
+      </targetfileset>
+    </dependset>
+
+    <available property="printable.exists" file="${doc}__printable.pdf"/>
+  </target>
+
+  <target name="tex2printable" depends="checkTex2web" unless="printable.exists">
+    <copy file="${doc}.content.tex" tofile="${doc}.content.ltx"/>
+    <echo>rewriting ${doc}.content.tex</echo>
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]slide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]longslide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+  
+    <getTexSkeleton format="printable"/>
+    <runTex format="printable"/>
+  </target>
+
+  <target name="checkTex2web">
+  <dependset >
+    <srcfileset dir=".">
+      <include name="${doc}.*.tex"/>
+      <include name="${doc}__web.ltx"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__web.pdf"/>
+      <include name="${doc}__web*.html"/>
+    </targetfileset>
+  </dependset>
+
+  <available property="web.exists" file="${doc}__web.pdf"/>
+  </target>
+
+  <target name="tex2web" depends="checkTex2web" unless="web.exists">
+    <copy file="${doc}.content.tex" tofile="${doc}.content.ltx"/>
+    <echo>rewriting ${doc}.content.tex</echo>
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]slide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]longslide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+  
+    <getTexSkeleton format="web"/>
+    <runTex format="web"/>
+  </target>
+
+  <target name="checkTex2slides">
+  <dependset >
+    <srcfileset dir=".">
+      <include name="${doc}.*.tex"/>
+      <include name="${doc}__slides.ltx"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__slides.pdf"/>
+      <include name="${doc}__slides*.html"/>
+    </targetfileset>
+  </dependset>
+
+
+  <available property="slides.exists" file="${doc}__slides.pdf"/>
+  </target>
+
+  <target name="tex2slides" depends="checkTex2slides" unless="slides.exists" >
+    <copy file="${doc}.content.tex" tofile="${doc}.content.ltx"/>
+    <echo>rewriting ${doc}.content.tex</echo>
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]slide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]longslide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+  
+    <getTexSkeleton format="slides"/>
+    <runTex format="slides"/>
+  </target>
+
+  <target name="checkTex2html">
+  <dependset >
+    <srcfileset dir=".">
+      <include name="${doc}.*.tex"/>
+      <include name="${doc}__html.ltx"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__html.pdf"/>
+      <include name="${doc}__html*.html"/>
+    </targetfileset>
+  </dependset>
+
+  <available property="html.exists" file="${doc}__html.html"/>
+  </target>
+
+  <target name="tex2html" depends="checkTex2html" unless="html.exists">
+    <copy file="${doc}.content.tex" tofile="${doc}.content.ltx"/>
+    <echo>rewriting ${doc}.content.tex</echo>
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]slide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]longslide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+  
+    <getTexSkeleton format="html"/>
+      <move file="${doc}__html.ltx" tofile="${doc}__html.tex"/>
+      <exec executable="htlatex">
+	<arg value="${doc}__html.tex"/>
+	<arg value="html"/>
+	<env key="TEXMFHOME" value="../../templates//"/>
+      </exec>
+      <move tofile="${doc}__html.ltx" file="${doc}__html.tex"/>
+      <replaceregexp 
+	  file="${doc}__html.html"
+	  match="&lt;/pre&gt;&lt;!--l[.][^&gt;]*&gt;&lt;pre class=[^&gt;]*&gt;"
+	  replace=""
+	  byline="true"
+	  />
+  </target>
+
+
+  <target name="checkTex2pages">
+  <dependset >
+    <srcfileset dir=".">
+      <include name="${doc}.*.tex"/>
+      <include name="${doc}__pages.ltx"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__pages.pdf"/>
+      <include name="${doc}__pages*.html"/>
+    </targetfileset>
+  </dependset>
+
+
+  <available property="pages.exists" file="${doc}__pages.html"/>
+  </target>
+
+  <target name="tex2pages" depends="checkTex2pages" unless="pages.exists">
+    <copy file="${doc}.content.tex" tofile="${doc}.content.ltx"/>
+    <echo>rewriting ${doc}.content.tex</echo>
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]slide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]slide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]\[" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks,"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]begin[{]longslide[}]" 
+	replace="\\\\begin{frame}[fragile=singleslide,allowframebreaks]"
+	flags="g"/> 
+    <replaceregexp 
+	file="${doc}.content.ltx" 
+	match ="[\\]end[{]longslide[}]" 
+	replace="\\\\EL\\\\end{frame}"
+	flags="g"/> 
+  
+    <getTexSkeleton format="pages"/>
+      <move file="${doc}__pages.ltx" tofile="${doc}__pages.tex"/>
+      <exec executable="htlatex">
+	<arg value="${doc}__pages.tex"/>
+	<arg value="html,3,next"/>
+	<env key="TEXMFHOME" value="../../templates//"/>
+      </exec>
+      <move tofile="${doc}__pages.ltx" file="${doc}__pages.tex"/>
+      <replaceregexp 
+	  match="&lt;/pre&gt;&lt;!--l[.][^&gt;]*&gt;&lt;pre class=[^&gt;]*&gt;"
+	  replace=""
+	  byline="true"
+	  >
+	<fileset dir=".">
+	  <include name="${doc}__pages*.html"/>
+	</fileset>
+      </replaceregexp>
+  </target>
+
+
+</project>

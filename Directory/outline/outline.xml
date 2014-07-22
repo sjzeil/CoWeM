@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<outline xmlns:axle="http://www.cs.odu.edu/~zeil/axle">
+  <!-- Sample course outline: The outline is divided into topics.
+       Topics are titled and may be nested inside other topics. 
+       Topics may also include items. Each item is a short 
+       descriptive text, with optional date, kind, and href attributes.
+       -->
+  <!-- FILE TO EDIT -->
+  <preamble>
+    <info>
+      <title>Miscellaneous Topics</title>
+    </info>
+
+  </preamble>
+
+  <topic title="Software for Courses">
+    <item kind="lecturenotes"
+	  targetdoc="courseWebsite">Course Websites</item>
+    <item kind="lecturenotes"
+	  href="http://www.cs.odu.edu/~zeil/websubmit/websubmit.pdf">
+      Web-based Assignment Submission
+    </item>
+    <item kind="lecturenotes"
+	  href="http://www.cs.odu.edu/~zeil/websubmit/autograde.pdf">
+      Automatic Grading
+    </item>
+    <item kind="lecturenotes"
+	  targetdoc="assignments">Assignments</item>
+    <item kind="lecturenotes"
+	  targetdoc="markdown"/>
+  </topic>
+
+  <topic title="Resources">
+    <item kind="lecturenotes"
+	  targetdoc="registrationFAQ"/>
+    <item kind="lecturenotes"
+	  targetdoc="testYourBrowser"/>
+  </topic>
+
+  <topic title="Other Stuff">
+    <item kind="slides"
+	  targetdoc="provostConversationOct2013">
+      Provost's Conversation, October 2013
+    </item>
+  </topic>
+
+  <presentation>
+    <column title="Topics" kinds="topics"/>
+    <column title="Lecture Notes" kinds="slides video lecturenotes construct"/>
+    <column title="Readings" kinds="text reading cs382"/>
+    <column title="Assignments &amp; other events" kinds="quiz asst selfassess lecture exam event"/>
+  </presentation>
+  <postscript>
+  <table>
+    <tr>
+      <th colspan="2">
+        Symbol Key
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <img alt="conference" src="lecture.gif"/>
+      </td>
+      <td>Conference</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="slides" src="slides.gif"/>
+      </td>
+      <td>Slides &amp; Lecture Notes</td>
+    </tr>
+    <tr>
+      <td>
+      <img alt="text" src="text.gif"/></td>
+      <td>Text</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="exam" src="exam.gif"/>
+      </td>
+      <td>Exam</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="lab" src="lab.gif"/>
+      </td>
+      <td>Lab Assignment</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="asst" src="asst.gif"/>
+      </td>
+      <td>Assignment</td>
+    </tr>
+    <tr>
+      <td>
+        <img alt="cs382" src="cs382.gif"/>
+      </td>
+      <td>CS382 readings</td>
+    </tr>
+    <!-- 
+<tr><td><img alt="slides" src="slides.gif"/></td><td>Slides</td></tr>
+<tr><td><img alt="event" src="event.gif"/></td><td>Event</td></tr>
+<tr><td><img alt="lecturenotes" src="lecturenotes.gif"/></td><td>Lectures: Live, Notes &amp; Recordings</td></tr>
+<tr><td><img alt="optreading" src="optreading.gif"/></td><td>Optional Reading</td></tr>
+<tr><td><img alt="quiz" src="quiz.gif"/></td><td>Quiz</td></tr>
+<tr><td><img alt="reading" src="reading.gif"/></td><td>Reading</td></tr>
+<tr><td><img alt="selfassess" src="selfassess.gif"/></td><td>Self-Assessment</td></tr>
+<tr><td><img alt="video" src="video.gif"/></td><td>Video</td></tr>
+-->
+  </table>
+  <blockquote>
+    <para>All times in this schedule are given in Eastern Time.</para>
+  </blockquote>
+
+  </postscript>
+</outline>

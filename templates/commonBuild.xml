@@ -1,0 +1,667 @@
+  <project xmlns:antcontrib="antlib:net.sf.antcontrib">
+    
+    <path id="antelope-classpath" >
+      <pathelement location="../templates/AntelopeTasks_3.5.1.jar"/>
+      <pathelement location="../../templates/AntelopeTasks_3.5.1.jar"/>
+    </path>
+    <path id="antcontrib-classpath" >
+      <pathelement location="../templates/ant-contrib.jar"/>
+      <pathelement location="../../templates/ant-contrib.jar"/>
+    </path>
+    <taskdef name="fileutil" 
+	     classname="ise.antelope.tasks.FileUtilTask" 
+	     classpathref="antelope-classpath"/>
+    <taskdef uri="antlib:net.sf.antcontrib"
+              resource="net/sf/antcontrib/antlib.xml"
+	      classpathref="antcontrib-classpath"/>
+
+   
+
+
+    <import file="texBuilds.xml"/>
+    <import file="mdBuilds.xml"/>
+    <import file="dbBuilds.xml"/>
+    <import file="xmlBuilds.xml"/>
+
+    
+
+    <condition property="windowsos">
+      <os family="windows" />
+    </condition>
+
+    <target name="logging" unless="windowsos">
+      <record name="ant.log" action="start" append="false" />
+    </target>
+
+    <property environment="env"/>
+
+    <basename property="doc" file="${basedir}"/>
+    <property name="baseParent" location=".."/>
+    <basename property="relPath" file="${baseParent}"/>
+
+    <property name="stylesDir" location="../../styles/"/>
+
+    <property file="../../course.properties"/>
+    
+    <macrodef name="docformat">
+      <attribute name="from" default="tex"/>
+      <attribute name="format"/>
+      <attribute name="index" default="0"/>
+      <sequential>
+	<antcall target="@{from}2@{format}"/>
+	<antcall target="indexGen@{index}">
+	  <param name="format" value="@{format}"/>
+	</antcall>
+      </sequential>
+    </macrodef>
+
+    <target name="indexGen0"/>
+
+    <target name="indexGen1">
+      <copy file="${doc}__${format}.html" 
+	    tofile="index.html"
+	    overwrite="true"
+	    preservelastmodified="true"
+	    />
+    </target>
+
+    <target name="indexGenyes">
+      <copy file="${doc}__${format}.html" 
+	    tofile="index.html"
+	    overwrite="true"
+	    preservelastmodified="true"
+	    />
+    </target>
+
+    <target name="indexGentrue">
+      <copy file="${doc}__${format}.html" 
+	    tofile="index.html"
+	    overwrite="true"
+	    preservelastmodified="true"
+	    />
+    </target>
+
+
+    <property name="md.content.file" location="${doc}.md"/>
+    <property name="db.content.file" location="${doc}.dbk"/>
+    <property name="tex.content.file" location="${doc}.content.tex"/>
+
+
+    <property name="content.date.file" location="${doc}.content.date"/>
+
+    <available property="md.content.exists" file="${md.content.file}"/>
+
+    <target name="genProperties" if="md.content.exists">
+      <copy file="${md.content.file}" tofile="${doc}.properties">
+	<filterchain>
+	  <headfilter lines="8"/>
+	  <linecontainsregexp>
+	    <regexp pattern="(^Title:)|(^Author:)"/>
+	  </linecontainsregexp>
+	</filterchain>
+      </copy>
+      <replaceregexp file="${doc}.properties"
+		     match="^Title: *"
+		     flags="m"
+		     replace="doc.title="/>
+      <replaceregexp file="${doc}.properties"
+		     match="^Author: *"
+		     flags="m"
+		     replace="doc.author="/>
+    </target>
+
+    <target name="loadProperties" depends="genProperties">
+      <property file="${doc}.properties"/>
+    </target>
+
+    <target name="checkForContent" depends="loadProperties">
+      <available property="db.content.exists" file="${db.content.file}"/>
+      <available property="tex.content.exists" file="${tex.content.file}"/>
+    </target>
+
+
+    <target name="convertDB" depends="checkForContent" unless="content.exists">
+      <apply executable="dblatex" parallel="false">
+	<arg value="--style=simple"/>
+	<arg value="--type=tex"/>
+	<arg value="--xsl-user=../../templates/dblatex-sjz.xsl"/>
+	<fileset file="${doc}.dbk"/>
+      </apply>
+      <replace file="${doc}.dbk.tex" token="language=cpp" value="language=C++"/>
+      <replace file="${doc}.dbk.tex" token="\cyrchar\cyrie{}" value="$\epsilon$"/>
+      <apply executable="csplit" parallel="false" addsourcefile="false">
+	<arg value="${doc}.dbk.tex"/>
+	<arg value="/title/"/>
+	<arg value="/^%/"/>
+	<arg value="/mainmatter/+1"/>
+	<arg value="/end{document}/"/>
+	<fileset file="${doc}.dbk.tex"/>
+      </apply>
+      <move file="xx01" tofile="${doc}.info.tex"/>
+      <move file="xx03" tofile="${doc}.content.tex"/>
+      <delete>
+	<fileset dir="." includes="xx0*"/>
+	<fileset file="${doc}.dbk.tex"/>
+      </delete>
+    </target>
+
+
+    <target name="makeGraphics" 
+	    depends="logging,epsGraphics,gifGraphics,epspngGraphics"/>
+
+    <available property="epstopdf-is-installed" 
+	       file="epstopdf" filepath="${env.PATH}"/>
+
+    <target name="epsGraphics" depends="logging,diaGraphics,figGraphics" 
+	    if="epstopdf-is-installed">
+      <apply executable="epstopdf" parallel="false">
+	<fileset dir="." includes="*.eps"/>
+	<globmapper from="*.eps" to="${basedir}/*.pdf"/>
+      </apply>
+      <dependset>
+	<srcfileset dir="." includes="*.eps"/>
+	<targetfileset dir="." includes="${doc}__*.pdf"/>
+      </dependset>
+    </target>
+
+
+    <available property="dia-is-installed" 
+	       file="dia" filepath="${env.PATH}"/>
+    <uptodate property="diaConversion.notRequired">
+      <srcfiles dir= ".">
+	<include name="*.dia"/>
+      </srcfiles>
+      <globmapper from="*.dia" to="${basedir}/*.eps"/>
+    </uptodate>
+
+    <target name="diaGraphics" depends="logging" 
+	    if="dia-is-installed"
+	    unless="diaConversion.notRequired" >
+      <apply executable="dia" parallel="false" force="false">
+	<arg value="-t"/>
+	<arg value="eps-builtin"/>
+	<fileset dir="." includes="*.dia"/>
+	<globmapper from="*.dia" to="${basedir}/*.eps"/>
+      </apply>
+    </target>
+    
+    
+    <available property="fig2dev-is-installed" 
+	       file="fig2dev" filepath="${env.PATH}"/>
+    
+    <target name="figGraphics" depends="logging" if="fig2dev-is-installed">
+      <apply executable="fig2dev" parallel="false">
+	<arg value="-L"/>
+	<arg value="eps"/>
+	<srcfile/>
+	<targetfile/>
+	<fileset dir="." includes="*.fig"/>
+	<globmapper from="*.fig" to="${basedir}/*.eps"/>
+      </apply>
+    </target>
+    
+    <available property="convert-is-installed" 
+	       file="convert" filepath="${env.PATH}"/>
+    
+    <uptodate property="gifConversion.notRequired">
+      <srcfiles dir= ".">
+	<include name="*.gif"/>
+      </srcfiles>
+      <globmapper from="*.gif" to="${basedir}/*.png"/>
+    </uptodate>
+    
+    <target name="gifGraphics" depends="logging" 
+	    if="convert-is-installed" unless="gifConversion.notRequired">
+      <apply executable="convert" parallel="false" relative="true">
+	<srcfile/>
+	<targetfile/>
+	<fileset dir="${basedir}" includes="*.gif"/>
+	<globmapper from="*.gif" to="${basedir}/*.png"/>
+      </apply>
+    </target>
+    
+    
+    <uptodate property="epspngConversion.notRequired">
+      <srcfiles dir= ".">
+	<include name="*.eps"/>
+      </srcfiles>
+      <globmapper from="*.eps" to="${basedir}/*.png"/>
+    </uptodate>
+    
+    <target name="epspngGraphics" depends="diaGraphics,figGraphics" 
+	    if="convert-is-installed" unless="epspngConversion.notRequired">
+      <apply executable="convert" parallel="false" relative="true">
+	<arg value="-density"/>
+	<arg value="75"/>
+	<srcfile/>
+	<arg value="-flatten"/>
+	<targetfile/>
+	<fileset dir="${basedir}" includes="*.eps"/>
+	<globmapper from="*.eps" to="${basedir}/*.png"/>
+      </apply>
+    </target>
+    
+    
+    <uptodate property="makeSourceCodeHTML.notRequired">
+      <srcfiles dir= ".">
+	<include name="*.h"/>
+	<include name="*.cpp"/>
+	<include name="*.java"/>
+	<include name="*.listing"/>
+      </srcfiles>
+      <globmapper from="*" to="${basedir}/*.html"/>
+    </uptodate>
+    <uptodate property="makeSourceCodeTex.notRequired">
+      <srcfiles dir= ".">
+	<include name="*.h"/>
+	<include name="*.cpp"/>
+	<include name="*.java"/>
+	<include name="*.listing"/>
+      </srcfiles>
+      <globmapper from="*" to="${basedir}/*.tex"/>
+    </uptodate>
+
+    <target name="makeSourceCodeTex" depends="logging" 
+	    if="tex.content.exists"
+	    unless="makeSourceCodeTex.notRequired">
+      <apply executable="java">
+	<arg value="-cp"/>
+	<arg value="../../templates/codeAnnotation.jar"/>
+	<arg value="edu.odu.cs.codeAnnotation.Code2TeX"/>
+	<fileset dir=".">
+	  <include name="**/*.h"/>
+	  <include name="**/*.cpp"/>
+	  <include name="**/*.java"/>
+	</fileset>
+	<globmapper from="*" to="${basedir}/*.tex"/>
+      </apply>
+      <apply executable="java">
+	<arg value="-cp"/>
+	<arg value="../../templates/codeAnnotation.jar"/>
+	<arg value="edu.odu.cs.codeAnnotation.Listing2TeX"/>
+	<fileset dir=".">
+	  <include name="**/*.listing"/>
+	</fileset>
+	<globmapper from="*" to="${basedir}/*.tex"/>
+      </apply>
+    </target>
+
+    <target name="makeSourceCodeHTML" depends="logging" 
+	    unless="makeSourceCodeHTML.notRequired">
+      <antcontrib:foreach target="cpp2html" param="theFile">
+	<path>
+	  <fileset dir=".">
+	    <include name="**/*.h"/>
+	    <include name="**/*.cpp"/>
+	  </fileset>
+	</path>
+      </antcontrib:foreach>
+      <foreach target="java2html" param="theFile">
+	<path>
+	  <fileset dir=".">
+	    <include name="**/*.java"/>
+	  </fileset>
+	</path>
+      </foreach>
+      <foreach target="listing2html" param="theFile">
+	<path>
+	  <fileset dir=".">
+	    <include name="**/*.listing"/>
+	  </fileset>
+	</path>
+      </foreach>
+      <!--
+      <apply executable="java">
+	<arg value="-cp"/>
+	<arg value="../../templates/codeAnnotation.jar"/>
+	<arg value="edu.odu.cs.codeAnnotation.Code2HTML"/>
+	<arg value="-footer"/>
+	<arg value="&lt;footer/&gt;"/>
+	<fileset dir=".">
+	  <include name="**/*.h"/>
+	  <include name="**/*.cpp"/>
+	  <include name="**/*.java"/>
+	</fileset>
+	<globmapper from="*" to="${basedir}/*.html.xml"/>
+      </apply>
+      <apply executable="java">
+	<arg value="-cp"/>
+	<arg value="../../templates/codeAnnotation.jar"/>
+	<arg value="edu.odu.cs.codeAnnotation.Listing2HTML"/>
+	<fileset dir=".">
+	  <include name="**/*.listing"/>
+	</fileset>
+	<globmapper from="*" to="${basedir}/*.html.xml"/>
+      </apply>
+      -->
+    </target>
+
+    <target name="cpp2html">
+      <echo>${theFile}</echo>
+      <basename property="cpp.basename" file="${theFile}"/>
+      <copy file="../../templates/codeheader.txt" tofile="${theFile}.md"/>
+      <echo file="${theFile}.md" append="true">Title: ${cpp.basename}
+
+# ${cpp.basename}
+
+```Cpp
+</echo>
+       <concat destfile="${theFile}.md" append="yes">
+	 <filelist dir="." files="${theFile}"/>
+       </concat>
+       <echo file="${theFile}.md" append="true">
+```
+</echo>
+        <exec executable="multimarkdown">
+	   <arg value="-b"/>
+           <arg value="${theFile}.md"/>
+	</exec>
+	<codeFilter file="${theFile}.html"/>
+	<delete file="${theFile}.md"/>
+    </target>
+
+
+    <target name="java2html">
+      <echo>${theFile}</echo>
+      <basename property="java.basename" file="${theFile}"/>
+      <copy file="../../templates/codeheader.txt" tofile="${theFile}.md"/>
+      <echo file="${theFile}.md" append="true">Title: ${java.basename}
+
+# ${java.basename}
+
+```Java
+</echo>
+       <concat destfile="${theFile}.md" append="yes">
+	 <filelist dir="." files="${theFile}"/>
+       </concat>
+       <echo file="${theFile}.md" append="true">
+```
+</echo>
+        <exec executable="multimarkdown">
+	   <arg value="-b"/>
+           <arg value="${theFile}.md"/>
+	</exec>
+	<codeFilter file="${theFile}.html"/>
+	<delete file="${theFile}.md"/>
+    </target>
+
+
+    <target name="listing2html">
+      <echo>${theFile}</echo>
+      <basename property="listing.basename" file="${theFile}" suffix=".listing"/>
+      <copy file="../../templates/codeheader.txt" tofile="${theFile}.md"/>
+      <echo file="${theFile}.md" append="true">Title: ${listing.basename}
+
+# ${listing.basename}
+
+```
+</echo>
+       <concat destfile="${theFile}.md" append="yes">
+	 <filelist dir="." files="${theFile}"/>
+       </concat>
+       <echo file="${theFile}.md" append="true">
+```
+</echo>
+        <exec executable="multimarkdown">
+	   <arg value="-b"/>
+           <arg value="${theFile}.md"/>
+	</exec>
+	<codeFilter file="${theFile}.html"/>
+	<delete file="${theFile}.md"/>
+    </target>
+
+
+    <uptodate property="makeOneshotMMD.notRequired">
+      <srcfiles dir= ".">
+	<include name="*.mmd"/>
+      </srcfiles>
+      <globmapper from="*" to="${basedir}/*.html"/>
+    </uptodate>
+    <target name="makeOneshotMMD" depends="logging" 
+	    unless="makeOneshotMMD.notRequired">
+      <antcontrib:foreach target="mmd2html" param="theFile">
+	<path>
+	  <fileset dir=".">
+	    <include name="**/*.mmd"/>
+	  </fileset>
+	</path>
+      </antcontrib:foreach>
+    </target>
+
+
+
+    <target name="mmd2html">
+      <echo>${theFile}</echo>
+      <basename property="mmd.basename" suffix=".mmd" file="${theFile}"/>
+      <preprocessMD format="html" file="${mmd.basename}" extension="mmd">
+	<defined>
+	  <arg value="-D_printable"/>
+	</defined>
+      </preprocessMD>
+      <touch file="${mmd.basename}.properties"/>
+      <exec executable="multimarkdown">
+	<arg value="-b"/>
+	<arg value="${mmd.basename}__html.md"/>
+      </exec>
+      <postprocessMDHTML format="html" file="${mmd.basename}"/>
+      <move file="${mmd.basename}__html.html" tofile="${mmd.basename}.mmd.html"
+	    overwrite="true"/>
+      <delete file="${mmd.basename}__html.md"/>
+      <delete file="${mmd.basename}__html.xml"/>
+      <delete file="${mmd.basename}.properties"/>
+    </target>
+
+
+
+
+
+    <target name="makeSourceCode" depends="makeSourceCodeHTML, makeSourceCodeTex"/>
+
+
+    <target name="saveTexModDate" depends="checkForContent" if="tex.content.exists">
+      <fileutil property="docModDate" 
+		file="${tex.content.file}">
+	<lastmodified format="MMM dd, yyyy"/>
+      </fileutil>
+    </target>
+
+    <target name="saveMdModDate" depends="saveTexModDate" if="md.content.exists" unless="docModDate">
+      <fileutil property="docModDate" 
+		file="${md.content.file}">
+	<lastmodified format="MMM dd, yyyy"/>
+      </fileutil>
+    </target>
+
+    <target name="saveDbModDate" depends="saveMdModDate" if="db.content.exists" unless="docModDate">
+      <fileutil property="docModDate" 
+		file="${db.content.file}">
+	<lastmodified format="MMM dd, yyyy"/>
+      </fileutil>
+    </target>
+
+    <target name="saveModDate" depends="saveDbModDate"/>
+
+
+    <target name="properties" 
+	    depends="logging,saveModDate">
+      <echo file="title.xml">&lt;title doc="${doc}"&gt;${doc.title}&lt;/title&gt;</echo>
+    </target>
+
+  <makeurl file="." property="cb.pwdURL"/>
+    <target name="makeHTML" depends="makeSourceCode">
+      <!-- dependset>
+	<srcfileset dir="." includes="*.html.xml"/>
+	<targetfileset dir="." includes="*.html"/>
+      </dependset -->
+      <xslt style="../../templates/modifyHTML.xsl" destdir=".">
+	<param name="pwdURL" expression="${cb.pwdURL}"/>
+	<param name="courseName" expression="${courseName}"/>
+	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
+	<param name="graphicsDir" expression="${graphicsURL}" if="graphicsURL"/>
+	<param name="homeURL" expression="${homeurl}" if="homeurl"/>
+	<param name="email" expression="${email}" if="email"/>
+	<param name="forum" expression="${forum}" if="forum"/>
+	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
+	<param name="highlightjsURL" expression="${highlightjsURL}" 
+	       if="highlightjsURL"/> 
+	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
+	<fileset dir=".">
+	  <include name="*.html.xml"/>
+	</fileset>
+	<globmapper from="*.html.xml" to="*.html.tmp"/>
+      </xslt>
+      <copy todir=".">
+	<fileset dir='.' includes="*.html.tmp"/>
+	<globmapper from="*.html.tmp" to="*.html"/>
+	<filterset>
+	  <filtersfile file="../../course.properties"/>
+	</filterset>
+      </copy>
+      <delete>
+	<fileset dir='.' includes="*.html.tmp"/>
+      </delete>
+    </target>
+
+    <uptodate property="preserve.index"
+	      srcfile="build.xml"
+	      targetfile="index.html"/>
+
+    <target name="generateIndex" depends="properties,saveModDate"
+	    unless="preserve.index">
+      <xslt style="../../templates/indexGenerator.xsl" 
+	    in="build.xml"
+	    out="index.html.tmp">
+	<param name="title" expression="${doc.title}"/>
+	<param name="doc" expression="${doc}"/>
+	<param name="modDate" expression="${docModDate}"/>
+      </xslt>
+      <copy file="index.html.tmp" tofile="index.html">
+	<filterset>
+	  <filtersfile file="../../course.properties"/>
+	</filterset>
+      </copy>
+      <delete file="index.html.tmp"/>
+    </target>
+
+    <target name="setup" depends="properties,makeHTML,makeGraphics,makeSourceCode,saveModDate,generateIndex,makeOneshotMMD"
+	    description="Prepare all source files prior to main document generation"
+	    >
+      <replaceregexp file="index.html" match="@[^@]+@" replace="none" flags="g"/>
+    </target>
+
+
+
+    <target name="build" depends="documents" 
+	    description="Generate all documents">
+      <echo>${doc}</echo>
+    </target>
+
+    <target name="deploy" depends="build"
+	    description="Generate all documents and sync with the deployment directory (usually a website)"
+	    >
+      <sync todir="${deploymentDestination}/${relPath}/${doc}" 
+	  includeEmptyDirs="true" granularity="2000">
+	<fileset dir=".">
+	  <exclude name="epub/**/*"/>
+	  <exclude name="**/epub/**/*"/>
+	  <exclude name="**/*~"/>
+	  <exclude name="**/*.aux"/>
+	  <exclude name="**/*.fdb_latexmk"/>
+	  <exclude name="**/*.fls"/>
+	  <exclude name="**/*.log"/>
+	  <exclude name="**/*.out"/>
+	  <exclude name="**/*.toc"/>
+	  <exclude name="**/*.nav"/>
+	  <exclude name="**/*.snm"/>
+	  <exclude name="**/*.vrb"/>
+	  <exclude name="**/*.tex"/>
+	  <exclude name="**/*.ltx"/>
+	  <exclude name="**/*.4ct"/>
+	  <exclude name="**/*.4tc"/>
+	  <exclude name="**/*.idv"/>
+	  <exclude name="**/*.dvi"/>
+	  <exclude name="**/*.lg"/>
+	  <exclude name="**/*.tmp"/>
+	  <exclude name="**/*.xref"/>
+	</fileset>
+	<preserveintarget>
+	  <include name="**/.ht*"/>
+	</preserveintarget>
+      </sync>
+    </target>
+
+    <target name="clean"
+	    description="Remove temporary files created when building documents"
+	    >
+      <delete>
+	<fileset dir=".">
+	  <include name="*_firstPass.html"/>
+	  <include name="*.fdb_latexmk"/>
+	  <include name="*.fls"/>
+	  <include name="*.nav"/>
+	  <include name="*.snm"/>
+	  <include name="*.vrb"/>
+	  <include name="*.log"/>
+	  <include name="*.out"/>
+	  <include name="*.4ct"/>
+	  <include name="*.4tc"/>
+	  <include name="*.dvi"/>
+	  <include name="*.idv"/>
+	  <include name="*.lg"/>
+	  <include name="*.tmp"/>
+	  <include name="*.xref"/>
+	  <include name="*.h.html.xml"/>
+	  <include name="*.cpp.html.xml"/>
+	  <include name="*.java.html.xml"/>
+	  <include name="*__*.xml"/>
+	  <include name="*__*.md"/>
+	  <include name="*__epub.math.*"/>
+	  <include name="epub.contents*"/>
+
+	</fileset>
+      </delete>
+      <delete dir="epub"/>
+    </target>
+
+    <target name="cleaner" depends="clean"
+	    description="Remove all files that can be easily regenerated, including the deliverable target documents, but leaving files that affect cross-refeerences from other documents in the website)."
+	    >
+      <delete>
+	<fileset dir=".">
+	  <include name="index.html"/>
+	  <include name="${doc}.content.ltx"/>
+	  <include name="${doc}__*.pdf"/>
+	  <include name="${doc}__*.html"/>
+	  <include name="${doc}__*.png"/>
+	  <include name="${doc}__*.css"/>
+	  <include name="*.h.tex"/>
+	  <include name="*.cpp.tex"/>
+	  <include name="*.java.tex"/>
+	  <include name="*.h.html"/>
+	  <include name="*.cpp.html"/>
+	  <include name="*.java.html"/>
+	  <include name="*.mmd.html"/>
+	  <include name="${doc}.epub"/>
+	  <include name="${doc}__epub.math*"/>
+	</fileset>
+      </delete>
+    </target>
+
+    <target name="cleanest" depends="cleaner"
+	    description="Remove all files that can be automatically regenerated"
+	    >
+      <delete>
+	<fileset dir=".">
+	  <include name="${doc}*.*~"/>
+	  <include name="title.xml"/>
+	  <include name="${doc}.properties"/>
+	  <include name="${doc}.content.date"/>
+	  <include name="${doc}-*"/>
+	  <include name="${doc}__*"/>
+	</fileset>
+      </delete>
+    </target>
+
+
+</project>

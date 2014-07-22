@@ -1,0 +1,253 @@
+%%
+%%  beamercommonsjz.sty, by Steven Zeil, Old Dominion University
+%%       zeil@cs.odu.edu
+%%
+%%  Personal augmentations to the beamer class and beamerarticle style
+%%
+\ProvidesPackage{beamercommonsjz}[2012/12/19 v1.0]
+\NeedsTeXFormat{LaTeX2e}[1997/12/01]
+%
+%
+\RequirePackage{pifont}
+\RequirePackage[alpine,geometry,misc,weather]{ifsym}
+\RequirePackage{ifthen}
+\RequirePackage{fancyvrb}
+\RequirePackage{fancybox}
+\RequirePackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpg,.mps,.png}
+\RequirePackage{color}
+\RequirePackage{hhline}
+\RequirePackage{autolist}
+\RequirePackage{wrapfig}
+\RequirePackage{listings}
+\RequirePackage{xstring}
+\RequirePackage[export]{adjustbox}
+\RequirePackage{needspace}
+\RequirePackage{alltt}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[scaled=0.85]{beramono}
+
+\ProcessOptions\relax
+
+\newif\ifSlides
+\newif\ifPrintable
+\newif\ifBandW
+\newif\ifHTML
+
+\HTMLfalse
+
+
+\def\olinkMarker{\Lightning}
+\newcommand{\references}[1]{\externaldocument[#1-]{../#1/#1-\format}}
+\newcommand{\olink}[3]{\href{\baseurl/\relPath/#1/#1-\format.pdf\##2}{\textcolor{blue}{#3 \olinkMarker\ifPrintable(\pageref*{#1-#2})\fi}}}
+\newcommand{\doclink}[2]{\href{\baseurl/\relPath/#1/#1-\format.pdf}{#2}}
+
+
+
+
+\let\old@title\title
+\renewcommand\title[1]{\def\theTitle{#1}\old@title{#1}}
+\def\docurl{\baseurl/\relPath/\doc/\doc\string_\string_\format.pdf}
+
+\def\navigationSymbols{\Large\href{\homeurl}{\FilledHut}\hspace{2ex}\href{\baseurl/sendEmail.html?subject=\courseName: [enter a descriptive subject]&body=In regards to \theTitle, p. \arabic{page} (\docurl\%23page.\arabic{page}):\%0A\%0A[enter your message]}{\Letter}\hspace{2ex}}
+
+\definecolor{brown}{rgb}{0.4,0.2,0}
+\definecolor{darkgreen}{rgb}{0,0.4,0}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.4}
+\definecolor{bluegreen}{rgb}{0,0.5,0.5}
+\definecolor{lightgray}{rgb}{0.8,0.8,0.8}
+\definecolor{lightergray}{rgb}{0.9,0.9,0.9}
+\definecolor{lightblue}{rgb}{0.7,1.0,1.0}
+\definecolor{olivedrab}{rgb}{.42,.557,.137}
+\definecolor{orange}{rgb}{1,.549,0}
+
+
+\newcommand{\DEF}[1]{\textcolor{blue}{#1}}
+\newcommand{\EM}[1]{\textcolor{red}{#1}}
+\newcommand{\CD}[1]{\textcolor{darkgreen}{\texttt{#1}}}
+
+\lstset{%mathescape=true,escapechar=@,
+   basicstyle=\small,
+   showstringspaces=false,
+%  keywordstyle=\color{black}\bfseries,
+%  commentstyle=\color{darkred},
+%  stringstyle=\color{blue}\slshape,
+  backgroundcolor=\color{lightergray},
+%  fancyvrb=true
+   moredelim=**[is][\itshape\color{blue}]{<1i>}{</i>},
+%   moredelim={**[is][\itshape\color{darkred}]{<1b>}{</b>}},
+%   moredelim={**[is][\itshape\color{darkred}]{<1h>}{</h>}},
+%   moredelim={**[is][\itshape\color{blue}]{<2h>}{</h>}},
+%   moredelim={**[is][\itshape\color{magenta}]{<3h>}{</h>}}
+}
+
+\lstdefinestyle{cpplst}{
+   language=C++,
+   backgroundcolor=\color{lightergray},
+   escapeinside={<:}{:>},
+   basicstyle=\small,
+   keywordstyle=\color{black}\bfseries,
+   commentstyle=\color{darkgreen}\itshape,
+   stringstyle=\color{blue}\slshape,
+%  directivestyle=\color{magenta}\itshape
+}
+
+\lstdefinestyle{javalst}{
+   language=Java,
+   backgroundcolor=\color{lightergray},
+   escapeinside={<:}{:>},
+   basicstyle=\small,
+   keywordstyle=\color{black}\bfseries,
+   commentstyle=\color{darkgreen}\itshape,
+   stringstyle=\color{blue}\slshape,
+}
+
+\lstdefinestyle{screenlst}{
+   language=,
+   basicstyle=\small,
+   backgroundcolor=\color{lightblue},
+   escapeinside={<:}{:>},
+%  fancyvrb=true,
+   moredelim={**[is][\itshape\color{blue}]{<1i>}{</i>}},
+   moredelim={**[is][\itshape\color{darkred}]{<1b>}{</b>}},
+   moredelim={**[is][\itshape\color{darkred}]{<+1>}{<-1>}},
+   moredelim={**[is][\itshape\color{blue}]{<+2>}{<-2>}},
+   moredelim={**[is][\itshape\color{magenta}]{<+3>}{<-3>}}
+}
+
+
+\newenvironment{listing}{\colorlet{ttBG}{listingBG}\begin{alltt}}{\end{alltt}}
+\newenvironment{cpplisting}{\colorlet{ttBG}{listingBG}\begin{alltt}}{\end{alltt}}
+\newenvironment{screenlisting}{\colorlet{ttBG}{lightblue}\begin{alltt}}{\end{alltt}}
+
+
+\def\codePath{}
+\newcommand{\shortlisting}[2][cpp]{\begin{#1listing}\input{\codePath#2.tex}\end{#1listing}}
+
+
+
+\colorlet{listingBG}{lightergray}
+\colorlet{screenBG}{lightblue}
+\colorlet{ttBG}{lightblue}
+\newenvironment{lstdirective}{\color{darkred}}{}
+\newenvironment{lstcomment}{\color{darkgreen}\itshape}{}
+\newenvironment{lststring}{\color{darkblue}}{}
+\newcommand{\lstkwd}[1]{\textcolor{black}{\textbf{#1}}}
+\newcommand{\lstln}{\makebox[0pt][l]{\raisebox{-0.4\baselineskip}[0pt][0pt]{\colorbox{ttBG}{\rule{\linewidth}{0pt}\rule{0pt}{1.0\baselineskip}}}}}
+%\renewcommand{\lstln}{}
+
+
+\definecolor{hlicolor}{rgb}{1,1,0.6}% #ffff99
+\definecolor{hliicolor}{rgb}{0.4,0.8,1}% #66ccff
+\definecolor{hliiicolor}{rgb}{0.8,0.2,1}% #cc33ff
+\definecolor{hlivcolor}{rgb}{1,0.6,0}% #ff33cc
+
+\newcommand{\hli}[1]{\colorbox{hlicolor}{#1}}
+\newcommand{\hlii}[1]{\colorbox{hliicolor}{#1}}
+\newcommand{\hliii}[1]{\colorbox{hliiicolor}{#1}}
+\newcommand{\hliv}[1]{\colorbox{hlivcolor}{#1}}
+\newcommand{\hliiii}[1]{\colorbox{hlivcolor}{#1}}
+%
+\newcommand{\inhli}[1]{\textit{\textcolor{darkred}{#1}}}
+\newcommand{\inhlii}[1]{\textit{\textcolor{blue}{#1}}}
+\newcommand{\inhliii}[1]{\textit{\textcolor{magenta}{#1}}}
+\newcommand{\inhliv}[1]{\textit{\textcolor{green}{#1}}}
+
+\newcommand{\smvdots}{\vbox{\baselineskip3pt\lineskiplimit0pt\kern1pt\hbox{.}\hbox{.}\hbox{.}\kern-1pt}}
+
+
+\def\listingLabel{listing}
+\newcommand{\colabel}[2][\listingLabel]{\hypertarget{#1-co-\toRoman{#2}}{\conum{#2}}}
+\newcommand{\coref}[2][\listingLabel]{\hyperlink{#1-co-\toRoman{#2}}{\conum{#2}}}
+
+\newcommand{\toRoman}[1]{%
+\ifthenelse{\equal{#1}{1}}{i}{}%
+\ifthenelse{\equal{#1}{2}}{ii}{}%
+\ifthenelse{\equal{#1}{3}}{iii}{}%
+\ifthenelse{\equal{#1}{4}}{iv}{}%
+\ifthenelse{\equal{#1}{5}}{v}{}%
+\ifthenelse{\equal{#1}{6}}{vi}{}%
+\ifthenelse{\equal{#1}{7}}{vii}{}%
+\ifthenelse{\equal{#1}{8}}{viii}{}%
+\ifthenelse{\equal{#1}{9}}{ix}{}%
+\ifthenelse{\equal{#1}{10}}{x}{xi}%
+}
+
+\newcommand{\conum}[1]{%
+\ifthenelse{\equal{#1}{1}}{\textcolor{black}{\ding{182}}}{}%
+\ifthenelse{\equal{#1}{2}}{\textcolor{black}{\ding{183}}}{}%
+\ifthenelse{\equal{#1}{3}}{\textcolor{black}{\ding{184}}}{}%
+\ifthenelse{\equal{#1}{4}}{\textcolor{black}{\ding{185}}}{}%
+\ifthenelse{\equal{#1}{5}}{\textcolor{black}{\ding{186}}}{}%
+\ifthenelse{\equal{#1}{6}}{\textcolor{black}{\ding{187}}}{}%
+\ifthenelse{\equal{#1}{7}}{\textcolor{black}{\ding{188}}}{}%
+\ifthenelse{\equal{#1}{8}}{\textcolor{black}{\ding{189}}}{}%
+\ifthenelse{\equal{#1}{9}}{\textcolor{black}{\ding{190}}}{}%
+\ifthenelse{\equal{#1}{10}}{\textcolor{black}{\ding{191}}}{}%
+}
+
+\def\docTag{\doc}
+\newcommand{\hyperlabel}[2][]{\hypertarget{#2}{#1}\label{#2}\label{\docTag--#2}\hypertarget{\docTag--#2}{}}
+
+\newcommand{\firstterm}[1]{\textit{\textcolor{blue}{#1}}}
+\newcommand{\command}[1]{\texttt{\bf #1}}
+\newcommand{\computeroutput}[1]{\texttt{#1}}
+\newcommand{\constant}[1]{\texttt{#1}}
+\newcommand{\filename}[1]{\texttt{#1}}
+\newcommand{\function}[1]{\texttt{#1}}
+\newcommand{\keycap}[1]{\texttt{\large #1}}
+\newcommand{\parameter}[1]{\texttt{#1}}
+\newcommand{\replaceable}[1]{\textit{\textcolor{darkblue}{#1}}}
+\newcommand{\type}[1]{\texttt{\it #1}}
+\newcommand{\code}[1]{\texttt{\it #1}}
+\newcommand{\userinput}[1]{\texttt{\textcolor{darkred}{#1}}}
+\newcommand{\varname}[1]{\texttt{\it #1}}
+
+
+\renewcommand{\emph}[1]{{\it\color{darkred} #1}}
+
+
+%\newenvironment{slide}[2][]{\begin{frame}[fragile=singleslide,environment=slide,#1]{#2}}{\EL\end{frame}}
+%\newenvironment{longslide}[2][]{\begin{frame}[fragile=singleslide,environment=longslide,allowframebreaks,#1]{#2}}{\EL\end{frame}}
+
+\newsavebox\savedPic
+\newlength{\savedPicwd}
+\newlength{\savedRemainingwd}
+\newlength{\savedPicht}
+
+\newcommand{\@saveAndMeasure}[1]{\sbox\savedPic{#1}%
+\settowidth{\savedPicwd}{\usebox{\savedPic}}%
+\setlength{\savedRemainingwd}{\linewidth}%
+\addtolength{\savedRemainingwd}{-1\savedPicwd}%
+\addtolength{\savedRemainingwd}{-1em}%
+\settoheight{\savedPicht}{\usebox{\savedPic}}}
+
+\newcommand{\@saveAndMeasurePic}[2][0.4\linewidth]{\@saveAndMeasure{\includegraphics[max height=0.8\textheight,max width=#1]{#2}}}
+
+\newcommand{\wrapPic}[2][40]{\@saveAndMeasurePic[0.#1\linewidth]{#2}\@wrapSavedPic}
+\newcommand{\wrapPicture}[2][40]{\@saveAndMeasurePic[0.#1\linewidth]{#2}\@wrapSavedPic}
+
+\newenvironment{picOnRight}[2][40]{\@saveAndMeasurePic[0.#1\linewidth]{#2}\needspace{\savedPicht}\begin{columns}[c]\begin{column}{\savedRemainingwd}}%
+{\EL\end{column}\begin{column}{1ex}\rule{1ex}{0ex}\end{column}\begin{column}{\savedPicwd}\usebox{\savedPic}\end{column}\end{columns}}
+
+\newenvironment{picOnLeft}[2][40]{\@saveAndMeasurePic[0.#1\linewidth]{#2}\needspace{\savedPicht}\begin{columns}[c]\begin{column}{\savedPicwd}\usebox{\savedPic}\end{column}\begin{column}{\savedRemainingwd}}%
+{\EL\end{column}\end{columns}}
+
+\newcommand{\centerPic}[2][90]{\@saveAndMeasurePic[0.#1\linewidth]{#2}\begin{minipage}{\linewidth}\begin{center}\usebox{\savedPic}\end{center}\end{minipage}}
+
+\newlength{\savedColWidth}
+\newlength{\splitColWidth}
+\newenvironment{splitColumns}[1][50]{\begin{columns}%
+\setlength{\splitColWidth}{0.#1\linewidth}%
+\setlength{\savedColWidth}{\linewidth}%
+\addtolength{\savedColWidth}{-1.01\splitColWidth}%
+\begin{column}{\splitColWidth}}%
+%
+{\EL\end{column}\end{columns}}
+\newcommand{\splitColumn}{\EL\end{column}\begin{column}{\savedColWidth}}
+
+\newenvironment{question}{\par\textbf{Question:} }{}
+\newenvironment{qanswer}{\newpage\par\textbf{Answer:} }{\par\noindent\hfill\dotfill\hfill}
+
+\endinput
