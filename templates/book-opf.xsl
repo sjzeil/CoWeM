@@ -128,35 +128,34 @@
 	select="concat(@targetdoc, '/', @targetdoc, '__epub.html')"/>
     <xsl:variable name="fileID" 
 		  select="translate(encode-for-uri($fileName), '%', '_')"/>
-
     <opf:item id="{$fileID}" 
 	      href="{$fileName}" 
 	      media-type="application/xhtml+xml"/>
     <xsl:if test="count(/epub/files/file[text() = $fileName]) = 0">
       <!-- This file does not exist. May be lecture notes that have
-           not yet been written, or that were not built for epub
-           output. -->
+	   not yet been written, or that were not built for epub
+	   output. -->
       <xsl:result-document href="{$fileName}" method="xhtml"> 
-      <html>
-	<head>
-	  <title>
-	    <xsl:call-template name="getTitle">
-	      <xsl:with-param name="doc" select="@targetdoc"/>
-	    </xsl:call-template>
-	  </title>
-	</head>
-	<body>
-	  <h1>
-	    <xsl:call-template name="getTitle">
-	      <xsl:with-param name="doc" select="@targetdoc"/>
-	    </xsl:call-template>
-	  </h1>
-	  <h2>(place holder)</h2>
-	  <p>
-	    This section is currently unavailable.
-	  </p>
-	</body>
-      </html>
+	<html>
+	  <head>
+	    <title>
+	      <xsl:call-template name="getTitle">
+		<xsl:with-param name="doc" select="@targetdoc"/>
+	      </xsl:call-template>
+	    </title>
+	  </head>
+	  <body>
+	    <h1>
+	      <xsl:call-template name="getTitle">
+		<xsl:with-param name="doc" select="@targetdoc"/>
+	      </xsl:call-template>
+	    </h1>
+	    <h2>(place holder)</h2>
+	    <p>
+	      This section is currently unavailable.
+	    </p>
+	  </body>
+	</html>
       </xsl:result-document>
     </xsl:if>
   </xsl:template>

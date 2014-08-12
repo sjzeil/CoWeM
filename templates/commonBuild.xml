@@ -525,36 +525,28 @@
       </delete>
     </target>
 
-    <uptodate property="preserve.index"
-	      srcfile="build.xml"
-	      targetfile="index.html"/>
+    <target name="selectIndex" depends="properties,saveModDate">
 
-    <target name="generateIndex" depends="properties,saveModDate"
-	    unless="preserve.index">
-      <xslt style="../../templates/indexGenerator.xsl" 
+      <xslt style="../../templates/selectIndex.xsl" 
 	    in="build.xml"
-	    out="index.html.tmp">
-	<param name="title" expression="${doc.title}"/>
+	    out="index.prop.tmp">
 	<param name="doc" expression="${doc}"/>
-	<param name="modDate" expression="${docModDate}"/>
       </xslt>
-      <copy file="index.html.tmp" tofile="index.html">
-	<filterset>
-	  <filtersfile file="../../course.properties"/>
-	</filterset>
-      </copy>
-      <delete file="index.html.tmp"/>
     </target>
 
-    <target name="setup" depends="properties,makeHTML,makeGraphics,makeSourceCode,saveModDate,generateIndex,makeOneshotMMD"
+    <target name="setup" depends="properties,makeHTML,makeGraphics,makeSourceCode,saveModDate,makeOneshotMMD"
 	    description="Prepare all source files prior to main document generation"
 	    >
-      <replaceregexp file="index.html" match="@[^@]+@" replace="none" flags="g"/>
     </target>
 
+    <target name="prepareSelectedIndex" depends="selectIndex, documents"
+	    >
+      <property file="index.prop.tmp"/>
+      <copy file="${doc.indexFile}" tofile="index.html" overwrite="yes"/>
+      <delete file="index.prop.tmp"/>
+    </target>
 
-
-    <target name="build" depends="documents" 
+    <target name="build" depends="documents,prepareSelectedIndex" 
 	    description="Generate all documents">
       <echo>${doc}</echo>
     </target>
@@ -598,6 +590,7 @@
 	    >
       <delete>
 	<fileset dir=".">
+	  <include name="index.prop.txt"/>
 	  <include name="*_firstPass.html"/>
 	  <include name="*.fdb_latexmk"/>
 	  <include name="*.fls"/>

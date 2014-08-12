@@ -6,6 +6,7 @@
 >
 
   <xsl:import href="../styles/footer.xsl"/>
+  <xsl:import href="bblink.xsl"/>
 
   <!-- Converts the course outline to a tabular view. The columns
        of the table are described in the presentation section of the
@@ -20,6 +21,7 @@
   <xsl:param name="graphicsURL" select="'../../graphics'"/>
   <xsl:param name="homeURL" select="''"/>
   <xsl:param name="forum" select="''"/>
+  <xsl:param name="bbURL" select="/outline/@bbcourse"/>
   <xsl:param name="forumsURL" select="''"/>
   <xsl:param name="email" select="''"/>
   <xsl:param name="stylesDir" select="'../outline'"/>
@@ -152,6 +154,56 @@
 		</xsl:choose>
 	      </a>
 	    </xsl:when>
+	    <xsl:when test="@target != ''">
+	      <a href="../../Public/{@target}/index.html" target="_blank">
+		<xsl:choose>
+		  <xsl:when test="@title != ''">
+		    <xsl:value-of select="@title"/>
+		  </xsl:when>
+		  <xsl:when test="normalize-space(./text()) != ''">
+		    <xsl:copy-of select="*|text()"/>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:variable name="doc" select="@target"/>
+		    <xsl:variable name="titleNode" 
+				  select="$titleTable/title[@doc=$doc]"/>
+		    <xsl:choose>
+		      <xsl:when test="$titleNode">
+			<xsl:copy-of select="$titleNode/* | $titleNode/text()"/>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:text>???</xsl:text>
+		      </xsl:otherwise>
+		    </xsl:choose>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </a>
+	    </xsl:when>
+	    <xsl:when test="@assignment != ''">
+	      <a href="../../Protected/Assts/{@assignment}.mmd.html" target="_blank">
+		<xsl:choose>
+		  <xsl:when test="@title != ''">
+		    <xsl:value-of select="@title"/>
+		  </xsl:when>
+		  <xsl:when test="normalize-space(./text()) != ''">
+		    <xsl:copy-of select="*|text()"/>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:variable name="doc" select="@target"/>
+		    <xsl:variable name="titleNode" 
+				  select="$titleTable/title[@doc=$doc]"/>
+		    <xsl:choose>
+		      <xsl:when test="$titleNode">
+			<xsl:copy-of select="$titleNode/* | $titleNode/text()"/>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:text>???</xsl:text>
+		      </xsl:otherwise>
+		    </xsl:choose>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </a>
+	    </xsl:when>
 	    <xsl:when test="@title != ''">
 	      <xsl:value-of select="@title"/>
 	    </xsl:when>
@@ -245,44 +297,70 @@
           </a>
         </xsl:when>
         <xsl:when test="@bblink != ''">
-	  <xsl:variable name="bburlstart"
-			select="concat(substring-before(/outline/@bbcourse,'url='),'url=')"/>
-	  <xsl:variable name="bburl0"
-			select="concat('/webapps', substring-after(@bblink,'/webapps'))"/>
-	  <xsl:variable name="bburl1">
-	    <xsl:call-template name="string-replace-all">
-	      <xsl:with-param name="text" select="$bburl0"/>
-	      <xsl:with-param name="replace" select="'/'"/>
-	      <xsl:with-param name="by" select="'%2f'"/>
+	  <xsl:variable name="bbhref">
+	    <xsl:call-template name="bblinkConvert">
+	      <xsl:with-param name="bbcourseURL"
+			      select="$bbURL"/>
+	      <xsl:with-param name="bblinkURL"
+			      select="@bblink"/>
 	    </xsl:call-template>
 	  </xsl:variable>
-	  <xsl:variable name="bburl2">
-	    <xsl:call-template name="string-replace-all">
-	      <xsl:with-param name="text" select="$bburl1"/>
-	      <xsl:with-param name="replace" select="'='"/>
-	      <xsl:with-param name="by" select="'%3d'"/>
-	    </xsl:call-template>
-	  </xsl:variable>
-	  <xsl:variable name="bburl3">
-	    <xsl:call-template name="string-replace-all">
-	      <xsl:with-param name="text" select="$bburl2"/>
-	      <xsl:with-param name="replace" select="'&amp;'"/>
-	      <xsl:with-param name="by" select="'%26'"/>
-	    </xsl:call-template>
-	  </xsl:variable>
-	  <xsl:variable name="bburl4">
-	    <xsl:call-template name="string-replace-all">
-	      <xsl:with-param name="text" select="$bburl3"/>
-	      <xsl:with-param name="replace" select="'?'"/>
-	      <xsl:with-param name="by" select="'%3f'"/>
-	    </xsl:call-template>
-	  </xsl:variable>
-	  <a href="{concat($bburlstart,$bburl4)}" target="_blank">
+	  <a href="{$bbhref}" target="_blank">
 	    <xsl:apply-templates select="*|text()" mode="copying"/>
 	  </a>
         </xsl:when>
+	<xsl:when test="@target != ''">
+	      <a href="../../Public/{@target}/index.html" target="_blank">
+		<xsl:choose>
+		  <xsl:when test="@title != ''">
+		    <xsl:value-of select="@title"/>
+		  </xsl:when>
+		  <xsl:when test="normalize-space(./text()) != ''">
+		    <xsl:copy-of select="*|text()"/>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:variable name="doc" select="@target"/>
+		    <xsl:variable name="titleNode" 
+				  select="$titleTable/title[@doc=$doc]"/>
+		    <xsl:choose>
+		      <xsl:when test="$titleNode">
+			<xsl:copy-of select="$titleNode/* | $titleNode/text()"/>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:text>???</xsl:text>
+		      </xsl:otherwise>
+		    </xsl:choose>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </a>
+        </xsl:when>
 	<xsl:when test="@targetdoc != ''">
 	      <a href="../../Public/{@targetdoc}/index.html" target="_blank">
+		<xsl:choose>
+		  <xsl:when test="@title != ''">
+		    <xsl:value-of select="@title"/>
+		  </xsl:when>
+		  <xsl:when test="normalize-space(./text()) != ''">
+		    <xsl:copy-of select="*|text()"/>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:variable name="doc" select="@targetdoc"/>
+		    <xsl:variable name="titleNode" 
+				  select="$titleTable/title[@doc=$doc]"/>
+		    <xsl:choose>
+		      <xsl:when test="$titleNode">
+			<xsl:copy-of select="$titleNode/* | $titleNode/text()"/>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:text>???</xsl:text>
+		      </xsl:otherwise>
+		    </xsl:choose>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </a>
+        </xsl:when>
+	<xsl:when test="@assignment != ''">
+	      <a href="../../Protected/Assts/{@assignment}.mmd.html" target="_blank">
 		<xsl:choose>
 		  <xsl:when test="@title != ''">
 		    <xsl:value-of select="@title"/>
@@ -421,26 +499,5 @@
 
   </xsl:template>
 
-
-  <xsl:template name="string-replace-all">
-    <xsl:param name="text" />
-    <xsl:param name="replace" />
-    <xsl:param name="by" />
-    <xsl:choose>
-      <xsl:when test="contains($text, $replace)">
-	<xsl:value-of select="substring-before($text,$replace)" />
-	<xsl:value-of select="$by" />
-	<xsl:call-template name="string-replace-all">
-	  <xsl:with-param name="text"
-			  select="substring-after($text,$replace)" />
-	  <xsl:with-param name="replace" select="$replace" />
-	  <xsl:with-param name="by" select="$by" />
-	</xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:value-of select="$text" />
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
 
 </xsl:stylesheet>

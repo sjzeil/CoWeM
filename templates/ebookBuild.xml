@@ -5,8 +5,8 @@
     <property name="mobi.name" value="${courseName}.mobi"/>
 
     <resourcecount property="epub.content.count">
-      <fileset dir="Public">
-	<include name="**/*__epub.html"/>
+      <fileset dir="Public" includes="*/build.xml">
+	<contains text="epub"/>
       </fileset>
     </resourcecount>
 
@@ -27,6 +27,12 @@
       <srcfiles dir="Public" includes="**/*__epub.html"/>
     </uptodate>
 
+    <target name="debugepub">
+      <echo>epub.content.count ${epub.content.count}</echo>
+      <echo>epub.content.exists ${epub.content.exists}</echo>
+      <echo>epub.content.uptodate ${epub.content.uptodate}</echo>
+      <echo>mobi.content.uptodate ${mobi.content.uptodate}</echo>
+    </target>
 
     <target name="generateEpub" depends="generateDocs" 
 	    if="epub.content.exists"
@@ -264,7 +270,7 @@
 
     <condition property="do.xmobi1">
       <and>
-	<istrue value="${epub.contents.exists}"/>
+	<istrue value="${epub.content.exists}"/>
 	<available  file="ebook-convert"
 		    filepath="${envir.PATH}"/>
       </and>
@@ -272,7 +278,7 @@
 
     <condition property="do.xmobi2">
       <and>
-	<istrue value="${epub.contents.exists}"/>
+	<istrue value="${epub.content.exists}"/>
 	<not>
 	  <available file="ebook-convert"
 		     filepath="${envir.PATH}"/>
@@ -281,6 +287,13 @@
 		   filepath="${envir.PATH}"/>
       </and>
     </condition>
+
+    <target name="debugmobi">
+      <echo>epub.content.exists ${epub.content.exists}</echo>
+      <echo>mobi.content.uptodate ${mobi.content.uptodate}</echo>
+      <echo>do.xmobi1 ${do.xmobi1}</echo>
+      <echo>do.xmobi2 ${do.xmobi2}</echo>
+    </target>
 
     <target name="genmobi1" depends="generateEpub" 
 	    if="do.xmobi1" unless="mobi.content.uptodate"> 
@@ -291,7 +304,7 @@
       </exec>
     </target>
 
-    <target name="genmobi2" depends="generateEpub" 
+    <target name="genmobi2" depends="generateEpub,debugmobi" 
 	    if="do.xmobi2" unless="mobi.content.uptodate"> 
       <echo>building the ebook ${mobi.name}</echo>
       <exec executable="kindlegen">

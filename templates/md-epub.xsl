@@ -5,6 +5,8 @@
   xmlns="http://www.w3.org/1999/xhtml"
 >
 
+  <xsl:import href="bblink.xsl"/>
+
 
   <xsl:output method="xml" encoding="utf-8"/>
   <!-- xsl:output 
@@ -428,6 +430,28 @@
       <xsl:copy-of select="@*"/>
       <img src="{$doc}__epub.math{$count}.png"
 	   alt="{normalize-space(text())}"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="a[@href != '']">
+    <xsl:copy>
+      <xsl:copy-of select="@*[name() != 'href']"/>
+      <xsl:attribute name="href">
+	<xsl:choose>
+	  <xsl:when test="starts-with(@href, 'bb:')">
+	    <xsl:call-template name="bblinkConvert">
+	      <xsl:with-param name="bbcourseURL"
+			      select="$bbURL"/>
+	      <xsl:with-param name="bblinkURL"
+			      select="@href"/>
+	    </xsl:call-template>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="@href"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:attribute>
+      <xsl:apply-templates select="node()"/>
     </xsl:copy>
   </xsl:template>
 

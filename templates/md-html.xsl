@@ -5,6 +5,7 @@
 >
 
   <xsl:import href="../styles/footer.xsl"/>
+  <xsl:import href="bblink.xsl"/>
 
   <!-- 
        Chops an HTML page into "slidy" style slides
@@ -233,6 +234,29 @@
         <xsl:copy-of select="$encoded/html/body/pre"/>
       </div>
     </div>    
+  </xsl:template>
+
+
+  <xsl:template match="a[@href != '']">
+    <xsl:copy>
+      <xsl:copy-of select="@*[name() != 'href']"/>
+      <xsl:attribute name="href">
+	<xsl:choose>
+	  <xsl:when test="starts-with(@href, 'bb:')">
+	    <xsl:call-template name="bblinkConvert">
+	      <xsl:with-param name="bbcourseURL"
+			      select="$bbURL"/>
+	      <xsl:with-param name="bblinkURL"
+			      select="@href"/>
+	    </xsl:call-template>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="@href"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:attribute>
+      <xsl:apply-templates select="node()"/>
+    </xsl:copy>
   </xsl:template>
 
 
