@@ -35,6 +35,9 @@ tr { border-bottom: 1px solid black; }
 td { border-right: 1px solid black; }
 caption { font-weight: bold;  margin: 1em; }
 
+div.exampleTitle {color: #000040; font-weight: bold; font-size: 110%;}
+figcaption {font-weight: bold;}
+
 blockquote {
  font-size: 85%;
  font-weight: normal;

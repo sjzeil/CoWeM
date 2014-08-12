@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE xsl:stylesheet> 
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
@@ -11,6 +11,9 @@
        divided at each <h1>, <h2>, and <hr/> marker
   -->
 
+  <xsl:param name="doc" select="'doc'"/>
+  <xsl:param name="format" select="'html'"/>
+  <xsl:param name="pwdURL" select="'./'"/>
   <xsl:param name="MathJaxURL" select="'../../styles/MathJax'"/>
   <xsl:param name="highlightjsURL" select="'../../styles/highlight.js'"/>
   <xsl:param name="slidyURL" select="'../../styles/Slidy2'"/>
@@ -67,6 +70,7 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <div class="slide titleblock">
+	<xsl:call-template name="insertHeader"/>
 	<h1>
 	  <xsl:value-of select="/html/head/title/text()"/>
 	</h1>
@@ -74,7 +78,7 @@
 	  <xsl:value-of select="/html/head/meta[@name='author']/@content"/>
 	</h2>
 	<xsl:if test="/html/head/meta[@name='date']">
-	  <p>
+	  <p class="modDate">
 	    <xsl:text>Last modified: </xsl:text>
 	    <xsl:value-of select="/html/head/meta[@name='date']/@content"/>
 	  </p>
@@ -84,7 +88,11 @@
       <xsl:call-template name="splitIntoSlides">
 	<xsl:with-param name="sequence" select="*|text()"/>
       </xsl:call-template>
-      <!-- xsl:copy-of select="document('../styles/footer.xml')"/ -->
+      <div class="slide">
+	<xsl:text>last slide</xsl:text>
+	<!-- xsl:call-template name="insertFooter"/-->
+      </div>
+
     </xsl:copy>
   </xsl:template>
 

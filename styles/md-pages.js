@@ -43,7 +43,8 @@ var modify_toolbar = function () {
 
     var gap1 = document.createTextNode(" ");
     left.appendChild(gap1);
-
+    
+    /*
     var discuss = w3c_slidy.create_element("a");
     discuss.setAttribute("href", "#(" + w3c_slidy.slides.length + ")");
     discuss.setAttribute("title", "Discuss");
@@ -53,6 +54,7 @@ var modify_toolbar = function () {
 
     var gap2 = document.createTextNode(" ");
     left.appendChild(gap2);
+    /*
 
     var copyright = w3c_slidy.find_copyright();
 

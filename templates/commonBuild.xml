@@ -494,6 +494,8 @@
 	<targetfileset dir="." includes="*.html"/>
       </dependset -->
       <xslt style="../../templates/modifyHTML.xsl" destdir=".">
+	<param name="format" expression="html"/>
+	<param name="doc" expression="index"/>
 	<param name="pwdURL" expression="${cb.pwdURL}"/>
 	<param name="courseName" expression="${courseName}"/>
 	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>

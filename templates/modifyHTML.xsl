@@ -16,6 +16,8 @@
 
   <xsl:output method="xml" encoding="utf-8"/>
 
+  <xsl:param name="format" select="'html'"/>
+  <xsl:param name="doc" select="'index'"/>
   <xsl:param name="pwdURL" select="'./'"/>
   <xsl:param name="MathJaxURL" select="'../../styles/MathJax'"/>
   <xsl:param name="highlightjsURL" select="'../../styles/highlight.js'"/>

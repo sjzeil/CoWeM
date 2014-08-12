@@ -20,6 +20,8 @@
   <xsl:param name="homeURL" select="''"/>
   <xsl:param name="forum" select="''"/>
   <xsl:param name="forumsURL" select="''"/>
+  <xsl:param name="format" select="'directory'"/>
+  <xsl:param name="doc" select="'this'"/>
   <xsl:param name="email" select="''"/>
 
   <xsl:output method="xml" encoding="utf-8"/>

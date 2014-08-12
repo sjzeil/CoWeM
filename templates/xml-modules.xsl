@@ -12,6 +12,8 @@
        outline file.
   -->
 
+  <xsl:param name="doc" select="'outline'"/>
+  <xsl:param name="format" select="'modules'"/>
   <xsl:param name="pwdURL" select="'./'"/>
   <xsl:param name="courseName" select="'CS'"/>
   <xsl:param name="stylesURL" select="'../../styles'"/>

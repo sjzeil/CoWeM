@@ -11,6 +11,9 @@
        divided at each <h1>, <h2>, and <hr/> marker
   -->
 
+  <xsl:param name="doc" select="'doc'"/>
+  <xsl:param name="format" select="'html'"/>
+  <xsl:param name="pwdURL" select="'./'"/>
   <xsl:param name="MathJaxURL" select="'../../styles/MathJax'"/>
   <xsl:param name="highlightjsURL" select="'../../styles/highlight.js'"/>
   <xsl:param name="slidyURL" select="'../../styles/Slidy2'"/>
@@ -64,6 +67,7 @@
       <xsl:copy-of select="@*"/>
 
     <div class="slide titleblock">
+      <xsl:call-template name="insertHeader"/>
       <h1>
 	<xsl:value-of select="/html/head/title/text()"/>
       </h1>

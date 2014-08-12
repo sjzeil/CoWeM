@@ -25,6 +25,7 @@ Assorted text decorations (from docbook, originally)
 %define <\command> {newterm} {<span class="command" markdown="1">newterm</span>}
 %define <\replaceable> {newterm} {<span class="replaceable" markdown="1">newterm</span>}
 %define <\sout> <strikePhrase> {<span class='strike' markdown='1'>strikePhrase</span>}
+%define <\anchor> <anchorID> {<span id='anchorID'></span>}
 %endif
 
 
@@ -40,6 +41,7 @@ Assorted text decorations (from docbook, originally)
 %define <\command> {newterm} {<span class="command" markdown="1">newterm</span>}
 %define <\replaceable> {newterm} {<span class="replaceable" markdown="1">newterm</span>}
 %define <\sout> <strikePhrase> {<span class='strike' markdown='1'>strikePhrase</span>}
+%define <\anchor> <anchorID> {<span id='anchorID'></span>}
 %endif
 
 

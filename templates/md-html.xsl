@@ -11,6 +11,8 @@
        divided at each <h1>, <h2>, and <hr/> marker
   -->
 
+  <xsl:param name="doc" select="'doc'"/>
+  <xsl:param name="format" select="'html'"/>
   <xsl:param name="pwdURL" select="'./'"/>
   <xsl:param name="MathJaxURL" select="'../../styles/MathJax'"/>
   <xsl:param name="highlightjsURL" select="'../../styles/highlight.js'"/>
@@ -20,6 +22,7 @@
   <xsl:param name="homeURL" select="''"/>
   <xsl:param name="forum" select="''"/>
   <xsl:param name="forumsURL" select="''"/>
+  <xsl:param name="bbURL" select="''"/>
   <xsl:param name="email" select="''"/>
   <xsl:param name="stylesDir" select="'../../styles'"/>
 
@@ -57,6 +60,8 @@
   <xsl:template match="body">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
+
+      <xsl:call-template name="insertHeader"/>
 
       <div class="titleblock">
 	<h1>

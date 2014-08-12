@@ -112,6 +112,8 @@
 	    out="@{file}__@{format}.xml"
 	    style="../../templates/md-@{format}.xsl"
 	    >
+	<param name="doc" expression="@{file}"/>
+	<param name="format" expression="@{format}"/>
 	<param name="pwdURL" expression="${md.pwdURL}"/>
 	<param name="courseName" expression="${courseName}"/>
 	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
@@ -120,6 +122,7 @@
 	<param name="email" expression="${email}" if="email"/>
 	<param name="forum" expression="${forum}" if="forum"/>
 	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="bbURL" expression="${bbURL}" if="bbURL"/>
 	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
 	<param name="highlightjsURL" expression="${highlightjsURL}" 
 	       if="highlightjsURL"/> 

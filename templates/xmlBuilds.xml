@@ -31,6 +31,8 @@
       <xslt in="${doc}.xml" 
 	    out="${doc}__@{format}.xml"
 	    style="../../templates/xml-@{format}.xsl">
+	<param name="doc" expression="@{file}"/>
+	<param name="format" expression="@{format}"/>
 	<param name="pwdURL" expression="${xml.pwdURL}"/>
 	<param name="courseName" expression="${courseName}"/>
 	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
@@ -39,12 +41,12 @@
 	<param name="email" expression="${email}" if="email"/>
 	<param name="forum" expression="${forum}" if="forum"/>
 	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="bbURL" expression="${bbURL}" if="bbURL"/>
 	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
 	<param name="highlightjsURL" expression="${highlightjsURL}" 
 	       if="highlightjsURL"/> 
 	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
       </xslt>
-      <echo>about to copy</echo>
       <copy file="${doc}__@{format}.xml" tofile="${doc}__@{format}.html"  
 	    overwrite="yes">
 	<filterset>

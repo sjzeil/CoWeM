@@ -63,6 +63,9 @@ pre {
  background-color: #E4E5E7;
 }
 
+div.exampleTitle {color: #000040; font-weight: bold; font-size: 110%;}
+figcaption {font-weight: bold;}
+
 blockquote {
  font-size: 85%;
  font-weight: normal;
