@@ -92,7 +92,8 @@
     <xsl:apply-templates select="topic | subject | item"/>
 
     <xsl:if test="postscript">
-      <xsl:apply-templates select="postscript/*|postscript/text()" mode="copying"/>
+      <hr/>
+      <xsl:apply-templates select="postscript/node()" mode="copying"/>
     </xsl:if>
   </xsl:template>
 
@@ -581,6 +582,15 @@
         </xsl:if>
     </p>
   </xsl:template>
+
+  <xsl:template match="text()" mode="copying">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+  <xsl:template match="*" mode="copying">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
 
   <xsl:template name="formatDate">
     <xsl:param name="date" select="'2005-01-01'"/>
