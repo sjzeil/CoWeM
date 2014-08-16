@@ -272,3 +272,13 @@ Columns
 
 
 %define <\Rightarrow> <> [<span>&#x21D2;</span>]
+
+
+Generating the submission button for assignments:
+
+%define <\submitButton> <submissionControlFile> {
+
+<form><p><input type="button" value="Submit this assignment"
+onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>
+
+}
