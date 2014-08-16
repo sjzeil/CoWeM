@@ -18,6 +18,7 @@
 	<arg value="-o@{file}__@{format}.md"/>
 	<arg value="-D_@{format}"/>
 	<arg value="-D${courseName}"/>
+	<arg value="-D${delivery}"/>
 	<defined/>
 	<arg value="-i${md.macros.file}"/>
 	<arg value="@{file}.@{extension}"/>

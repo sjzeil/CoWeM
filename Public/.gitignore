@@ -14,3 +14,7 @@
 **/*.java.html
 **/*.listing.html
 
+/hangout
+/library
+/outline
+/provostConversationOct2013
