@@ -8,12 +8,15 @@ websites.
 The website is a collection of primary and secondary
 documents.
 
-Primary documents carry lots of content and are generally
+_Primary documents_ carry lots of content and are
 stored with each in its own directory. Primary documents can be
-converted from a source format (DocBook, LaTeX, or Markdown) into any
-of a variety of HTML and PDF output formats.
+converted from source documents in [Markdown](../markdown/index.html)
+into a variety of a variety of HTML-based output formats.
 
-Secondary documents are shorter documents that are often intended to
+Also, supported, but deprecated, is support for source documents in
+DocBook or LaTeX, converted into HTML or PDF.
+
+_Secondary documents_ are shorter documents that are often intended to
 accompany a primary document. For example, a set of lecture notes (a
 primary document) on sorting algorithms might be accompanied by
 several C++ source code files, each of which will be converted to an
@@ -61,9 +64,10 @@ necessary.
 There several other directories in the website as well (_templates_,
 _styles_, _graphics_).  Generally these should simply be symbolic
 links to the corresponding directories in
-_/home/zeil/courses/prototype_, or copies of those directories. Less
-commonly, custom versions of the content of  the _styles_ and
-_graphics_ directories may be used to alter the style of the website.
+_/home/zeil/courses/course-website-management_, or copies of those
+directories. Less commonly, custom versions of the content of the
+_styles_ and _graphics_ directories may be used to alter the style of
+the website.
 
 # Document Formats
 
@@ -71,18 +75,6 @@ _graphics_ directories may be used to alter the style of the website.
 
 Primary documents can be written in
 
-* [DocBook](http://www.docbook.org):  I used this for a while, and
-  still have DocBook material in several of my course websites, but have
-  moved away from it.
-* LaTeX: Specifically, I use
-  [Beamer](http://en.wikibooks.org/wiki/LaTeX/Presentations) to
-  produce both slides and notes/articles. I also have (in the
-  _templates_ directory, a number of my own LaTeX macros). Most
-  notably, I have my own commands for injecting graphics in a way that
-  allows consistency in both the slide and notes forms.
-
-    This produces some really beautiful PDF output, but is slow and
-    finicky.	
 * Markdown: specifically the
   [MultiMarkdown](http://fletcher.github.io/MultiMarkdown-4/) dialect.
 
@@ -92,6 +84,18 @@ Primary documents can be written in
 
     I do run the documents through a C/M4-style pre-processor,
     allowing me to do some macros and conditional text markup.
+* [DocBook](http://www.docbook.org) (deprecated):  I used this for a while, and
+  still have DocBook material in several of my course websites, but have
+  moved away from it.
+* LaTeX (deprecated): Specifically, I use
+  [Beamer](http://en.wikibooks.org/wiki/LaTeX/Presentations) to
+  produce both slides and notes/articles. I also have (in the
+  _templates_ directory, a number of my own LaTeX macros). Most
+  notably, I have my own commands for injecting graphics in a way that
+  allows consistency in both the slide and notes forms.
+
+    This produces some really beautiful PDF output, but is slow and
+    finicky.	
 
 
 A primary document stored in the directory _primaryDoc_ would appear
@@ -99,9 +103,9 @@ in files:
 
 | Input format | Content Files |
 |:------------:|:--------------|
+   Markdown    | _primaryDoc_`.md`
    DocBook     | _primaryDoc_`.dbk` 
    LaTeX       | _primaryDoc_`.info.tex`, _primaryDoc_`.ext.tex`, _primaryDoc_`.content.tex` 
-   Markdown    | _primaryDoc_`.md`
 
 
 
@@ -114,9 +118,18 @@ The available output formats are:
     * _pages_ : the entire document, split into pages at section and
       subsection boundaries.
 	* _slidy_ : The document formatted as slides. New slides begin at
-      each h1 and h2 element, and also at each horizontal rule in the
-      `<body>` that is not nested within some other HTML element.
+      each #, ##, and ### header, and also at each horizontal rule in the
+      document that is not nested within a list or other nested
+      formatting block.
+	* _epub_ : An e-book collection of the web pages nad associated
+      graphics and style files, suitable for viewing in an ebook
+      reader. Selecting this option results in ebooks generated in
+      both `.epub` and `.mobi` formats.
 
+        A single ebook is generated for the entire site. Marking a
+        particular document with this output option indicates that the
+        document should be included within the ebook.
+      
 * PDF outputs
     * web: a landscape format with medium-sized type for easy reading
       on screens and tablets.
@@ -127,13 +140,13 @@ The available output formats are:
 Not every input format can be converted to every output format. The
 possibilities are shown in the table below:
 
-| Input Format | can be converted to ||||||
-|              |  HTML ||| PDF |||
-|              | html | pages | slidy | web | printable | slides |
-|:------------:|:----:|:-----:|:-----:|:---:|:---------:|:------:|
-**DocBook**    |  Y   |   Y   |       |     |           |        |
-**LaTeX**      |  Y   |   ?   |       |  Y  |    Y      |   Y    |
-**Markdown**   |  Y   |   Y   |   Y   |     |           |        |
+| Input Format | can be converted to |||||||
+|              |  HTML |||| PDF |||
+|              | html | pages | slidy | epub | web | printable | slides |
+|:------------:|:----:|:-----:|:-----:|:-----|:---:|:---------:|:------:|
+**Markdown**   |  Y   |   Y   |   Y   |   Y  |     |           |        |
+**DocBook**    |  Y   |   Y   |       |      |     |           |        |
+**LaTeX**      |  Y   |   ?   |       |      |  Y  |    Y      |   Y    |
 
 In theory, Markdown could generate any of the output formats, but I
 have not felt it worthwhile to do more than idle experimenting with
@@ -172,14 +185,51 @@ The highlighted `docformat` instructions are the key. The `from`
 attribute indicates the input format (`md`, `tex`, or `dbk`) and the
 `format` attribute names the desired output format.
 
+The first `docformat` listed becomes the "default" document for the
+directory -- it is copied into an `index.html` file for that
+directory.  The choice of default document can be overridden with an
+explicit `index` attribute:
+
+```
+<project name="docs" default="build">
+
+  <import file="../../commonBuild.xml"/>
+
+  <target name="documents" depends="setup">
+    <docformat from="md" format="html"/>
+    <docformat from="md" format="pages"/>
+    <docformat from="md" format="slidy" /*+*/index="1"/*-*//>
+  </target>
+
+
+</project>
+```
+
+
 
 ## Secondary Documents
 
+
+Secondary documents are logically associated with the primary or main
+document in a directory. Usually, the primary document will link to
+them, and they are often not referenced from anywhere else.
+
+| Secondary Documents |||
+| source format | input file extension | processed file extension |
+|:-------------:|:--------------------:|:------------------------:|
+| Markdown      |  .mmd                | .mmd.html                |
+| C++ source code |  .cpp              | .cpp.html                |
+| C++ source code |  .h                | .h.html                  |
+| Java source code |  .java            | .java.html               |
+| preformatted text |  .listing        | .listing.html            |
+| simple HTML |  .html.xml             | .html (deprecated)       |
+
+
 ### Graphics
 
-As a general rule, graphics to be imported into PDF output formats
-should themselves be in PDF files. Graphics for use with HTML output
-formats should be in PNG format.
+As a general rule, graphics for use with HTML output formats should be
+in PNG format.  Graphics to be imported into PDF output formats should
+themselves be in PDF files.
 
 If graphics are present in `.gif` or `.eps`` formats, they will be
 automatically converted into these other formats.
@@ -191,7 +241,7 @@ exported as PNG and PDF files.
 
 In most cases, all primary documents when rendered into a non-slides
 format will have a standard "footer" attached that provides a link
-back toe the course home and a link to either a course email address
+back to the course home and a link to either a course email address
 or to a related section of a course Forum.
 
 The same footer can be added to secondary HTML documents by storing
@@ -283,6 +333,7 @@ This file defined website-wide properties. Here is an example:
 courseName=CS350
 courseTitle=Introduction to Software Engineering
 semester=Spring 2014
+sem=s14
 instructor=Steven J Zeil
 copyright=2014, Old Dominion Univ.
 baseurl=https://secweb.cs.odu.edu/~zeil/cs350/s14
@@ -290,6 +341,12 @@ homeurl=https://secweb.cs.odu.edu/~zeil/cs350/s14/Directory/topics.html
 deploymentDestination=/home/zeil/secure_html/cs350/s14/
 email=zeil@cs.odu.edu
 forum=
+bbURL=
+forums=
+delivery=_online
+MathJaxURL=https://www.cs.odu.edu/~zeil/styles/MathJax
+highlightjsURL=https://www.cs.odu.edu/~zeil/styles/highlight.js
+slidyURL=https://www.cs.odu.edu/~zeil/styles/Slidy2
 ```
 
 The first few entries are self-explanatory.
@@ -300,13 +357,33 @@ tablets, copy all PDFs to an internal folder and then open the PDF
 from there, completely losing all memory of the URL form which the
 document was obtained.)
 
-The `homeurl` and `emailurl` values are used in the footer information
-at the bottom of most pages. However, if the `forumurl` is non-empty,
-the email links are replaced by Javascript code to provide access to a
-course Forum.
+The `homeurl` and `email` values are used in the footer information
+at the bottom of most pages.
+
+The `bbURL` and `forums` entries are used to interface with a
+Blackboard course. The proper value for the `bbURL` should be the link
+to a specific course on Blackboard (go to your list of courses for the
+semester, right-click and copy the link). Similarly, the proper value
+for `forums` can be found by right-clicking and saving the link of any
+"tool link" in Blackboard.   If non-empty, each of these adds another
+icon and link to the navigation header/footer for all documents.
+
+That `bbURL` entry is also important because it sets up "smart"
+linking for Blackboard. Most Blackboard URLs cannot be simply copied
+and pasted from a browser into a webpage link and used later frm
+outside of Blackboard. But both the `forums` URL and most links within
+documents preceded by "bb:" will be rewritten, using the value of
+`bbURL`, into a legal external Blackboard URL.
 
 The `deploymentDestination` names the directory to which the final content
 is copied when `ant deploy` is run.
+
+The last three entries are used to locate important Javascript and CSS
+resources. I find it useful, for performance reasons, to keep these on
+the same server as the one serving the course website, though they can
+be shared by multiple course websites on that same server.
+
+
 
 ## Directory/outline.xml
 
@@ -365,6 +442,12 @@ Here is a portion of a course outline:
   <postscript>
      /*...*/
   </postscript>
+
+  <appendix>
+	  <item kind="lecture" targetdoc="syllabus"/>
+      <item kind="lecture" targetdoc="grading"/>
+  </appendix>
+
 </outline>
 ```
 
@@ -373,13 +456,30 @@ The heart of the outline is the collection of `<topic` and `<item` elements.
 * Topics divide the course and are titled.
 * Items generate a line in the outline page.
     * Each item has a kind.
-	* Items may link to course content. A link can appear as an `href`
-      attribute (as in the HTML `<a>` element) or in a shorthand form
-      as `targetdoc` if the target is a primary document in the
-      _Public_ area.
-	* Item elements can contain text. If the text is omitted/empty and
-      the item contains a `targetdoc` link, the title of the document
-      is extracted and used as the link text.
+	* Items may link to course content. A link can appear as
+	    * an `href` attribute (as in the HTML `<a>` element)
+		* a `targetdoc` attribute names a primary document in
+		     the _Public_ area.
+
+            If ebooks are being generated, then anything with a
+            `targetdoc` link is copied into the ebook. If, for some
+            reason, a document appears multiple times within the
+            outline, it can have at most one `targetdoc` link.			
+			
+		* a `target` attribute names a primary document in
+		     the _Public_ area.
+
+             `target` links do not force the
+		     copying of a document into the ebook.
+
+		* an `assignment` attribute names a secondary document with a
+		     `.mmd.html` extension in the  _Protected/Assts_ directory.
+
+
+
+* Item elements can contain text. If the text is omitted/empty and the
+      item contains a `targetdoc` or `target` link, the title of the
+      document is extracted and used as the link text.
 	* Other optional attributes include `date=` and `due=`, which add
       a date to the listing. The attribute `time=` can be used to add
       a time.
@@ -391,3 +491,6 @@ should appear above and below the course outline.
 
 The `<presentation>` section indicates how many titles should be used
 to present the outline, and what kinds of items go into each column.
+
+The `<appendix>` section adds primary documents to the ebook that are
+not named in earlier `targetdoc` links.

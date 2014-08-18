@@ -126,6 +126,7 @@ Image processing:
 %define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
 %define <\picOnLeft> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
 %define <\centerPic> (file,pctwidth) {<div class="noFloat"> </div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
+%define <\icon> (file,linkURL) {<span class="linkedIcon"><a href="linkURL" target="_blank"><img src="file"/></a></span>}
 %define <\noFloat> <> {<div class="noFloat"/>}
 %else
 %ifdef _epub
@@ -134,6 +135,7 @@ Image processing:
 %define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat"> </div><div><img src="file.png" style="float: left; max-width: pctwidth%;"/></div>}
 %define <\picOnLeft> (file,pctwidth) {<div class="noFloat"> </div><div><img src="file.png" style="float: left; max-width: pctwidth%;"/></div>}
 %define <\centerPic> (file,pctwidth) {<div class="noFloat"> </div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
+%define <\icon> (file,linkURL) {<span class="linkedIcon"><a href="linkURL" target="_blank"><img src="file"/></a></span>}
 %define <\noFloat> <> {<div class="noFloat"/>}
 %else
 %define <\bPicOnRight> (file,pctwidth) <\begin{picOnRight}[pctwidth]{file}>

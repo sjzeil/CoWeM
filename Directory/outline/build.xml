@@ -5,7 +5,6 @@
   <target name="documents" depends="setup">
     <docformat from="xml" format="modules" index="1"/>
     <docformat from="xml" format="epub" />
-    <!-- docformat from="xml" format="mobi" / -->
   </target>
 
 

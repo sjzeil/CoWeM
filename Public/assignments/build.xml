@@ -1,10 +1,11 @@
 <project name="docs" default="build">
 
-  <import file="../../commonBuild.xml"/>
+  <import file="../../templates/commonBuild.xml"/>
 
   <target name="documents" depends="setup">
     <docformat from="md" format="html"/>
     <docformat from="md" format="pages"/>
+    <docformat from="md" format="epub"/>
   </target>
 
 

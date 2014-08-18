@@ -425,7 +425,7 @@ Finally, I do like an occasional sidebar.
 \\{}bSidebar{25}
 Sidebars can be width-constrained so that they will not extend
 horizontally past a certain percentage of the page width. Any multiple
-of 5 can be given as a maximum with. If not value is given, the
+of 5 can be given as a maximum with. If no value is given, the
 default is 50.
 
 If the sidebar contents have a "natural" width less than the value

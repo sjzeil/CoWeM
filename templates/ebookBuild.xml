@@ -314,7 +314,8 @@
 
     <target name="generateMobi" depends="genmobi1,genmobi2"/>
 
-    <target name="generateEbooks" depends="generateEpub,generateMobi"/>
-
+    <target name="generateEbooks" depends="generateEpub,generateMobi">
+      <delete dir="epub"/>
+    </target>
 
 </project>

@@ -8,9 +8,8 @@ Setting up assignments:
 
 Look in one of my assignment directories.  You will find:
 
-_assignmentName_`.html`
-: Description of the assignment. Although this is saved as an HTML
-    file, it is important that it be valid XML.
+_assignmentName_`.md`
+: Description of the assignment, in [Markdown](../markdown/index.html).
 
 _assignmentName_`.xml`
 : Configuration file for the [web-based submission](http://www.cs.odu.edu/~zeil/websubmit/websubmit.pdf) program.
