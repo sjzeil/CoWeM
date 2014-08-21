@@ -321,6 +321,14 @@
 	<xsl:when test="contains(@href, '://')">
 	  <xsl:value-of select="@href"/>
 	</xsl:when>
+	  <xsl:when test="starts-with(@href, 'bb:')">
+	    <xsl:call-template name="bblinkConvert">
+	      <xsl:with-param name="bbcourseURL"
+			      select="$bbURL"/>
+	      <xsl:with-param name="bblinkURL"
+			      select="@href"/>
+	    </xsl:call-template>
+	  </xsl:when>
 	<xsl:otherwise>
 	  <xsl:call-template name="localHref">
 	    <xsl:with-param name="href" select="@href"/>
@@ -433,27 +441,6 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="a[@href != '']">
-    <xsl:copy>
-      <xsl:copy-of select="@*[name() != 'href']"/>
-      <xsl:attribute name="href">
-	<xsl:choose>
-	  <xsl:when test="starts-with(@href, 'bb:')">
-	    <xsl:call-template name="bblinkConvert">
-	      <xsl:with-param name="bbcourseURL"
-			      select="$bbURL"/>
-	      <xsl:with-param name="bblinkURL"
-			      select="@href"/>
-	    </xsl:call-template>
-	  </xsl:when>
-	  <xsl:otherwise>
-	    <xsl:value-of select="@href"/>
-	  </xsl:otherwise>
-	</xsl:choose>
-      </xsl:attribute>
-      <xsl:apply-templates select="node()"/>
-    </xsl:copy>
-  </xsl:template>
 
 
   <xsl:template match="text()">
