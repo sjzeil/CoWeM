@@ -33,8 +33,6 @@
       <record name="ant.log" action="start" append="false" />
     </target>
 
-    <property environment="env"/>
-
     <basename property="doc" file="${basedir}"/>
     <property name="baseParent" location=".."/>
     <basename property="relPath" file="${baseParent}"/>
@@ -42,6 +40,16 @@
     <property name="stylesDir" location="../../styles/"/>
 
     <property file="../../course.properties"/>
+
+
+    <property environment="env"/>
+    <path id="executables.path">
+      <pathelement path="${env.PATH}"/>
+      <pathelement path="/home/zeil/bin"/>
+    </path>
+
+
+
     
     <macrodef name="docformat">
       <attribute name="from" default="tex"/>

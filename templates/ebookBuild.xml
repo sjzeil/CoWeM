@@ -267,12 +267,14 @@
     </target>
 
     <property environment="envir"/>
+    <property name="zeil.ebc.bin" 
+	      location="/home/zeil/bin/ebook-convert"/> 
 
     <condition property="do.xmobi1">
       <and>
 	<istrue value="${epub.content.exists}"/>
 	<available  file="ebook-convert"
-		    filepath="${envir.PATH}"/>
+	            filepath="${envir.path}"/>
       </and>
     </condition>
 
@@ -281,21 +283,21 @@
 	<istrue value="${epub.content.exists}"/>
 	<not>
 	  <available file="ebook-convert"
-		     filepath="${envir.PATH}"/>
+	            filepath="${envir.path}"/>
 	</not>
-	<available file="kindlegen"
-		   filepath="${envir.PATH}"/>
+	<available file="${zeil.ebc.bin}"/>
       </and>
     </condition>
+
 
     <target name="debugmobi">
       <echo>epub.content.exists ${epub.content.exists}</echo>
       <echo>mobi.content.uptodate ${mobi.content.uptodate}</echo>
-      <echo>do.xmobi1 ${do.xmobi1}</echo>
-      <echo>do.xmobi2 ${do.xmobi2}</echo>
+      <echo>ebook-convert installed? ${do.xmobi1}</echo>
+      <echo>available in ~zeil? ${do.xmobi2}</echo>
     </target>
 
-    <target name="genmobi1" depends="generateEpub" 
+    <target name="genmobi1" depends="generateEpub,debugmobi" 
 	    if="do.xmobi1" unless="mobi.content.uptodate"> 
       <echo>building the ebook ${mobi.name}</echo>
       <exec executable="ebook-convert">
@@ -307,8 +309,9 @@
     <target name="genmobi2" depends="generateEpub,debugmobi" 
 	    if="do.xmobi2" unless="mobi.content.uptodate"> 
       <echo>building the ebook ${mobi.name}</echo>
-      <exec executable="kindlegen">
+      <exec executable="${zeil.ebc.bin}">
 	<arg value="${epub.name}"/>
+	<arg value="${mobi.name}"/>
       </exec>
     </target>
 
