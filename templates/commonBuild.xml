@@ -339,76 +339,69 @@
     <target name="cpp2html">
       <echo>${theFile}</echo>
       <basename property="cpp.basename" file="${theFile}"/>
-      <copy file="../../templates/codeheader.txt" tofile="${theFile}.md"/>
-      <echo file="${theFile}.md" append="true">Title: ${cpp.basename}
-
-# ${cpp.basename}
+      <copy file="../../templates/codeheader.txt" tofile="${theFile}.mmd"/>
+      <echo file="${theFile}.mmd" append="true">Title: ${cpp.basename}
 
 ```Cpp
 </echo>
-       <concat destfile="${theFile}.md" append="yes">
+       <concat destfile="${theFile}.mmd" append="yes">
 	 <filelist dir="." files="${theFile}"/>
        </concat>
-       <echo file="${theFile}.md" append="true">
+       <echo file="${theFile}.mmd" append="true">
 ```
 </echo>
-        <exec executable="multimarkdown">
-	   <arg value="-b"/>
-           <arg value="${theFile}.md"/>
-	</exec>
-	<codeFilter file="${theFile}.html"/>
-	<delete file="${theFile}.md"/>
+      <antcontrib:foreach target="mmd2html" param="theFile">
+	<path location="${theFile}.mmd"/>
+      </antcontrib:foreach>
+      <move file="${theFile}.mmd.html" tofile="${theFile}.html"/>
+      <delete file="${theFile}.mmd"/>
     </target>
 
 
     <target name="java2html">
       <echo>${theFile}</echo>
       <basename property="java.basename" file="${theFile}"/>
-      <copy file="../../templates/codeheader.txt" tofile="${theFile}.md"/>
-      <echo file="${theFile}.md" append="true">Title: ${java.basename}
+      <copy file="../../templates/codeheader.txt" tofile="${theFile}.mmd"/>
+      <echo file="${theFile}.mmd" append="true">Title: ${java.basename}
 
-# ${java.basename}
-
-```Java
+```java
 </echo>
-       <concat destfile="${theFile}.md" append="yes">
+       <concat destfile="${theFile}.mmd" append="yes">
 	 <filelist dir="." files="${theFile}"/>
        </concat>
-       <echo file="${theFile}.md" append="true">
+       <echo file="${theFile}.mmd" append="true">
 ```
 </echo>
-        <exec executable="multimarkdown">
-	   <arg value="-b"/>
-           <arg value="${theFile}.md"/>
-	</exec>
-	<codeFilter file="${theFile}.html"/>
-	<delete file="${theFile}.md"/>
+      <antcontrib:foreach target="mmd2html" param="theFile">
+	<path location="${theFile}.mmd"/>
+      </antcontrib:foreach>
+      <move file="${theFile}.mmd.html" tofile="${theFile}.html"/>
+      <delete file="${theFile}.mmd"/>
     </target>
 
 
     <target name="listing2html">
       <echo>${theFile}</echo>
-      <basename property="listing.basename" file="${theFile}" suffix=".listing"/>
-      <copy file="../../templates/codeheader.txt" tofile="${theFile}.md"/>
-      <echo file="${theFile}.md" append="true">Title: ${listing.basename}
-
-# ${listing.basename}
+      <basename property="listing.basename" file="${theFile}"/>
+      <copy file="../../templates/codeheader.txt" tofile="${theFile}.mmd"/>
+      <echo file="${theFile}.mmd" append="true">Title: ${listing.basename}
 
 ```
 </echo>
-       <concat destfile="${theFile}.md" append="yes">
+       <concat destfile="${theFile}.mmd" append="yes">
 	 <filelist dir="." files="${theFile}"/>
        </concat>
-       <echo file="${theFile}.md" append="true">
+       <echo file="${theFile}.mmd" append="true">
 ```
 </echo>
-        <exec executable="multimarkdown">
-	   <arg value="-b"/>
-           <arg value="${theFile}.md"/>
-	</exec>
-	<codeFilter file="${theFile}.html"/>
-	<delete file="${theFile}.md"/>
+      <antcontrib:foreach target="mmd2html" param="theFile">
+	<path location="${theFile}.mmd"/>
+      </antcontrib:foreach>
+      <move file="${theFile}.mmd.html" tofile="${theFile}.html"/>
+      <delete file="${theFile}.mmd"/>
     </target>
+
+
 
 
     <uptodate property="makeOneshotMMD.notRequired">
@@ -443,7 +436,7 @@
 	<arg value="-b"/>
 	<arg value="${mmd.basename}__html.md"/>
       </exec>
-      <postprocessMDHTML format="html" file="${mmd.basename}"/>
+      <postprocessMDHTML format="html" file="${mmd.basename}" altformats="no"/>
       <move file="${mmd.basename}__html.html" tofile="${mmd.basename}.mmd.html"
 	    overwrite="true"/>
       <delete file="${mmd.basename}__html.md"/>
@@ -636,6 +629,7 @@
 	  <include name="*.h.html"/>
 	  <include name="*.cpp.html"/>
 	  <include name="*.java.html"/>
+	  <include name="*.listing.html"/>
 	  <include name="*.mmd.html"/>
 	  <include name="${doc}.epub"/>
 	  <include name="${doc}__epub.math*"/>

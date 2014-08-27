@@ -26,6 +26,7 @@
   <xsl:param name="bbURL" select="''"/>
   <xsl:param name="email" select="''"/>
   <xsl:param name="stylesDir" select="'../../styles'"/>
+  <xsl:param name="altformats" select="'yes'"/>
 
   <xsl:output method="xml" encoding="utf-8"/>
 

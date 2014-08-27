@@ -25,6 +25,7 @@
   <xsl:param name="forumsURL" select="''"/>
   <xsl:param name="email" select="''"/>
   <xsl:param name="bbURL" select="''"/>
+  <xsl:param name="altformats" select="'yes'"/>
 
 
   <xsl:output method="xml" encoding="utf-8"/>
@@ -98,35 +99,37 @@
 
 
 <xsl:template match="docformat" mode="options">
-  <xsl:text>&#10;</xsl:text>
-  <xsl:choose>
-    <xsl:when test="@format = 'epub'">
-      <a class="imgLink" href="../../Directory/ebooks/index.html">
-	<img src="{$graphicsURL}/{@format}.png" title="e-book for course"/>
-      </a>      
-    </xsl:when>
-    <xsl:when test="@format = 'mobi'"></xsl:when>
-    <xsl:otherwise>
-      <xsl:variable name="theTitle">
-	<xsl:choose>
-	  <xsl:when test="@format = 'html'">
-	    <xsl:text>single-page HTML version</xsl:text>
-	  </xsl:when>
-	  <xsl:when test="@format = 'pages'">
-	    <xsl:text>multi-page HTML version</xsl:text>
-	  </xsl:when>
-	  <xsl:when test="@format = 'slidy'">
-	    <xsl:text>Slides for classroom lectures</xsl:text>
-	  </xsl:when>
-	</xsl:choose>
-      </xsl:variable>
-      <xsl:if test="@format != $format">
-	<a class="imgLink" href="{$doc}__{@format}.html">
-	  <img src="{$graphicsURL}/{@format}.png" title="{$theTitle}"/>
-	</a>
-      </xsl:if>
-    </xsl:otherwise>
-  </xsl:choose>
+  <xsl:if test="$altformats = 'yes'">
+    <xsl:text>&#10;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="@format = 'epub'">
+	<a class="imgLink" href="../../Directory/ebooks/index.html">
+	  <img src="{$graphicsURL}/{@format}.png" title="e-book for course"/>
+	</a>      
+      </xsl:when>
+      <xsl:when test="@format = 'mobi'"></xsl:when>
+      <xsl:otherwise>
+	<xsl:variable name="theTitle">
+	  <xsl:choose>
+	    <xsl:when test="@format = 'html'">
+	      <xsl:text>single-page HTML version</xsl:text>
+	    </xsl:when>
+	    <xsl:when test="@format = 'pages'">
+	      <xsl:text>multi-page HTML version</xsl:text>
+	    </xsl:when>
+	    <xsl:when test="@format = 'slidy'">
+	      <xsl:text>Slides for classroom lectures</xsl:text>
+	    </xsl:when>
+	  </xsl:choose>
+	</xsl:variable>
+	<xsl:if test="@format != $format">
+	  <a class="imgLink" href="{$doc}__{@format}.html">
+	    <img src="{$graphicsURL}/{@format}.png" title="{$theTitle}"/>
+	  </a>
+	</xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:if>
 </xsl:template>
 
 

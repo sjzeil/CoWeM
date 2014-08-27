@@ -108,6 +108,7 @@
   <macrodef name="postprocessMDHTML">
     <attribute name="format" default="html"/>
     <attribute name="file" default="${doc}"/>
+    <attribute name="altformats" default="yes"/>
     <sequential>
       <xslt in="@{file}__@{format}.html" 
 	    out="@{file}__@{format}.xml"
@@ -128,6 +129,7 @@
 	<param name="highlightjsURL" expression="${highlightjsURL}" 
 	       if="highlightjsURL"/> 
 	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
+	<param name="altformats" expression="@{altformats}"/>
       </xslt>
 
       <copy file="@{file}__@{format}.xml" tofile="@{file}__@{format}.html"  
