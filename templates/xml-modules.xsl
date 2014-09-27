@@ -80,12 +80,21 @@
       <xsl:apply-templates select="preamble/*|preamble/text()" mode="copying"/>
     </xsl:if>
 
+    <xsl:variable name="buildURL">
+      <xsl:value-of select="concat($pwdURL, 'build.xml')"/>
+    </xsl:variable>
+
+
     <form action="">
       <div class="showHideControls">
 	<input type="button" value="expand all"
 	       onclick="expandAll()"/>
 	<input type="button" value="collapse all"
 	       onclick="collapseAll()"/>
+	<xsl:if test="document($buildURL)/project/target[@name='documents']/docformat[@format='topics']">
+	  	<input type="button" value="table view"
+		       onclick="visitPage('outline__topics.html')"/>
+	</xsl:if>
       </div>
     </form>
 

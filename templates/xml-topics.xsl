@@ -80,12 +80,26 @@
       <xsl:apply-templates select="preamble/*|preamble/text()" mode="copying"/>
     </xsl:if>
 
+    <xsl:variable name="buildURL">
+      <xsl:value-of select="concat($pwdURL, 'build.xml')"/>
+    </xsl:variable>
+
+
+    <form action="">
+      <div class="showHideControls">
+	<xsl:if test="document($buildURL)/project/target[@name='documents']/docformat[@format='topics']">
+	  	<input type="button" value="outline view"
+		       onclick="visitPage('outline__modules.html')"/>
+	</xsl:if>
+      </div>
+    </form>
+
     <table border="1" rules="all" 
 	   frame="box" role="outline">
       <tr class="columnheader">
 	<xsl:apply-templates select="/outline/presentation/column"/>
       </tr>
-      <xsl:apply-templates select="topic | item"/>
+      <xsl:apply-templates select="topic | subject | item"/>
     </table>
 
     <xsl:if test="postscript">
@@ -99,23 +113,29 @@
     </th>
   </xsl:template>
 
-  <xsl:template match="topic" mode="topicSpacing">
+  <xsl:template match="topic | subject" mode="topicSpacing">
     <span style="width: 3em;"/>
   </xsl:template>
 
-  <xsl:template match="topic">
+  <xsl:template match="description">
+    <!-- Ignored: only shown in outline view -->
+  </xsl:template>
+
+
+  <xsl:template match="topic | subject">
     <xsl:variable name="className"
-      select="concat('topic', 1+count(ancestor::topic))"/>
+      select="concat('topic', 1+count(ancestor::topic) +count(ancestor::subject))"/>
 
 
     <tr class="{$className}">
       <td class="{$className}" 
 	     colspan="{count(/outline/presentation/column)}">
-	<xsl:apply-templates select="ancestor::topic" mode="topicSpacing"/>
+	<xsl:apply-templates select="ancestor::topic | ancestor::subject" mode="topicSpacing"/>
 	<span class="{$className}">
+	  <xsl:if test="local-name() = 'topic'">
 	  <xsl:apply-templates select="." mode="itemNumber"/>
 	  <xsl:text> </xsl:text>
-
+	  </xsl:if>
 	  <xsl:choose>
 	    <xsl:when test="@href != ''">
 	      <a href="{@href}" target="_blank">
@@ -217,7 +237,7 @@
 
   <xsl:template match="item">
     <xsl:variable name="className"
-      select="concat('item', 1+count(ancestor::topic))"/>
+      select="concat('item', 1+count(ancestor::topic)+count(ancestor::subject))"/>
     <xsl:variable name="item" select="."/>
     <xsl:choose>
       <xsl:when test="contains($columnKinds, concat(' ', @kind, ' '))">
@@ -230,7 +250,7 @@
             <xsl:copy-of select="@id"/>
 	    <td><span class="topicSpacing"> </span></td>
             <xsl:for-each select="/outline/presentation/column">
-              <xsl:if test="@kinds != 'topics'">
+              <xsl:if test="@kinds != 'topics' and @kinds != 'subject'">
                 <td class="{$className}">
                   <xsl:call-template name="gatherItems">
                     <xsl:with-param name="node" select="$item"/>
@@ -442,12 +462,15 @@
   <xsl:template match="outline" mode="itemNumber">
   </xsl:template>
 
-  <xsl:template match="topic|item" mode="itemNumber">
+  <xsl:template match="topic|item|subject" mode="itemNumber">
     <xsl:apply-templates select=".." mode="itemNumber"/>
     <xsl:if test="local-name(..) = 'topic'">
       <xsl:text>.</xsl:text>
     </xsl:if>
-    <xsl:value-of select="count(preceding-sibling::item | preceding-sibling::topic) + 1"/>
+    <xsl:if test="local-name(..) = 'subject'">
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="count(preceding-sibling::item | preceding-sibling::topic| preceding-sibling::subject) + 1"/>
   </xsl:template>
 
   <xsl:template match="img" mode="copying">

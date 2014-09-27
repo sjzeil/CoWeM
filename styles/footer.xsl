@@ -102,6 +102,10 @@
   <xsl:if test="$altformats = 'yes'">
     <xsl:text>&#10;</xsl:text>
     <xsl:choose>
+      <xsl:when test="@format = 'topics'">
+      </xsl:when>
+      <xsl:when test="@format = 'modules'">
+      </xsl:when>
       <xsl:when test="@format = 'epub'">
 	<a class="imgLink" href="../../Directory/ebooks/index.html">
 	  <img src="{$graphicsURL}/{@format}.png" title="e-book for course"/>
