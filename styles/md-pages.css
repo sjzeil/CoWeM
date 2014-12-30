@@ -118,7 +118,11 @@ div.details {
    font-weight: 500;
 }
 
-div.sidebar {float: right; background-color: #F7F7F7; margin: 1ex; padding: 1ex; border-left: solid 1px;}
+div.sidebar {float: right;         
+             background-color: #C0E0ff;
+             margin: 1ex; 
+	     padding: 1ex; 
+             border-left: solid 1px;}
 div.pct10 {max-width: 10%}
 div.pct20 {max-width: 20%}
 div.pct30 {max-width: 30%}

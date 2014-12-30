@@ -299,22 +299,22 @@
       <antcontrib:foreach target="cpp2html" param="theFile">
 	<path>
 	  <fileset dir=".">
-	    <include name="**/*.h"/>
-	    <include name="**/*.cpp"/>
+	    <include name="*.h"/>
+	    <include name="*.cpp"/>
 	  </fileset>
 	</path>
       </antcontrib:foreach>
       <foreach target="java2html" param="theFile">
 	<path>
 	  <fileset dir=".">
-	    <include name="**/*.java"/>
+	    <include name="*.java"/>
 	  </fileset>
 	</path>
       </foreach>
       <foreach target="listing2html" param="theFile">
 	<path>
 	  <fileset dir=".">
-	    <include name="**/*.listing"/>
+	    <include name="*.listing"/>
 	  </fileset>
 	</path>
       </foreach>
@@ -582,6 +582,7 @@
 	</fileset>
 	<preserveintarget>
 	  <include name="**/.ht*"/>
+	  <include name="**/Protected/Students/*"/>
 	</preserveintarget>
       </sync>
     </target>
