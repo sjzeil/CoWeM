@@ -140,13 +140,17 @@
 	<param name="baseURL" expression="${baseurl}"/>
       </xslt>
       
-      <copy file="styles/epub-cover.html"
+    <tstamp>
+       <format property="now" pattern="MMMM dd, yyyy, hh:mm aa"/>
+    </tstamp>
+    <copy file="styles/epub-cover.html"
 	    tofile="epub/OEPBS/cover.html">
 	<filterset>
 	  <filtersfile file="course.properties"/>
 	  <filter token="doc.title" value="${courseTitle}"/>
 	  <filter token="doc.author" value="Dept. of Computer Science"/>
-	  <filter token="docModDate" value="${semester}"/>
+	  <filter token="semester" value="${semester}"/>
+	  <filter token="docModDate" value="${now}"/>
 	</filterset>
       </copy>
       <copy file="Directory/outline/outline__epubOverview.html"
