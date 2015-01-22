@@ -228,6 +228,38 @@
 	      <xsl:value-of select="@title"/>
 	    </xsl:when>
 	  </xsl:choose>
+          <xsl:choose>
+            <xsl:when test="@enddate != ''">
+              <xsl:text> </xsl:text>
+              <span class="date">
+                <xsl:text>(</xsl:text>
+                <xsl:call-template name="formatDate">
+                  <xsl:with-param name="date" select="@date"/>
+                </xsl:call-template>
+                <xsl:text> - </xsl:text>
+                <xsl:call-template name="formatDate">
+                  <xsl:with-param name="date" select="@enddate"/>
+                </xsl:call-template>
+                <xsl:text>)</xsl:text>
+              </span>
+            </xsl:when>
+            
+            <xsl:when test="@date != ''">
+              <xsl:text> </xsl:text>
+              <span class="date">
+                <xsl:text>(</xsl:text>
+                <xsl:call-template name="formatDate">
+                  <xsl:with-param name="date" select="@date"/>
+                </xsl:call-template>
+                
+                <xsl:if test="@time != ''">
+                  <xsl:text>, </xsl:text>
+                  <xsl:value-of select="@time"/>
+                </xsl:if>
+                <xsl:text>)</xsl:text>
+              </span>
+            </xsl:when>
+          </xsl:choose>
 	</span>
 	</td>
     </tr>
