@@ -9,7 +9,9 @@
 
 }
 %else
-%define {>>>} <> {}
+%define {>>>} <> {
+
+}
 %endif
 
 
