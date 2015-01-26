@@ -5,7 +5,9 @@
   incrementally in slides
 
 %ifdef _slides
-%define {>>>} <> {<span class="incremental"> </span>}
+%define {>>>} <> {<span class="incremental"> </span>
+
+}
 %else
 %define {>>>} <> {}
 %endif
