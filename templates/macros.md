@@ -86,39 +86,39 @@ Assorted text decorations (from docbook, originally)
 
 Callout numbers
 %ifdef _html
-%define <\co1> <> [<span>&#x278a;</span>]
-%define <\co2> <> [<span>&#x278b;</span>]
-%define <\co3> <> [<span>&#x278c;</span>]
-%define <\co4> <> [<span>&#x278d;</span>]
-%define <\co5> <> [<span>&#x278e;</span>]
-%define <\co6> <> [<span>&#x278f;</span>]
-%define <\co7> <> [<span>&#x2790;</span>]
-%define <\co8> <> [<span>&#x2791;</span>]
-%define <\co9> <> [<span>&#x2792;</span>]
+%define <\co1> <> [<span>&#x2780;</span>]
+%define <\co2> <> [<span>&#x2781;</span>]
+%define <\co3> <> [<span>&#x2782;</span>]
+%define <\co4> <> [<span>&#x2783;</span>]
+%define <\co5> <> [<span>&#x2784;</span>]
+%define <\co6> <> [<span>&#x2785;</span>]
+%define <\co7> <> [<span>&#x2786;</span>]
+%define <\co8> <> [<span>&#x2787;</span>]
+%define <\co9> <> [<span>&#x2788;</span>]
 %else
 
 %ifdef _epub
-%define <\co1> <> [<span>&#x278a;</span>]
-%define <\co2> <> [<span>&#x278b;</span>]
-%define <\co3> <> [<span>&#x278c;</span>]
-%define <\co4> <> [<span>&#x278d;</span>]
-%define <\co5> <> [<span>&#x278e;</span>]
-%define <\co6> <> [<span>&#x278f;</span>]
-%define <\co7> <> [<span>&#x2790;</span>]
-%define <\co8> <> [<span>&#x2791;</span>]
-%define <\co9> <> [<span>&#x2792;</span>]
+%define <\co1> <> [<span>&#x2780;</span>]
+%define <\co2> <> [<span>&#x2781;</span>]
+%define <\co3> <> [<span>&#x2782;</span>]
+%define <\co4> <> [<span>&#x2783;</span>]
+%define <\co5> <> [<span>&#x2784;</span>]
+%define <\co6> <> [<span>&#x2785;</span>]
+%define <\co7> <> [<span>&#x2786;</span>]
+%define <\co8> <> [<span>&#x2787;</span>]
+%define <\co9> <> [<span>&#x2788;</span>]
 
 %else
 
-%define <\co1> <> [\ding{182}]
-%define <\co2> <> [\ding{183}]
-%define <\co3> <> [\ding{184}]
-%define <\co4> <> [\ding{185}]
-%define <\co5> <> [\ding{186}]
-%define <\co6> <> [\ding{187}]
-%define <\co7> <> [\ding{188}]
-%define <\co8> <> [\ding{189}]
-%define <\co9> <> [\ding{190}]
+%define <\co1> <> [\ding{192}]
+%define <\co2> <> [\ding{193}]
+%define <\co3> <> [\ding{194}]
+%define <\co4> <> [\ding{195}]
+%define <\co5> <> [\ding{196}]
+%define <\co6> <> [\ding{197}]
+%define <\co7> <> [\ding{198}]
+%define <\co8> <> [\ding{199}]
+%define <\co9> <> [\ding{200}]
 %endif
 %endif
 

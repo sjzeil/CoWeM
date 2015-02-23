@@ -32,15 +32,15 @@
       <replace
 	  file="@{file}">
 	<replacefilter token='/*...*/' value="&amp;#x22ee;"/>
-	<replacefilter token='/*1*/' value="&amp;#x278a;"/>
-	<replacefilter token='/*2*/' value="&amp;#x278b;"/>
-	<replacefilter token='/*3*/' value="&amp;#x278c;"/>
-	<replacefilter token='/*4*/' value="&amp;#x278d;"/>
-	<replacefilter token='/*5*/' value="&amp;#x278e;"/>
-	<replacefilter token='/*6*/' value="&amp;#x278f;"/>
-	<replacefilter token='/*7*/' value="&amp;#x2790;"/>
-	<replacefilter token='/*8*/' value="&amp;#x2791;"/>
-	<replacefilter token='/*9*/' value="&amp;#x2792;"/>
+	<replacefilter token='/*1*/' value="&amp;#x2780;"/>
+	<replacefilter token='/*2*/' value="&amp;#x2781;"/>
+	<replacefilter token='/*3*/' value="&amp;#x2782;"/>
+	<replacefilter token='/*4*/' value="&amp;#x2783;"/>
+	<replacefilter token='/*5*/' value="&amp;#x2784;"/>
+	<replacefilter token='/*6*/' value="&amp;#x2785;"/>
+	<replacefilter token='/*7*/' value="&amp;#x2786;"/>
+	<replacefilter token='/*8*/' value="&amp;#x2787;"/>
+	<replacefilter token='/*9*/' value="&amp;#x2788;"/>
 	<replacefilter token='/*+*/' value='&lt;span class=&quot;hli&quot;&gt;'/>
 	<replacefilter token='/*-*/' value='&lt;/span&gt;&lt;!-- class=&quot;hli&quot; --&gt;'/>
 	<replacefilter token='/*+1*/' value='&lt;span class=&quot;hli&quot;&gt;'/>
@@ -70,15 +70,15 @@
       <replace
 	  file="@{file}">
 	<replacefilter token='/*...*/' value="&amp;#x22ee;"/>
-	<replacefilter token='/*1*/' value="&amp;#x278a;"/>
-	<replacefilter token='/*2*/' value="&amp;#x278b;"/>
-	<replacefilter token='/*3*/' value="&amp;#x278c;"/>
-	<replacefilter token='/*4*/' value="&amp;#x278d;"/>
-	<replacefilter token='/*5*/' value="&amp;#x278e;"/>
-	<replacefilter token='/*6*/' value="&amp;#x278f;"/>
-	<replacefilter token='/*7*/' value="&amp;#x2790;"/>
-	<replacefilter token='/*8*/' value="&amp;#x2791;"/>
-	<replacefilter token='/*9*/' value="&amp;#x2792;"/>
+	<replacefilter token='/*1*/' value="&amp;#x2780;"/>
+	<replacefilter token='/*2*/' value="&amp;#x2781;"/>
+	<replacefilter token='/*3*/' value="&amp;#x2782;"/>
+	<replacefilter token='/*4*/' value="&amp;#x2783;"/>
+	<replacefilter token='/*5*/' value="&amp;#x2784;"/>
+	<replacefilter token='/*6*/' value="&amp;#x2785;"/>
+	<replacefilter token='/*7*/' value="&amp;#x2786;"/>
+	<replacefilter token='/*8*/' value="&amp;#x2787;"/>
+	<replacefilter token='/*9*/' value="&amp;#x2788;"/>
 	<replacefilter token='/*+*/' value='&lt;span class=&quot;hli&quot;&gt;&#x2460;&#8594;'/>
 	<replacefilter token='/*-*/' value='&#8592;&#x2460;&lt;/span&gt;'/>
 	<replacefilter token='/*+1*/' value='&lt;span class=&quot;hli&quot;&gt;&#x2460;&#8594;'/>
