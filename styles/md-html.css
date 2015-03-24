@@ -4,6 +4,12 @@ body {
   margin-top: 5px;
 }
 
+@media (min-width: 80ex) {
+    body {
+        width: 80ex;
+    }
+}
+
 table.sourceCode { background-color: #E0E0E0;}
 .sourceCode { background-color: #E0E0E0;}
 span.firstterm {color: #006000; font-style: italic; text-decoration:underline;}

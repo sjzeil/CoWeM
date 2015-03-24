@@ -9,6 +9,14 @@ body {
   font-size: 11pt;
 }
 
+@media (min-width: 80ex) {
+    div.slide {
+        width: 80ex;
+    }
+}
+
+
+
 .button {  color: #000000;
   background: #a0a0a0;
   font-weight: bold;

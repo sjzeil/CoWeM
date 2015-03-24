@@ -45,15 +45,15 @@
   <xsl:template match="/">
     <html>
       <head>
-	<title>@courseName@ Modules</title>
-	<link rel="stylesheet" type="text/css" media="screen, projection, print"
-	      href="{$stylesURL}/modules.css" />
-	<script type="text/javascript"
-		src="{$stylesURL}/modules.js">
-	<xsl:text> </xsl:text>
-      </script>
-      <link rel="stylesheet" type="text/css" media="screen, projection, print"
-	    href="local.css" />
+	     <title>@courseName@ Modules</title>
+	     <link rel="stylesheet" type="text/css" media="screen, projection, print"
+	        href="{$stylesURL}/modules.css" />
+	     <meta name="viewport" content="width=device-width, initial-scale=1"/>	
+	     <script type="text/javascript" src="{$stylesURL}/modules.js">
+	        <xsl:text> </xsl:text>
+         </script>
+         <link rel="stylesheet" type="text/css" media="screen, projection, print"
+	        href="local.css" />
       </head>
       <body>
 	<div class="titleBlock">

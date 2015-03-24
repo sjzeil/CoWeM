@@ -27,8 +27,9 @@
   <xsl:template match="/">
     <html>
       <head>
-	<title>@courseName@ Outline &amp; Topics</title>
-	<link href="directory.css" rel="stylesheet" type="text/css"/>
+	     <title>@courseName@ Outline &amp; Topics</title>
+	     <meta name="viewport" content="width=device-width, initial-scale=1"/>	
+	     <link href="directory.css" rel="stylesheet" type="text/css"/>
       </head>
       <body>
 	<div class="titleArea">

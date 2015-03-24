@@ -41,6 +41,7 @@
       <xsl:copy-of select="@*"/>
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
 	    href="{$stylesURL}/md-html.css" />
+	  <meta name="viewport" content="width=device-width, initial-scale=1"/>	
       <script type="text/javascript"
 	      src="{$stylesURL}/md-html.js">
 	<xsl:text> </xsl:text>

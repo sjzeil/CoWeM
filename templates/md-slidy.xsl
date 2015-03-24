@@ -45,6 +45,7 @@
 	    href="{$stylesURL}/md-slidy.css" />
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
 	    href="../../md-slidy.css" />
+	  <meta name="viewport" content="width=device-width, initial-scale=1"/>	
       <script src="{$slidyURL}/scripts/slidy.js"
 	      charset="utf-8" type="text/javascript">
 	<xsl:text> </xsl:text>

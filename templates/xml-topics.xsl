@@ -43,15 +43,16 @@
   <xsl:template match="/">
     <html>
       <head>
-	<title>@courseName@ Outline &amp; Topics</title>
-	<link rel="stylesheet" type="text/css" media="screen, projection, print"
-	      href="{$stylesURL}/outline.css" />
-	<script type="text/javascript"
-		src="{$stylesURL}/outline.js">
-	<xsl:text> </xsl:text>
-      </script>
-      <link rel="stylesheet" type="text/css" media="screen, projection, print"
-	    href="local.css" />
+	     <title>@courseName@ Outline &amp; Topics</title>
+	     <link rel="stylesheet" type="text/css" media="screen, projection, print"
+	        href="{$stylesURL}/outline.css" />
+	     <meta name="viewport" content="width=device-width, initial-scale=1"/>	
+	     <script type="text/javascript"
+		    src="{$stylesURL}/outline.js">
+	       <xsl:text> </xsl:text>
+         </script>
+         <link rel="stylesheet" type="text/css" media="screen, projection, print"
+	       href="local.css" />
       </head>
       <body>
 	<div class="titleBlock">

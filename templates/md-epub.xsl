@@ -59,6 +59,7 @@
       <xsl:copy-of select="@*"/>
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
 	    href="../md-epub.css" />
+	  <meta name="viewport" content="width=device-width, initial-scale=1"/>	
       <xsl:copy-of select="*"/>
     </xsl:copy>
   </xsl:template>

@@ -40,6 +40,13 @@
       <xsl:copy-of select="@*"/>
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
 	    href="{$stylesURL}/md-html.css" />
+	  <xsl:choose>
+	     <xsl:when test="meta[@name='viewport']">
+	     </xsl:when>
+	     <xsl:otherwise>
+	        <meta name="viewport" content="width=device-width, initial-scale=1"/>	
+	     </xsl:otherwise>
+	  </xsl:choose>
       <script type="text/javascript"
 	      src="{$stylesURL}/md-html.js">
 	<xsl:text> </xsl:text>
