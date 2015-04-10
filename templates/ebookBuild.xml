@@ -3,6 +3,8 @@
 
     <property name="epub.name" value="${courseName}.epub"/>
     <property name="mobi.name" value="${courseName}.mobi"/>
+  	
+  	<property name="epub.check.jar" location="templates/epubcheck-3.0.0.1/epubcheck-3.0.0.1.jar"/>
 
     <resourcecount property="epub.content.count">
       <fileset dir="Public" includes="*/build.xml">
@@ -260,7 +262,7 @@
       
       <move file="epub/${courseName}.epub" tofile="${courseName}.epub"/>
 
-      <java jar="templates/epubcheck.jar" fork="true">
+      <java jar="${epub.check.jar}" fork="true">
 	<arg value="${courseName}.epub"/>
       </java>
 
