@@ -3,9 +3,10 @@ html    {
 
 body	{
          background: #67859e;
-	 background: -moz-linear-gradient(top, #d6e3ee 0%, #67859e 100%); /* FF3.6+ */
-         background: linear-gradient(to bottom, #d6e3ee 0%, #67859e 100%);
+	     background: -moz-linear-gradient(left, #67859e 0%, #d6e3ee 150px); /* FF3.6+ */
+         background: linear-gradient(to right, #67859e 0%, #d6e3ee 150px);
          padding-left: 175px;
+         background-attachment: fixed;
 	}
 
 div.courseName {
@@ -131,6 +132,8 @@ a.but:link {
   text-decoration: none;
 }
 a.but:visited {
+  color: #919693; 
+  text-decoration: none;
 }
 a.but:hover {
   color: #006600;

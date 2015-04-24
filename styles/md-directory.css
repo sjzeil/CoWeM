@@ -1,15 +1,16 @@
-html    {background-color: #DFD3C3;  
-	 background-image: url(directory.png); 
-	 background-repeat: repeat-y;}
+html    {
+	}
 
-body	{background: transparent;
-	 background-image: url(directory.png); 
-	 background-repeat: repeat-y;
+body	{
+         background: #67859e;
+	     background: -moz-linear-gradient(left, #67859e 0%, #d6e3ee 150px); /* FF3.6+ */
+         background: linear-gradient(to right, #67859e 0%, #d6e3ee 150px);
          padding-left: 175px;
+         background-attachment: fixed;
 	}
 
 div.courseName {
-  color: #004000;
+  color: #002441;
   text-align:center;
   font-weight:bold;
   font-size: 20pt;
@@ -22,10 +23,18 @@ div.leftPart {
   height: 500px;
   width: 0px;
   float: left;
-  background: transparent; 
+  background: transparent;
   border-style: none;
   border-width: 0;
 }
+
+div.leftPart table {
+  background: #002441;
+  color: #919693; 
+  width: 15ex;
+  padding: 0.5ex;
+}
+
 
 div.rightPart {
   position: relative;
@@ -34,9 +43,62 @@ div.rightPart {
   border-width: 0;
 }
 
+
+.topic1 {
+   font-size: 16pt;
+   font-weight: bold;
+}
+
+.topic2 {
+   font-size: 14pt;
+   font-weight: bold;
+   padding-left: 1.5ex;
+}
+
+.topic3 {
+   font-weight: bold;
+   padding-left: 2.5ex;
+}
+
+.subject {
+   font-weight: bold;
+}
+
+div.moduleActivities {
+   padding-left: 3.5ex;
+   border-top-style:solid;
+   border-bottom-style:solid;
+}
+
+td.moduleDescription {
+   padding-left: 3.5ex;
+   padding-right: 3.5ex;
+   width: 45%;
+   border-top-style:solid;
+   border-bottom-style:solid;
+}
+
+
+td.moduleActivitiesRt {
+   background: transparent;
+   padding-left: 3.5ex;
+   border-top-style:solid;
+   border-bottom-style:solid;
+   border-left-style:dotted;
+}
+
+span.topicSpacing {
+   width: 60pt;
+   display: block;
+}
+
+div.module {
+     display: none;
+  }
+
+
+
 input.but {
-  color: #000000;
-  background: #CCFFCC;
   font-weight: bold;
   font-family: serif;
   font-size: 10pt;
@@ -44,8 +106,6 @@ input.but {
 }
 
 span.but  {
-  color: #000000;
-  background: #CCFFCC;
   padding: 2px;
   margin: 2px;
   font-weight: bold;
@@ -58,25 +118,22 @@ span.but  {
 }
 
 td.but  {
-  color: #000000;
-  background: #CCFFCC;
-  padding: 5px;
+  padding: 8px;
   font-weight: bold;
   font-family: serif;
   font-size: 12pt;
-  border-width: thin;
-  border-style: outset;
   text-decoration: none;
   border-radius: 8px;
 }
 
 
 a.but:link {
-  color: #003300;
+  color: #919693; 
   text-decoration: none;
 }
 a.but:visited {
-  color: #003300;
+  color: #919693; 
+  text-decoration: none;
 }
 a.but:hover {
   color: #006600;
@@ -84,7 +141,7 @@ a.but:hover {
 }
 
 tr.separator	{
-  height: 20px;
+  height: 1px;
 }
 
 
@@ -100,8 +157,8 @@ hr { clear: both;}
 
 /* .titleblock { background-color: #0000A0; color: #E0E0E0;} */
 
-div.titleblock h1 { background-color: #0000A0; text-align: center; color: #E0E0E0;}
-div.titleblock h2 { background-color: #0000A0; text-align: center; color: #E0E0E0;}
+div.titleblock h1 { background-color: #002441; text-align: center; color: #919693;}
+div.titleblock h2 { background-color: #002441; text-align: center; color: #919693;}
 
 h1 a { background-color: #0000A0; text-align: center; color: #E0E0E0;}
 .hli {background-color: #ffff99; }

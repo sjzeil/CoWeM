@@ -1,19 +1,19 @@
-html    {background-color: #DFD3C3;  
-	 background-image: url(directory.png); 
-	 background-repeat: repeat-y;}
-
-body	{background: transparent;
-	 background-image: url(directory.png); 
-	 background-repeat: repeat-y;
+body	{
+         background: #67859e;
+	     background: -moz-linear-gradient(top, #d6e3ee 0%, #67859e 100%); /* FF3.6+ */
+         background: linear-gradient(to bottom, #d6e3ee 0%, #67859e 100%);
          padding-left: 175px;
+         background-repeat: no-repeat;
+         background-attachment: fixed;
 	}
 
 div.courseName {
-  color: #004000;
+  color: #002441;
   text-align:center;
   font-weight:bold;
   font-size: 20pt;
 }
+
 
 div.leftPart {
   position: relative;
@@ -25,6 +25,13 @@ div.leftPart {
   background: transparent; 
   border-style: none;
   border-width: 0;
+}
+
+div.leftPart table {
+  background: #002441;
+  color: #919693; 
+  width: 15ex;
+  padding: 0.5ex;
 }
 
 div.rightPart {
@@ -58,10 +65,7 @@ span.topicSpacing {
 
 
 
-
 input.but {
-  color: #000000;
-  background: #CCFFCC;
   font-weight: bold;
   font-family: serif;
   font-size: 10pt;
@@ -69,8 +73,6 @@ input.but {
 }
 
 span.but  {
-  color: #000000;
-  background: #CCFFCC;
   padding: 2px;
   margin: 2px;
   font-weight: bold;
@@ -83,25 +85,22 @@ span.but  {
 }
 
 td.but  {
-  color: #000000;
-  background: #CCFFCC;
-  padding: 5px;
+  padding: 8px;
   font-weight: bold;
   font-family: serif;
   font-size: 12pt;
-  border-width: thin;
-  border-style: outset;
   text-decoration: none;
   border-radius: 8px;
 }
 
 
 a.but:link {
-  color: #003300;
+  color: #919693; 
   text-decoration: none;
 }
 a.but:visited {
-  color: #003300;
+  color: #919693; 
+  text-decoration: none;
 }
 a.but:hover {
   color: #006600;
@@ -109,7 +108,7 @@ a.but:hover {
 }
 
 tr.separator	{
-  height: 20px;
+  height: 1px;
 }
 
 
@@ -125,10 +124,11 @@ hr { clear: both;}
 
 /* .titleblock { background-color: #0000A0; color: #E0E0E0;} */
 
-div.titleblock h1 { background-color: #0000A0; text-align: center; color: #E0E0E0;}
-div.titleblock h2 { background-color: #0000A0; text-align: center; color: #E0E0E0;}
+div.titleblock h1 { background-color: #002441; text-align: center; color: #919693;}
+div.titleblock h2 { background-color: #002441; text-align: center; color: #919693;}
 
 h1 a { background-color: #0000A0; text-align: center; color: #E0E0E0;}
+
 .hli {background-color: #ffff99; }
 .hlii {background-color: #66ccff; }
 .hliii {background-color: #cc33ff; }
@@ -144,44 +144,6 @@ span.replaceable {font-style:italic; color: #215E21; }
 span.userinput {font-style:italic; color: #215E21; }
 code {background-color: transparent; }
 
-/*
-table { border: 2px solid black; border-collapse: collapse; }
-th { text-align: center; border-bottom: 2px solid black; border-right: 1px solid black;}
-tr { border-bottom: 1px solid black; }
-td { border-right: 1px solid black; }
-caption { font-weight: bold;  margin: 1em; }
-
-blockquote {
- font-size: 85%;
- font-weight: normal;
- line-height: 120%;
- padding-top: 0.2em;
- padding-bottom: 0.2em;
- padding-left: 1em;
- padding-right: 1em;
- border-style: solid;
- border-left-width: 1em;
- border-top-width: thin;
- border-right-width: thin;
- border-bottom-width: thin;
- border-color: #95ABD0;
- color: #001936;
- background-color: #E4E5E7;
-}
-
-
-blockquote blockquote {
- font-size: 100%;
- font-weight: normal;
- line-height: 100%;
- padding-top: 0em;
- padding-bottom: 0em;
- padding-left: 1em;
- padding-right: 1em;
- border-style: none;
-}
-
-*/
 
 li li { font-size: 85%; font-style: normal }
 li ul li { font-size: 85%; font-style: normal }
