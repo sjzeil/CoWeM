@@ -147,7 +147,6 @@
 	</filterset>
       </copy>
       <codeFilter file="@{file}__@{format}.html"/>
-      <echo>doc.modDate is ${doc.modDate}</echo>
     </sequential>
   </macrodef>
 
@@ -206,7 +205,6 @@
 		   byline="true"
 		   match='&lt;meta charset='
 		   replace='&lt;meta name="charset" content='/>
-      <echo>doc.modDate is ${doc.modDate}</echo>
     </sequential>
   </macrodef>
 

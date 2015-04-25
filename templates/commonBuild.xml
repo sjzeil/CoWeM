@@ -120,7 +120,6 @@
 
 
     <target name="genProperties" if="regenerate.md.properties">
-      <echo>in genProperties</echo>
       <delete file="${doc}.properties"/>
       <copy file="${md.content.file}" tofile="${doc}.properties">
 	<filterchain>
