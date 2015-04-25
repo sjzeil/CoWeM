@@ -99,19 +99,16 @@
 
     <available property="md.content.exists" file="${md.content.file}"/>
 
-    <fileset id="mdModifiedSources" dir="." includes="${doc}.md">
-      <modified/>
-    </fileset>
-    <pathconvert refid="mdModifiedSources" 
-		 property="modified.md.properties"
-		 setonempty="false"/>
+  	<checksum property="md.checksum" file="${doc}.md"/>
+  	<property file="cache.properties"/>
+  	
     <condition property="regenerate.md.properties">
-      <or>
-	<isset property="modified.md.properties"/>
-	<not>
-	  <available file="${doc}.properties"/>
-	</not>
-      </or>
+    	<not>
+           <and>
+	           <available file="${doc}.properties"/>
+           	   <equals arg1="${md.checksum}" arg2="${mdFile.checksum}" trim="true"/>
+           </and>
+	    </not>
     </condition>
     <fileutil property="mdModDate" 
 	      file="${md.content.file}">
@@ -119,7 +116,8 @@
     </fileutil>
 
 
-    <target name="genProperties" if="regenerate.md.properties">
+  	<target name="genProperties" if="regenerate.md.properties">
+  	  <echo> in genProperties</echo>
       <delete file="${doc}.properties"/>
       <copy file="${md.content.file}" tofile="${doc}.properties">
 	<filterchain>
@@ -141,6 +139,8 @@
 		     match="^Date: *.*"
 		     flags="m"
 		     replace="doc.modDate=${mdModDate}"/>
+      <echo file="cache.properties">mdFile.checksum=${md.checksum}
+</echo>
     </target>
 
     <target name="loadProperties" depends="genProperties">
