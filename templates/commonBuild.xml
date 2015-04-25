@@ -99,12 +99,34 @@
 
     <available property="md.content.exists" file="${md.content.file}"/>
 
-    <target name="genProperties" if="md.content.exists">
+    <fileset id="mdModifiedSources" dir="." includes="${doc}.md">
+      <modified/>
+    </fileset>
+    <pathconvert refid="mdModifiedSources" 
+		 property="modified.md.properties"
+		 setonempty="false"/>
+    <condition property="regenerate.md.properties">
+      <or>
+	<isset property="modified.md.properties"/>
+	<not>
+	  <available file="${doc}.properties"/>
+	</not>
+      </or>
+    </condition>
+    <fileutil property="mdModDate" 
+	      file="${md.content.file}">
+      <lastmodified format="MMM dd, yyyy"/>
+    </fileutil>
+
+
+    <target name="genProperties" if="regenerate.md.properties">
+      <echo>in genProperties</echo>
+      <delete file="${doc}.properties"/>
       <copy file="${md.content.file}" tofile="${doc}.properties">
 	<filterchain>
 	  <headfilter lines="8"/>
 	  <linecontainsregexp>
-	    <regexp pattern="(^Title:)|(^Author:)"/>
+	    <regexp pattern="(^Title:)|(^Author:)|(^Date:)"/>
 	  </linecontainsregexp>
 	</filterchain>
       </copy>
@@ -116,6 +138,10 @@
 		     match="^Author: *"
 		     flags="m"
 		     replace="doc.author="/>
+      <replaceregexp file="${doc}.properties"
+		     match="^Date: *.*"
+		     flags="m"
+		     replace="doc.modDate=${mdModDate}"/>
     </target>
 
     <target name="loadProperties" depends="genProperties">

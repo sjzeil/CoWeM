@@ -143,10 +143,11 @@
 	<filterset>
 	  <filtersfile file="../../course.properties"/>
 	  <filtersfile file="@{file}.properties"/>
-	  <filter token="docModDate" value="${docModDate}"/>
+	  <filter token="docModDate" value="${doc.modDate}"/>
 	</filterset>
       </copy>
       <codeFilter file="@{file}__@{format}.html"/>
+      <echo>doc.modDate is ${doc.modDate}</echo>
     </sequential>
   </macrodef>
 
@@ -186,7 +187,7 @@
 	<filterset>
 	  <filtersfile file="../../course.properties"/>
 	  <filtersfile file="@{file}.properties"/>
-	  <filter token="docModDate" value="${docModDate}"/>
+	  <filter token="docModDate" value="${doc.modDate}"/>
 	</filterset>
       </copy>
       <codeFilterEpub file="@{file}__@{format}.html"/>
@@ -205,6 +206,7 @@
 		   byline="true"
 		   match='&lt;meta charset='
 		   replace='&lt;meta name="charset" content='/>
+      <echo>doc.modDate is ${doc.modDate}</echo>
     </sequential>
   </macrodef>
 
@@ -403,7 +405,7 @@
       <filterset>
 	<filtersfile file="../../course.properties"/>
 	<filtersfile file="${doc}.properties"/>
-	<filter token="docModDate" value="${docModDate}"/>
+	<filter token="docModDate" value="${doc.modDate}"/>
       </filterset>
     </copy>
     <copy file="../../templates/epub-appendix.html"
@@ -411,7 +413,7 @@
       <filterset>
 	<filtersfile file="../../course.properties"/>
 	<filtersfile file="${doc}.properties"/>
-	<filter token="docModDate" value="${docModDate}"/>
+	<filter token="docModDate" value="${doc.modDate}"/>
       </filterset>
     </copy>
     <copy file="../../styles/epub-cover.png"
