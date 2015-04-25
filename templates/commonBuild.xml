@@ -99,16 +99,25 @@
 
     <available property="md.content.exists" file="${md.content.file}"/>
 
-  	<checksum property="md.checksum" file="${doc}.md"/>
+  	<antcontrib:if>
+  		<isset property="md.content.exists"/>
+  		<then>
+  	       <checksum property="md.checksum" file="${doc}.md"/>
+  		</then>
+  	</antcontrib:if>
+  	
   	<property file="cache.properties"/>
   	
     <condition property="regenerate.md.properties">
-    	<not>
-           <and>
-	           <available file="${doc}.properties"/>
-           	   <equals arg1="${md.checksum}" arg2="${mdFile.checksum}" trim="true"/>
-           </and>
-	    </not>
+    	<and>
+    		<isset property="md.content.exists"/>
+    	   <not>
+              <and>
+	              <available file="${doc}.properties"/>
+           	      <equals arg1="${md.checksum}" arg2="${mdFile.checksum}" trim="true"/>
+              </and>
+	       </not>
+    	</and>
     </condition>
     <fileutil property="mdModDate" 
 	      file="${md.content.file}">
