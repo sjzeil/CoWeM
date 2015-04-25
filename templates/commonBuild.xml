@@ -679,7 +679,6 @@
 	<fileset dir=".">
 	  <include name="${doc}*.*~"/>
 	  <include name="title.xml"/>
-	  <include name="${doc}.properties"/>
 	  <include name="${doc}.content.date"/>
 	  <include name="${doc}-*"/>
 	  <include name="${doc}__*"/>
