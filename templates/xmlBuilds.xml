@@ -100,20 +100,23 @@
     <postprocessXMLHTML format="epubOverview"/>
   </target>
 
-  <property name="export.calendar.file" value="${courseName}-bb-calendar.zip"/>
-  <uptodate property="bbcal.zip.exists" targetfile="${export.calendar.file}">
-     <srcfiles dir="../../Public" includes="**/*.epub"/>
-  </uptodate>
+  <target name="bbcalCheck">
+      <property name="export.calendar.file" value="${courseName}-bb-calendar.zip"/>
+      <uptodate property="bbcal.zip.exists" targetfile="${export.calendar.file}">
+         <srcfiles dir="../../Public" includes="**/*.epub"/>
+      </uptodate>
+  </target>
 
-  <target name="bbcalCollect" unless="bbcal.zip.exists">
+  <target name="bbcalCollect" depends="bbcalCheck" unless="bbcal.zip.exists">
+  	<echo>export.calendar.file is ${export.calendar.file}</echo>
      <mkdir dir="export-calendar"/>
      <mkdir dir="export-calendar/csfiles"/>
   	 <property name="calendar.work.dir" location="export-calendar"/>
   	 <xslt in="outline.xml"
   		   out="export-calendar/imsmanfest.xml"
-  		   style="templates/exportCalendar.xsl"
+  		   style="../../templates/exportCalendar.xsl"
         >
-        <classpath location="templates/saxon.jar" />
+        <classpath location="../../templates/saxon.jar" />
         <param name="workDir" expression="${calendar.work.dir}"/>
     </xslt>
 
@@ -122,6 +125,7 @@
   <target name="xml2bbcal" depends="bbcalCollect" unless="bbcal.zip.exists">
   	<zip destfile="${export.calendar.file}" basedir="export-calendar"
   	/>
+  	<echo>courseName ${courseName} | doc ${doc} | sem ${sem}</echo>
   	<delete file="export-calendar"/>
   </target>
 

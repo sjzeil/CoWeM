@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE xsl:stylesheet> 
 <xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:opf="http://www.idpf.org/2007/opf"
+  xmlns:bb="http://www.blackboard.com/content-packaging/"
 >
 
   <xsl:param name="workDir" select="'export-calendar'"/>
@@ -13,8 +13,24 @@
 	      method="xml"
 	      encoding="utf-8"
 	      /> 
+  <xsl:output name="textual"
+	      method="text"
+	      encoding="utf-8"
+	      /> 
 
 
+  <xsl:variable name="nowDT" select="adjust-dateTime-to-timezone(current-dateTime())"/>
+  <xsl:variable name="now">
+  	<xsl:value-of select="year-from-dateTime($nowDT)"/>
+  	<xsl:text>-</xsl:text>
+  	<xsl:value-of select="month-from-dateTime($nowDT)"/>
+  	<xsl:text>-</xsl:text>
+  	<xsl:value-of select="day-from-dateTime($nowDT)"/>
+  	<xsl:text> </xsl:text>
+    <xsl:value-of select="hours-from-dateTime($nowDT)"/>
+  	<xsl:text>:</xsl:text>
+    <xsl:value-of select="minutes-from-dateTime($nowDT)"/>
+ </xsl:variable>
 
 
   <xsl:template match="/">
@@ -22,34 +38,72 @@
           <organizations/>
           <resources>
               <xsl:apply-templates select="*|text()"/>
+              <resource 
+              		bb:file="courseinfo.dat" 
+              		bb:title="arbitrary-course-title" 
+                    identifier="courseinfo"
+   					type="resource/x-mhhe-course-cx" 
+   					xml:base="courseinfo"/>
           </resources>
       </manifest>
       <xsl:apply-templates mode="resources" select="*|text()"/>
+      <xsl:result-document 
+          href="courseinfo.dat"
+	      format="resources">
+	      <parentContextInfo>
+	          <parentContextId>arbitrary-course-title</parentContextId>
+	      </parentContextInfo>
+      </xsl:result-document>
+      <xsl:result-document 
+          href=".bb-package-info"
+	      format="textual">
+	     <xsl:text>#Bb PackageInfo Property File
+#</xsl:text>
+	     <xsl:value-of select="$nowDT"
+	     <xsl:text>
+</xsl:text>
+      </xsl:result-document>
+      <xsl:result-document 
+          href=".bb-package-sig"
+	      format="textual">
+	     <xsl:text>BEDBC1234B88F661117C26D53AECCB3B8
+</xsl:text>
+      </xsl:result-document>
   </xsl:template>
 
   <xsl:template match="topic">
   	  <xsl:variable name="ident" select="generate-id()"/>
       <xsl:choose>
           <xsl:when test="@enddate != '' or @date != '' or @due != ''">
-              <resource bb:title="@title" 
+              <resource bb:title="{@title}" 
                         identifier="res-{$ident}"
-                        bb:file="res-{$ident}.xml"
+                        bb:file="res-{$ident}.dat"
                         type="resource/x-bb-calendar"
+                        xml:base="res-{$ident}">
               </resource>
           </xsl:when>
       </xsl:choose>
   </xsl:template>
   
-  <xsl:template match="topic[@enddate != '']" mode="resources">
+  
+  
+  <xsl:template match="topic[@date != '']" mode="resources">
   	  <xsl:variable name="ident" select="generate-id()"/>
    	  <xsl:variable name="start">
   	      <xsl:value-of select="@date"/>
   	  </xsl:variable>
    	  <xsl:variable name="stop">
-  	      <xsl:value-of select="@enddate"/>
+   	  	<xsl:choose>
+   	  		<xsl:when test="@enddate != ''">
+  	            <xsl:value-of select="@enddate"/>
+   	  		</xsl:when>
+   	  		<xsl:otherwise>
+   	  		    <xsl:value-of select="@date"/>
+   	  		</xsl:otherwise>
+   	  	</xsl:choose>
   	  </xsl:variable>
       <xsl:result-document 
-          href="res-{$ident}.xml.tex"
+          href="res-{$ident}.dat"
 	      format="resources">
           <CALENDAR id="cal-{$ident}">
               <TITLE>
@@ -59,13 +113,13 @@
                   <TEXT>(none)</TEXT>
                   <TYPE value="S"/>
               </DESCRIPTION>
-              <USERID value="??"/>
+              <!-- USERID value="??"/ -->
               <TYPE value="COURSE"/>
               <DATES>
                   <CREATED value=""/>
-                  <UPDATED value="{current-dateTime()}"/>
-                  <START value="{start}"/>
-                  <END value="{stop}"/>
+                  <UPDATED value="{$now}"/>
+                  <START value="{$start}"/>
+                  <END value="{$stop}"/>
               </DATES>
           </CALENDAR>
       </xsl:result-document>
@@ -85,7 +139,7 @@
   	      </xsl:choose>
   	  </xsl:variable>
       <xsl:result-document 
-          href="res-{$ident}.xml.tex"
+          href="res-{$ident}.dat"
 	      format="resources">
           <CALENDAR id="cal-{$ident}">
               <TITLE>
@@ -99,49 +153,15 @@
               <TYPE value="COURSE"/>
               <DATES>
                   <CREATED value=""/>
-                  <UPDATED value="{current-dateTime()}"/>
-                  <START value="{start}"/>
-                  <END value="{start}"/>
+                  <UPDATED value="{$now}"/>
+                  <START value="{$start}"/>
+                  <END value="{$start}"/>
               </DATES>
           </CALENDAR>
       </xsl:result-document>
   </xsl:template>
 
 
-  <xsl:template match="topic[@date != '']" mode="resources">
-  	  <xsl:variable name="ident" select="generate-id()"/>
-  	  <xsl:variable name="start">
-  	      <xsl:choose>
-  	          <xsl:when test="@time != ''">
-  	              <xsl:value-of select="@date"/><xsl:text> </xsl:text><xsl:value-of select="@time"/>
-  	          </xsl:when>
-  	          <xsl:otherwise>
-  	              <xsl:value-of select="@date"/>
-  	          </xsl:otherwise>
-  	      </xsl:choose>
-  	  </xsl:variable>
-      <xsl:result-document 
-          href="res-{$ident}.xml.tex"
-	      format="resources">
-          <CALENDAR id="cal-{$ident}">
-              <TITLE>
-                  <xsl:value-of select="@title"/>
-              </TITLE>
-              <DESCRIPTION>
-                  <TEXT>(none)</TEXT>
-                  <TYPE value="S"/>
-              </DESCRIPTION>
-              <USERID value="??"/>
-              <TYPE value="COURSE"/>
-              <DATES>
-                  <CREATED value=""/>
-                  <UPDATED value="{current-dateTime()}"/>
-                  <START value="{start}"/>
-                  <END value="{start}"/>
-              </DATES>
-          </CALENDAR>
-      </xsl:result-document>
-  </xsl:template>
 
 
   <xsl:template match="item[@targetdoc != '']">
@@ -155,8 +175,9 @@
           <xsl:when test="@enddate != '' or @date != '' or @due != ''">
               <resource bb:title="{$theTitle}" 
                         identifier="res-{$ident}"
-                        bb:file="res-{$ident}.xml"
+                        bb:file="res-{$ident}.dat"
                         type="resource/x-bb-calendar"
+                        xml:base="res-{$ident}">
               </resource>
           </xsl:when>
       </xsl:choose>
@@ -170,8 +191,8 @@
           <xsl:when test="@enddate != '' or @date != '' or @due != ''">
               <resource bb:title="{$theTitle}" 
                         identifier="res-{$ident}"
-                        bb:file="res-{$ident}.xml"
-                        type="resource/x-bb-calendar"
+                        bb:file="res-{$ident}.dat"
+                        type="resource/x-bb-calendar">
               </resource>
           </xsl:when>
       </xsl:choose>
