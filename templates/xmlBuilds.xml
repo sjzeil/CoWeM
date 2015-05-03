@@ -101,7 +101,7 @@
   </target>
 
   <target name="bbcalCheck">
-      <property name="export.calendar.file" value="${courseName}-bb-calendar.zip"/>
+      <property name="export.calendar.file" value="../../${courseName}-bb-calendar.zip"/>
       <uptodate property="bbcal.zip.exists" targetfile="${export.calendar.file}">
          <srcfiles dir="../../Public" includes="**/*.epub"/>
       </uptodate>
@@ -113,11 +113,13 @@
      <mkdir dir="export-calendar/csfiles"/>
   	 <property name="calendar.work.dir" location="export-calendar"/>
   	 <xslt in="outline.xml"
-  		   out="export-calendar/imsmanfest.xml"
+  		   out="export-calendar/imsmanifest.xml"
   		   style="../../templates/exportCalendar.xsl"
         >
         <classpath location="../../templates/saxon.jar" />
         <param name="workDir" expression="${calendar.work.dir}"/>
+  	 	<param name="pwdURL" expression="${xml.pwdURL}"/>
+  	 	<param name="courseName" expression="${courseName}"/>
     </xslt>
 
   </target>
@@ -126,7 +128,7 @@
   	<zip destfile="${export.calendar.file}" basedir="export-calendar"
   	/>
   	<echo>courseName ${courseName} | doc ${doc} | sem ${sem}</echo>
-  	<delete file="export-calendar"/>
+  	<delete dir="export-calendar"/>
   </target>
 
   <uptodate property="epub.xml.exists" targetfile="${courseName}.epub">
