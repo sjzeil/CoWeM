@@ -136,6 +136,9 @@
   </uptodate>
   <target name="xml2epub" depends="xml2epubOverview" unless="epub.xml.exists">
   </target>
+  <target name="xml2imscc">
+  	<echo file="imscc.requested">imscc</echo>
+  </target>
 
   <condition property="do.xmobi1">
     <and>
