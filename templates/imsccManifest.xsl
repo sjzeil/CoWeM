@@ -9,15 +9,41 @@
   http://www.imsglobal.org/xsd/imsccv1p2/imscp_v1p1 http://www.imsglobal.org/profile/cc/ccv1p2/ccv1p2_imscp_v1p1_v1p0.xsd
   http://ltsc.ieee.org/xsd/imsccv1p2/LOM/resource http://www.imsglobal.org/profile/cc/ccv1p2/LOM/ccv1p2_lomresource_v1p0.xsd
   http://ltsc.ieee.org/xsd/imsccv1p2/LOM/manifest http://www.imsglobal.org/profile/cc/ccv1p2/LOM/ccv1p2_lommanifest_v1p0.xsd"
+	
+	xmlns:opf="http://www.idpf.org/2007/opf"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	>
 
   <xsl:param name="baseURL" select="'document'"/>
   <xsl:param name="doc" select="'OEPBS'"/>
 
   <xsl:output method="xml" indent="yes" encoding="utf-8"/>
+  
+  
+  <!--
+      Input structure:
+      
+      <imscc>
+         <sem>semester code</sem>
+         <title>course title</title>
+         <author>course name</author>
+         <courseName>course name</courseName>
+         <files>
+             <file>path to file</file>
+                ... all files in web distribution ...
+         </files>
+         <outline>
+            ... entire contents of outline.xml
+         </outline>
+         <table> <!-- titleTable.xml -->
+             <title doc="docName">title of document</title>
+               ...
+         </table>
+      </imscc> 
+   -->
 
   <xsl:template match="/">
-  <manifest identifier="man0001"
+  <manifest identifier="man0001">
       
   <metadata>
     <schema>IMS Common Cartridge</schema>
@@ -44,143 +70,73 @@
   </metadata>
   <organizations>
     <organization identifier="O_1" structure="rooted-hierarchy">
-      <item identifier="I_1">
-        <item identifier="I_00000">
-          <title>Psychology, Research, and You</title>
-          <item identifier="I_00001" identifierref="I_00001_R">
-            <title>Learning Objectives</title>
-          </item>
-          <item identifier="I_00002">
-            <title>Study Guide</title>
-            <item identifier="I_00003" identifierref="I_00003_R">
-              <title>Pretest</title>
-            </item>
-          </item>
-          <item identifier="I_00005" identifierref="I_00005_R">
-            <title>Wikipedia - Psychology</title>
-          </item>
-          <item identifier="I_00006" identifierref="I_00006_R">
-            <title>Psychology of Faces</title>
-          </item>
-        </item>
+      <item identifier="LearningModules">
+           <xsl:apply-templates select="/imscc/outline/topic"/>
       </item>
     </organization>
   </organizations>
   <resources>
-    <xsl:apply-templates select="/imscc/files/file" />
-    </resources>
+      <xsl:apply-templates select="/imscc/outline/topic" mode="resources"/>
+  </resources>
+  </manifest>
   </xsl:template>
 
-  <xsl:variable name="docContentID"
-		select="translate(concat(/epub/doc/text(),'__epub.html'), ' ', '_')"/>
-
-  <xsl:template match="epub">
-    <opf:package
-	unique-identifier="bookid" version="2.0">
-      <opf:metadata>
-	<xsl:if test="title/text() != ''">
-	  <dc:title>
-	    <xsl:value-of select="title/text()"/>
-	  </dc:title>
-	</xsl:if>
-	<xsl:if test="author/text() != ''">
-	  <dc:creator>
-	    <xsl:value-of select="author/text()"/>
-	  </dc:creator>
-	</xsl:if>
-	<xsl:if test="date/text() != ''">
-	  <dc:date>
-	    <xsl:value-of select="date/text()"/>
-	  </dc:date>
-	</xsl:if>
-	<dc:identifier id="bookid">
-	  <xsl:value-of select="$baseURL "/>
-	</dc:identifier>
-	<dc:language>en-US</dc:language>
-	<meta name="cover" content="cover-image" />
-      </opf:metadata>
-      <opf:manifest>
-	<opf:item id="ncx" href="toc.ncx" 
-		  media-type="application/x-dtbncx+xml"/>
-	<opf:item id="cover" 
-		  href="cover.html" media-type="application/xhtml+xml"/>
-	<opf:item id="coverimg" 
-		  href="cover.png" media-type="image/png"/>
-	<opf:item id="epub-overview.html" 
-		  href="epub-overview.html" media-type="application/xhtml+xml"/>
-	<opf:item id="epub-appendix.html" 
-		  href="epub-appendix.html" media-type="application/xhtml+xml"/>
-	<xsl:apply-templates select="outline"/>
-	<xsl:apply-templates select="files/file"/>
-      </opf:manifest>
-      <opf:spine toc="ncx">
-	<opf:itemref idref="cover" linear="no"/>
-	<opf:itemref idref="epub-overview.html" />
-	<xsl:apply-templates select="outline/topic" mode="spine"/>
-	<opf:itemref idref="epub-appendix.html" />
-	<xsl:apply-templates select="/epub/outline/appendix/*" mode="spine"/>
-	<xsl:apply-templates select="files/file" mode="spine"/>
-      </opf:spine>
-      <opf:guide>
-	<opf:reference href="cover.html" type="cover" title="Cover"/>
-      </opf:guide>
-    </opf:package>
-  </xsl:template>
-
-
-  <xsl:template match="file">
-    <xsl:variable name="fileName" select="text()"/>
-    <xsl:variable name="fileID" 
-		  select="translate(encode-for-uri($fileName), '%', '_')"/>
-    <!-- xsl:message>
-      <xsl:text>ID is </xsl:text>
-      <xsl:value-of select="$fileID"/>
-    </xsl:message -->
-    <xsl:choose>
-      <xsl:when test="$fileName = 'epub-appendix.html'">
-	<!-- do nothing -->
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '.css')">
-	<opf:item id="{$fileID}" 
-		  href="{$fileName}" media-type="text/css"/>
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '.css')">
-	<opf:item id="{$fileID}" 
-		  href="{$fileName}" media-type="text/css"/>
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '.png')">
-	<opf:item id="{$fileID}" 
-		  href="{$fileName}" media-type="image/png"/>
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '__epub.html')">
-	<!-- do nothing -->
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '.html')">
-	<opf:item id="{$fileID}" 
-		  href="{$fileName}" media-type="application/xhtml+xml"/>
-      </xsl:when>
-      <xsl:otherwise>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="outline">
-    <xsl:apply-templates select="*"/>
-  </xsl:template>
-
-  <xsl:template match="appendix">
-    <xsl:apply-templates select="*"/>
-  </xsl:template>
 
   <xsl:template match="topic">
-    <xsl:apply-templates select="topic | subject | item"/>
+      <xsl:choose>
+      	 <xsl:when test="item | subject">
+      	     <xsl:variable name="topicID" select="generate-id()"/>
+      	     <item identifier="{$topicID}">
+      	     	<title>
+      	     		<xsl:value-of select="@title"/>
+      	     		<xsl:text> (</xsl:text>
+      	     		<xsl:value-of select="@date"
+      	     		<xsl:text> - </xsl:text>
+      	     		<xsl:value-of select="@enddate"
+      	     		<xsl:text> )</xsl:text>
+      	     	</title>
+      	     	<xsl:apply-templates select="description"/>
+      	     	<xsl:apply-templates select="item | subject"/>
+      	     </item>
+      	 </xsl:when>
+      	 <xsl:otherwise>
+      	     <xsl:apply-templates select="topic"/>
+      	 </xsl:otherwise>
+      </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="description">
+      <xsl:variable name="descriptionID" select="generate-id()"/>
+  	  <item identifier="{$descriptionID}" identifierref="{concat("res",$desciptionID)}">
+  	      <title>Description</title>
+  	  </item>
   </xsl:template>
 
   <xsl:template match="subject">
-    <xsl:apply-templates select="topic | subject | item"/>
+      <xsl:variable name="subjectID" select="generate-id()"/>
+  	  <item identifier="subjectID">
+  	      <title>
+  	          <xsl:value-of select="@title"/>
+  	      </title>
+  	  </item>
+  	  <xsl:apply-templates select="item | subject"/>
+  </xsl:template>
+  	  
+  <xsl:template match="item">
+      <xsl:variable name="itemID" select="generate-id()"/>
+  	  <item identifier="{$itemID}" identifierref="{concat("res",$itemID)}">
+  	      <title>
+  	          <xsl:value-of select="@kind"/>
+  	          <xsl:text>: </xsl:text>
+  	          <xsl:value-of select="@title"/>
+  	          <xsl:value-of select="text()"/>
+  	      </title>
+  	  </item>
   </xsl:template>
 
-  <xsl:template match="item[@targetdoc != '']">
+
+
+  <xsl:template match="item[@targetdoc != '']" mode="suppressed">
     <xsl:variable name="fileName" 
 	select="concat(@targetdoc, '/', @targetdoc, '__epub.html')"/>
     <xsl:variable name="fileID" 
@@ -218,62 +174,13 @@
   </xsl:template>
 
 
-  <xsl:template match="outline" mode="spine">
-    <xsl:apply-templates select="*" mode="spine"/>
-  </xsl:template>
-
-  <xsl:template match="topic" mode="spine">
-    <xsl:apply-templates select="topic | subject | item" mode="spine"/>
-  </xsl:template>
-
-  <xsl:template match="subject" mode="spine">
-    <xsl:apply-templates select="topic | subject | item" mode="spine"/>
-  </xsl:template>
-
-  <xsl:template match="item[@targetdoc != '']" mode="spine">
-    <xsl:variable name="fileName" 
-	select="concat(@targetdoc, '/', @targetdoc, '__epub.html')"/>
-    <xsl:variable name="fileID" 
-		  select="translate(encode-for-uri($fileName), '%', '_')"/>
-    <opf:itemref idref="{$fileID}"/>
-  </xsl:template>
-
-
-
-
-
-<!-- ============  Spine ===================== -->
-
-  <xsl:template match="file" mode="spine">
-    <xsl:variable name="fileName" select="text()"/>
-    <xsl:variable name="fileID" 
-		  select="translate(encode-for-uri($fileName), '%', '_')"/>
-
-    <xsl:choose>
-      <xsl:when test="$fileName = 'epub-appendix.html'">
-	<!-- do nothing -->
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '__epub.html')">
-	<xsl:if test="count(/epub/outline//item[@href = concat('../../Public/',$fileName)]) = 0">
-	  <xsl:variable name="targetdoc" 
-			select="substring-before($fileName, '/')"/>
-	  <xsl:if test="count(/epub/outline//item[@targetdoc = $targetdoc]) = 0">
-	    <opf:itemref idref="{$fileID}"/>
-	  </xsl:if>
-	</xsl:if>
-      </xsl:when>
-      <xsl:when test="ends-with($fileName, '.html')">
-	<opf:itemref idref="{$fileID}"/>
-      </xsl:when>
-    </xsl:choose>
-  </xsl:template>
 
 
   <xsl:template match="*">
     <xsl:apply-templates select="*"/>
   </xsl:template>
 
-  <xsl:template match="*" mode="spine">
+  <xsl:template match="*" mode="resources">
     <xsl:apply-templates select="*"/>
   </xsl:template>
 
