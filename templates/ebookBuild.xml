@@ -94,7 +94,9 @@
                    byline="true"
                    match="$"
                    replace="&lt;/file&gt;"/>
-    <echo file="epub.contents.xml">&lt;epub&gt;
+    <echo file="epub.contents.xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;!DOCTYPE outline SYSTEM "section.dtd" &gt;
+    &lt;epub&gt;
     &lt;sem&gt;${sem}&lt;/sem&gt;
     &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
     &lt;author&gt;${courseName}&lt;/author&gt;
