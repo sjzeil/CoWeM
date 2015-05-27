@@ -55,6 +55,7 @@
     <targetfileset file="course.info.tex"/>
   </dependset>    
   <available property="course.info.tex.exists" file="course.info.tex"/>
+  <available property="section.dtd.exists" file="section.dtd"/>
 
   <property name="proto.styles.dir" location="${coursePrototype}/styles"/>
   <property name="proto.graphics.dir" location="${coursePrototype}/graphics"/>
@@ -80,8 +81,13 @@
     </sync>
   </target>
 
+  <target name="gensection.dtd" 
+		  unless="section.dtd.exists">
+  	<echo file="section.dtd"> </echo>
+  </target>
+	
   <target name="courseSetup" 
-	  depends="syncFromPrototype" 
+	  depends="syncFromPrototype,gensection.dtd" 
 	  unless="course.info.tex.exists">
     <copy file="templates/course.info.tex" toFile="course.info.tex">
       <filterset>
