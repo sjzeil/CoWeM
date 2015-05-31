@@ -2,7 +2,7 @@
     
 
     <property name="imscc.name" value="${courseName}.imscc"/>
-    <property name="imscc.webcontent.dir" value="imscc/${courseName}"/>
+    <property name="imscc.webcontent.dir" value="imscc/webcontent"/>
 
     	
     <available property="imscc.requested" file="Directory/outline/imscc.requested"/>
@@ -102,16 +102,18 @@
          <concat destfile="imscc.contents.xml" append="yes">
    	         <filelist dir="." files="imscc.contents"/> 
          </concat>
-         <echo file="imscc.contents.xml" append="true">&lt;/files&gt;</echo>
-         <concat destfile="epub.contents.xml" append="true">
-   	          <fileset dir="Directory/outline" includes="outline.xml"/>
-   	          <filterchain>
-   	              <headfilter lines="-1" skip="1"/>
-   	          </filterchain>
-         </concat>
-         <concat destfile="imscc.contents.xml" append="true">
-   	         <fileset dir="Directory/outline" includes="titleTable.xml"/>
-         </concat>
+         <echo file="imscc.contents.xml" append="true">&lt;/files&gt;
+    	    &lt;!--
+    	 </echo>
+    	 <concat destfile="imscc.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="outline.xml"/>
+    	 </concat>
+    	 <concat destfile="imscc.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="titleTable.xml"/>
+    	 </concat>
+    	 <replace file="imscc.contents.xml" 
+    	          token="&lt;outline&gt;" 
+    	          value="--&gt; &lt;outline&gt;"/>
          <echo file="imscc.contents.xml" append="true">&lt;/imscc&gt;</echo>
          
          <xslt in="imscc.contents.xml"

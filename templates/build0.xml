@@ -28,6 +28,7 @@
   -->
 
   <import file="${coursePrototype}/templates/ebookBuild.xml"/>
+  <import file="${coursePrototype}/templates/imsccBuild.xml"/>
 
   <macrodef name="iterate">
     <attribute name="target"/>
@@ -117,7 +118,7 @@
     <iterate target="build"/>
   </target>
 
-  <target name="build"  depends="generateDocs,generateEbooks"
+  <target name="build"  depends="generateDocs,generateEbooks,generateIMSCC"
 	  description="Generate all documents and ebooks">
   </target>
 
