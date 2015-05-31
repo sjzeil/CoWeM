@@ -90,6 +90,13 @@
 	</organization>
       </organizations>
       <resources>
+	<resource identifier="webcontent0"
+	      type="webcontent" 
+	      href="webcontent/Directory/outline/index.html">
+	  <xsl:apply-templates 
+	      select="/imscc/files/file"
+	      mode="resources"/>
+	</resource >
 	<xsl:apply-templates select="/imscc/outline/topic" mode="resources"/>
       </resources>
     </manifest>
@@ -248,9 +255,12 @@
   <xsl:template match="item" mode="resources">
     <xsl:variable name="itemID" select="generate-id()"/>
     <resource identifier="{concat('res',$itemID)}" 
-	      type="webcontent">
+	      >
       <xsl:choose>
 	<xsl:when test="@targetdoc">
+	  <xsl:attribute name="type">
+	    <xsl:text>webcontent</xsl:text>
+	  </xsl:attribute>
 	  <xsl:attribute name="href">
 	    <xsl:value-of select="concat('webcontent/Public/',@targetdoc, '/index.html')"/>
 	  </xsl:attribute>
@@ -261,6 +271,9 @@
 	</xsl:when>
 
 	<xsl:when test="@target">
+	  <xsl:attribute name="type">
+	    <xsl:text>webcontent</xsl:text>
+	  </xsl:attribute>
 	  <xsl:attribute name="href">
 	    <xsl:value-of select="concat('webcontent/Public/',@target, '/index.html')"/>
 	  </xsl:attribute>
@@ -271,6 +284,9 @@
 	</xsl:when>
 
 	<xsl:when test="@assignment">
+	  <xsl:attribute name="type">
+	    <xsl:text>webcontent</xsl:text>
+	  </xsl:attribute>
 	  <xsl:attribute name="href">
 	    <xsl:value-of select="concat('Protected/Assts/',@assignment, '.mmd.html')"/>
 	  </xsl:attribute>
@@ -281,6 +297,9 @@
 	</xsl:when>
 
 	<xsl:when test="starts-with(@href, '../../')">
+	  <xsl:attribute name="type">
+	    <xsl:text>webcontent</xsl:text>
+	  </xsl:attribute>
 	  <xsl:attribute name="href">
 	    <xsl:value-of select="concat('webcontent/', substring-after(@href, '../../'))"/>
 	  </xsl:attribute>
@@ -291,6 +310,25 @@
 	</xsl:when>
 
 	<xsl:otherwise>
+	  <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
+	  <xsl:attribute name="type">
+	    <xsl:text>imswl_xmlv1p1</xsl:text>
+	  </xsl:attribute>
+	  <file href="{$fileName}"/>
+	  <xsl:result-document 
+	      href="{$fileName}"
+	      format="resources">
+	    <webLink 
+		xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+	      <title>
+		<xsl:call-template name="kindPrefix"/>
+		<xsl:call-template name="getTitle"/>
+	      </title>
+	      <url href="{@href}"/>
+	    </webLink>
+	  </xsl:result-document>
 	</xsl:otherwise>
       </xsl:choose>
     </resource>
@@ -304,6 +342,7 @@
   <xsl:template name="listResourceFiles">
     <xsl:param name="directory" select="'garbage/'"/>
 
+    <!--
     <xsl:apply-templates 
 	select="/imscc/files/file[starts-with(text(), $directory)]"
 	mode="resources"/>
@@ -313,6 +352,7 @@
     <xsl:apply-templates 
 	select="/imscc/files/file[starts-with(text(), 'graphics/')]"
 	mode="resources"/>
+    -->
   </xsl:template>
 
 
