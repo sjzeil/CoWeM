@@ -23,6 +23,10 @@
 	      encoding="utf-8"
 	      indent="yes"
 	      /> 
+  <xsl:output name="textual"
+	      method="text"
+	      encoding="utf-8"
+	      /> 
   
   
   <!--
@@ -90,6 +94,26 @@
 	</organization>
       </organizations>
       <resources>
+	<resource identifier="course-settings" 
+		  type="associatedcontent/imscc_xmlv1p1/learning-application-resource"
+		  href="course_settings/canvas_export.txt">
+	<!--
+	  <file href="course_settings/course_settings.xml"/>
+	  <file href="course_settings/module_meta.xml"/>
+	  <file href="course_settings/assignment_groups.xml"/>
+	  <file href="course_settings/files_meta.xml"/>
+	  <file href="course_settings/events.xml"/>
+	  -->
+	  <file href="course_settings/canvas_export.txt"/>
+	</resource>
+	<xsl:result-document
+	    href="course_settings/canvas_export.txt"
+	    format="textual">
+	  <xsl:text>Q: What did the panda say when he was forced out of his natural habitat?
+A: This is un-BEAR-able
+</xsl:text>
+	</xsl:result-document>
+
 	<resource identifier="webcontent0"
 	      type="webcontent" 
 	      href="webcontent/Directory/outline/index.html">
@@ -100,6 +124,54 @@
 	<xsl:apply-templates select="/imscc/outline/topic" mode="resources"/>
       </resources>
     </manifest>
+    <xsl:result-document 
+	href="course_settings/course_settings.xml"
+	format="resources">
+      <course identifier="{generate-id()}" 
+	      xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd"
+	      >
+	<title>Imported matter</title>
+      </course>
+    </xsl:result-document>
+    <xsl:result-document 
+	href="course_settings/assignment-groups.xml"
+	format="resources">
+      <assignmentGroups 
+	  xmlns="http://canvas.instructure.com/xsd/cccv1p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	  xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd"
+	  >
+	<assignmentGroup identifier="{generate-id()}">
+	  <title>Assignments</title>
+	  <position>1</position>
+	  <group_weight>0</group_weight>
+	</assignmentGroup>
+	<assignmentGroup identifier="{generate-id()}">
+	  <title>Assignments</title>
+	  <position>1</position>
+	  <group_weight>0</group_weight>
+	</assignmentGroup>
+      </assignmentGroups>
+    </xsl:result-document>
+    <xsl:result-document 
+	href="course_settings/files_meta.xml"
+	format="resources">
+      <fileMeta 
+	  xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	  xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd">
+      </fileMeta>
+    </xsl:result-document>
+    <xsl:result-document 
+	href="course_settings/module_meta.xml"
+	format="resources">
+      <modules 
+	  xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	  xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd">
+	<xsl:apply-templates select="/imscc/outline/topic" mode="modules"/>
+      </modules>
+    </xsl:result-document>
   </xsl:template>
 
 
@@ -128,6 +200,10 @@
 			 mode="resources"/>
   </xsl:template>
 
+  <xsl:template match="topic" mode="events">
+    <xsl:apply-templates select="topic | item | subject" 
+			 mode="events"/>
+  </xsl:template>
 
 
 
@@ -233,6 +309,10 @@
     <xsl:apply-templates select="item | subject" mode="resources"/>
   </xsl:template>
 
+  <xsl:template match="subject" mode="events">
+    <xsl:apply-templates select="item | subject" mode="events"/>
+  </xsl:template>
+
 
   <xsl:template match="item">
     <xsl:variable name="itemID" select="generate-id()"/>
@@ -332,6 +412,57 @@
 	</xsl:otherwise>
       </xsl:choose>
     </resource>
+  </xsl:template>
+
+  <xsl:template match="item" mode="events">
+    <xsl:variable name="itemID" select="generate-id()"/>
+    <xsl:if test="@date|@due">
+      <event xmlns="http://canvas.instructure.com/xsd/cccv1p0"
+	     identifier="{concat('event-',$itemID)}">
+	<title>
+	  <xsl:call-template name="getTitle"/>
+	</title>
+	<description>
+	  <xsl:value-of select="normalize-space(*|text())"/>
+	  <xsl:if test="@due != ''">
+	    <xsl:text> due</xsl:text>
+	  </xsl:if>
+	  <xsl:if test="@time != ''">
+	    <xsl:text> (</xsl:text>
+	    <xsl:value-of select="@date"/>
+	    <xsl:text>)</xsl:text>
+	  </xsl:if>
+	</description>
+	  
+	<xsl:choose>
+	  <xsl:when test="@enddate != ''">
+	    <start_at>
+	      <xsl:value-of select="concat(@date, 'T00:00:00')"/>
+	    </start_at>
+	    <end_at>
+	      <xsl:value-of select="concat(@enddate, 'T23:59:59')"/>
+	    </end_at>
+	  </xsl:when>
+	  
+	  <xsl:when test="@date != ''">
+	    <start_at>
+	      <xsl:value-of select="concat(@date, 'T00:00:00')"/>
+	    </start_at>
+	    <end_at>
+	      <xsl:value-of select="concat(@date, 'T23:59:59')"/>
+	    </end_at>
+	  </xsl:when>
+	  <xsl:when test="@due != ''">
+	    <start_at>
+	      <xsl:value-of select="concat(@date, 'T23:59:58')"/>
+	    </start_at>
+	    <end_at>
+	      <xsl:value-of select="concat(@date, 'T23:59:59')"/>
+	    </end_at>
+	  </xsl:when>
+	</xsl:choose>
+      </event>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="file" mode="resources">
