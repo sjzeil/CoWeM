@@ -97,13 +97,11 @@
 	<resource identifier="course-settings" 
 		  type="associatedcontent/imscc_xmlv1p1/learning-application-resource"
 		  href="course_settings/canvas_export.txt">
-	<!--
 	  <file href="course_settings/course_settings.xml"/>
 	  <file href="course_settings/module_meta.xml"/>
 	  <file href="course_settings/assignment_groups.xml"/>
 	  <file href="course_settings/files_meta.xml"/>
 	  <file href="course_settings/events.xml"/>
-	  -->
 	  <file href="course_settings/canvas_export.txt"/>
 	</resource>
 	<xsl:result-document
@@ -205,6 +203,31 @@ A: This is un-BEAR-able
 			 mode="events"/>
   </xsl:template>
 
+  <xsl:template match="topic" mode="modules">
+    <xsl:choose>
+      <xsl:when test="item | subject">
+	<xsl:variable name="topicID" select="generate-id()"/>
+	<module identifier="{$topicID}">
+	  <title>
+	    <xsl:call-template name="getTitle"/>
+	    <xsl:call-template name="dateAttributes"/>
+	  </title>
+	  <workflow_state>active</workflow_state>
+	  <position>
+	    <xsl:value-of select="1 + count(preceding-sibling::topic)"/>
+	  </position>
+	  <require_sequential_progress>false</require_sequential_progress>
+	  <items>
+	    <xsl:apply-templates select="description" mode="modules"/>
+	    <xsl:apply-templates select="item | subject" mode="modules"/>
+	  </items>
+	</module>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:apply-templates select="topic" mode="modules"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 
 
   <xsl:template match="description">
@@ -216,7 +239,6 @@ A: This is un-BEAR-able
       <title>Overview</title>
     </item>
   </xsl:template>
-
 
 
   <xsl:template match="description" mode="resources">
@@ -293,6 +315,20 @@ A: This is un-BEAR-able
     <xsl:copy-of select="."/>
   </xsl:template>
 
+  <xsl:template match="description" mode="modules">
+    <xsl:variable name="descriptionID" select="generate-id()"/>
+    <item identifier="{$descriptionID}">
+      <content_type>Attachment</content_type>
+      <title>Overview</title>
+      <workflow_state>active</workflow_state>
+      <identifierref>
+	<xsl:value-of select="concat('res',$descriptionID)"/>
+      </identifierref>
+      <position>0</position>
+      <new_tab></new_tab>
+      <indent>1</indent>
+    </item>
+  </xsl:template>
 
   <xsl:template match="subject">
     <xsl:variable name="subjectID" select="generate-id()"/>
@@ -304,7 +340,37 @@ A: This is un-BEAR-able
     </item>
     <xsl:apply-templates select="item | subject"/>
   </xsl:template>
+
+
+  <xsl:template match="subject"  mode="modules">
+    <xsl:variable name="subjectID" select="generate-id()"/>
+    <item identifier="{$subjectID}">
+      <content_type>ContextModuleSubHeader</content_type>
+      <title>
+	<xsl:call-template name="getTitle"/>
+	<xsl:call-template name="dateAttributes"/>
+      </title>
+      <workflow_state>active</workflow_state>
+      <position>
+	<xsl:variable name="count1"
+		      select="count(preceding::subject | preceding::topic | ancestor::subject | ancestor::topic | preceding::item)"/>
+	<xsl:variable name="count2"
+		  select="count(ancestor::topic/preceding::subject | ancestor::topic/preceding::topic | ancestor::topic | ancestor::topic/preceding::item)"/>
+	<xsl:message>
+	  <xsl:text>position calc </xsl:text>
+	  <xsl:value-of select="$count1"/>
+	  <xsl:text> </xsl:text>
+	  <xsl:value-of select="$count2"/>
+	</xsl:message>
+	<xsl:value-of select="$count1 - $count2 + 1"/>
+      </position>
+      <new_tab></new_tab>
+      <indent>1</indent>
+    </item>
+    <xsl:apply-templates select="item | subject" mode="modules"/>
+  </xsl:template>
   	  
+
   <xsl:template match="subject" mode="resources">
     <xsl:apply-templates select="item | subject" mode="resources"/>
   </xsl:template>
@@ -330,6 +396,53 @@ A: This is un-BEAR-able
     </item>
   </xsl:template>
 
+
+  <xsl:template match="item" mode="modules">
+    <xsl:variable name="itemID" select="generate-id()"/>
+	<xsl:variable 
+	    name="count1"
+	    select="count(preceding::subject | preceding::topic | ancestor::subject | ancestor::topic | preceding::item)"/>
+	<xsl:variable 
+	    name="count2"
+	    select="count(ancestor::topic/preceding::subject | ancestor::topic/preceding::topic | ancestor::topic | ancestor::topic/preceding::item)"/>
+    <xsl:message>
+      <xsl:text>item position calc </xsl:text>
+      <xsl:value-of select="count1"/>
+      <xsl:text> </xsl:text>
+      <xsl:value-of select="$count2"/>
+    </xsl:message>
+
+    <item identifier="{$itemID}">
+      <title>
+	<xsl:call-template name="kindPrefix"/>
+	<xsl:call-template name="getTitle"/>
+      </title>
+      <workflow_state>active</workflow_state>
+      <position>
+	<xsl:value-of select="$count1 - $count2 + 1"/>
+      </position>
+      <indent>1</indent>
+      <identifierref>
+	<xsl:value-of select="concat('res',$itemID)"/>
+      </identifierref>
+      <xsl:choose>
+	<xsl:when test="@targetdoc | @target | @assignment">
+	  <content_type>Attachment</content_type>
+	  <new_tab></new_tab>
+	</xsl:when>
+
+	<xsl:when test="starts-with(@href, '../../')">
+	  <content_type>Attachment</content_type>
+	  <new_tab></new_tab>
+	</xsl:when>
+
+	<xsl:otherwise>
+	  <content_type>ExternalUrl</content_type>
+	  <new_tab>1</new_tab>
+	</xsl:otherwise>
+      </xsl:choose>
+    </item>
+  </xsl:template>
 
 
   <xsl:template match="item" mode="resources">
