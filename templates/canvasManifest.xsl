@@ -104,26 +104,20 @@
 	  <file href="course_settings/events.xml"/>
 	  <file href="course_settings/canvas_export.txt"/>
 	</resource>
-	<xsl:result-document
-	    href="course_settings/canvas_export.txt"
-	    format="textual">
-	  <xsl:text>Q: What did the panda say when he was forced out of his natural habitat?
-A: This is un-BEAR-able
-</xsl:text>
-	</xsl:result-document>
 
-	<!--
-	<resource identifier="webcontent0"
-	      type="webcontent" 
-	      href="web_resources/Directory/outline/index.html">
-	  <xsl:apply-templates 
-	      select="/imscc/files/file"
-	      mode="resources"/>
-	</resource >
-	-->
 	<xsl:apply-templates select="/imscc/outline/topic" mode="resources"/>
+	<xsl:apply-templates 
+	    select="/imscc/files/file"
+	    mode="resources"/>
       </resources>
     </manifest>
+    <xsl:result-document
+	href="course_settings/canvas_export.txt"
+	format="textual">
+      <xsl:text>Q: What did the panda say when he was forced out of his natural habitat?
+A: This is un-BEAR-able
+</xsl:text>
+    </xsl:result-document>
     <xsl:result-document 
 	href="course_settings/course_settings.xml"
 	format="resources">
@@ -172,6 +166,16 @@ A: This is un-BEAR-able
 	  xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd">
 	<xsl:apply-templates select="/imscc/outline/topic" mode="modules"/>
       </modules>
+    </xsl:result-document>
+    <xsl:result-document 
+	href="course_settings/events.xml"
+	format="resources">
+      <events 
+	  xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://canvas.instructure.com/xsd/cccv1p0 http://canvas.instructure.com/xsd/cccv1p0.xsd"
+	  >
+	<xsl:apply-templates select="/imscc/outline/topic" mode="events"/>
+      </events>
     </xsl:result-document>
   </xsl:template>
 
@@ -253,7 +257,6 @@ A: This is un-BEAR-able
 	      type="webcontent" 
 	      href="{$fileName}">
       <file href="{$fileName}"/>
-      <file href="web_resources/styles/modules.css"/>
     </resource>
 
     <xsl:result-document 
@@ -362,12 +365,6 @@ A: This is un-BEAR-able
 		      select="count(preceding::subject | preceding::topic | ancestor::subject | ancestor::topic | preceding::item)"/>
 	<xsl:variable name="count2"
 		  select="count(ancestor::topic/preceding::subject | ancestor::topic/preceding::topic | ancestor::topic | ancestor::topic/preceding::item)"/>
-	<xsl:message>
-	  <xsl:text>position calc </xsl:text>
-	  <xsl:value-of select="$count1"/>
-	  <xsl:text> </xsl:text>
-	  <xsl:value-of select="$count2"/>
-	</xsl:message>
 	<xsl:value-of select="$count1 - $count2 + 1"/>
       </position>
       <new_tab></new_tab>
@@ -411,12 +408,6 @@ A: This is un-BEAR-able
 	<xsl:variable 
 	    name="count2"
 	    select="count(ancestor::topic/preceding::subject | ancestor::topic/preceding::topic | ancestor::topic | ancestor::topic/preceding::item)"/>
-	<xsl:message>
-	  <xsl:text>item position calc </xsl:text>
-	  <xsl:value-of select="count1"/>
-	  <xsl:text> </xsl:text>
-	  <xsl:value-of select="$count2"/>
-	</xsl:message>
 
 	<item xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
 	      identifier="{$itemID}">
@@ -477,76 +468,68 @@ A: This is un-BEAR-able
   <xsl:template match="item" mode="resources">
     <xsl:variable name="itemID" select="generate-id()"/>
     <xsl:if test="@targetdoc | @target | @assignment | @href">
-      <resource identifier="{concat('res-',$itemID)}" >
-	<xsl:choose>
-	  <xsl:when test="@targetdoc">
-	    <xsl:attribute name="type">
-	      <xsl:text>webcontent</xsl:text>
-	    </xsl:attribute>
-	    <xsl:attribute name="href">
-	      <xsl:value-of select="concat('web_resources/Public/',@targetdoc, '/index.html')"/>
-	    </xsl:attribute>
-	    <xsl:choose>
-	      <xsl:when test="count(preceding::item[@targetdoc]) = 0">
-		<xsl:apply-templates 
-		    select="/imscc/files/file"
-		    mode="resources"/>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<xsl:call-template name="listResourceFiles">
-		  <xsl:with-param name="directory"
-				  select="concat('Public/',@targetdoc)"/>
-		</xsl:call-template>
-	      </xsl:otherwise>
-	    </xsl:choose>
-
-	  </xsl:when>
+      <xsl:choose>
+	<xsl:when test="@targetdoc">
+	  <xsl:variable 
+	      name="fileName"
+	      select="concat('web_resources/Public/',@targetdoc, '/index.html')"/>
+	  <resource 
+	      identifier="{concat('res-',$itemID)}"
+	      type="webcontent"
+	      href="{$fileName}"
+	      >
+	    <file href="{$fileName}"/>
+	  </resource>
+	</xsl:when>
 	  
-	  <xsl:when test="@target">
-	    <xsl:attribute name="type">
-	      <xsl:text>webcontent</xsl:text>
-	    </xsl:attribute>
-	    <xsl:attribute name="href">
-	      <xsl:value-of select="concat('web_resources/Public/',@target, '/index.html')"/>
-	    </xsl:attribute>
-	    <xsl:call-template name="listResourceFiles">
-	      <xsl:with-param name="directory"
-			      select="concat('Public/',@target)"/>
-	    </xsl:call-template>
+	<xsl:when test="@target">
+	  <xsl:variable 
+	      name="fileName"
+	      select="concat('web_resources/Public/',@target, '/index.html')"/>
+	  <resource 
+	      identifier="{concat('res-',$itemID)}"
+	      type="webcontent"
+	      href="{$fileName}"
+	      >
+	    <file href="{$fileName}"/>
+	  </resource>
 	  </xsl:when>
 	  
 	  <xsl:when test="@assignment">
-	    <xsl:attribute name="type">
-	      <xsl:text>webcontent</xsl:text>
-	    </xsl:attribute>
-	    <xsl:attribute name="href">
-	      <xsl:value-of select="concat('web_resources/Protected/Assts/',@assignment, '.mmd.html')"/>
-	    </xsl:attribute>
-	    <xsl:call-template name="listResourceFiles">
-	      <xsl:with-param name="directory"
-			      select="'Protected/Assts'"/>
-	    </xsl:call-template>
+	    <xsl:variable 
+		name="fileName"
+		select="concat('web_resources/Public/',@target, '/index.html')"/>
+	    <resource 
+		identifier="{concat('res-',$itemID)}"
+		type="webcontent"
+		href="{$fileName}"
+		>
+	      <file href="{$fileName}"/>
+	    </resource>
 	  </xsl:when>
 	  
 	  <xsl:when test="starts-with(@href, '../../')">
-	    <xsl:attribute name="type">
-	      <xsl:text>webcontent</xsl:text>
-	    </xsl:attribute>
-	    <xsl:attribute name="href">
-	      <xsl:value-of select="concat('web_resources/', substring-after(@href, '../../'))"/>
-	    </xsl:attribute>
-	    <xsl:call-template name="listResourceFiles">
-	      <xsl:with-param name="directory"
-			      select="substring-after(@href, '../../')"/>
-	    </xsl:call-template>
+	    <xsl:variable 
+		name="fileName"
+		select="concat('web_resources/', substring-after(@href, '../../'))"/>
+	    <resource 
+		identifier="{concat('res-',$itemID)}"
+		type="webcontent"
+		href="{$fileName}"
+		>
+	      <file href="{$fileName}"/>
+	    </resource>
 	  </xsl:when>
-	  
+
 	  <xsl:when test="@href != ''">
 	    <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
-	    <xsl:attribute name="type">
-	      <xsl:text>imswl_xmlv1p1</xsl:text>
-	    </xsl:attribute>
-	    <file href="{$fileName}"/>
+	    <resource 
+		identifier="{concat('res-',$itemID)}"
+		type="imswl_xmlv1p1"
+		href="{$fileName}"
+		>
+	      <file href="{$fileName}"/>
+	    </resource>
 	    <xsl:result-document 
 		href="{$fileName}"
 		format="resources">
@@ -562,8 +545,7 @@ A: This is un-BEAR-able
 	      </webLink>
 	    </xsl:result-document>
 	  </xsl:when>
-	</xsl:choose>
-      </resource>
+      </xsl:choose>
     </xsl:if>
   </xsl:template>
 
@@ -574,43 +556,70 @@ A: This is un-BEAR-able
 	     identifier="{concat('event-',$itemID)}">
 	<title>
 	  <xsl:call-template name="getTitle"/>
+	  <xsl:if test="@enddate != ''">
+	    <xsl:call-template name="dateAttributes"/>
+	  </xsl:if>
 	</title>
 	<description>
-	  <xsl:value-of select="normalize-space(*|text())"/>
-	  <xsl:if test="@due != ''">
-	    <xsl:text> due</xsl:text>
-	  </xsl:if>
-	  <xsl:if test="@time != ''">
-	    <xsl:text> (</xsl:text>
-	    <xsl:value-of select="@date"/>
-	    <xsl:text>)</xsl:text>
-	  </xsl:if>
+	  details
 	</description>
 	  
 	<xsl:choose>
 	  <xsl:when test="@enddate != ''">
 	    <start_at>
-	      <xsl:value-of select="concat(@date, 'T00:00:00')"/>
+	      <xsl:call-template name="isoDate">
+		<xsl:with-param name="date"
+				select="@date"/>
+		</xsl:call-template>
 	    </start_at>
 	    <end_at>
-	      <xsl:value-of select="concat(@enddate, 'T23:59:59')"/>
+	      <xsl:call-template name="isoEndDate">
+		<xsl:with-param name="date"
+				select="@enddate"/>
+		</xsl:call-template>
 	    </end_at>
 	  </xsl:when>
 	  
-	  <xsl:when test="@date != ''">
+	  <xsl:when test="@date != '' or @due != ''">
+	    <xsl:variable name="startDateTime">
+	      <xsl:choose>
+		<xsl:when test="@date != ''">
+		  <xsl:call-template name="isoDate">
+		    <xsl:with-param name="date" select="@date"/>
+		  </xsl:call-template>
+		</xsl:when>
+		<xsl:otherwise>
+		  <xsl:call-template name="isoEndDate">
+		    <xsl:with-param name="date" select="@due"/>
+		  </xsl:call-template>
+		</xsl:otherwise>
+	      </xsl:choose>
+	    </xsl:variable>
+
 	    <start_at>
-	      <xsl:value-of select="concat(@date, 'T00:00:00')"/>
+	      <xsl:value-of select="$startDateTime"/>
 	    </start_at>
+
+	    <xsl:variable name="oneSecondLater">
+	      <xsl:value-of 
+		  xmlns:date="java:java.util.Date"
+		  xmlns:sdf="java:java.text.SimpleDateFormat"
+		  select='sdf:format(
+                    sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+                    date:new(
+                      date:getTime(
+                        sdf:parse(
+                          sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+                          $startDateTime)) 
+                      + 1000))'/>
+	    </xsl:variable>
+	    <xsl:message>
+	      <xsl:value-of select="$startDateTime"/>
+	      <xsl:text> - </xsl:text>
+	      <xsl:value-of select="$oneSecondLater"/>
+	    </xsl:message>
 	    <end_at>
-	      <xsl:value-of select="concat(@date, 'T23:59:59')"/>
-	    </end_at>
-	  </xsl:when>
-	  <xsl:when test="@due != ''">
-	    <start_at>
-	      <xsl:value-of select="concat(@date, 'T23:59:58')"/>
-	    </start_at>
-	    <end_at>
-	      <xsl:value-of select="concat(@date, 'T23:59:59')"/>
+	      <xsl:value-of select="$oneSecondLater"/>
 	    </end_at>
 	  </xsl:when>
 	</xsl:choose>
@@ -619,76 +628,21 @@ A: This is un-BEAR-able
   </xsl:template>
 
   <xsl:template match="file" mode="resources">
-    <file href="{concat('web_resources/', text())}"
-	  />
+    <resource
+	type="webcontent"
+	identifier="{concat('file-',generate-id())}"
+	href="{concat('web_resources/', text())}">
+      <file href="{concat('web_resources/', text())}"/>
+    </resource>
   </xsl:template>
 
   <xsl:template match="file" mode="files">
-    <!--
-    <file xmlns="http://canvas.instructure.com/xsd/cccv1p0">
-      <display_name>
-	<xsl:value-of select="concat('web_resources/', text())"/>
-      </display_name>
-      <identifier>
-	<xsl:value-of select="concat('file-', generate-id())"/>
-      </identifier>
-    </file>
-    -->
   </xsl:template>
 
   <xsl:template name="listResourceFiles">
     <xsl:param name="directory" select="'garbage/'"/>
 
-    <!--
-    <xsl:apply-templates 
-	select="/imscc/files/file[starts-with(text(), $directory)]"
-	mode="resources"/>
-    <xsl:apply-templates 
-	select="/imscc/files/file[starts-with(text(), 'styles/')]"
-	mode="resources"/>
-    <xsl:apply-templates 
-	select="/imscc/files/file[starts-with(text(), 'graphics/')]"
-	mode="resources"/>
-    -->
   </xsl:template>
-
-
-  <!-- <xsl:template match="item[@targetdoc != '']" mode="suppressed"> -->
-  <!--   <xsl:variable name="fileName"  -->
-  <!-- 		  select="concat(@targetdoc, '/', @targetdoc, '__epub.html')"/> -->
-  <!--   <xsl:variable name="fileID"  -->
-  <!-- 		  select="translate(encode-for-uri($fileName), '%', '_')"/> -->
-  <!--   <opf:item id="{$fileID}"  -->
-  <!-- 	      href="{$fileName}"  -->
-  <!-- 	      media-type="application/xhtml+xml"/> -->
-  <!--   <xsl:if test="count(/epub/files/file[text() = $fileName]) = 0"> -->
-  <!--     <\!- - This file does not exist. May be lecture notes that have -->
-  <!-- 	   not yet been written, or that were not built for epub -->
-  <!-- 	   output. -\-> -->
-  <!--     <xsl:result-document href="{$fileName}" method="xhtml">  -->
-  <!-- 	<html> -->
-  <!-- 	  <head> -->
-  <!-- 	    <title> -->
-  <!-- 	      <xsl:call-template name="getTitle"> -->
-  <!-- 		<xsl:with-param name="doc" select="@targetdoc"/> -->
-  <!-- 	      </xsl:call-template> -->
-  <!-- 	    </title> -->
-  <!-- 	  </head> -->
-  <!-- 	  <body> -->
-  <!-- 	    <h1> -->
-  <!-- 	      <xsl:call-template name="getTitle"> -->
-  <!-- 		<xsl:with-param name="doc" select="@targetdoc"/> -->
-  <!-- 	      </xsl:call-template> -->
-  <!-- 	    </h1> -->
-  <!-- 	    <h2>(place holder)</h2> -->
-  <!-- 	    <p> -->
-  <!-- 	      This section is currently unavailable. -->
-  <!-- 	    </p> -->
-  <!-- 	  </body> -->
-  <!-- 	</html> -->
-  <!--     </xsl:result-document> -->
-  <!--   </xsl:if> -->
-  <!-- </xsl:template> -->
 
 
 
@@ -765,7 +719,7 @@ A: This is un-BEAR-able
 	  <xsl:with-param name="date" select="@date"/>
 	</xsl:call-template>
 	<xsl:text> - </xsl:text>
-	<xsl:call-template name="formatDate">
+	<xsl:call-template name="formatEndDate">
 	  <xsl:with-param name="date" select="@enddate"/>
 	</xsl:call-template>
 	<xsl:text>)</xsl:text>
@@ -787,7 +741,7 @@ A: This is un-BEAR-able
     </xsl:choose>
     <xsl:if test="@due != ''">
       <xsl:text>(Due: </xsl:text>
-      <xsl:call-template name="formatDate">
+      <xsl:call-template name="formatEndDate">
 	<xsl:with-param name="date" select="@due"/>
       </xsl:call-template>
       
@@ -800,33 +754,163 @@ A: This is un-BEAR-able
   </xsl:template>
 
 
+
   <xsl:template name="formatDate">
-    <xsl:param name="date" select="'2005-01-01'"/>
-
-    <xsl:variable name="year" select="substring-before($date, '-')"/>
-    <xsl:variable name="afterYear" select="substring-after($date, '-')"/>
-
-    <xsl:variable name="month" select="substring-before($afterYear, '-')"/>
-    <xsl:variable name="afterMonth" select="substring-after($afterYear, '-')"/>
-
-    <xsl:variable name="day">
-      <xsl:choose>
-        <xsl:when test="contains($afterMonth, 'T')">
-          <xsl:value-of select="substring-before($afterMonth, 'T')"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="$afterMonth"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-
-    <xsl:value-of select="$month"/>
-    <xsl:text>/</xsl:text>
-    <xsl:value-of select="$day"/>
-    <xsl:text>/</xsl:text>
-    <xsl:value-of select="$year"/>
-
+    <xsl:param name="date" select="'2005-01-01T13:00:00-05:00'"/>
+    <xsl:choose>
+      <xsl:when test="contains($date, 'T')">
+	<!-- Both a date and a time are indicated. -->
+	<xsl:variable name="timePart" select="substring-after($date, 'T')"/>
+	<xsl:choose>
+	  <xsl:when test="contains(timePart, '-') or contains(timePart, '+')">
+	    <!-- DateTime includes ISO time zone -->
+	    <xsl:value-of 
+		xmlns:date="java:java.util.Date"
+		xmlns:sdf="java:java.text.SimpleDateFormat"
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"),
+                           $date))'/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <!-- Time zone unspecified - use locale -->
+	    <xsl:value-of 
+		xmlns:date="java:java.util.Date"
+		xmlns:sdf="java:java.text.SimpleDateFormat"
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           $date))'/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+	<!-- only a date is given -->
+	<xsl:value-of 
+	    xmlns:date="java:java.util.Date"
+	    xmlns:sdf="java:java.text.SimpleDateFormat"
+	    select='sdf:format(
+                           sdf:new("MM/dd/yyyy"), 
+		           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+		                     concat($date, "T00:00:00")
+                                     )
+                           )'/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
+
+
+
+  <xsl:template name="formatEndDate">
+    <xsl:param name="date" select="'2005-01-01T23:59:59-05:00'"/>
+    <xsl:choose>
+      <xsl:when test="contains($date, 'T')">
+	<!-- Both a date and a time are indicated. -->
+	<xsl:variable name="timePart" select="substring-after($date, 'T')"/>
+	<xsl:choose>
+	  <xsl:when test="contains(timePart, '-') or contains(timePart, '+')">
+	    <!-- DateTime includes ISO time zone -->
+	    <xsl:value-of 
+		xmlns:date="java:java.util.Date"
+		xmlns:sdf="java:java.text.SimpleDateFormat"
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"),
+                           $date))'/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <!-- Time zone unspecified - use locale -->
+	    <xsl:value-of 
+		xmlns:date="java:java.util.Date"
+		xmlns:sdf="java:java.text.SimpleDateFormat"
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           $date))'/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+	<!-- only a date is given -->
+	<xsl:value-of 
+	    xmlns:date="java:java.util.Date"
+	    xmlns:sdf="java:java.text.SimpleDateFormat"
+	    select='sdf:format(sdf:new("MM/dd/yyyy"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           concat($date, "T23:59:59")))'/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+  <xsl:template name="isoDate">
+    <xsl:param name="date" select="'2005-01-01T13:00:00-05:00'"/>
+    <xsl:choose>
+      <xsl:when test="contains($date, 'T')">
+	<!-- Both a date and a time are indicated. -->
+	<xsl:variable name="timePart" select="substring-after($date, 'T')"/>
+	<xsl:choose>
+	  <xsl:when test="contains(timePart, '-') or contains(timePart, '+')">
+	    <!-- DateTime includes ISO time zone -->
+	    <xsl:value-of select="$date"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <!-- Time zone unspecified - use locale -->
+	    <xsl:value-of 
+		xmlns:date="java:java.util.Date"
+		xmlns:sdf="java:java.text.SimpleDateFormat"
+		select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           $date))'/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+	<!-- only a date is given -->
+	<xsl:value-of 
+	    xmlns:date="java:java.util.Date"
+	    xmlns:sdf="java:java.text.SimpleDateFormat"
+	    select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           concat($date, "T00:00:00")))'/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="isoEndDate">
+    <xsl:param name="date" select="'2005-01-01T13:00:00-05:00'"/>
+    <xsl:choose>
+      <xsl:when test="contains($date, 'T')">
+	<!-- Both a date and a time are indicated. -->
+	<xsl:variable name="timePart" select="substring-after($date, 'T')"/>
+	<xsl:choose>
+	  <xsl:when test="contains(timePart, '-') or contains(timePart, '+')">
+	    <!-- DateTime includes ISO time zone -->
+	    <xsl:value-of select="$date"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <!-- Time zone unspecified - use locale -->
+	    <xsl:value-of 
+		xmlns:date="java:java.util.Date"
+		xmlns:sdf="java:java.text.SimpleDateFormat"
+		select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           $date))'/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+	<!-- only a date is given -->
+	<xsl:value-of 
+	    xmlns:date="java:java.util.Date"
+	    xmlns:sdf="java:java.text.SimpleDateFormat"
+	    select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+                           sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
+                           concat($date, "T23:59:59")))'/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+
+
+
+
 
 
 </xsl:stylesheet>
