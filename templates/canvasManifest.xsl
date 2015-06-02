@@ -561,7 +561,52 @@ A: This is un-BEAR-able
 	  </xsl:if>
 	</title>
 	<description>
-	  details
+	  <!-- if there is a link associated with this item, 
+	       use the link in the calendar description
+	  -->
+	  <xsl:variable 
+	      name="descriptionPrefix">
+	    <xsl:text>&lt;p&gt;&lt;a class=" instructure_file_link" title="event details" href="</xsl:text>
+	  </xsl:variable>
+	  <xsl:variable 
+	      name="fileAreaDesignation"
+	      select="'%24IMS-CC-FILEBASE%24/'"/>
+	  <xsl:variable 
+	      name="descriptionSuffix">
+	    <xsl:text>?canvas_download=1&amp;amp;canvas_qs_wrap=1"&gt;event details&lt;/a&gt;&lt;/p&gt;</xsl:text>	  
+	  </xsl:variable>
+	  <xsl:choose>
+	    <xsl:when test="@targetdoc != ''">
+	      <xsl:value-of select="$descriptionPrefix"/>
+	      <xsl:value-of select="$fileAreaDesignation"/>
+	      <xsl:text>Public/@targetdoc/index.html</xsl:text>
+	      <xsl:value-of select="$descriptionSuffix"/>
+	    </xsl:when>
+	    <xsl:when test="@target != ''">
+	      <xsl:value-of select="$descriptionPrefix"/>
+	      <xsl:value-of select="$fileAreaDesignation"/>
+	      <xsl:text>Public/@target/index.html</xsl:text>
+	      <xsl:value-of select="$descriptionSuffix"/>
+	    </xsl:when>
+	    <xsl:when test="@assignment != ''">
+	      <xsl:value-of select="$descriptionPrefix"/>
+	      <xsl:value-of select="$fileAreaDesignation"/>
+	      <xsl:text>Protected/Assts/@targetdoc.mmd.html</xsl:text>
+	      <xsl:value-of select="$descriptionSuffix"/>
+	    </xsl:when>
+	    
+	    <xsl:when test="starts-with(@href, '../../')">
+	      <xsl:value-of select="$descriptionPrefix"/>
+	      <xsl:value-of select="$fileAreaDesignation"/>
+	      <xsl:value-of select="substring-after(@href,'../../')"/>
+	    </xsl:when>
+	    
+	    <xsl:when test="@href != ''">
+	      <xsl:text>&lt;p&gt;&lt;a title="event details" href="</xsl:text>
+	      <xsl:value-of select="@href"/>
+	      <xsl:text>"&gt;details&lt;a&gt;&lt;/p&gt;</xsl:text>
+	    </xsl:when>
+	  </xsl:choose>
 	</description>
 	  
 	<xsl:choose>
@@ -613,11 +658,13 @@ A: This is un-BEAR-able
                           $startDateTime)) 
                       + 1000))'/>
 	    </xsl:variable>
+	    <!--
 	    <xsl:message>
 	      <xsl:value-of select="$startDateTime"/>
 	      <xsl:text> - </xsl:text>
 	      <xsl:value-of select="$oneSecondLater"/>
 	    </xsl:message>
+	    -->
 	    <end_at>
 	      <xsl:value-of select="$oneSecondLater"/>
 	    </end_at>
@@ -778,7 +825,7 @@ A: This is un-BEAR-able
 		xmlns:sdf="java:java.text.SimpleDateFormat"
 		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
-                           $date))'/>
+                           concat($date,":00")))'/>
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:when>
@@ -822,7 +869,7 @@ A: This is un-BEAR-able
 		xmlns:sdf="java:java.text.SimpleDateFormat"
 		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
-                           $date))'/>
+                           concat($date,":00")))'/>
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:when>
@@ -857,7 +904,7 @@ A: This is un-BEAR-able
 		xmlns:sdf="java:java.text.SimpleDateFormat"
 		select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
-                           $date))'/>
+                           concat($date,":00")))'/>
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:when>
@@ -891,7 +938,7 @@ A: This is un-BEAR-able
 		xmlns:sdf="java:java.text.SimpleDateFormat"
 		select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
-                           $date))'/>
+                           concat($date,":00")))'/>
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:when>
