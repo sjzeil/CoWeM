@@ -261,7 +261,7 @@ A: This is un-BEAR-able
 
     <xsl:result-document 
 	href="{$fileName}"
-	format="resources">
+	format="resources" xmlns="">
       <html>
 	<head>
 	  <title>
@@ -814,7 +814,7 @@ A: This is un-BEAR-able
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"),
                            $date))'/>
 	  </xsl:when>
@@ -823,7 +823,7 @@ A: This is un-BEAR-able
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date,":00")))'/>
 	  </xsl:otherwise>
@@ -858,7 +858,7 @@ A: This is un-BEAR-able
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"),
                            $date))'/>
 	  </xsl:when>
@@ -867,7 +867,7 @@ A: This is un-BEAR-able
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mm aa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date,":00")))'/>
 	  </xsl:otherwise>
