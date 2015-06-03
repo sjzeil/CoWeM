@@ -1,0 +1,285 @@
+  <project xmlns:antcontrib="antlib:net.sf.antcontrib">
+    
+
+    <property name="imscc.name" value="${courseName}.imscc"/>
+    <property name="imscc.webcontent.dir" value="imscc/webcontent"/>
+    <property name="canvas.name" value="${courseName}.canvas.imscc"/>
+    <property name="canvas.webcontent.dir" value="canvas/web_resources"/>
+
+    	
+    <available property="imscc.requested" file="Directory/outline/imscc.requested"/>
+    <available property="canvas.requested" file="Directory/outline/canvas.requested"/>
+    	    	
+    <uptodate property="imscc.content.uptodate" 
+	      targetfile="${imscc.name}"
+	      >
+      <srcfiles dir="." includes="**/*.md"/>
+	  <srcfiles dir="." includes="**/*.mmd"/>
+	  <srcfiles dir="Directory/outline" includes="outline.xml"/>
+    </uptodate>
+
+    <uptodate property="canvas.content.uptodate" 
+	      targetfile="${canvas.name}"
+	      >
+      <srcfiles dir="." includes="**/*.md"/>
+	  <srcfiles dir="." includes="**/*.mmd"/>
+	  <srcfiles dir="Directory/outline" includes="outline.xml"/>
+    </uptodate>
+
+
+    <target name="debugimscc">
+      <!--
+      <echo>imscc.requested ${imscc.requested}</echo>
+      <echo>imscc.content.uptodate ${imscc.content.uptodate}</echo>
+      -->
+    </target>
+
+
+    <target name="genIMSCCWebContent" depends="debugimscc,generateDocs" 
+    	if="imscc.requested"
+	    unless="imscc.content.uptodate">
+      <echo>building the IMS Course Cartridge ${imscc.name}</echo>
+      <delete file="${imscc.name}"/>
+      <delete dir="imscc"/>
+      <mkdir dir="${imscc.webcontent.dir}"/>
+      <copy todir="${imscc.webcontent.dir}">
+      		<fileset dir=".">
+      	      <include name="Directory/**/*"/>
+        	  <include name="graphics/**/*"/>
+  	          <include name="Protected/**/*"/>
+    	      <include name="Public/**/*"/>
+      	      <include name="styles/**/*"/>
+      		  <exclude name="epub/**/*"/>
+      		  <exclude name="**/*__epub*"/>
+      		  <exclude name="**/*~"/>
+      		  <exclude name="**/*.md"/>
+      		  <exclude name="**/build.xml"/>
+      		  <exclude name="**/*.aux"/>
+      		  <exclude name="**/*.fdb_latexmk"/>
+      		  <exclude name="**/*.fls"/>
+      		  <exclude name="**/*.log"/>
+      		  <exclude name="**/*.out"/>
+      		  <exclude name="**/*.toc"/>
+      		  <exclude name="**/*.nav"/>
+      		  <exclude name="**/*.snm"/>
+      		  <exclude name="**/*.vrb"/>
+      		  <exclude name="**/*.tex"/>
+      		  <exclude name="**/*.ltx"/>
+      		  <exclude name="**/*.4ct"/>
+      		  <exclude name="**/*.4tc"/>
+      		  <exclude name="**/*.idv"/>
+      		  <exclude name="**/*.dvi"/>
+      		  <exclude name="**/*.lg"/>
+      		  <exclude name="**/*.tmp"/>
+      		  <exclude name="**/*.xref"/>
+      		</fileset>
+      </copy>
+     </target>
+
+    <target name="genCanvasWebContent" depends="debugimscc,generateDocs" 
+    	if="canvas.requested"
+	    unless="canvas.content.uptodate">
+      <echo>building the Canvas Course Cartridge ${canvas.name}</echo>
+      <delete file="${canvas.name}"/>
+      <delete dir="canvas"/>
+      <mkdir dir="${canvas.webcontent.dir}"/>
+      <copy todir="${canvas.webcontent.dir}">
+      		<fileset dir=".">
+      	      <include name="Directory/**/*"/>
+        	  <include name="graphics/**/*"/>
+  	          <include name="Protected/**/*"/>
+    	      <include name="Public/**/*"/>
+      	      <include name="styles/**/*"/>
+      		  <exclude name="epub/**/*"/>
+      		  <exclude name="**/*__epub*"/>
+      		  <exclude name="**/*~"/>
+      		  <exclude name="**/*.md"/>
+      		  <exclude name="**/build.xml"/>
+      		  <exclude name="**/*.aux"/>
+      		  <exclude name="**/*.fdb_latexmk"/>
+      		  <exclude name="**/*.fls"/>
+      		  <exclude name="**/*.log"/>
+      		  <exclude name="**/*.out"/>
+      		  <exclude name="**/*.toc"/>
+      		  <exclude name="**/*.nav"/>
+      		  <exclude name="**/*.snm"/>
+      		  <exclude name="**/*.vrb"/>
+      		  <exclude name="**/*.tex"/>
+      		  <exclude name="**/*.ltx"/>
+      		  <exclude name="**/*.4ct"/>
+      		  <exclude name="**/*.4tc"/>
+      		  <exclude name="**/*.idv"/>
+      		  <exclude name="**/*.dvi"/>
+      		  <exclude name="**/*.lg"/>
+      		  <exclude name="**/*.tmp"/>
+      		  <exclude name="**/*.xref"/>
+      		</fileset>
+      </copy>
+     </target>
+
+
+    <target name="genIMSCCLearningApps" depends="generateDocs" 
+    	    if="imscc.requested"
+	        unless="imscc.content.uptodate"/> 
+        	
+    <target name="genCanvasLearningApps" depends="generateDocs" 
+    	    if="canvas.requested"
+	        unless="canvas.content.uptodate"/> 
+
+
+    <target name="genIMSCCManifest" 
+    	    depends="genIMSCCWebContent,genIMSCCLearningApps"
+    	    if="imscc.requested"
+    		unless="imscc.content.uptodate">
+         
+         <fileset id="imscc.contents.set" dir="${imscc.webcontent.dir}">
+   	         <include name="**/*"/>
+         </fileset>
+         <pathconvert pathsep="${line.separator}" 
+   		              property="imscc.contents" 
+   		              refid="imscc.contents.set">
+   	         <mapper>
+   	             <regexpmapper from="${imscc.webcontent.dir}/(.*)" to="\1"/>
+   	         </mapper>
+         </pathconvert>
+         <echo file="imscc.contents" append="false">${imscc.contents}</echo>
+         <replaceregexp file="imscc.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="^"
+   		     replace="&lt;file&gt;"/>
+         <replaceregexp file="imscc.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="$"
+   		     replace="&lt;/file&gt;"/>
+         <echo file="imscc.contents.xml">&lt;imscc&gt;
+         &lt;sem&gt;${sem}&lt;/sem&gt;
+         &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+         &lt;author&gt;${courseName}&lt;/author&gt;
+         &lt;courseName&gt;${courseName}&lt;/courseName&gt;
+         &lt;files&gt;
+         </echo>
+         <concat destfile="imscc.contents.xml" append="yes">
+   	         <filelist dir="." files="imscc.contents"/> 
+         </concat>
+         <echo file="imscc.contents.xml" append="true">&lt;/files&gt;
+    	    &lt;!--
+    	 </echo>
+    	 <concat destfile="imscc.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="outline.xml"/>
+    	 </concat>
+    	 <concat destfile="imscc.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="titleTable.xml"/>
+    	 </concat>
+    	 <replace file="imscc.contents.xml" 
+    	          token="&lt;outline&gt;" 
+    	          value="--&gt; &lt;outline&gt;"/>
+         <echo file="imscc.contents.xml" append="true">&lt;/imscc&gt;</echo>
+         
+         <xslt in="imscc.contents.xml"
+   	           out="imscc/imsmanifest.xml"
+   	           style="templates/imsccManifest.xsl"
+   	           >
+   	         <classpath location="templates/saxon.jar" />
+   	         <param name="doc" expression="imscc"/>
+   	         <param name="baseURL" expression="${baseurl}"/>
+         </xslt>
+         
+         
+    </target>
+    	
+    <target name="genCanvasManifest" 
+    	    depends="genCanvasWebContent,genCanvasLearningApps"
+    	    if="canvas.requested"
+    		unless="canvas.content.uptodate">
+         
+         <fileset id="canvas.contents.set" dir="${canvas.webcontent.dir}">
+   	         <include name="**/*"/>
+         </fileset>
+         <pathconvert pathsep="${line.separator}" 
+   		              property="canvas.contents" 
+   		              refid="canvas.contents.set">
+   	         <mapper>
+   	             <regexpmapper from="${canvas.webcontent.dir}/(.*)" to="\1"/>
+   	         </mapper>
+         </pathconvert>
+         <echo file="canvas.contents" append="false">${canvas.contents}</echo>
+         <replaceregexp file="canvas.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="^"
+   		     replace="&lt;file&gt;"/>
+         <replaceregexp file="canvas.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="$"
+   		     replace="&lt;/file&gt;"/>
+         <echo file="canvas.contents.xml">&lt;imscc&gt;
+         &lt;sem&gt;${sem}&lt;/sem&gt;
+         &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+         &lt;author&gt;${courseName}&lt;/author&gt;
+         &lt;courseName&gt;${courseName}&lt;/courseName&gt;
+         &lt;files&gt;
+         </echo>
+         <concat destfile="canvas.contents.xml" append="yes">
+   	         <filelist dir="." files="canvas.contents"/> 
+         </concat>
+         <echo file="canvas.contents.xml" append="true">&lt;/files&gt;
+    	    &lt;!--
+    	 </echo>
+    	 <concat destfile="canvas.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="outline.xml"/>
+    	 </concat>
+    	 <concat destfile="canvas.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="titleTable.xml"/>
+    	 </concat>
+    	 <replace file="canvas.contents.xml" 
+    	          token="&lt;outline&gt;" 
+    	          value="--&gt; &lt;outline&gt;"/>
+         <echo file="canvas.contents.xml" append="true">&lt;/imscc&gt;</echo>
+         
+         <xslt in="canvas.contents.xml"
+   	           out="canvas/imsmanifest.xml"
+   	           style="templates/canvasManifest.xsl"
+   	           >
+   	         <classpath location="templates/saxon.jar" />
+   	         <param name="doc" expression="canvas"/>
+   	         <param name="baseURL" expression="${baseurl}"/>
+         </xslt>
+         
+         
+    </target>
+
+
+    <target name="generateIMSCCFiles" depends="genIMSCCManifest"
+      		if="imscc.requested"
+      		unless="imscc.content.uptodate"
+      		  	> 
+        <delete file="${imscc.name}"/>
+    	<zip destfile="${imscc.name}"
+    		 basedir="imscc"/>
+
+        <!-- delete file="imscc.contents"/>
+        <delete file="imscc.contents.xml"/>
+        <delete dir="imscc"/ -->
+    </target>            
+
+    <target name="generateCanvasFiles" depends="genCanvasManifest"
+      		if="canvas.requested"
+      		unless="canvas.content.uptodate"
+      		  	> 
+        <delete file="${canvas.name}"/>
+    	<zip destfile="${canvas.name}"
+    		 basedir="canvas"/>
+
+        <!-- delete file="canvas.contents"/>
+        <delete file="canvas.contents.xml"/>
+        <delete dir="canvas"/ -->
+    </target>            
+
+    <target name="generateIMSCC" depends="generateIMSCCFiles,generateCanvasFiles"
+      		if="imscc.requested"
+      		unless="imscc.content.uptodate"/>
+
+</project>
