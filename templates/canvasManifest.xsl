@@ -386,11 +386,9 @@ A: This is un-BEAR-able
   <xsl:template match="item">
     <xsl:variable name="itemID" select="generate-id()"/>
     <item identifier="{$itemID}">
-      <xsl:if test="@href | @bblink | @target | @targetdoc | @assignment">
-	<xsl:attribute name="identifierref">
-	  <xsl:value-of select="concat('res-',$itemID)"/>
-	</xsl:attribute>
-      </xsl:if>
+      <xsl:attribute name="identifierref">
+	<xsl:call-template name="identifierref"/>
+      </xsl:attribute>
       <title>
 	<xsl:call-template name="kindPrefix"/>
 	<xsl:call-template name="getTitle"/>
@@ -423,21 +421,21 @@ A: This is un-BEAR-able
 
 	  <xsl:choose>
 	    <xsl:when test="@targetdoc | @target | @assignment">
+	      <identifierref>
+		<xsl:call-template name="identifierref"/>
+	      </identifierref>
 	      <content_type>Attachment</content_type>
 	      <new_tab></new_tab>
 	      <indent>1</indent>
-	      <identifierref>
-		<xsl:value-of select="concat('res-',$itemID)"/>
-	      </identifierref>
 	    </xsl:when>
 	    
 	    <xsl:when test="starts-with(@href, '../../')">
+	      <identifierref>
+		<xsl:call-template name="identifierref"/>
+	      </identifierref>
 	      <content_type>Attachment</content_type>
 	      <new_tab></new_tab>
 	      <indent>1</indent>
-	      <identifierref>
-		<xsl:value-of select="concat('res-',$itemID)"/>
-	      </identifierref>
 	    </xsl:when>
 	    
 	    <xsl:when test="@href != ''">
@@ -465,11 +463,46 @@ A: This is un-BEAR-able
   </xsl:template>
 
 
+  <xsl:template name="identifierref">
+    <xsl:variable name="itemID" select="generate-id()"/>
+    <xsl:choose>
+      <xsl:when test="@targetdoc">
+	<xsl:variable
+	    name="doc" 
+	    select="concat('Public/', @targetdoc, '/index.html')"/>
+	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
+      </xsl:when>
+      <xsl:when test="@target">
+	<xsl:variable
+	    name="doc" 
+	    select="concat('Public/', @target, '/index.html')"/>
+	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
+      </xsl:when>
+      <xsl:when test="@assignment">
+	<xsl:variable
+	    name="doc" 
+	    select="concat('Protected/Assts/', @assignment, '.mmd.html')"/>
+	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
+      </xsl:when>
+      <xsl:when test="starts-with(@href,'../../')">
+	<xsl:variable
+	    name="doc" 
+	    select="substring-after(@href, '../../')"/>
+	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
+      </xsl:when>
+      <xsl:when test="@href != ''">
+	<xsl:value-of select="concat('res-',$itemID)"/>
+      </xsl:when>
+    </xsl:choose>    
+  </xsl:template>
+
+
   <xsl:template match="item" mode="resources">
     <xsl:variable name="itemID" select="generate-id()"/>
     <xsl:if test="@targetdoc | @target | @assignment | @href">
       <xsl:choose>
 	<xsl:when test="@targetdoc">
+	  <!--
 	  <xsl:variable 
 	      name="fileName"
 	      select="concat('web_resources/Public/',@targetdoc, '/index.html')"/>
@@ -480,9 +513,11 @@ A: This is un-BEAR-able
 	      >
 	    <file href="{$fileName}"/>
 	  </resource>
+	  -->
 	</xsl:when>
 	  
 	<xsl:when test="@target">
+	  <!-- 
 	  <xsl:variable 
 	      name="fileName"
 	      select="concat('web_resources/Public/',@target, '/index.html')"/>
@@ -493,9 +528,11 @@ A: This is un-BEAR-able
 	      >
 	    <file href="{$fileName}"/>
 	  </resource>
+	  -->
 	  </xsl:when>
 	  
 	  <xsl:when test="@assignment">
+	    <!--
 	    <xsl:variable 
 		name="fileName"
 		select="concat('web_resources/Public/',@target, '/index.html')"/>
@@ -506,9 +543,11 @@ A: This is un-BEAR-able
 		>
 	      <file href="{$fileName}"/>
 	    </resource>
+	    -->
 	  </xsl:when>
 	  
 	  <xsl:when test="starts-with(@href, '../../')">
+	    <!--
 	    <xsl:variable 
 		name="fileName"
 		select="concat('web_resources/', substring-after(@href, '../../'))"/>
@@ -519,6 +558,7 @@ A: This is un-BEAR-able
 		>
 	      <file href="{$fileName}"/>
 	    </resource>
+	    -->
 	  </xsl:when>
 
 	  <xsl:when test="@href != ''">
@@ -557,6 +597,9 @@ A: This is un-BEAR-able
 	<title>
 	  <xsl:call-template name="getTitle"/>
 	  <xsl:if test="@enddate != ''">
+	    <xsl:call-template name="dateAttributes"/>
+	  </xsl:if>
+	  <xsl:if test="@date != '' and @due != ''">
 	    <xsl:call-template name="dateAttributes"/>
 	  </xsl:if>
 	</title>
@@ -625,6 +668,21 @@ A: This is un-BEAR-able
 	    </end_at>
 	  </xsl:when>
 	  
+	  <xsl:when test="@date != '' and @due != ''">
+	    <start_at>
+	      <xsl:call-template name="isoDate">
+		<xsl:with-param name="date"
+				select="@date"/>
+		</xsl:call-template>
+	    </start_at>
+	    <end_at>
+	      <xsl:call-template name="isoEndDate">
+		<xsl:with-param name="date"
+				select="@due"/>
+		</xsl:call-template>
+	    </end_at>
+	  </xsl:when>
+
 	  <xsl:when test="@date != '' or @due != ''">
 	    <xsl:variable name="startDateTime">
 	      <xsl:choose>
@@ -772,6 +830,20 @@ A: This is un-BEAR-able
 	<xsl:text>)</xsl:text>
       </xsl:when>
       
+      <xsl:when test="@date != '' and @due != ''">
+	<xsl:text> </xsl:text>
+	<xsl:text>(</xsl:text>
+	<xsl:call-template name="formatDate">
+	  <xsl:with-param name="date" select="@date"/>
+	</xsl:call-template>
+	<xsl:text> - </xsl:text>
+	<xsl:call-template name="formatEndDate">
+	  <xsl:with-param name="date" select="@due"/>
+	</xsl:call-template>
+	<xsl:text>)</xsl:text>
+      </xsl:when>
+
+
       <xsl:when test="@date != ''">
 	<xsl:text> </xsl:text>
 	<xsl:text>(</xsl:text>
