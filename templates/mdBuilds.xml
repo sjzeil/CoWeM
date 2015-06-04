@@ -244,6 +244,21 @@
   </target>
 
 
+  <available property="canvas.md.exists" file="${doc}__canvas.html"/>
+  <target name="md2canvas" unless="canvas.md.exists">
+    <preprocessMD format="canvas">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessMD>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__canvas.md"/>
+    </exec>
+    <postprocessMDHTML format="canvas"/>
+  </target>
+
+
   <available property="pages.md.exists" file="${doc}__pages.html"/>
   <target name="md2pages" unless="pages.md.exists">
     <preprocessMD format="pages">

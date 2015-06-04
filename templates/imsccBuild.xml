@@ -5,6 +5,7 @@
     <property name="imscc.webcontent.dir" value="imscc/webcontent"/>
     <property name="canvas.name" value="${courseName}.canvas.imscc"/>
     <property name="canvas.webcontent.dir" value="canvas/web_resources"/>
+    <property name="canvas.wiki.dir" value="canvas/wiki_content"/>
 
     	
     <available property="imscc.requested" file="Directory/outline/imscc.requested"/>
@@ -115,6 +116,14 @@
 	  <exclude name="**/*.lg"/>
 	  <exclude name="**/*.tmp"/>
 	  <exclude name="**/*.xref"/>
+	</fileset>
+      </copy>
+      <mkdir dir="${canvas.wiki.dir}"/>
+      <copy todir="${canvas.wiki.dir}" flatten="true">
+	<fileset dir=".">
+	  <include name="Directory/**/*__canvas.html"/>
+	  <include name="Protected/**/*__canvas.html"/>
+	  <include name="Public/**/*__canvas.html"/>
 	</fileset>
       </copy>
      </target>

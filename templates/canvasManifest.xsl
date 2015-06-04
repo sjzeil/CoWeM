@@ -453,7 +453,7 @@ A: This is un-BEAR-able
 	    <xsl:otherwise>
 	      <content_type>ContextModuleSubHeader</content_type>
 	      <new_tab></new_tab>
-	      <indent>0</indent>
+	      <indent>1</indent>
 	    </xsl:otherwise>
 
 
@@ -483,6 +483,16 @@ A: This is un-BEAR-able
 	    name="doc" 
 	    select="concat('Protected/Assts/', @assignment, '.mmd.html')"/>
 	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
+      </xsl:when>
+      <xsl:when test="ends-with(@href,'__canvas.html')">
+	<xsl:variable name="fileName">
+	  <xsl:call-template name="stripDirectories">
+	    <xsl:with-param name="path" select="@href"/>
+	  </xsl:call-template>
+	</xsl:variable>
+	<xsl:variable name="doc"
+		      select="substring-before($fileName, '__canvas.html')"/>
+	<xsl:value-of select="concat('wiki-', $doc)"/>
       </xsl:when>
       <xsl:when test="starts-with(@href,'../../')">
 	<xsl:variable
@@ -733,13 +743,50 @@ A: This is un-BEAR-able
   </xsl:template>
 
   <xsl:template match="file" mode="resources">
-    <resource
-	type="webcontent"
-	identifier="{concat('file-',generate-id())}"
-	href="{concat('web_resources/', text())}">
-      <file href="{concat('web_resources/', text())}"/>
-    </resource>
+    <xsl:choose>
+      <xsl:when test="ends-with(text(), '__canvas.html')">
+	<xsl:variable name="fileName">
+	  <xsl:call-template name="stripDirectories">
+	    <xsl:with-param name="path" select="text()"/>
+	  </xsl:call-template>
+	</xsl:variable>
+	<xsl:variable name="doc"
+		      select="substring-before($fileName, '__canvas.html')"/>
+	<xsl:variable name="wikiPage"
+		      select="concat('wiki_content/', $doc, '__canvas.html')"/>
+	<resource
+	    type="webcontent"
+	    identifier="{concat('wiki-', $doc)}"
+	    href="{$wikiPage}">
+	  <file href="{$wikiPage}"/>
+	</resource>	
+      </xsl:when>
+      <xsl:otherwise>
+	<resource
+	    type="webcontent"
+	    identifier="{concat('file-',generate-id())}"
+	    href="{concat('web_resources/', text())}">
+	  <file href="{concat('web_resources/', text())}"/>
+	</resource>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
+
+
+  <xsl:template name="stripDirectories">
+    <xsl:param name="path" select="foo/bar/baz.html"/>
+    <xsl:choose>
+      <xsl:when test="contains($path, '/')">
+	<xsl:call-template name="stripDirectories">
+	  <xsl:with-param name="path" select="substring-after($path, '/')"/>
+	</xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="$path"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 
   <xsl:template match="file" mode="files">
   </xsl:template>
