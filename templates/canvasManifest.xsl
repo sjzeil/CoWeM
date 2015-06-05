@@ -296,6 +296,9 @@ A: This is un-BEAR-able
 
   <xsl:template match="objectives" mode="generateDescription">
     <h2>Objectives</h2>
+    <p>
+      At the end of this module, students will be able to:
+    </p>
     <ol>
       <xsl:apply-templates select="*|text()" mode="generateDescription"/>
     </ol>
