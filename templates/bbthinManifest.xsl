@@ -180,7 +180,7 @@
   </xsl:template>
 
 
-  <xsl:template match="topic" mode="resources">
+  <xsl:template match="topic | subject" mode="resources">
     <xsl:variable name="topicID" select="generate-id()"/>
     <xsl:result-document 
 	href="{concat('res-', $topicID, '.dat')}"
@@ -578,15 +578,12 @@
 	</TITLE>
 	<TITLECOLOR value="#000000"/>
 	<BODY>
-	  <TEXT>
-	    <xsl:if test="normalize-space($linkHref) != ''">
-	      <xsl:text>&amp;lt;p&amp;gt;&amp;lt;a href="</xsl:text>
-	      <xsl:value-of select="escape-html-uri($linkHref)"/>
-	      <xsl:text>"&amp;lt;/a&amp;gt;(link)&amp;lt;/p&amp;gt;</xsl:text>
-	    </xsl:if>
-	  </TEXT>
+	  <TEXT/>
 	</BODY>
-	<DATES/>
+	<DATES>
+	  <START value=""/>
+	  <STOP value=""/>
+	</DATES>
 	<FLAGS>
 	  <ISAVAILABLE value="true"/>
 	  <ISFROMCARTRIDGE value="false"/>
@@ -602,9 +599,9 @@
 	  <ISGROUPCONTENT value="false"/>
 	  <ISSAMPLECONTENT value="false"/>
 	</FLAGS>
-	<CONTENTHANDLER value="resource/x-bb-document"/>
-	<RENDERTYPE value="REGULAR"/>
-	<URL value=""/>
+	<CONTENTHANDLER value="resource/x-bb-externallink"/>
+	<RENDERTYPE value="URL"/>
+	<URL value="{$linkHref}"/>
 	<VIEWMODE value="TEXT_ICON_ONLY"/>
 	<OFFLINENAME value=""/><OFFLINEPATH value=""/>
 	<LINKREF value=""/>
