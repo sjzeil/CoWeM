@@ -6,6 +6,8 @@
     <property name="canvas.name" value="${courseName}.canvas.imscc"/>
     <property name="canvas.webcontent.dir" value="canvas/web_resources"/>
     <property name="canvas.wiki.dir" value="canvas/wiki_content"/>
+    <property name="bbthin.name" value="${courseName}.bbthin.zip"/>
+    <property name="bbthin.webcontent.dir" value="bbthin/webcontent"/>
 
     	
     <available property="imscc.requested" file="Directory/outline/imscc.requested"/>
@@ -27,6 +29,15 @@
 	  <srcfiles dir="Directory/outline" includes="outline.xml"/>
     </uptodate>
 
+    <target name="bbthin.check" depends="generateDocs">
+      <available property="bbthin.requested" file="Directory/outline/bbthin.requested"/>
+      <uptodate property="bbthin.content.uptodate" 
+		targetfile="${bbthin.name}"
+		>
+	<srcfiles dir="Directory/outline" includes="outline.xml"/>
+      </uptodate>
+    </target>
+
 
     <target name="debugimscc">
       <!--
@@ -36,7 +47,7 @@
     </target>
 
 
-    <target name="genIMSCCWebContent" depends="debugimscc,generateDocs" 
+    <target name="genIMSCCWebContent" depends="debugimscc,bbthin.check" 
     	if="imscc.requested"
 	    unless="imscc.content.uptodate">
       <echo>building the IMS Course Cartridge ${imscc.name}</echo>
@@ -129,6 +140,53 @@
      </target>
 
 
+    <target name="genBBthinWebContent" depends="debugimscc,generateDocs" 
+    	if="bbthin.requested"
+	    unless="bbthin.content.uptodate">
+      <echo>building the BlackBoard thin export Cartridge ${bbthin.name}</echo>
+      <delete file="${bbthin.name}"/>
+      <delete dir="bbthin"/>
+      <mkdir dir="${bbthin.webcontent.dir}"/>
+      <!--
+      <copy todir="${bbthin.webcontent.dir}">
+	<fileset dir=".">
+	  <include name="**/*.epub"/>
+	  <include name="**/*.mobi"/>
+	  <include name="Directory/**/*"/>
+	  <include name="graphics/**/*"/>
+	  <include name="Protected/**/*"/>
+	  <include name="Public/**/*"/>
+	  <include name="styles/**/*"/>
+	  <exclude name="epub/**/*"/>
+	  <exclude name="**/*__epub*"/>
+	  <exclude name="**/*~"/>
+	  <exclude name="**/*.md"/>
+	  <exclude name="**/build.xml"/>
+	  <exclude name="**/*.aux"/>
+	  <exclude name="**/*.fdb_latexmk"/>
+	  <exclude name="**/*.fls"/>
+	  <exclude name="**/*.log"/>
+	  <exclude name="**/*.out"/>
+	  <exclude name="**/*.toc"/>
+	  <exclude name="**/*.nav"/>
+	  <exclude name="**/*.snm"/>
+	  <exclude name="**/*.vrb"/>
+	  <exclude name="**/*.tex"/>
+	  <exclude name="**/*.ltx"/>
+	  <exclude name="**/*.4ct"/>
+	  <exclude name="**/*.4tc"/>
+	  <exclude name="**/*.idv"/>
+	  <exclude name="**/*.dvi"/>
+	  <exclude name="**/*.lg"/>
+	  <exclude name="**/*.tmp"/>
+	  <exclude name="**/*.xref"/>
+	</fileset>
+      </copy>
+      -->
+     </target>
+
+
+
     <target name="genIMSCCLearningApps" depends="generateDocs" 
     	    if="imscc.requested"
 	        unless="imscc.content.uptodate"/> 
@@ -136,6 +194,10 @@
     <target name="genCanvasLearningApps" depends="generateDocs" 
     	    if="canvas.requested"
 	        unless="canvas.content.uptodate"/> 
+
+    <target name="genBBthinLearningApps" depends="generateDocs" 
+    	    if="bbthin.requested"
+	        unless="bbthin.content.uptodate"/> 
 
 
     <target name="genIMSCCManifest" 
@@ -263,6 +325,75 @@
     </target>
 
 
+    <target name="genBBthinManifest" 
+    	    depends="genBBthinWebContent,genBBthinLearningApps"
+    	    if="bbthin.requested"
+    		unless="bbthin.content.uptodate">
+         
+         <fileset id="bbthin.contents.set" dir="${bbthin.webcontent.dir}">
+   	         <include name="**/*"/>
+         </fileset>
+         <pathconvert pathsep="${line.separator}" 
+   		              property="bbthin.contents" 
+   		              refid="bbthin.contents.set">
+   	         <mapper>
+   	             <regexpmapper from="${bbthin.webcontent.dir}/(.*)" to="\1"/>
+   	         </mapper>
+         </pathconvert>
+         <echo file="bbthin.contents" append="false">${bbthin.contents}</echo>
+         <replaceregexp file="bbthin.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="^"
+   		     replace="&lt;file&gt;"/>
+         <replaceregexp file="bbthin.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="$"
+   		     replace="&lt;/file&gt;"/>
+         <echo file="bbthin.contents.xml">&lt;imscc&gt;
+         &lt;sem&gt;${sem}&lt;/sem&gt;
+         &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+         &lt;author&gt;${courseName}&lt;/author&gt;
+         &lt;courseName&gt;${courseName}&lt;/courseName&gt;
+         &lt;files&gt;
+         </echo>
+	 <!--
+         <concat destfile="bbthin.contents.xml" append="yes">
+   	         <filelist dir="." files="bbthin.contents"/> 
+         </concat>
+	 -->
+         <echo file="bbthin.contents.xml" append="true">&lt;/files&gt;
+    	    &lt;!--
+    	 </echo>
+    	 <concat destfile="bbthin.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="outline.xml"/>
+    	 </concat>
+    	 <concat destfile="bbthin.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="titleTable.xml"/>
+    	 </concat>
+    	 <replace file="bbthin.contents.xml" 
+    	          token="&lt;outline&gt;" 
+    	          value="--&gt; &lt;outline&gt;"/>
+         <echo file="bbthin.contents.xml" append="true">&lt;/imscc&gt;</echo>
+         
+         <xslt in="bbthin.contents.xml"
+   	           out="bbthin/imsmanifest.xml"
+   	           style="templates/bbthinManifest.xsl"
+   	           >
+   	         <classpath location="templates/saxon.jar" />
+   	         <param name="doc" expression="bbthin"/>
+   	         <param name="baseURL" expression="${baseurl}"/>
+         </xslt>
+         
+         
+    </target>
+
+
+
+
+
+
     <target name="generateIMSCCFiles" depends="genIMSCCManifest"
       		if="imscc.requested"
       		unless="imscc.content.uptodate"
@@ -274,6 +405,7 @@
         <!-- delete file="imscc.contents"/>
         <delete file="imscc.contents.xml"/>
         <delete dir="imscc"/ -->
+	<delete file="Directory/outline/imscc.requested"/>
     </target>            
 
     <target name="generateCanvasFiles" depends="genCanvasManifest"
@@ -287,10 +419,30 @@
         <!-- delete file="canvas.contents"/>
         <delete file="canvas.contents.xml"/>
         <delete dir="canvas"/ -->
+	<delete file="Directory/outline/canvas.requested"/>
     </target>            
 
-    <target name="generateIMSCC" depends="generateIMSCCFiles,generateCanvasFiles"
-      		if="imscc.requested"
-      		unless="imscc.content.uptodate"/>
+
+    <target name="generateBBthinFiles" depends="genBBthinManifest"
+      		if="bbthin.requested"
+      		unless="bbthin.content.uptodate"
+      		  	> 
+        <delete file="${bbthin.name}"/>
+    	<zip destfile="${bbthin.name}"
+    		 basedir="bbthin"/>
+
+        <!-- delete file="bbthin.contents"/>
+        <delete file="bbthin.contents.xml"/>
+        <delete dir="bbthin"/ -->
+	<delete file="Directory/outline/bbthin.requested"/>
+    </target>            
+
+
+
+
+    <target name="generateIMSCC" 
+	    depends="generateIMSCCFiles,generateCanvasFiles,generateBBthinFiles"
+	    if="imscc.requested"
+	    unless="imscc.content.uptodate"/>
 
 </project>
