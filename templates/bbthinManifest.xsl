@@ -111,6 +111,12 @@
 	  <URL value=""/>
 	  <TARGETTYPE value="CONTENT"/>
 	  <INTERNALHANDLE value="content"/>
+	  <DATES>
+	    <CREATED value=""/>
+	    <UPDATED value="{$now}"/>
+	    <START value=""/>
+	    <END value=""/>
+	  </DATES>
 	  <FLAGS>
 	    <LAUNCHINNEWWINDOW value="false"/>
 	    <ISENABLED value="true"/>
@@ -121,10 +127,15 @@
 	</COURSETOC>
     </xsl:result-document>
 
+    <xsl:variable name="tocContentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select="/imscc/outline"/>
+      </xsl:call-template>
+    </xsl:variable>
     <xsl:result-document 
 	href="res00002.dat"
 	format="resources">
-      <CONTENT id="{concat('content-', generate-id())}">
+      <CONTENT id="{$tocContentID}">
 	<TITLE value="--TOP--"/>
 	<TITLECOLOR value="#000000"/>
 	<BODY>
@@ -132,6 +143,10 @@
 	  <TYPE value="S"/>
 	</BODY>
 	<DATES>
+	  <CREATED value=""/>
+	  <UPDATED value="{$now}"/>
+	  <START value=""/>
+	  <END value=""/>
 	</DATES>
 	<FLAGS>
 	  <ISAVAILABLE value="true"/>
@@ -175,17 +190,40 @@
 	<xsl:call-template name="dateAttributes"/>
       </title>
       <xsl:apply-templates select="description"/>
-      <xsl:apply-templates select="item | subject"/>
+      <xsl:apply-templates select="topic | item | subject"/>
     </item>
   </xsl:template>
 
 
   <xsl:template match="topic | subject" mode="resources">
     <xsl:variable name="topicID" select="generate-id()"/>
+    <xsl:variable name="theTitle">
+      <xsl:call-template name="getTitle"/>
+      <xsl:text> </xsl:text>
+      <xsl:call-template name="dateAttributes"/>
+    </xsl:variable>
+    <resource
+	identifier="{concat('res-',$topicID)}"
+	bb:file="{concat('res-',$topicID,'.dat')}"
+	bb:title="{normalize-space($theTitle)}"
+	type="resource/x-bb-document"
+	xml:base="{concat('res-',$topicID)}"
+	/>
+    <xsl:variable name="contentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select="."/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="parentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select=".."/>
+      </xsl:call-template>
+    </xsl:variable>
+
     <xsl:result-document 
 	href="{concat('res-', $topicID, '.dat')}"
 	format="resources">
-      <CONTENT id="{concat('content-', $topicID)}">
+      <CONTENT id="{$contentID}">
 	<TITLE>
 	  <xsl:attribute name="value">
 	    <xsl:call-template name="getTitle"/>
@@ -198,7 +236,12 @@
 	  <TEXT/>
 	  <TYPE value="H"/>
 	</BODY>
-	<DATES/>
+	<DATES>
+	  <CREATED value=""/>
+	  <UPDATED value="{$now}"/>
+	  <START value=""/>
+	  <END value=""/>
+	</DATES>
 	<FLAGS>
 	  <ISAVAILABLE value="true"/>
 	  <ISFROMCARTRIDGE value="false"/>
@@ -221,7 +264,7 @@
 	<OFFLINENAME value=""/>
 	<OFFLINEPATH value=""/>
 	<LINKREF value=""/>
-	<PARENTID value="{concat('content-',generate-id(..))}"/>
+	<PARENTID value="{$parentID}"/>
 	<VERSION value="3"/>
 	<EXTENDEDDATA>
 	  <ENTRY key="HierarchyDisplay">None</ENTRY>
@@ -230,7 +273,7 @@
 	<FILES/>
       </CONTENT>
     </xsl:result-document>
-    <xsl:apply-templates select="topic | item | subject" mode="resources"/>
+    <xsl:apply-templates select="description | topic | item | subject" mode="resources"/>
   </xsl:template>
 
   <xsl:template match="topic" mode="events">
@@ -279,46 +322,75 @@
 
   <xsl:template match="description" mode="resources">
     <xsl:variable name="descriptionID" select="generate-id()"/>
+    <xsl:variable name="resourceID" select="concat('res-',$descriptionID)"/>
     <xsl:variable name="fileName" 
-		  select="concat('web_resources/Directory/outline/', $descriptionID, '__description.html')"/>
-    <resource identifier="{concat('res-',$descriptionID)}"
-	      type="webcontent" 
-	      href="{$fileName}">
-      <file href="{$fileName}"/>
+		  select="concat('res-', $descriptionID, '.dat')"/>
+    <resource identifier="{$resourceID}"
+	      bb:title="Overview"
+	      type="resource/x-bb-document" 
+	      bb:file="{$resourceID}"
+	      xml:base="{$resourceID}"
+	      >
     </resource>
 
+    <xsl:variable name="contentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select="."/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="parentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select=".."/>
+      </xsl:call-template>
+    </xsl:variable>
+    
     <xsl:result-document 
-	href="{$fileName}"
-	format="resources" xmlns="">
-      <html>
-	<head>
-	  <title>
-	    <xsl:value-of select="../@title"/>
-	    <xsl:text> Overview</xsl:text>
-	  </title>
-	  <link rel="stylesheet" 
-		type="text/css" media="screen, projection, print"
-		href="../../styles/md-html.css" />
-	  <meta name="viewport" 
-		content="width=device-width, initial-scale=1"/>	
-	  <script type="text/javascript"
-		  src="{$MathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-	    <xsl:text> </xsl:text>
-	  </script>
-	  <link rel="stylesheet" 
-		href="{$highlightjsURL}/styles/googlecode.css"/>
-	  <script src="{$highlightjsURL}/highlight.pack.js">
-	    <xsl:text> </xsl:text>
-	  </script>
-	  <script>hljs.initHighlightingOnLoad();</script>
-	</head>
-	<body>
-	  <h1>
-	    <xsl:value-of select="../@title"/>
-	  </h1>
-	  <xsl:apply-templates select="*|text()" mode="generateDescription"/>
-	</body>
-      </html>
+	href="{concat('res-', $descriptionID, '.dat')}"
+	format="resources">
+      <CONTENT id="{$contentID}">
+	<TITLE value="Overview"/>
+	<TITLECOLOR value="#000000"/>
+	<BODY>
+	  <TEXT>
+	    <xsl:text>&lt;div&gt;place-holder</xsl:text>
+	    <xsl:apply-templates select="*|text()" mode="bbDoc"/>
+	    <xsl:text>&lt;/div&gt;</xsl:text>
+	  </TEXT>
+	  <TYPE value="H"/>
+	</BODY>
+	<DATES>
+	  <CREATED value=""/>
+	  <UPDATED value="{$now}"/>
+	  <START value=""/>
+	  <END value=""/>
+	</DATES>
+	<FLAGS>
+	  <ISAVAILABLE value="true"/>
+	  <ISFROMCARTRIDGE value="false"/>
+	  <ISFOLDER value="true"/>
+	  <ISDESCRIBED value="false"/>
+	  <ISTRACKED value="false"/>
+	  <ISLESSON value="false"/>
+	  <ISSEQUENTIAL value="false"/>
+	  <ALLOWGUESTS value="true"/>
+	  <ALLOWOBSERVERS value="true"/>
+	  <LAUNCHINNEWWINDOW value="false"/>
+	  <ISREVIEWABLE value="false"/>
+	  <ISGROUPCONTENT value="false"/>
+	  <ISSAMPLECONTENT value="false"/>
+	</FLAGS>
+	<CONTENTHANDLER value="resource/x-bb-document"/>
+	<RENDERTYPE value="REGULAR"/>
+	<URL value=""/>
+	<VIEWMODE value="TEXT_ICON_ONLY"/>
+	<OFFLINENAME value=""/>
+	<OFFLINEPATH value=""/>
+	<LINKREF value=""/>
+	<PARENTID value="{$parentID}"/>
+	<VERSION value="3"/>
+	<EXTENDEDDATA/>
+	<FILES/>
+      </CONTENT>
     </xsl:result-document>
   </xsl:template>
 
@@ -355,6 +427,20 @@
 
   <xsl:template match="description" mode="modules">
     <xsl:variable name="descriptionID" select="generate-id()"/>
+
+    <xsl:variable name="contentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select="."/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="parentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select=".."/>
+      </xsl:call-template>
+    </xsl:variable>
+
+
+
     <item xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
 	  identifier="{$descriptionID}">
       <content_type>Attachment</content_type>
@@ -554,7 +640,7 @@
 	</xsl:when>
 	  
 	<xsl:when test="starts-with(@href, '../../')">
-	  <xsl:value-of select="concat($baseURL, 
+	  <xsl:value-of select="concat($baseURL, '/',
 				substring-after(@href, '../../'))"/>
 	</xsl:when>
 	<xsl:when test="@href != ''">
@@ -565,10 +651,36 @@
 
     <xsl:variable name="fileName" select="concat('res-',$itemID,'.dat')"/>
 
+    <xsl:variable name="theTitle">
+      <xsl:call-template name="getTitle"/>
+      <xsl:text> </xsl:text>
+      <xsl:call-template name="dateAttributes"/>
+    </xsl:variable>
+
+    <resource
+	identifier="{concat('res-',$itemID)}"
+	bb:file="{concat('res-',$itemID,'.dat')}"
+	bb:title="{normalize-space($theTitle)}"
+	type="resource/x-bb-document"
+	xml:base="{concat('res-',$itemID)}"
+	/>
+
+    <xsl:variable name="contentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select="."/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="parentID">
+      <xsl:call-template name="contentID">
+	<xsl:with-param name="node" select=".."/>
+      </xsl:call-template>
+    </xsl:variable>
+
+
     <xsl:result-document 
 	href="{$fileName}"
 	format="resources">
-      <CONTENT id="{concat('content-', $itemID)}">
+      <CONTENT id="{$contentID}">
 	<TITLE>
 	  <xsl:attribute name="value">
 	    <xsl:call-template name="getTitle"/>
@@ -579,10 +691,13 @@
 	<TITLECOLOR value="#000000"/>
 	<BODY>
 	  <TEXT/>
+	  <TYPE value="H"/>
 	</BODY>
 	<DATES>
+	  <CREATED value=""/>
+	  <UPDATED value="{$now}"/>
 	  <START value=""/>
-	  <STOP value=""/>
+	  <END value=""/>
 	</DATES>
 	<FLAGS>
 	  <ISAVAILABLE value="true"/>
@@ -605,7 +720,7 @@
 	<VIEWMODE value="TEXT_ICON_ONLY"/>
 	<OFFLINENAME value=""/><OFFLINEPATH value=""/>
 	<LINKREF value=""/>
-	<PARENTID value="{concat('content-',generate-id(..))}"/>
+	<PARENTID value="{$parentID}"/>
 	<VERSION value="3"/>
         <EXTENDEDDATA/>
 	<FILES/>
@@ -1090,9 +1205,38 @@
   </xsl:template>
 
 
+  <xsl:template name="contentID">
+    <xsl:param name="node" select="."/>
+    <xsl:variable name="genID" select="generate-id($node)"/>
+    <xsl:variable name="decID">
+      <xsl:call-template name="hex2dec">
+	<xsl:with-param name="hex" select="$genID"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:value-of select="concat('_',$decID,'_1')"/>
+  </xsl:template>
 
+  <xsl:template name="hex2dec">
+    <xsl:param name="hex" select="0"/>
+    <xsl:param name="num" select="0"/>
 
-
-
-
+    <xsl:variable 
+	name="digit" 
+	select="translate(substring($hex, 1, 1), 'abcdef', 'ABCDEF')"/>
+    <xsl:variable
+	name="value" 
+	select="string-length(substring-before('0123456789ABCDEF', $digit))"/>
+    <xsl:variable name="result" select="16 * $num + $value"/>
+    <xsl:choose>
+      <xsl:when test="string-length($hex) > 1">
+	<xsl:call-template name="hex2dec">
+	  <xsl:with-param name="hex" select="substring($hex, 2)"/>
+	  <xsl:with-param name="num" select="$result"/>
+	</xsl:call-template>
+        </xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="$result"/>
+	</xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 </xsl:stylesheet>
