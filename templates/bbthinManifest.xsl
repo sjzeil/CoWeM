@@ -248,7 +248,18 @@
 	  <ISFOLDER value="true"/>
 	  <ISDESCRIBED value="false"/>
 	  <ISTRACKED value="false"/>
-	  <ISLESSON value="true"/>
+	  <ISLESSON>
+	    <xsl:attribute name="value">
+	      <xsl:choose>
+		<xsl:when test="../topic">
+		  <xsl:text>false</xsl:text>
+		</xsl:when>
+		<xsl:otherwise>
+		  <xsl:text>true</xsl:text>
+		</xsl:otherwise>
+	      </xsl:choose>
+	    </xsl:attribute>
+	  </ISLESSON>
 	  <ISSEQUENTIAL value="false"/>
 	  <ALLOWGUESTS value="true"/>
 	  <ALLOWOBSERVERS value="true"/>
@@ -257,7 +268,18 @@
 	  <ISGROUPCONTENT value="false"/>
 	  <ISSAMPLECONTENT value="false"/>
 	</FLAGS>
-	<CONTENTHANDLER value="resource/x-bb-lesson"/>
+	<CONTENTHANDLER>
+	  <xsl:attribute name="value">
+	    <xsl:choose>
+	      <xsl:when test="./ancestor::topic">
+		<xsl:text>resource/x-bb-folder</xsl:text>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:text>resource/x-bb-lesson</xsl:text>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:attribute>
+	</CONTENTHANDLER>
 	<RENDERTYPE value="REGULAR"/>
 	<URL value=""/>
 	<VIEWMODE value="TEXT_ICON_ONLY"/>
@@ -267,8 +289,10 @@
 	<PARENTID value="{$parentID}"/>
 	<VERSION value="3"/>
 	<EXTENDEDDATA>
-	  <ENTRY key="HierarchyDisplay">None</ENTRY>
-	  <ENTRY key="ShouldHideToc">false</ENTRY>
+	  <xsl:if test="local-name(..) = 'outline'">
+	    <ENTRY key="HierarchyDisplay">None</ENTRY>
+	    <ENTRY key="ShouldHideToc">false</ENTRY>
+	  </xsl:if>
 	</EXTENDEDDATA>
 	<FILES/>
       </CONTENT>
@@ -279,33 +303,6 @@
   <xsl:template match="topic" mode="events">
     <xsl:apply-templates select="topic | item | subject" 
 			 mode="events"/>
-  </xsl:template>
-
-  <xsl:template match="topic" mode="modules">
-    <xsl:choose>
-      <xsl:when test="item | subject">
-	<xsl:variable name="topicID" select="generate-id()"/>
-	<module xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
-		identifier="{$topicID}">
-	  <title>
-	    <xsl:call-template name="getTitle"/>
-	    <xsl:call-template name="dateAttributes"/>
-	  </title>
-	  <workflow_state>active</workflow_state>
-	  <position>
-	    <xsl:value-of select="1 + count(preceding-sibling::topic)"/>
-	  </position>
-	  <require_sequential_progress>false</require_sequential_progress>
-	  <items>
-	    <xsl:apply-templates select="description" mode="modules"/>
-	    <xsl:apply-templates select="item | subject" mode="modules"/>
-	  </items>
-	</module>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:apply-templates select="topic" mode="modules"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 
 
@@ -328,7 +325,7 @@
     <resource identifier="{$resourceID}"
 	      bb:title="Overview"
 	      type="resource/x-bb-document" 
-	      bb:file="{$resourceID}"
+	      bb:file="{$fileName}"
 	      xml:base="{$resourceID}"
 	      >
     </resource>
@@ -352,8 +349,8 @@
 	<TITLECOLOR value="#000000"/>
 	<BODY>
 	  <TEXT>
-	    <xsl:text>&lt;div&gt;place-holder</xsl:text>
-	    <xsl:apply-templates select="*|text()" mode="bbDoc"/>
+	    <xsl:text>&lt;div&gt;</xsl:text>
+	    <xsl:apply-templates select="*|text()" mode="generateDescription"/>
 	    <xsl:text>&lt;/div&gt;</xsl:text>
 	  </TEXT>
 	  <TYPE value="H"/>
@@ -367,7 +364,7 @@
 	<FLAGS>
 	  <ISAVAILABLE value="true"/>
 	  <ISFROMCARTRIDGE value="false"/>
-	  <ISFOLDER value="true"/>
+	  <ISFOLDER value="false"/>
 	  <ISDESCRIBED value="false"/>
 	  <ISTRACKED value="false"/>
 	  <ISLESSON value="false"/>
@@ -379,7 +376,7 @@
 	  <ISGROUPCONTENT value="false"/>
 	  <ISSAMPLECONTENT value="false"/>
 	</FLAGS>
-	<CONTENTHANDLER value="resource/x-bb-document"/>
+	<CONTENTHANDLER value="resource/x-bb-module-page"/>
 	<RENDERTYPE value="REGULAR"/>
 	<URL value=""/>
 	<VIEWMODE value="TEXT_ICON_ONLY"/>
@@ -395,19 +392,32 @@
   </xsl:template>
 
   <xsl:template match="objectives" mode="generateDescription">
-    <h2>Objectives</h2>
-    <p>
+    <xsl:text>
+    &lt;h2&gt;Objectives&lt;/h2&gt;
+    &lt;p&gt;
       At the end of this module, students will be able to:
-    </p>
-    <ol>
+    &lt;/p&gt;
+    &lt;ol&gt;
+    </xsl:text>
       <xsl:apply-templates select="*|text()" mode="generateDescription"/>
-    </ol>
+    <xsl:text>
+    &lt;/ol&gt;
+    </xsl:text>
   </xsl:template>
 
+  <xsl:template match="overview" mode="generateDescription">
+    <xsl:apply-templates select="*|text()" mode="bbDoc"/>
+  </xsl:template>
+
+
   <xsl:template match="obj" mode="generateDescription">
-    <li>
-      <xsl:copy-of select="*|text()"/>
-    </li>
+    <xsl:text>
+    &lt;li&gt;
+    </xsl:text>
+    <xsl:apply-templates select="*|text()" mode="bbDoc"/>
+    <xsl:text>
+    &lt;/li&gt;
+    </xsl:text>
   </xsl:template>
 
 
@@ -415,45 +425,31 @@
     <xsl:variable name="firstLetter" select="upper-case(substring(local-name(),1,1))"/>
     <xsl:variable name="remainder" select="substring(local-name(),2)"/>
     <xsl:variable name="combined" select="concat($firstLetter, $remainder)"/>
-    <h2>
-      <xsl:value-of select="$combined"/>
-    </h2>
-    <xsl:copy-of select="*|text()"/>
+    <xsl:text>&lt;h2&gt;</xsl:text>
+    <xsl:value-of select="$combined"/>
+    <xsl:text>&lt;/h2&gt;</xsl:text>
+    <xsl:apply-templates select="*|text()" mode="bbDoc"/>
   </xsl:template>
 
   <xsl:template match="text()" mode="generateDescription">
     <xsl:copy-of select="."/>
   </xsl:template>
 
-  <xsl:template match="description" mode="modules">
-    <xsl:variable name="descriptionID" select="generate-id()"/>
-
-    <xsl:variable name="contentID">
-      <xsl:call-template name="contentID">
-	<xsl:with-param name="node" select="."/>
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:variable name="parentID">
-      <xsl:call-template name="contentID">
-	<xsl:with-param name="node" select=".."/>
-      </xsl:call-template>
-    </xsl:variable>
-
-
-
-    <item xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
-	  identifier="{$descriptionID}">
-      <content_type>Attachment</content_type>
-      <title>Overview</title>
-      <workflow_state>active</workflow_state>
-      <identifierref>
-	<xsl:value-of select="concat('res-',$descriptionID)"/>
-      </identifierref>
-      <position>0</position>
-      <new_tab></new_tab>
-      <indent>1</indent>
-    </item>
+  <xsl:template match="*" mode="bbDoc">
+    <xsl:variable name="element" select="local-name()"/>
+    <xsl:value-of select="concat('&lt;', $element, ' ')"/>
+    <xsl:for-each select="@*">
+      <xsl:value-of select="concat(name(.), '=&quot;', ., '&quot; ')"/>
+    </xsl:for-each>
+    <xsl:text>'&gt;</xsl:text>
+    <xsl:apply-templates select="*|text()" mode="bbDoc"/>
+    <xsl:value-of select="concat('&lt;/', $element, '&gt;')"/>
   </xsl:template>
+
+  <xsl:template match="text()" mode="bbDoc">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
 
   <xsl:template match="subject">
     <xsl:variable name="subjectID" select="generate-id()"/>
@@ -468,29 +464,6 @@
   </xsl:template>
 
 
-  <xsl:template match="subject"  mode="modules">
-    <xsl:variable name="subjectID" select="generate-id()"/>
-    <item xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
-	  identifier="{$subjectID}">
-      <content_type>ContextModuleSubHeader</content_type>
-      <title>
-	<xsl:call-template name="getTitle"/>
-	<xsl:call-template name="dateAttributes"/>
-      </title>
-      <workflow_state>active</workflow_state>
-      <position>
-	<xsl:variable name="count1"
-		      select="count(preceding::subject | preceding::topic | ancestor::subject | ancestor::topic | preceding::item)"/>
-	<xsl:variable name="count2"
-		  select="count(ancestor::topic/preceding::subject | ancestor::topic/preceding::topic | ancestor::topic | ancestor::topic/preceding::item)"/>
-	<xsl:value-of select="$count1 - $count2 + 1"/>
-      </position>
-      <new_tab></new_tab>
-      <indent>0</indent>
-    </item>
-    <xsl:apply-templates select="item | subject" mode="modules"/>
-  </xsl:template>
-  	  
 
   <xsl:template match="subject" mode="events">
     <xsl:apply-templates select="item | subject" mode="events"/>
@@ -512,113 +485,6 @@
   </xsl:template>
 
 
-  <xsl:template match="item" mode="modules">
-    <xsl:variable name="itemID" select="generate-id()"/>
-	<xsl:variable 
-	    name="count1"
-	    select="count(preceding::subject | preceding::topic | ancestor::subject | ancestor::topic | preceding::item)"/>
-	<xsl:variable 
-	    name="count2"
-	    select="count(ancestor::topic/preceding::subject | ancestor::topic/preceding::topic | ancestor::topic | ancestor::topic/preceding::item)"/>
-
-	<item xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
-	      identifier="{$itemID}">
-	  <title>
-	    <xsl:call-template name="kindPrefix"/>
-	    <xsl:call-template name="getTitle"/>
-	    <xsl:call-template name="dateAttributes"/>
-	  </title>
-	  <workflow_state>active</workflow_state>
-	  <position>
-	    <xsl:value-of select="$count1 - $count2 + 1"/>
-	  </position>
-
-	  <xsl:choose>
-	    <xsl:when test="@targetdoc | @target | @assignment">
-	      <identifierref>
-		<xsl:call-template name="identifierref"/>
-	      </identifierref>
-	      <content_type>Attachment</content_type>
-	      <new_tab></new_tab>
-	      <indent>1</indent>
-	    </xsl:when>
-	    
-	    <xsl:when test="starts-with(@href, '../../')">
-	      <identifierref>
-		<xsl:call-template name="identifierref"/>
-	      </identifierref>
-	      <content_type>Attachment</content_type>
-	      <new_tab></new_tab>
-	      <indent>1</indent>
-	    </xsl:when>
-	    
-	    <xsl:when test="@href != ''">
-	      <content_type>ExternalUrl</content_type>
-	      <new_tab>true</new_tab>
-	      <indent>1</indent>
-	      <identifierref>
-		<xsl:value-of select="$itemID"/>
-	      </identifierref>
-	      <url>
-		<xsl:value-of select="@href"/>
-	      </url>
-	    </xsl:when>
-
-	    <xsl:otherwise>
-	      <content_type>ContextModuleSubHeader</content_type>
-	      <new_tab></new_tab>
-	      <indent>1</indent>
-	    </xsl:otherwise>
-
-
-
-      </xsl:choose>
-    </item>
-  </xsl:template>
-
-
-  <xsl:template name="identifierref">
-    <xsl:variable name="itemID" select="generate-id()"/>
-    <xsl:choose>
-      <xsl:when test="@targetdoc">
-	<xsl:variable
-	    name="doc" 
-	    select="concat('Public/', @targetdoc, '/index.html')"/>
-	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
-      </xsl:when>
-      <xsl:when test="@target">
-	<xsl:variable
-	    name="doc" 
-	    select="concat('Public/', @target, '/index.html')"/>
-	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
-      </xsl:when>
-      <xsl:when test="@assignment">
-	<xsl:variable
-	    name="doc" 
-	    select="concat('Protected/Assts/', @assignment, '.mmd.html')"/>
-	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
-      </xsl:when>
-      <xsl:when test="ends-with(@href,'__canvas.html')">
-	<xsl:variable name="fileName">
-	  <xsl:call-template name="stripDirectories">
-	    <xsl:with-param name="path" select="@href"/>
-	  </xsl:call-template>
-	</xsl:variable>
-	<xsl:variable name="doc"
-		      select="substring-before($fileName, '__canvas.html')"/>
-	<xsl:value-of select="concat('wiki-', $doc)"/>
-      </xsl:when>
-      <xsl:when test="starts-with(@href,'../../')">
-	<xsl:variable
-	    name="doc" 
-	    select="substring-after(@href, '../../')"/>
-	<xsl:value-of select="concat('file-', generate-id(/imscc/files/file[text() = $doc]))"/>
-      </xsl:when>
-      <xsl:when test="@href != ''">
-	<xsl:value-of select="concat('res-',$itemID)"/>
-      </xsl:when>
-    </xsl:choose>    
-  </xsl:template>
 
 
   <xsl:template match="item" mode="resources">
