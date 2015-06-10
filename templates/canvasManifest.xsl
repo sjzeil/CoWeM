@@ -815,6 +815,10 @@ A: This is un-BEAR-able
 
 
   <xsl:template name="getTitle">
+    <xsl:if test="local-name() = 'topic'>
+      <apply-templates select='.' mode="itemNumber"/>
+      <xsl:text> </xsl:text>
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="@title != ''">
 	<xsl:value-of select="@title"/>
@@ -846,8 +850,9 @@ A: This is un-BEAR-able
     <xsl:choose>
       <xsl:when test="@prefix">
 	<xsl:value-of select="@prefix"/>
+	<xsl:text> </xsl:text>
       </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="@kind">
 	<xsl:variable name="kindNm" select="@kind"/>
 	<xsl:variable name="kindDescription" select="/imscc/outline/presentation/kind[@name=$kindNm]"/>
 	<xsl:choose>
@@ -857,13 +862,13 @@ A: This is un-BEAR-able
 	  <xsl:otherwise>
 	    <xsl:variable name="firstLetter" select="upper-case(substring($kindNm,1,1))"/>
 	    <xsl:variable name="remainder" select="substring($kindNm,2)"/>
-	    <xsl:value-of select="concat($firstLetter, $remainder, ': ')"/>
+	    <xsl:value-of select="concat($firstLetter, $remainder, ':')"/>
 	  </xsl:otherwise>
 	</xsl:choose>
-      </xsl:otherwise>
+	<xsl:text> </xsl:text>
+      </xsl:when>
     </xsl:choose>
   </xsl:template>
-
 
   <xsl:template name="dateAttributes">
     <xsl:choose>
@@ -1077,6 +1082,16 @@ A: This is un-BEAR-able
   </xsl:template>
 
 
+  <xsl:template match="outline" mode="itemNumber">
+  </xsl:template>
+
+  <xsl:template match="topic|item" mode="itemNumber">
+    <xsl:apply-templates select=".." mode="itemNumber"/>
+    <xsl:if test="local-name(..) = 'topic'">
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="count(preceding-sibling::item | preceding-sibling::topic) + 1"/>
+  </xsl:template>
 
 
 

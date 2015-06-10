@@ -52,7 +52,7 @@
   <xsl:variable name="now">
       <xsl:value-of xmlns:date="java:java.util.Date"
          	xmlns:sdf="java:java.text.SimpleDateFormat"
-          	select='sdf:format(sdf:new("yyyy-MM-dd hh:mm:ss z"), date:new())'/>
+          	select='sdf:format(sdf:new("yyyy-MM-dd HH:mm:ss z"), date:new())'/>
   </xsl:variable>
 
   <xsl:template match="/">
@@ -518,6 +518,7 @@
     <xsl:variable name="fileName" select="concat('res-',$itemID,'.dat')"/>
 
     <xsl:variable name="theTitle">
+      <xsl:call-template name="kindPrefix"/>
       <xsl:call-template name="getTitle"/>
       <xsl:text> </xsl:text>
       <xsl:call-template name="dateAttributes"/>
@@ -549,6 +550,7 @@
       <CONTENT id="{$contentID}">
 	<TITLE>
 	  <xsl:attribute name="value">
+	    <xsl:call-template name="kindPrefix"/>
 	    <xsl:call-template name="getTitle"/>
 	    <xsl:text> </xsl:text>
 	    <xsl:call-template name="dateAttributes"/>
@@ -592,7 +594,175 @@
 	<FILES/>
       </CONTENT>
     </xsl:result-document >
+
+
+    <!-- Now add calendar entries if appropriate -->
+
+    <xsl:if test="@date != '' or @due != ''">
+      <xsl:variable name="ident" select="generate-id()"/>
+      <xsl:variable name="eventTitle">
+	<xsl:call-template name="getTitle"/>
+      </xsl:variable> 
+
+
+      <resource bb:title="{/imscc/courseName/text()}: {$eventTitle}" 
+		identifier="date-{$ident}"
+		bb:file="date-{$ident}.dat"
+		type="resource/x-bb-calendar"
+		xml:base="date-{$ident}"/>
+
+      <xsl:result-document 
+          href="date-{$ident}.dat"
+	      format="resources">
+          <CALENDAR id="date-{$ident}">
+	    <TITLE value="{/imscc/courseName/text()}: {$eventTitle}"/>
+	    <DESCRIPTION>
+	      <TEXT>
+		<xsl:if test="$linkHref != ''">
+		  <!--
+		      As far as I can tell, BB does not support calendar
+		      events that link to other pages. -->
+		  <xsl:text>Details at </xsl:text>
+		  <xsl:value-of select="$linkHref"/>
+		</xsl:if>
+	      </TEXT>
+	      <TYPE value="S"/>
+	    </DESCRIPTION>
+	    <!-- USERID value="??"/ -->
+	    <TYPE value="COURSE"/>
+	    <DATES>
+	      <CREATED value=""/>
+	      <UPDATED value="{$now}"/>
+	      <xsl:call-template name="startAndStop"/>
+	    </DATES>
+	  </CALENDAR>
+      </xsl:result-document>
+
+
+
+    </xsl:if>
+
   </xsl:template>
+
+
+
+  <xsl:template name="startAndStop">
+    <xsl:choose>
+      <xsl:when test="@enddate != ''">
+	<START>
+	  <xsl:attribute name="value">
+	    <xsl:call-template name="bbDate">
+	      <xsl:with-param name="date"
+			      select="@date"/>
+	    </xsl:call-template>
+	  </xsl:attribute>
+	</START>
+	<END>
+	  <xsl:attribute name="value">
+	    <xsl:call-template name="bbEndDate">
+	      <xsl:with-param name="date"
+			      select="@enddate"/>
+	    </xsl:call-template>
+	  </xsl:attribute>
+	</END>
+      </xsl:when>
+
+      <xsl:when test="@date != '' and @due != ''">
+	<START>
+	  <xsl:attribute name="value">
+	    <xsl:call-template name="bbDate">
+	      <xsl:with-param name="date"
+			      select="@date"/>
+	    </xsl:call-template>
+	  </xsl:attribute>
+	</START>
+	<END>
+	  <xsl:attribute name="value">
+	    <xsl:call-template name="bbEndDate">
+	      <xsl:with-param name="date"
+			      select="@due"/>
+	    </xsl:call-template>
+	  </xsl:attribute>
+	</END>
+      </xsl:when>
+      
+      <xsl:when test="@date != ''">
+	<xsl:variable name="startDateTime">
+	  <xsl:call-template name="bbDate">
+	    <xsl:with-param name="date" select="@date"/>
+	  </xsl:call-template>
+	</xsl:variable>
+	  
+	<START value="{$startDateTime}"/>
+	
+	<xsl:choose>
+	  <xsl:when test="contains(@date, 'T')">
+	    <xsl:variable name="oneSecondLater">
+	      <xsl:value-of 
+		  xmlns:date="java:java.util.Date"
+		  xmlns:sdf="java:java.text.SimpleDateFormat"
+		  select='sdf:format(
+			  sdf:new("yyyy-MM-dd HH:mm:ss z"), 
+			  date:new(
+			  date:getTime(
+			  sdf:parse(
+			  sdf:new("yyyy-MM-dd HH:mm:ss z"), 
+			  $startDateTime)) 
+			  + 1000))'/>
+	    </xsl:variable>
+	    <END value="{$oneSecondLater}"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:variable name="endDateTime">
+	      <xsl:call-template name="bbDate">
+		<xsl:with-param name="date" select="concat(@date,'T23:59:59')"/>
+	      </xsl:call-template>
+	    </xsl:variable>
+	    <END value="{$endDateTime}"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+
+
+      <xsl:when test="@due != ''">
+	<xsl:variable name="startDateTime">
+	  <xsl:choose>
+	    <xsl:when test="contains(@due, 'T')">
+	      <xsl:call-template name="bbDate">
+		<xsl:with-param name="date" select="@due"/>
+	      </xsl:call-template>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:call-template name="bbDate">
+		<xsl:with-param name="date" 
+				select="concat(@due,'T23:59:00')"/>
+	      </xsl:call-template>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:variable>
+      
+	<START value="{$startDateTime}"/>
+	
+	<xsl:variable name="oneMinuteLater">
+	  <xsl:value-of 
+	      xmlns:date="java:java.util.Date"
+	      xmlns:sdf="java:java.text.SimpleDateFormat"
+	      select='sdf:format(
+		      sdf:new("yyyy-MM-dd HH:mm:ss z"), 
+		      date:new(
+		      date:getTime(
+		      sdf:parse(
+		      sdf:new("yyyy-MM-dd HH:mm:ss z"), 
+		      $startDateTime)) 
+		      + 59000))'/>
+	</xsl:variable>
+	<END value="{$oneMinuteLater}"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+
+
 
 
 
@@ -602,6 +772,7 @@
       <event xmlns="http://canvas.instructure.com/xsd/cccv1p0"
 	     identifier="{concat('event-',$itemID)}">
 	<title>
+	  <xsl:call-template name="kindPrefix"/>
 	  <xsl:call-template name="getTitle"/>
 	  <xsl:if test="@enddate != ''">
 	    <xsl:call-template name="dateAttributes"/>
@@ -662,13 +833,13 @@
 	<xsl:choose>
 	  <xsl:when test="@enddate != ''">
 	    <start_at>
-	      <xsl:call-template name="isoDate">
+	      <xsl:call-template name="bbDate">
 		<xsl:with-param name="date"
 				select="@date"/>
 		</xsl:call-template>
 	    </start_at>
 	    <end_at>
-	      <xsl:call-template name="isoEndDate">
+	      <xsl:call-template name="bbEndDate">
 		<xsl:with-param name="date"
 				select="@enddate"/>
 		</xsl:call-template>
@@ -677,13 +848,13 @@
 	  
 	  <xsl:when test="@date != '' and @due != ''">
 	    <start_at>
-	      <xsl:call-template name="isoDate">
+	      <xsl:call-template name="bbDate">
 		<xsl:with-param name="date"
 				select="@date"/>
 		</xsl:call-template>
 	    </start_at>
 	    <end_at>
-	      <xsl:call-template name="isoEndDate">
+	      <xsl:call-template name="bbEndDate">
 		<xsl:with-param name="date"
 				select="@due"/>
 		</xsl:call-template>
@@ -694,12 +865,12 @@
 	    <xsl:variable name="startDateTime">
 	      <xsl:choose>
 		<xsl:when test="@date != ''">
-		  <xsl:call-template name="isoDate">
+		  <xsl:call-template name="bbDate">
 		    <xsl:with-param name="date" select="@date"/>
 		  </xsl:call-template>
 		</xsl:when>
 		<xsl:otherwise>
-		  <xsl:call-template name="isoEndDate">
+		  <xsl:call-template name="bbEndDate">
 		    <xsl:with-param name="date" select="@due"/>
 		  </xsl:call-template>
 		</xsl:otherwise>
@@ -809,6 +980,10 @@
 
 
   <xsl:template name="getTitle">
+    <xsl:if test="local-name() = 'topic'">
+      <xsl:apply-templates select='.' mode="itemNumber"/>
+      <xsl:text> </xsl:text>
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="@title != ''">
 	<xsl:value-of select="@title"/>
@@ -832,28 +1007,6 @@
       </xsl:when>
       <xsl:otherwise>
 	<xsl:text>???</xsl:text>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="kindPrefix">
-    <xsl:choose>
-      <xsl:when test="@prefix">
-	<xsl:value-of select="@prefix"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:variable name="kindNm" select="@kind"/>
-	<xsl:variable name="kindDescription" select="/imscc/outline/presentation/kind[@name=$kindNm]"/>
-	<xsl:choose>
-	  <xsl:when test="$kindDescription">
-	    <xsl:value-of select="$kindDescription/@prefix"/>
-	  </xsl:when>
-	  <xsl:otherwise>
-	    <xsl:variable name="firstLetter" select="upper-case(substring($kindNm,1,1))"/>
-	    <xsl:variable name="remainder" select="substring($kindNm,2)"/>
-	    <xsl:value-of select="concat($firstLetter, $remainder, ': ')"/>
-	  </xsl:otherwise>
-	</xsl:choose>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -930,7 +1083,7 @@
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy HH:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"),
                            $date))'/>
 	  </xsl:when>
@@ -939,7 +1092,7 @@
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy HH:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date,":00")))'/>
 	  </xsl:otherwise>
@@ -974,7 +1127,7 @@
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy HH:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"),
                            $date))'/>
 	  </xsl:when>
@@ -983,7 +1136,7 @@
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("MM/dd/yyyy hh:mmaa z"), 
+		select='sdf:format(sdf:new("MM/dd/yyyy HH:mmaa z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date,":00")))'/>
 	  </xsl:otherwise>
@@ -1002,7 +1155,7 @@
   </xsl:template>
 
 
-  <xsl:template name="isoDate">
+  <xsl:template name="bbDate">
     <xsl:param name="date" select="'2005-01-01T13:00:00-05:00'"/>
     <xsl:choose>
       <xsl:when test="contains($date, 'T')">
@@ -1018,7 +1171,7 @@
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+		select='sdf:format(sdf:new("yyyy-MM-dd HH:mm:ss z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date,":00")))'/>
 	  </xsl:otherwise>
@@ -1029,14 +1182,14 @@
 	<xsl:value-of 
 	    xmlns:date="java:java.util.Date"
 	    xmlns:sdf="java:java.text.SimpleDateFormat"
-	    select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+	    select='sdf:format(sdf:new("yyyy-MM-dd HH:mm:ss z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date, "T00:00:00")))'/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template name="isoEndDate">
+  <xsl:template name="bbEndDate">
     <xsl:param name="date" select="'2005-01-01T13:00:00-05:00'"/>
     <xsl:choose>
       <xsl:when test="contains($date, 'T')">
@@ -1052,7 +1205,7 @@
 	    <xsl:value-of 
 		xmlns:date="java:java.util.Date"
 		xmlns:sdf="java:java.text.SimpleDateFormat"
-		select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+		select='sdf:format(sdf:new("yyyy-MM-dd HH:mm:ss z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date,":00")))'/>
 	  </xsl:otherwise>
@@ -1063,7 +1216,7 @@
 	<xsl:value-of 
 	    xmlns:date="java:java.util.Date"
 	    xmlns:sdf="java:java.text.SimpleDateFormat"
-	    select='sdf:format(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
+	    select='sdf:format(sdf:new("yyyy-MM-dd HH:mm:ss z"), 
                            sdf:parse(sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ss"),
                            concat($date, "T23:59:59")))'/>
       </xsl:otherwise>
@@ -1105,4 +1258,44 @@
 	</xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
+
+  <xsl:template name="kindPrefix">
+    <xsl:choose>
+      <xsl:when test="@prefix">
+	<xsl:value-of select="@prefix"/>
+	<xsl:text> </xsl:text>
+      </xsl:when>
+      <xsl:when test="@kind">
+	<xsl:variable name="kindNm" select="@kind"/>
+	<xsl:variable name="kindDescription" select="/imscc/outline/presentation/kind[@name=$kindNm]"/>
+	<xsl:choose>
+	  <xsl:when test="$kindDescription">
+	    <xsl:value-of select="$kindDescription/@prefix"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:variable name="firstLetter" select="upper-case(substring($kindNm,1,1))"/>
+	    <xsl:variable name="remainder" select="substring($kindNm,2)"/>
+	    <xsl:value-of select="concat($firstLetter, $remainder, ':')"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+	<xsl:text> </xsl:text>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+
+  <xsl:template match="outline" mode="itemNumber">
+  </xsl:template>
+
+  <xsl:template match="topic|item" mode="itemNumber">
+    <xsl:apply-templates select=".." mode="itemNumber"/>
+    <xsl:if test="local-name(..) = 'topic'">
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="count(preceding-sibling::item | preceding-sibling::topic) + 1"/>
+  </xsl:template>
+
+
+
 </xsl:stylesheet>
