@@ -116,6 +116,9 @@
   <target name="xml2bbthin">
   	<echo file="bbthin.requested">imscc</echo>
   </target>
+  <target name="xml2bb">
+  	<echo file="bb.requested">imscc</echo>
+  </target>
 
   <condition property="do.xmobi1">
     <and>
