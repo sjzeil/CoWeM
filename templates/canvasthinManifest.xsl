@@ -423,22 +423,60 @@ A: This is un-BEAR-able
 	  </position>
 
 	  <xsl:choose>
-	    <xsl:when test="@targetdoc | @target | @assignment">
-	      <identifierref>
-		<xsl:call-template name="identifierref"/>
-	      </identifierref>
-	      <content_type>Attachment</content_type>
-	      <new_tab></new_tab>
+	    <xsl:when test="@targetdoc">
+	      <content_type>ExternalUrl</content_type>
+	      <new_tab>true</new_tab>
 	      <indent>1</indent>
+	      <identifierref>
+		<xsl:value-of select="$itemID"/>
+	      </identifierref>
+	      <url>
+		<xsl:value-of 
+		    select="concat($baseURL, '/Public/', 
+			           @targetdoc, '/index.html')"/>
+	      </url>
+	    </xsl:when>
+	    
+	    <xsl:when test="@target">
+	      <content_type>ExternalUrl</content_type>
+	      <new_tab>true</new_tab>
+	      <indent>1</indent>
+	      <identifierref>
+		<xsl:value-of select="$itemID"/>
+	      </identifierref>
+	      <url>
+		<xsl:value-of 
+		    select="concat($baseURL, '/Public/', 
+			           @target, '/index.html')"/>
+	      </url>
+	    </xsl:when>
+	    
+	    <xsl:when test="@assignment">
+	      <content_type>ExternalUrl</content_type>
+	      <new_tab>true</new_tab>
+	      <indent>1</indent>
+	      <identifierref>
+		<xsl:value-of select="$itemID"/>
+	      </identifierref>
+	      <url>
+		<xsl:value-of 
+		    select="concat($baseURL, '/Protected/Assts/', 
+			           @assignment, '.mmd.html')"/>
+	      </url>
 	    </xsl:when>
 	    
 	    <xsl:when test="starts-with(@href, '../../')">
-	      <identifierref>
-		<xsl:call-template name="identifierref"/>
-	      </identifierref>
-	      <content_type>Attachment</content_type>
-	      <new_tab></new_tab>
+	      <content_type>ExternalUrl</content_type>
+	      <new_tab>true</new_tab>
 	      <indent>1</indent>
+	      <identifierref>
+		<xsl:value-of select="$itemID"/>
+	      </identifierref>
+	      <url>
+		<xsl:value-of 
+		    select="concat($baseURL, 
+			           substring-after(@href, '../..'))"/>
+	      </url>
 	    </xsl:when>
 	    
 	    <xsl:when test="@href != ''">
@@ -515,89 +553,129 @@ A: This is un-BEAR-able
     <xsl:if test="@targetdoc | @target | @assignment | @href">
       <xsl:choose>
 	<xsl:when test="@targetdoc">
-	  <!--
-	  <xsl:variable 
-	      name="fileName"
-	      select="concat('web_resources/Public/',@targetdoc, '/index.html')"/>
+	  <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
 	  <resource 
 	      identifier="{concat('res-',$itemID)}"
-	      type="webcontent"
+	      type="imswl_xmlv1p1"
 	      href="{$fileName}"
 	      >
 	    <file href="{$fileName}"/>
 	  </resource>
-	  -->
+	  <xsl:result-document 
+	      href="{$fileName}"
+	      format="resources">
+	    <webLink 
+		xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+	      <title>
+		<xsl:call-template name="kindPrefix"/>
+		<xsl:call-template name="getTitle"/>
+	      </title>
+	      <url href="{concat($baseURL,'/Public/',@targetdoc,'/index.html')}"/>
+	    </webLink>
+	  </xsl:result-document>
 	</xsl:when>
 	  
 	<xsl:when test="@target">
-	  <!-- 
-	  <xsl:variable 
-	      name="fileName"
-	      select="concat('web_resources/Public/',@target, '/index.html')"/>
+	  <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
 	  <resource 
 	      identifier="{concat('res-',$itemID)}"
-	      type="webcontent"
+	      type="imswl_xmlv1p1"
 	      href="{$fileName}"
 	      >
 	    <file href="{$fileName}"/>
 	  </resource>
-	  -->
-	  </xsl:when>
+	  <xsl:result-document 
+	      href="{$fileName}"
+	      format="resources">
+	    <webLink 
+		xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+	      <title>
+		<xsl:call-template name="kindPrefix"/>
+		<xsl:call-template name="getTitle"/>
+	      </title>
+	      <url href="{concat($baseURL,'/Public/',@target,'/index.html')}"/>
+	    </webLink>
+	  </xsl:result-document>
+	</xsl:when>
 	  
-	  <xsl:when test="@assignment">
-	    <!--
-	    <xsl:variable 
-		name="fileName"
-		select="concat('web_resources/Public/',@target, '/index.html')"/>
-	    <resource 
-		identifier="{concat('res-',$itemID)}"
-		type="webcontent"
-		href="{$fileName}"
-		>
-	      <file href="{$fileName}"/>
-	    </resource>
-	    -->
-	  </xsl:when>
+	<xsl:when test="@assignment">
+	  <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
+	  <resource 
+	      identifier="{concat('res-',$itemID)}"
+	      type="imswl_xmlv1p1"
+	      href="{$fileName}"
+	      >
+	    <file href="{$fileName}"/>
+	  </resource>
+	  <xsl:result-document 
+	      href="{$fileName}"
+	      format="resources">
+	    <webLink 
+		xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+	      <title>
+		<xsl:call-template name="kindPrefix"/>
+		<xsl:call-template name="getTitle"/>
+	      </title>
+	      <url href="{concat($baseURL,'/Protected/Assts/',@assignment,'.mmd.html')}"/>
+	    </webLink>
+	  </xsl:result-document>
+	</xsl:when>
 	  
-	  <xsl:when test="starts-with(@href, '../../')">
-	    <!--
-	    <xsl:variable 
-		name="fileName"
-		select="concat('web_resources/', substring-after(@href, '../../'))"/>
-	    <resource 
-		identifier="{concat('res-',$itemID)}"
-		type="webcontent"
-		href="{$fileName}"
-		>
-	      <file href="{$fileName}"/>
-	    </resource>
-	    -->
-	  </xsl:when>
+	<xsl:when test="starts-with(@href, '../../')">
+	  <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
+	  <resource 
+	      identifier="{concat('res-',$itemID)}"
+	      type="imswl_xmlv1p1"
+	      href="{$fileName}"
+	      >
+	    <file href="{$fileName}"/>
+	  </resource>
+	  <xsl:result-document 
+	      href="{$fileName}"
+	      format="resources">
+	    <webLink 
+		xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+	      <title>
+		<xsl:call-template name="kindPrefix"/>
+		<xsl:call-template name="getTitle"/>
+	      </title>
+	      <url href="{concat($baseURL,substring-after(@href,'../..'))}"/>
+	    </webLink>
+	  </xsl:result-document>
+	</xsl:when>
 
-	  <xsl:when test="@href != ''">
-	    <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
-	    <resource 
-		identifier="{concat('res-',$itemID)}"
-		type="imswl_xmlv1p1"
-		href="{$fileName}"
-		>
-	      <file href="{$fileName}"/>
-	    </resource>
-	    <xsl:result-document 
-		href="{$fileName}"
-		format="resources">
-	      <webLink 
-		  xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
-		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		  xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
-		<title>
-		  <xsl:call-template name="kindPrefix"/>
-		  <xsl:call-template name="getTitle"/>
-		</title>
-		<url href="{@href}"/>
-	      </webLink>
-	    </xsl:result-document>
-	  </xsl:when>
+	<xsl:when test="@href != ''">
+	  <xsl:variable name="fileName" select="concat('res-',$itemID,'.xml')"/>
+	  <resource 
+	      identifier="{concat('res-',$itemID)}"
+	      type="imswl_xmlv1p1"
+	      href="{$fileName}"
+	      >
+	    <file href="{$fileName}"/>
+	  </resource>
+	  <xsl:result-document 
+	      href="{$fileName}"
+	      format="resources">
+	    <webLink 
+		xmlns="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:schemaLocation="http://www.imsglobal.org/xsd/imsccv1p1/imswl_v1p1 http://www.imsglobal.org/profile/cc/ccv1p1/ccv1p1_imswl_v1p1.xsd">
+	      <title>
+		<xsl:call-template name="kindPrefix"/>
+		<xsl:call-template name="getTitle"/>
+	      </title>
+	      <url href="{@href}"/>
+	    </webLink>
+	  </xsl:result-document>
+	</xsl:when>
       </xsl:choose>
     </xsl:if>
   </xsl:template>

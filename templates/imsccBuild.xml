@@ -6,30 +6,48 @@
     <property name="canvas.name" value="${courseName}.canvas.imscc"/>
     <property name="canvas.webcontent.dir" value="canvas/web_resources"/>
     <property name="canvas.wiki.dir" value="canvas/wiki_content"/>
+    <property name="canvasthin.name" value="${courseName}.canvasthin.imscc"/>
+    <property name="canvasthin.webcontent.dir" 
+	      value="canvasthin/web_resources"/>
+    <property name="canvasthin.wiki.dir" value="canvasthin/wiki_content"/>
     <property name="bbthin.name" value="${courseName}.bbthin.zip"/>
     <property name="bbthin.webcontent.dir" value="bbthin/webcontent"/>
     <property name="bb.name" value="${courseName}.bb.zip"/>
     <property name="bb.webcontent.dir" value="bb/csfiles/home_dir/webcontent"/>
 
     	
-    <available property="imscc.requested" file="Directory/outline/imscc.requested"/>
-    <available property="canvas.requested" file="Directory/outline/canvas.requested"/>
+    <available property="imscc.requested" 
+	       file="Directory/outline/imscc.requested"/>
+    <available property="canvas.requested" 
+	       file="Directory/outline/canvas.requested"/>
+    <available property="canvasthin.requested" 
+	       file="Directory/outline/canvasthin.requested"/>
     	    	
     <uptodate property="imscc.content.uptodate" 
 	      targetfile="${imscc.name}"
 	      >
       <srcfiles dir="." includes="**/*.md"/>
-	  <srcfiles dir="." includes="**/*.mmd"/>
-	  <srcfiles dir="Directory/outline" includes="outline.xml"/>
+      <srcfiles dir="." includes="**/*.mmd"/>
+      <srcfiles dir="Directory/outline" includes="outline.xml"/>
     </uptodate>
 
     <uptodate property="canvas.content.uptodate" 
 	      targetfile="${canvas.name}"
 	      >
       <srcfiles dir="." includes="**/*.md"/>
-	  <srcfiles dir="." includes="**/*.mmd"/>
-	  <srcfiles dir="Directory/outline" includes="outline.xml"/>
+      <srcfiles dir="." includes="**/*.mmd"/>
+      <srcfiles dir="Directory/outline" includes="outline.xml"/>
     </uptodate>
+
+    <uptodate property="canvasthin.content.uptodate" 
+	      targetfile="${canvasthin.name}"
+	      >
+      <srcfiles dir="." includes="**/*.md"/>
+      <srcfiles dir="." includes="**/*.mmd"/>
+      <srcfiles dir="Directory/outline" includes="outline.xml"/>
+    </uptodate>
+
+
 
     <target name="bbthin.check" depends="generateDocs">
       <available property="bbthin.requested" file="Directory/outline/bbthin.requested"/>
@@ -152,6 +170,27 @@
      </target>
 
 
+
+    <target name="genCanvasThinWebContent" depends="debugimscc,generateDocs" 
+    	if="canvasthin.requested"
+	    unless="canvasthin.content.uptodate">
+      <echo>building the Canvas thin Course Cartridge ${canvasthin.name}</echo>
+      <delete file="${canvasthin.name}"/>
+      <delete dir="canvasthin"/>
+      <mkdir dir="${canvasthin.webcontent.dir}"/>
+      <mkdir dir="${canvasthin.wiki.dir}"/>
+      <copy todir="${canvasthin.wiki.dir}" flatten="true">
+	<fileset dir=".">
+	  <include name="Directory/**/*__canvas.html"/>
+	  <include name="Protected/**/*__canvas.html"/>
+	  <include name="Public/**/*__canvas.html"/>
+	</fileset>
+      </copy>
+     </target>
+
+
+
+
     <target name="genBBthinWebContent" depends="debugimscc,generateDocs,bbthin.check" 
     	if="bbthin.requested"
 	    unless="bbthin.content.uptodate">
@@ -253,6 +292,10 @@
     <target name="genCanvasLearningApps" depends="generateDocs" 
     	    if="canvas.requested"
 	        unless="canvas.content.uptodate"/> 
+
+    <target name="genCanvasThinLearningApps" depends="generateDocs" 
+    	    if="canvasthin.requested"
+	        unless="canvasthin.content.uptodate"/> 
 
     <target name="genBBthinLearningApps" depends="generateDocs" 
     	    if="bbthin.requested"
@@ -385,6 +428,76 @@
          
          
     </target>
+
+
+    <target name="genCanvasThinManifest" 
+    	    depends="genCanvasThinWebContent,genCanvasThinLearningApps"
+    	    if="canvasthin.requested"
+    		unless="canvasthin.content.uptodate">
+         
+         <fileset id="canvasthin.contents.set" 
+		  dir="${canvasthin.webcontent.dir}">
+   	         <include name="**/*"/>
+         </fileset>
+         <pathconvert pathsep="${line.separator}" 
+   		              property="canvasthin.contents" 
+   		              refid="canvasthin.contents.set">
+   	         <mapper>
+   	             <regexpmapper from="${canvasthin.webcontent.dir}/(.*)" 
+				   to="\1"/>
+   	         </mapper>
+         </pathconvert>
+         <echo file="canvasthin.contents" 
+	       append="false">${canvasthin.contents}</echo>
+         <replaceregexp file="canvasthin.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="^"
+   		     replace="&lt;file&gt;"/>
+         <replaceregexp file="canvasthin.contents"
+   		     flags="m"
+   		     byline="true"
+   		     match="$"
+   		     replace="&lt;/file&gt;"/>
+         <echo file="canvasthin.contents.xml">&lt;imscc&gt;
+         &lt;sem&gt;${sem}&lt;/sem&gt;
+         &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+         &lt;author&gt;${courseName}&lt;/author&gt;
+         &lt;courseName&gt;${courseName}&lt;/courseName&gt;
+         &lt;files&gt;
+         </echo>
+	 <!--
+         <concat destfile="canvasthin.contents.xml" append="yes">
+   	         <filelist dir="." files="canvasthin.contents"/> 
+         </concat>
+	 -->
+         <echo file="canvasthin.contents.xml" append="true">&lt;/files&gt;
+    	    &lt;!--
+    	 </echo>
+    	 <concat destfile="canvasthin.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="outline.xml"/>
+    	 </concat>
+    	 <concat destfile="canvasthin.contents.xml" append="true">
+    	    <fileset dir="Directory/outline" includes="titleTable.xml"/>
+    	 </concat>
+    	 <replace file="canvasthin.contents.xml" 
+    	          token="&lt;outline&gt;" 
+    	          value="--&gt; &lt;outline&gt;"/>
+         <echo file="canvasthin.contents.xml" 
+	       append="true">&lt;/imscc&gt;</echo>
+         
+         <xslt in="canvasthin.contents.xml"
+   	           out="canvasthin/imsmanifest.xml"
+   	           style="templates/canvasthinManifest.xsl"
+   	           >
+   	         <classpath location="templates/saxon.jar" />
+   	         <param name="doc" expression="canvasthin"/>
+   	         <param name="baseURL" expression="${baseurl}"/>
+         </xslt>
+         
+         
+    </target>
+
 
 
     <target name="genBBthinManifest" 
@@ -548,6 +661,20 @@
     </target>            
 
 
+    <target name="generateCanvasThinFiles" depends="genCanvasThinManifest"
+      		if="canvasthin.requested"
+      		unless="canvasthin.content.uptodate"
+      		  	> 
+        <delete file="${canvasthin.name}"/>
+    	<zip destfile="${canvasthin.name}"
+    		 basedir="canvasthin"/>
+
+        <!-- delete file="canvasthin.contents"/>
+        <delete file="canvasthin.contents.xml"/>
+        <delete dir="canvasthin"/ -->
+	<delete file="Directory/outline/canvasthin.requested"/>
+    </target>            
+
     <target name="generateBBthinFiles" depends="genBBthinManifest"
       		if="bbthin.requested"
       		unless="bbthin.content.uptodate"
@@ -579,7 +706,7 @@
 
 
     <target name="generateIMSCC" 
-	    depends="generateIMSCCFiles,generateCanvasFiles,generateBBthinFiles,generateBBFiles"
+	    depends="generateIMSCCFiles,generateCanvasFiles,generateCanvasThinFiles,generateBBthinFiles,generateBBFiles"
 	    if="imscc.requested"
 	    unless="imscc.content.uptodate"/>
 
