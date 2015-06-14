@@ -55,7 +55,7 @@ When deployed on an Apache-style web server, you will need to
 enforce content protection by placing an appropriate
 `.htaccess` file in the _Protected_ directory of the server.
 
-If the entire website is being hosted in a Learning management System
+If the entire website is being hosted in a Learning Management System
 (e.g., Blackboard) where the entire site will be limited to enrolled
 students, then there is, in effect, no difference between the _Public_
 and _Protected_ directories and no special `.htaccess` file would be
@@ -84,18 +84,7 @@ Primary documents can be written in
 
     I do run the documents through a C/M4-style pre-processor,
     allowing me to do some macros and conditional text markup.
-* [DocBook](http://www.docbook.org) (deprecated):  I used this for a while, and
-  still have DocBook material in several of my course websites, but have
-  moved away from it.
-* LaTeX (deprecated): Specifically, I use
-  [Beamer](http://en.wikibooks.org/wiki/LaTeX/Presentations) to
-  produce both slides and notes/articles. I also have (in the
-  _templates_ directory, a number of my own LaTeX macros). Most
-  notably, I have my own commands for injecting graphics in a way that
-  allows consistency in both the slide and notes forms.
-
-    This produces some really beautiful PDF output, but is slow and
-    finicky.	
+* XML:  Used for the course outline only.
 
 
 A primary document stored in the directory _primaryDoc_ would appear
@@ -104,8 +93,7 @@ in files:
 | Input format | Content Files |
 |:------------:|:--------------|
    Markdown    | _primaryDoc_`.md`
-   DocBook     | _primaryDoc_`.dbk` 
-   LaTeX       | _primaryDoc_`.info.tex`, _primaryDoc_`.ext.tex`, _primaryDoc_`.content.tex` 
+   XML      | `outline.dbk` 
 
 
 
@@ -113,7 +101,7 @@ in files:
 
 The available output formats are:
 
-* HTML outputs
+* from Markdown:
     * _html_ : the entire document in a single page of HTML
     * _pages_ : the entire document, split into pages at section and
       subsection boundaries.
@@ -129,36 +117,15 @@ The available output formats are:
         A single ebook is generated for the entire site. Marking a
         particular document with this output option indicates that the
         document should be included within the ebook.
-      
-* PDF outputs
-    * web: a landscape format with medium-sized type for easy reading
-      on screens and tablets.
-	* printable: 8.5x11 inch pages, in 11pt type
-	* slides: The document formatted as slides (Beamer).
+
+    * _canvas_ : A simplified version of the _html_ format, suitable for
+      import into the Canvas LMS as a (wiki) "Page"  
 
 
-Not every input format can be converted to every output format. The
-possibilities are shown in the table below:
+* from XML:
+    * _modules_ The course outline presetned in HTML as a collapsed arrangement of modules. Expanding a module reveals a linear list of activities associated with that module, 
+    * _topics_  The same course outline presented on an HTML page as a multi-column table.
 
-| Input Format | can be converted to |||||||
-|              |  HTML |||| PDF |||
-|              | html | pages | slidy | epub | web | printable | slides |
-|:------------:|:----:|:-----:|:-----:|:-----|:---:|:---------:|:------:|
-**Markdown**   |  Y   |   Y   |   Y   |   Y  |     |           |        |
-**DocBook**    |  Y   |   Y   |       |      |     |           |        |
-**LaTeX**      |  Y   |   ?   |       |      |  Y  |    Y      |   Y    |
-
-In theory, Markdown could generate any of the output formats, but I
-have not felt it worthwhile to do more than idle experimenting with
-PDF output from Markdown.
-
-A primary document _primaryDoc_, when converted into output format
-_format_, will yield a file in the same directory named
-_primaryDoc_`__`_format_`.html` or _primaryDoc_`__`_format_`.pdf`.
-Those are two underscores between the document name and the output
-format. Most of the temporary files produced while doing the
-conversions will also contain those two underscores, so that one easy
-way to "clean" a directory is to delete all files _primaryDoc_`__*`.
 
 
 ### Selecting the desired formats
@@ -307,6 +274,50 @@ to be protected, a `secure_html` directory).
 contents. This can be uploaded to another server or to a content
 collection on Blackboard.
 
+`ant imscc`
+:  builds the course documents and creates a course cartridge file
+  that could be imported by most Learning Management Systems (LMS)
+
+`ant bb`
+: builds the course documents and creates a course cartridge file
+     that could be imported into BlackBoard. This cartridge features the
+	 entire course contents, a set of Learning Modules reflecting the
+	 basic course outline, and calendar events for all dated items 
+	 in the outline.
+
+`ant bbthin`
+: builds the course documents and creates a course cartridge file
+  that could be imported into BlackBoard. This cartridge features 
+  a set of Learning Modules reflecting the basic course outline, 
+  and calendar events for all dated items in the outline. 
+
+    This "thin" cartridge does not, however, include the actual 
+	 course documents. Those are presumed to have been deployed to
+	 a separate web server. The imported Blackboard modules will 
+	 link to those documents.
+
+`ant canvas`
+:  builds the course documents and creates a course cartridge file
+         that could be imported into Canvas. This cartridge features the
+	 entire course contents, a set of Modules reflecting the
+	 basic course outline, and calendar events for all dated items 
+	 in the outline. In addition, documents built with a "canvas"
+	 output format will be exported as Canvas (wiki) Pages.
+
+`ant canvasthin`
+: builds the course documents and creates a course cartridge file
+         that could be imported into Canvas. This cartridge features 
+         a set of Modules reflecting the basic course outline, 
+	 and calendar events for all dated items in the outline. 
+         In addition, documents built with a "canvas"
+	 output format will be exported as Canvas (wiki) Pages.
+
+    This "thin" cartridge does not, however, include the actual 
+	course documents. Those are presumed to have been deployed to
+	a separate web server. The imported Blackboard modules will 
+	link to those documents.
+
+
 `ant clean`
 : Removes most of the temporary files produced as a side effect of
 building the site. Temporary files that are particularly time consuming to
@@ -351,11 +362,13 @@ slidyURL=https://www.cs.odu.edu/~zeil/styles/Slidy2
 
 The first few entries are self-explanatory.
 
-The `baseurl` is required mainly for PDF outputs, as relative links in
-PDF files do not work well at all. (Some browsers, particularly on
-tablets, copy all PDFs to an internal folder and then open the PDF
-from there, completely losing all memory of the URL form which the
-document was obtained.)
+The `baseurl` indicates where the course website will be deployed. 
+Most of the intra-course links are expressed as relative URLs, but there
+are a few circumstnaces where the absolute URL is required. In particular,
+"thin" targets that allow an LMS (Blackboard or Canvas) to link to a website
+for course documents will use this to inform the LMS of the location of that
+website.  On the other hand, the "fat" export formats (`imscc`, `bb`, 
+and `canvas`) should ignore this entirely. 
 
 The `homeurl` and `email` values are used in the footer information
 at the bottom of most pages.
