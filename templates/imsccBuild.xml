@@ -1,85 +1,32 @@
   <project xmlns:antcontrib="antlib:net.sf.antcontrib">
     
 
-    <property name="imscc.name" value="${courseName}.imscc"/>
+    <tstamp>
+      <format property="cartridgeDate" pattern="yyyy-MM-dd_hh-mm"/>
+    </tstamp>
+
+    <property name="imscc.name" value="${courseName}.${cartridgeDate}.imscc"/>
     <property name="imscc.webcontent.dir" value="imscc/webcontent"/>
-    <property name="canvas.name" value="${courseName}.canvas.imscc"/>
+    <property name="canvas.name" 
+	      value="${courseName}.canvas.${cartridgeDate}.imscc"/>
     <property name="canvas.webcontent.dir" value="canvas/web_resources"/>
     <property name="canvas.wiki.dir" value="canvas/wiki_content"/>
-    <property name="canvasthin.name" value="${courseName}.canvasthin.imscc"/>
+    <property name="canvasthin.name" 
+	      value="${courseName}.canvasthin.${cartridgeDate}.imscc"/>
     <property name="canvasthin.webcontent.dir" 
 	      value="canvasthin/web_resources"/>
     <property name="canvasthin.wiki.dir" value="canvasthin/wiki_content"/>
-    <property name="bbthin.name" value="${courseName}.bbthin.zip"/>
+    <property name="bbthin.name" 
+value="${courseName}.bbthin.${cartridgeDate}.zip"/>
     <property name="bbthin.webcontent.dir" value="bbthin/webcontent"/>
-    <property name="bb.name" value="${courseName}.bb.zip"/>
+    <property name="bb.name" value="${courseName}.bb.${cartridgeDate}.zip"/>
     <property name="bb.webcontent.dir" value="bb/csfiles/home_dir/webcontent"/>
 
     	
-    <available property="imscc.requested" 
-	       file="Directory/outline/imscc.requested"/>
-    <available property="canvas.requested" 
-	       file="Directory/outline/canvas.requested"/>
-    <available property="canvasthin.requested" 
-	       file="Directory/outline/canvasthin.requested"/>
     	    	
-    <uptodate property="imscc.content.uptodate" 
-	      targetfile="${imscc.name}"
-	      >
-      <srcfiles dir="." includes="**/*.md"/>
-      <srcfiles dir="." includes="**/*.mmd"/>
-      <srcfiles dir="Directory/outline" includes="outline.xml"/>
-    </uptodate>
-
-    <uptodate property="canvas.content.uptodate" 
-	      targetfile="${canvas.name}"
-	      >
-      <srcfiles dir="." includes="**/*.md"/>
-      <srcfiles dir="." includes="**/*.mmd"/>
-      <srcfiles dir="Directory/outline" includes="outline.xml"/>
-    </uptodate>
-
-    <uptodate property="canvasthin.content.uptodate" 
-	      targetfile="${canvasthin.name}"
-	      >
-      <srcfiles dir="." includes="**/*.md"/>
-      <srcfiles dir="." includes="**/*.mmd"/>
-      <srcfiles dir="Directory/outline" includes="outline.xml"/>
-    </uptodate>
 
 
-
-    <target name="bbthin.check" depends="generateDocs">
-      <available property="bbthin.requested" file="Directory/outline/bbthin.requested"/>
-      <uptodate property="bbthin.content.uptodate" 
-		targetfile="${bbthin.name}"
-		>
-	<srcfiles dir="Directory/outline" includes="outline.xml"/>
-      </uptodate>
-    </target>
-
-    <target name="bb.check" depends="generateDocs">
-      <available property="bb.requested" file="Directory/outline/bb.requested"/>
-      <uptodate property="bb.content.uptodate" 
-		targetfile="${bb.name}"
-		>
-	<srcfiles dir="." includes="**/*.md"/>
-	<srcfiles dir="." includes="**/*.mmd"/>
-	<srcfiles dir="Directory/outline" includes="outline.xml"/>
-      </uptodate>
-    </target>
-
-    <target name="debugimscc">
-      <!--
-      <echo>imscc.requested ${imscc.requested}</echo>
-      <echo>imscc.content.uptodate ${imscc.content.uptodate}</echo>
-      -->
-    </target>
-
-
-    <target name="genIMSCCWebContent" depends="debugimscc" 
-    	if="imscc.requested"
-	    unless="imscc.content.uptodate">
+    <target name="genIMSCCWebContent" depends="build">
       <echo>building the IMS Course Cartridge ${imscc.name}</echo>
       <delete file="${imscc.name}"/>
       <delete dir="imscc"/>
@@ -118,9 +65,7 @@
       </copy>
      </target>
 
-    <target name="genCanvasWebContent" depends="debugimscc,generateDocs" 
-    	if="canvas.requested"
-	    unless="canvas.content.uptodate">
+    <target name="genCanvasWebContent" depends="build" >
       <echo>building the Canvas Course Cartridge ${canvas.name}</echo>
       <delete file="${canvas.name}"/>
       <delete dir="canvas"/>
@@ -171,9 +116,7 @@
 
 
 
-    <target name="genCanvasThinWebContent" depends="debugimscc,generateDocs" 
-    	if="canvasthin.requested"
-	    unless="canvasthin.content.uptodate">
+    <target name="genCanvasThinWebContent" depends="build" >
       <echo>building the Canvas thin Course Cartridge ${canvasthin.name}</echo>
       <delete file="${canvasthin.name}"/>
       <delete dir="canvasthin"/>
@@ -191,9 +134,7 @@
 
 
 
-    <target name="genBBthinWebContent" depends="debugimscc,generateDocs,bbthin.check" 
-    	if="bbthin.requested"
-	    unless="bbthin.content.uptodate">
+    <target name="genBBthinWebContent" depends="build">
       <echo>building the BlackBoard thin export Cartridge ${bbthin.name}</echo>
       <delete file="${bbthin.name}"/>
       <delete dir="bbthin"/>
@@ -237,9 +178,7 @@
      </target>
 
 
-    <target name="genBBWebContent" depends="debugimscc,generateDocs,bb.check" 
-    	if="bb.requested"
-	    unless="bb.content.uptodate">
+    <target name="genBBWebContent" depends="build">
       <echo>building the BlackBoard  export Cartridge ${bb.name}</echo>
       <delete file="${bb.name}"/>
       <delete dir="bb"/>
@@ -285,30 +224,19 @@
 
 
 
-    <target name="genIMSCCLearningApps" depends="generateDocs" 
-    	    if="imscc.requested"
-	        unless="imscc.content.uptodate"/> 
+    <target name="genIMSCCLearningApps" depends="generateDocs" />
         	
-    <target name="genCanvasLearningApps" depends="generateDocs" 
-    	    if="canvas.requested"
-	        unless="canvas.content.uptodate"/> 
+    <target name="genCanvasLearningApps" depends="generateDocs" />
 
-    <target name="genCanvasThinLearningApps" depends="generateDocs" 
-    	    if="canvasthin.requested"
-	        unless="canvasthin.content.uptodate"/> 
+    <target name="genCanvasThinLearningApps" depends="generateDocs" />
 
-    <target name="genBBthinLearningApps" depends="generateDocs" 
-    	    if="bbthin.requested"
-	        unless="bbthin.content.uptodate"/> 
+    <target name="genBBthinLearningApps" depends="generateDocs" />
 
-    <target name="genBBLearningApps" depends="generateDocs" 
-    	    if="bb.requested"
-	        unless="bb.content.uptodate"/> 
+    <target name="genBBLearningApps" depends="generateDocs" />
 
     <target name="genIMSCCManifest" 
     	    depends="genIMSCCWebContent,genIMSCCLearningApps"
-    	    if="imscc.requested"
-    		unless="imscc.content.uptodate">
+	    >
          
          <fileset id="imscc.contents.set" dir="${imscc.webcontent.dir}">
    	         <include name="**/*"/>
@@ -369,8 +297,7 @@
     	
     <target name="genCanvasManifest" 
     	    depends="genCanvasWebContent,genCanvasLearningApps"
-    	    if="canvas.requested"
-    		unless="canvas.content.uptodate">
+	    >
          
          <fileset id="canvas.contents.set" dir="${canvas.webcontent.dir}">
    	         <include name="**/*"/>
@@ -432,8 +359,7 @@
 
     <target name="genCanvasThinManifest" 
     	    depends="genCanvasThinWebContent,genCanvasThinLearningApps"
-    	    if="canvasthin.requested"
-    		unless="canvasthin.content.uptodate">
+	    >
          
          <fileset id="canvasthin.contents.set" 
 		  dir="${canvasthin.webcontent.dir}">
@@ -501,9 +427,7 @@
 
 
     <target name="genBBthinManifest" 
-    	    depends="genBBthinWebContent,genBBthinLearningApps"
-    	    if="bbthin.requested"
-    		unless="bbthin.content.uptodate">
+    	    depends="genBBthinWebContent,genBBthinLearningApps">
          
          <fileset id="bbthin.contents.set" dir="${bbthin.webcontent.dir}">
    	         <include name="**/*"/>
@@ -567,9 +491,7 @@
 
 
     <target name="genBBManifest" 
-    	    depends="genBBWebContent,genBBLearningApps"
-    	    if="bb.requested"
-    		unless="bb.content.uptodate">
+    	    depends="genBBWebContent,genBBLearningApps">
          
          <fileset id="bb.contents.set" dir="${bb.webcontent.dir}">
    	         <include name="**/*"/>
@@ -629,85 +551,96 @@
     </target>
 
 
-
-
-
-    <target name="generateIMSCCFiles" depends="genIMSCCManifest"
-      		if="imscc.requested"
-      		unless="imscc.content.uptodate"
-      		  	> 
+    <target name="generateIMSCCFiles" depends="genIMSCCManifest">
         <delete file="${imscc.name}"/>
     	<zip destfile="${imscc.name}"
     		 basedir="imscc"/>
-
-        <!-- delete file="imscc.contents"/>
-        <delete file="imscc.contents.xml"/>
-        <delete dir="imscc"/ -->
-	<delete file="Directory/outline/imscc.requested"/>
     </target>            
 
-    <target name="generateCanvasFiles" depends="genCanvasManifest"
-      		if="canvas.requested"
-      		unless="canvas.content.uptodate"
-      		  	> 
+    <target name="generateCanvasFiles" depends="genCanvasManifest">
         <delete file="${canvas.name}"/>
     	<zip destfile="${canvas.name}"
     		 basedir="canvas"/>
-
-        <!-- delete file="canvas.contents"/>
-        <delete file="canvas.contents.xml"/>
-        <delete dir="canvas"/ -->
-	<delete file="Directory/outline/canvas.requested"/>
     </target>            
 
 
-    <target name="generateCanvasThinFiles" depends="genCanvasThinManifest"
-      		if="canvasthin.requested"
-      		unless="canvasthin.content.uptodate"
-      		  	> 
+    <target name="generateCanvasThinFiles" depends="genCanvasThinManifest">
+
         <delete file="${canvasthin.name}"/>
     	<zip destfile="${canvasthin.name}"
     		 basedir="canvasthin"/>
-
-        <!-- delete file="canvasthin.contents"/>
-        <delete file="canvasthin.contents.xml"/>
-        <delete dir="canvasthin"/ -->
-	<delete file="Directory/outline/canvasthin.requested"/>
     </target>            
 
-    <target name="generateBBthinFiles" depends="genBBthinManifest"
-      		if="bbthin.requested"
-      		unless="bbthin.content.uptodate"
-      		  	> 
+    <target name="generateBBthinFiles" depends="genBBthinManifest">
         <delete file="${bbthin.name}"/>
     	<zip destfile="${bbthin.name}"
     		 basedir="bbthin"/>
-
-        <!-- delete file="bbthin.contents"/>
-        <delete file="bbthin.contents.xml"/>
-        <delete dir="bbthin"/ -->
-	<delete file="Directory/outline/bbthin.requested"/>
     </target>            
 
-    <target name="generateBBFiles" depends="genBBManifest"
-      		if="bb.requested"
-      		unless="bb.content.uptodate"
-      		  	> 
+    <target name="generateBBFiles" depends="genBBManifest">
         <delete file="${bb.name}"/>
     	<zip destfile="${bb.name}"
     		 basedir="bb"/>
+    </target>            
 
-        <!-- delete file="bb.contents"/>
+    <!-- Uncomment the next line to suppress deletion of intermediate files. -->
+    <!--  <property name="debugIMSCC" value="1"/>  -->
+
+
+    <target name="cleanIMSCC" depends="generateIMSCCFiles"
+	    unless="debugIMSCC">
+        <delete file="imscc.contents"/>
+        <delete file="imscc.contents.xml"/>
+        <delete dir="imscc"/>
+    </target>            
+
+    <target name="cleanCanvas" depends="generateCanvasFiles"
+	    unless="debugIMSCC">
+        <delete file="canvas.contents"/>
+        <delete file="canvas.contents.xml"/>
+        <delete dir="canvas"/>
+    </target>            
+
+
+    <target name="cleanCanvasThin" depends="generateCanvasThinFiles"
+	    unless="debugIMSCC">
+        <delete file="canvasthin.contents"/>
+        <delete file="canvasthin.contents.xml"/>
+        <delete dir="canvasthin"/>
+    </target>            
+
+    <target name="cleanBBthin" depends="generateBBthinFiles"
+	    unless="debugIMSCC">
+        <delete file="bbthin.contents"/>
+        <delete file="bbthin.contents.xml"/>
+        <delete dir="bbthin"/>
+    </target>            
+
+    <target name="cleanBB" depends="generateBBFiles"
+	    unless="debugIMSCC">
+        <delete file="bb.contents"/>
         <delete file="bb.contents.xml"/>
-        <delete dir="bb"/ -->
-	<delete file="Directory/outline/bb.requested"/>
+        <delete dir="bb"/>
+    </target>            
+
+
+    <target name="generateIMSCC" depends="cleanIMSCC">
+    </target>            
+
+    <target name="generateCanvas" depends="cleanCanvas">
+    </target>            
+
+
+    <target name="generateCanvasThin" depends="cleanCanvasThin">
+    </target>            
+
+    <target name="generateBBthin" depends="cleanBBthin">
+    </target>            
+
+    <target name="generateBB" depends="cleanBB">
     </target>            
 
 
 
-    <target name="generateIMSCC" 
-	    depends="generateIMSCCFiles,generateCanvasFiles,generateCanvasThinFiles,generateBBthinFiles,generateBBFiles"
-	    if="imscc.requested"
-	    unless="imscc.content.uptodate"/>
 
 </project>

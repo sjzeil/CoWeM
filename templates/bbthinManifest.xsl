@@ -180,7 +180,7 @@
   </xsl:template>
 
 
-  <xsl:template match="topic|subject">
+  <xsl:template match="topic">
     <xsl:variable name="topicID" select="generate-id()"/>
     <item identifier="{$topicID}" 
 	  identifierref="{concat('res-',$topicID)}">
@@ -457,9 +457,10 @@
 	  identifierref="{concat('res-',$subjectID)}">
       <title>
 	<xsl:call-template name="getTitle"/>
+      <xsl:text> </xsl:text>
 	<xsl:call-template name="dateAttributes"/>
       </title>
-      <xsl:apply-templates select="item | subject"/>
+      <xsl:apply-templates select="item"/>
     </item>
   </xsl:template>
 

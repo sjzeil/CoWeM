@@ -107,21 +107,6 @@
   </uptodate>
   <target name="xml2epub" depends="xml2epubOverview" unless="epub.xml.exists">
   </target>
-  <target name="xml2imscc">
-  	<echo file="imscc.requested">imscc</echo>
-  </target>
-  <target name="xml2canvas">
-  	<echo file="canvas.requested">imscc</echo>
-  </target>
-  <target name="xml2canvasthin">
-  	<echo file="canvasthin.requested">imscc</echo>
-  </target>
-  <target name="xml2bbthin">
-  	<echo file="bbthin.requested">imscc</echo>
-  </target>
-  <target name="xml2bb">
-  	<echo file="bb.requested">imscc</echo>
-  </target>
 
   <condition property="do.xmobi1">
     <and>

@@ -3,20 +3,68 @@
   <!-- Invoke this build file as
      ant
        - to build the desired documents
+
      ant deploy
        - to build the desired documents and deploy to
          a webserver
+
      ant zip
        - to build the desired documents and create a zip file that
          could be uploaded and unpacked on a webserver (e.g., a Blackboard
          personal or course "content collection").
+
+     ant imscc
+       - to build the desired documents and create a course cartridge file
+         that could be imported by most Learning Management Systems (LMS)
+
+     ant bb
+       - to build the desired documents and create a course cartridge file
+         that could be imported into BlackBoard. This cartridge features the
+	 entire course contents, a set of Learning Modules reflecting the
+	 basic course outline, and calendar events for all dated items 
+	 in the outline.
+
+     ant bbthin
+       - to build the desired documents and create a course cartridge file
+         that could be imported into BlackBoard. This cartridge features 
+         a set of Learning Modules reflecting the basic course outline, 
+	 and calendar events for all dated items in the outline. 
+
+         This "thin" cartridge does not, however, include the actual 
+	 course documents. Those are presumed to have been deployed to
+	 a separate web server. The imported Blackboard modules will 
+	 link to those documents.
+
+     ant canvas
+       - to build the desired documents and create a course cartridge file
+         that could be imported into Canvas. This cartridge features the
+	 entire course contents, a set of Modules reflecting the
+	 basic course outline, and calendar events for all dated items 
+	 in the outline. In addition, documents built with a "canvas"
+	 output format will be exported as Canvas (wiki) Pages.
+
+     ant canvasthin
+       - to build the desired documents and create a course cartridge file
+         that could be imported into Canvas. This cartridge features 
+         a set of Modules reflecting the basic course outline, 
+	 and calendar events for all dated items in the outline. 
+         In addition, documents built with a "canvas"
+	 output format will be exported as Canvas (wiki) Pages.
+
+         This "thin" cartridge does not, however, include the actual 
+	 course documents. Those are presumed to have been deployed to
+	 a separate web server. The imported Blackboard modules will 
+	 link to those documents.
+  
      ant clean
        - to clean out temporary and intermediate files generated 
          while building the real documents
+  
      ant cleaner
        - remove all files removed by clean and some other files that
          can be easily regenerated, including any of the target
          documents.
+
      ant cleanest
        - remove all files that can be automaticall regenerated
 
@@ -124,7 +172,7 @@
     <iterate target="build"/>
   </target>
 
-  <target name="build"  depends="generateDocs,generateEbooks,generateIMSCC"
+  <target name="build"  depends="generateDocs,generateEbooks"
 	  description="Generate all documents and ebooks">
   </target>
 
@@ -156,6 +204,30 @@
   </target>
 
 
+  <target name="imscc" depends="build,generateIMSCC"
+	  description="Generate all documents and prepare a course cartridge for import into most LMS's"
+	  >
+  </target>
+
+  <target name="bb" depends="build,generateBB"
+	  description="Generate all documents and prepare a course cartridge for import into BlackBoard"
+	  >
+  </target>
+
+  <target name="bbthin" depends="build,generateBBthin"
+	  description="Generate all documents and prepare a thin course cartridge for import into BlackBoard"
+	  >
+  </target>
+
+  <target name="canvas" depends="build,generateCanvas"
+	  description="Generate all documents and prepare a course cartridge for import into Canvas"
+	  >
+  </target>
+
+  <target name="canvasthin" depends="build,generateCanvasThin"
+	  description="Generate all documents and prepare a thin course cartridge for import into Canvas"
+	  >
+  </target>
 
 
   <target name="clean">
