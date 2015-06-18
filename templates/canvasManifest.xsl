@@ -105,6 +105,11 @@
 	  <file href="course_settings/canvas_export.txt"/>
 	</resource>
 
+	<xsl:if test="normalize-space(/imscc/outline/preamble) != ''">
+	  <xsl:apply-templates select="/imscc/outline/preamble" 
+			       mode="preamble"/>
+	</xsl:if>
+
 	<xsl:apply-templates select="/imscc/outline/topic" mode="resources"/>
 	<xsl:apply-templates 
 	    select="/imscc/files/file"
@@ -800,6 +805,97 @@ A: This is un-BEAR-able
   </xsl:template>
 
 
+  <xsl:template match="preamble" mode="preamble">
+    <resource 
+	identifier="{generate-id()}" 
+	type="associatedcontent/imscc_xmlv1p1/learning-application-resource" 
+	href="course_settings/syllabus.html" intendeduse="syllabus">
+      <file href="course_settings/syllabus.html"/>
+    </resource>
+    <xsl:result-document 
+	href="course_settings/syllabus.html"
+	format="resources">
+      <html>
+	<head>
+	  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	  <title>Syllabus</title>
+	</head>
+	<body>
+	  <div>
+	    <xsl:apply-templates select="*|text()" mode="preamble"/>
+	  </div>
+	</body>
+      </html>
+    </xsl:result-document>
+  </xsl:template>
+
+  <xsl:template match="a[@href != '']" mode="preamble">
+    <xsl:message>
+      <xsl:text>link to </xsl:text>
+      <xsl:value-of select="@href"/>
+    </xsl:message>
+
+    <xsl:variable name="wikiTrailer"
+		  select="'__canvas.html'"/>
+    <xsl:choose>
+      <xsl:when test="contains(@href, $wikiTrailer)">
+	<xsl:variable name="fileName">
+	  <xsl:call-template name="stripDirectories">
+	    <xsl:with-param name="path" select="@href"/>
+	  </xsl:call-template>
+	</xsl:variable>
+	<xsl:variable name="doc"
+		      select="substring-before($fileName, '.html')"/>
+	<a
+	    title="{@title}"
+	    href="{concat('%24WIKI_REFERENCE%24/pages/', $doc)}"
+	    >
+	  <xsl:apply-templates select="*|text()" mode="preamble"/>
+	</a>
+      </xsl:when>
+      <xsl:when test="starts-with(@href, '../../')">
+	<a
+	    class=" instructure_file_link"
+	    title="{@title}"
+	    href="{concat('%24IMS-CC-FILEBASE%24/', 
+                           substring-after(@href, '../../'),
+			   '?canvas_download=1&amp;canvas_qs_wrap=1')}"
+	    >
+	  <xsl:apply-templates select="*|text()" mode="preamble"/>
+	</a>
+      </xsl:when>
+      <xsl:when test="starts-with(@href, '../')">
+	<a
+	    class=" instructure_file_link"
+	    title="{@title}"
+	    href="{concat('%24IMS-CC-FILEBASE%24/Directory/', 
+                           substring-after(@href, '../'),
+			   '?canvas_download=1&amp;canvas_qs_wrap=1')}"
+	    >
+	  <xsl:apply-templates select="*|text()" mode="preamble"/>
+	</a>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:copy>
+	  <xsl:copy-of select="@*"/>
+	  <xsl:apply-templates select="*|text()" mode="preamble"/>
+	</xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="*" mode="preamble">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="* | text()"  mode="preamble"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="text()"  mode="preamble">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+
 
 
   <xsl:template match="*">
@@ -816,7 +912,7 @@ A: This is un-BEAR-able
 
   <xsl:template name="getTitle">
     <xsl:if test="local-name() = 'topic'">
-      <apply-templates select='.' mode="itemNumber"/>
+      <xsl:apply-templates select='.' mode="itemNumber"/>
       <xsl:text> </xsl:text>
     </xsl:if>
     <xsl:choose>
