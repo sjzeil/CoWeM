@@ -940,7 +940,6 @@ A: This is un-BEAR-able
       </xsl:when>
       <xsl:when test="starts-with(@href, '../../')">
 	<a
-	    class=" instructure_file_link"
 	    title="{@title}"
 	    href="{concat($baseURL, 
                            substring-after(@href, '../..'))}"
@@ -950,7 +949,6 @@ A: This is un-BEAR-able
       </xsl:when>
       <xsl:when test="starts-with(@href, '../')">
 	<a
-	    class=" instructure_file_link"
 	    title="{@title}"
 	    href="{concat($baseURL,
 		           '/Directory/',

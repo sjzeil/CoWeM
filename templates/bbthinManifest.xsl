@@ -63,6 +63,20 @@
 	    <title>Modules</title>
 	    <item identifier="itm00002" identifierref="res00002">
 	      <title>--TOP--</title>
+	      <xsl:if test="normalize-space(/imscc/outline/preamble) != ''">
+		<item identifier="mod00001" identifierref="rmod00001">
+		  <xsl:choose>
+		    <xsl:when test="/imscc/outline/preamble/h1">
+		      <title>
+			<xsl:value-of select="normalize-space(/imscc/outline/preamble/h1[1])"/>
+		      </title>
+		    </xsl:when>
+		    <xsl:otherwise>
+		      <title>Course Modules</title>
+		    </xsl:otherwise>
+		  </xsl:choose>
+		</item>
+	      </xsl:if>
 	      <xsl:apply-templates select="/imscc/outline/topic"/>
 	    </item>
 	  </item>
@@ -79,6 +93,86 @@
 		  identifier="res00002" 
 		  type="resource/x-bb-document" 
 		  xml:base="res00002"/>
+	<xsl:if test="normalize-space(/imscc/outline/preamble) != ''">
+	  <xsl:variable name="pageTitle">
+	    <xsl:choose>
+	      <xsl:when test="/imscc/outline/preamble/h1">
+		<title>
+		  <xsl:value-of select="normalize-space(/imscc/outline/preamble/h1[1])"/>
+		</title>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<title>Course Modules</title>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:variable>
+	  <resource identifier="rmod00001"
+		    xml:base="rmod00001"
+		    bb:file="rmod00001.dat"
+		    bb:title="{$pageTitle}"
+		    type="resource/x-bb-document" 
+		    />
+	  <xsl:result-document 
+	      href="rmod00001.dat"
+	      format="resources">
+	    <xsl:variable name="pageContentID">
+	      <xsl:call-template name="contentID">
+		<xsl:with-param name="node" 
+				select="/imscc/outline/preamble"/>
+	      </xsl:call-template>
+	    </xsl:variable>
+	    <xsl:variable name="parentID">
+	      <xsl:call-template name="contentID">
+		<xsl:with-param name="node" select="/imscc/outline"/>
+	      </xsl:call-template>
+	    </xsl:variable>
+
+	    <CONTENT id="{$pageContentID}">
+	      <TITLE value="{$pageTitle}"/>
+	      <TITLECOLOR value="#000000"/>
+	      <BODY>
+		<TEXT>
+		  <xsl:apply-templates select="/imscc/outline/preamble/node()"
+				       mode="bbDoc"/>
+		</TEXT>
+		<TYPE value="H"/>
+	      </BODY>
+	      <DATES>
+		<CREATED value=""/>
+		<UPDATED value="{$now}"/>
+		<START value=""/>
+		<END value=""/>
+	      </DATES>
+	      <FLAGS>
+		<ISAVAILABLE value="true"/>
+		<ISFROMCARTRIDGE value="false"/>
+		<ISFOLDER value="false"/>
+		<ISDESCRIBED value="false"/>
+		<ISTRACKED value="false"/>
+		<ISLESSON value="false"/>
+		<ISSEQUENTIAL value="false"/>
+		<ALLOWGUESTS value="true"/>
+		<ALLOWOBSERVERS value="true"/>
+		<LAUNCHINNEWWINDOW value="false"/>
+		<ISREVIEWABLE value="false"/>
+		<ISGROUPCONTENT value="false"/>
+		<ISSAMPLECONTENT value="false"/>
+	      </FLAGS>
+	      <CONTENTHANDLER value="resource/x-bb-document"/>
+	      <RENDERTYPE value="REGULAR"/>
+	      <URL value=""/>
+	      <VIEWMODE value="TEXT_ICON_ONLY"/>
+	      <OFFLINENAME value=""/>
+	      <OFFLINEPATH value=""/>
+	      <LINKREF value=""/>
+	      <PARENTID value="{$parentID}"/>
+	      <VERSION value="3"/>
+	      <EXTENDEDDATA/>
+	      <FILES/>
+	    </CONTENT>
+	  </xsl:result-document>
+	</xsl:if>
+
 	<xsl:apply-templates select="/imscc/outline/topic" mode="resources"/>
       </resources>
     </manifest>
@@ -376,7 +470,7 @@
 	  <ISGROUPCONTENT value="false"/>
 	  <ISSAMPLECONTENT value="false"/>
 	</FLAGS>
-	<CONTENTHANDLER value="resource/x-bb-module-page"/>
+	<CONTENTHANDLER value="resource/x-bb-document"/>
 	<RENDERTYPE value="REGULAR"/>
 	<URL value=""/>
 	<VIEWMODE value="TEXT_ICON_ONLY"/>
@@ -434,6 +528,41 @@
   <xsl:template match="text()" mode="generateDescription">
     <xsl:copy-of select="."/>
   </xsl:template>
+
+  <xsl:template match="a[@href != '']" mode="bbDoc">
+    <xsl:message>
+      <xsl:text>link to </xsl:text>
+      <xsl:value-of select="@href"/>
+    </xsl:message>
+
+    <xsl:choose>
+      <xsl:when test="starts-with(@href, '../../')">
+	<xsl:text>&lt;a target="_blank" href="</xsl:text>
+	<xsl:value-of select="concat($baseURL, 
+                              substring-after(@href, '../..'))"/>
+	<xsl:text>"&gt;</xsl:text>
+	<xsl:apply-templates select="*|text()" mode="bbDoc"/>
+	<xsl:text>&lt;/a&gt;</xsl:text>
+      </xsl:when>
+      <xsl:when test="starts-with(@href, '../')">
+	<xsl:text>&lt;a target="_blank" href="</xsl:text>
+	<xsl:value-of select="concat($baseURL, 
+		           '/Directory/',
+                           substring-after(@href, '../'))"/>
+	<xsl:text>"&gt;</xsl:text>
+	<xsl:apply-templates select="*|text()" mode="bbDoc"/>
+	<xsl:text>&lt;/a&gt;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>&lt;a target="_blank" href="</xsl:text>
+	<xsl:value-of select="@href"/>
+	<xsl:text>"&gt;</xsl:text>
+	<xsl:apply-templates select="*|text()" mode="bbDoc"/>
+	<xsl:text>&lt;/a&gt;</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 
   <xsl:template match="*" mode="bbDoc">
     <xsl:variable name="element" select="local-name()"/>
