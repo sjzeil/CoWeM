@@ -22,9 +22,65 @@ value="${courseName}.bbthin.${cartridgeDate}.zip"/>
     <property name="bb.name" value="${courseName}.bb.${cartridgeDate}.zip"/>
     <property name="bb.webcontent.dir" value="bb/csfiles/home_dir/webcontent"/>
 
-    	
-    	    	
 
+    
+    	    	
+    <macrodef name="contentList">
+      <attribute name="fileName" default="imscc.content.xml"/>
+      <attribute name="webcontentDir" default="imscc/webcontent"/>
+      <sequential>
+	<fileset id="cartridge.files.set" 
+		 dir="@{webcontentDir}">
+	  <include name="**/*"/>
+	</fileset>
+	<pathconvert pathsep="${line.separator}" 
+		     property="cartridge.contents" 
+		     refid="cartridge.files.set">
+	  <mapper>
+	    <regexpmapper from="@{webcontentDir}/(.*)" 
+			  to="\1"/>
+	  </mapper>
+	</pathconvert>
+	<echo file="@{fileName}" append="false">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</echo>
+	<echo file="@{fileName}" append="true">&lt;!DOCTYPE imscc SYSTEM "section.dtd"&gt;</echo>
+	 
+	<echo file="@{fileName}.tmp" append="false">${cartridge.contents}</echo>
+	<replaceregexp file="@{fileName}.tmp"
+		       flags="m"
+		       byline="true"
+		       match="^"
+		       replace="&lt;file&gt;"/>
+	<replaceregexp file="@{fileName}.tmp"
+		       flags="m"
+		       byline="true"
+		       match="$"
+		       replace="&lt;/file&gt;"/>
+	<echo file="@{fileName}" append="true">&lt;imscc&gt;
+	&lt;sem&gt;${sem}&lt;/sem&gt;
+	&lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+	&lt;author&gt;${courseName}&lt;/author&gt;
+	&lt;courseName&gt;${courseName}&lt;/courseName&gt;
+	&lt;files&gt;
+	</echo>
+	<concat destfile="@{fileName}" append="yes">
+	  <filelist dir="." files="@{fileName}.tmp"/> 
+	</concat>
+	<echo file="@{fileName}" append="true">&lt;/files&gt;
+	&lt;!--
+	</echo>
+	<concat destfile="@{fileName}" append="true">
+	  <fileset dir="Directory/outline" includes="outline.xml"/>
+	</concat>
+	<concat destfile="@{fileName}" append="true">
+	  <fileset dir="Directory/outline" includes="titleTable.xml"/>
+	</concat>
+	<replace file="@{fileName}" 
+		 token="&lt;outline&gt;" 
+		 value="--&gt; &lt;outline&gt;"/>
+	<echo file="@{fileName}" append="true">&lt;/imscc&gt;</echo>
+	<delete file="@{fileName}.tmp"/>
+      </sequential>
+    </macrodef>
 
     <target name="genIMSCCWebContent" depends="build">
       <echo>building the IMS Course Cartridge ${imscc.name}</echo>
@@ -121,6 +177,7 @@ value="${courseName}.bbthin.${cartridgeDate}.zip"/>
       <delete file="${canvasthin.name}"/>
       <delete dir="canvasthin"/>
       <mkdir dir="${canvasthin.webcontent.dir}"/>
+      <touch file="${canvasthin.webcontent.dir}/placeholder.txt"/>
       <mkdir dir="${canvasthin.wiki.dir}"/>
       <copy todir="${canvasthin.wiki.dir}" flatten="true">
 	<fileset dir=".">
@@ -360,66 +417,18 @@ value="${courseName}.bbthin.${cartridgeDate}.zip"/>
     <target name="genCanvasThinManifest" 
     	    depends="genCanvasThinWebContent,genCanvasThinLearningApps"
 	    >
+
+      <contentList fileName="canvasthin.contents.xml"
+		   webcontentDir="${canvasthin.webcontent.dir}"/>
          
-         <fileset id="canvasthin.contents.set" 
-		  dir="${canvasthin.webcontent.dir}">
-   	         <include name="**/*"/>
-         </fileset>
-         <pathconvert pathsep="${line.separator}" 
-   		              property="canvasthin.contents" 
-   		              refid="canvasthin.contents.set">
-   	         <mapper>
-   	             <regexpmapper from="${canvasthin.webcontent.dir}/(.*)" 
-				   to="\1"/>
-   	         </mapper>
-         </pathconvert>
-         <echo file="canvasthin.contents" 
-	       append="false">${canvasthin.contents}</echo>
-         <replaceregexp file="canvasthin.contents"
-   		     flags="m"
-   		     byline="true"
-   		     match="^"
-   		     replace="&lt;file&gt;"/>
-         <replaceregexp file="canvasthin.contents"
-   		     flags="m"
-   		     byline="true"
-   		     match="$"
-   		     replace="&lt;/file&gt;"/>
-         <echo file="canvasthin.contents.xml">&lt;imscc&gt;
-         &lt;sem&gt;${sem}&lt;/sem&gt;
-         &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
-         &lt;author&gt;${courseName}&lt;/author&gt;
-         &lt;courseName&gt;${courseName}&lt;/courseName&gt;
-         &lt;files&gt;
-         </echo>
-	 <!--
-         <concat destfile="canvasthin.contents.xml" append="yes">
-   	         <filelist dir="." files="canvasthin.contents"/> 
-         </concat>
-	 -->
-         <echo file="canvasthin.contents.xml" append="true">&lt;/files&gt;
-    	    &lt;!--
-    	 </echo>
-    	 <concat destfile="canvasthin.contents.xml" append="true">
-    	    <fileset dir="Directory/outline" includes="outline.xml"/>
-    	 </concat>
-    	 <concat destfile="canvasthin.contents.xml" append="true">
-    	    <fileset dir="Directory/outline" includes="titleTable.xml"/>
-    	 </concat>
-    	 <replace file="canvasthin.contents.xml" 
-    	          token="&lt;outline&gt;" 
-    	          value="--&gt; &lt;outline&gt;"/>
-         <echo file="canvasthin.contents.xml" 
-	       append="true">&lt;/imscc&gt;</echo>
-         
-         <xslt in="canvasthin.contents.xml"
-   	           out="canvasthin/imsmanifest.xml"
-   	           style="templates/canvasthinManifest.xsl"
-   	           >
-   	         <classpath location="templates/saxon.jar" />
-   	         <param name="doc" expression="canvasthin"/>
-   	         <param name="baseURL" expression="${baseurl}"/>
-         </xslt>
+      <xslt in="canvasthin.contents.xml"
+	    out="canvasthin/imsmanifest.xml"
+	    style="templates/canvasthinManifest.xsl"
+	    >
+	<classpath location="templates/saxon.jar" />
+	<param name="doc" expression="canvasthin"/>
+	<param name="baseURL" expression="${baseurl}"/>
+      </xslt>
          
          
     </target>
