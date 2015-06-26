@@ -186,22 +186,16 @@ A: This is un-BEAR-able
 
 
   <xsl:template match="topic">
-    <xsl:choose>
-      <xsl:when test="item | subject">
-	<xsl:variable name="topicID" select="generate-id()"/>
-	<item identifier="{$topicID}">
-	  <title>
-	    <xsl:call-template name="getTitle"/>
-	    <xsl:call-template name="dateAttributes"/>
-	  </title>
-	  <xsl:apply-templates select="description"/>
-	  <xsl:apply-templates select="item | subject"/>
-	</item>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:apply-templates select="topic"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="topicID" select="generate-id()"/>
+    <item identifier="{$topicID}">
+      <title>
+	<xsl:call-template name="getTitle"/>
+	<xsl:call-template name="dateAttributes"/>
+      </title>
+      <xsl:apply-templates select="description"/>
+      <xsl:apply-templates select="item | subject"/>
+    </item>
+    <xsl:apply-templates select="topic"/>
   </xsl:template>
 
 
@@ -216,30 +210,24 @@ A: This is un-BEAR-able
   </xsl:template>
 
   <xsl:template match="topic" mode="modules">
-    <xsl:choose>
-      <xsl:when test="item | subject">
-	<xsl:variable name="topicID" select="generate-id()"/>
-	<module xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
-		identifier="{$topicID}">
-	  <title>
-	    <xsl:call-template name="getTitle"/>
-	    <xsl:call-template name="dateAttributes"/>
-	  </title>
-	  <workflow_state>active</workflow_state>
-	  <position>
-	    <xsl:value-of select="1 + count(preceding-sibling::topic)"/>
-	  </position>
-	  <require_sequential_progress>false</require_sequential_progress>
-	  <items>
-	    <xsl:apply-templates select="description" mode="modules"/>
-	    <xsl:apply-templates select="item | subject" mode="modules"/>
-	  </items>
-	</module>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:apply-templates select="topic" mode="modules"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:variable name="topicID" select="generate-id()"/>
+    <module xmlns="http://canvas.instructure.com/xsd/cccv1p0" 
+	    identifier="{$topicID}">
+      <title>
+	<xsl:call-template name="getTitle"/>
+	<xsl:call-template name="dateAttributes"/>
+      </title>
+      <workflow_state>active</workflow_state>
+      <position>
+	<xsl:value-of select="1 + count(preceding::topic)"/>
+      </position>
+      <require_sequential_progress>false</require_sequential_progress>
+      <items>
+	<xsl:apply-templates select="description" mode="modules"/>
+	<xsl:apply-templates select="item | subject" mode="modules"/>
+      </items>
+    </module>
+    <xsl:apply-templates select="topic" mode="modules"/>
   </xsl:template>
 
 
