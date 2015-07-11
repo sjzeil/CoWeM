@@ -250,36 +250,77 @@
     <exec executable="rsync" failonerror="true">
       <arg value="-auzv"/>
       <arg value="-e"/>
-      <arg value="ssh"/>
-      <arg value="--exclude='*~'"/>
-      <arg value="--exclude='*.md'"/>
-      <arg value="--exclude='*.mmd'"/>
-      <arg value="--exclude='epub/**/*'"/>
-      <arg value="--exclude='**/epub/**/*'"/>
-      <arg value="--exclude='**/*~'"/>
-      <arg value="--exclude='**/*.aux'"/>
-      <arg value="--exclude='**/*.fdb_latexmk'"/>
-      <arg value="--exclude='**/*.fls'"/>
-      <arg value="--exclude='**/*.log'"/>
-      <arg value="--exclude='**/*.out'"/>
-      <arg value="--exclude='**/*.toc'"/>
-      <arg value="--exclude='**/*.nav'"/>
-      <arg value="--exclude='**/*.snm'"/>
-      <arg value="--exclude='**/*.vrb'"/>
-      <arg value="--exclude='**/*.tex'"/>
-      <arg value="--exclude='**/*.ltx'"/>
-      <arg value="--exclude='**/*.4ct'"/>
-      <arg value="--exclude='**/*.4tc'"/>
-      <arg value="--exclude='**/*.idv'"/>
-      <arg value="--exclude='**/*.dvi'"/>
-      <arg value="--exclude='**/*.lg'"/>
-      <arg value="--exclude='**/*.tmp'"/>
-      <arg value="--exclude='**/*.xref'"/>
+      <arg value="ssh -i ${sshDeploymentKey}"/>
+      <arg value="--exclude"/>
+      <arg value="*~"/>
+      <arg value="--exclude"/>
+      <arg value="*.md"/>
+      <arg value="--exclude"/>
+      <arg value="*.mmd"/>
+      <arg value="--exclude"/>
+      <arg value="epub/**/*"/>
+      <arg value="--exclude"/>
+      <arg value=".git"/>
+      <arg value="--exclude"/>
+      <arg value="templates"/>
+      <arg value="--exclude"/>
+      <arg value=".gitignore"/>
+      <arg value="--exclude"/>
+      <arg value=".project"/>
+      <arg value="--exclude"/>
+      <arg value="section.dtd"/>
+      <arg value="--exclude"/>
+      <arg value="*.key"/>
+      <arg value="--exclude"/>
+      <arg value="CS*.zip"/>
+      <arg value="--exclude"/>
+      <arg value="CS*.imscc"/>
+      <arg value="--exclude"/>
+      <arg value="**/epub/**/*"/>
+      <arg value="--exclude"/>
+      <arg value="**/*~"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.aux"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.fdb_latexmk"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.fls"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.log"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.out"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.toc"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.nav"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.snm"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.vrb"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.tex"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.ltx"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.4ct"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.4tc"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.idv"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.dvi"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.lg"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.tmp"/>
+      <arg value="--exclude"/>
+      <arg value="**/*.xref"/>
       
-      <arg value="--exclude='.ht*'"/>
+      <arg value="--exclude"/>
+      <arg value=".ht*"/>
       
       <arg value="./"/>
-      <arg value="${deploymentURL}${relPath}/${doc}/"/>
+      <arg value="${deploymentURL}"/>
     </exec>
   </target>
   
