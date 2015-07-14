@@ -247,7 +247,7 @@
   <target name="deployBySsh" depends="build"
 	  description="Generate all documents and sync with the deployment directory (usually a website) on a remote machine"
 	  >
-    <exec executable="rsync" failonerror="true">
+    <exec executable="echo" failonerror="true">
       <arg value="-auzv"/>
       <arg value="-e"/>
       <arg value="ssh -i ${sshDeploymentKey}"/>
