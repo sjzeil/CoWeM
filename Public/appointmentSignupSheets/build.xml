@@ -3,9 +3,8 @@
   <import file="../../templates/commonBuild.xml"/>
 
   <target name="documents" depends="setup">
-    <docformat from="xml" format="modules" index="1"/>
-    <docformat from="xml" format="topics"/>
-    <docformat from="xml" format="epub" />
+    <docformat from="md" format="html"/>
+    <docformat from="md" format="epub"/>
   </target>
 
 

@@ -24,6 +24,8 @@ HTML document residing in the same directory as the primary.
 
 # The Main Directories
 
+<iframe align="right" width="60%" height="600px" scrolling="auto" src="treeOverview.html"> </iframe>
+
 There are three major directories relating to course content:
 
 _Directory_
@@ -62,12 +64,9 @@ and _Protected_ directories and no special `.htaccess` file would be
 necessary.
 
 There several other directories in the website as well (_templates_,
-_styles_, _graphics_).  Generally these should simply be symbolic
-links to the corresponding directories in
-_/home/zeil/courses/course-website-management_, or copies of those
-directories. Less commonly, custom versions of the content of the
-_styles_ and _graphics_ directories may be used to alter the style of
-the website.
+_styles_, _graphics_).  These are generated automatically when the
+website is built.
+
 
 # Document Formats
 
@@ -79,11 +78,12 @@ Primary documents can be written in
   [MultiMarkdown](http://fletcher.github.io/MultiMarkdown-4/) dialect.
 
     Currently, this is my favorite, because it's very easy to prepare
-    documents that generate good looking out, and does so very
+    documents that generate good looking output, and does so very
     quickly.
 
-    I do run the documents through a C/M4-style pre-processor,
+    before processing, I run the documents through a pre-processor,
     allowing me to do some macros and conditional text markup.
+
 * XML:  Used for the course outline only.
 
 
@@ -93,7 +93,7 @@ in files:
 | Input format | Content Files |
 |:------------:|:--------------|
    Markdown    | _primaryDoc_`.md`
-   XML      | `outline.dbk` 
+   XML      | `outline.xml` 
 
 
 
@@ -125,6 +125,8 @@ The available output formats are:
 * from XML:
     * _modules_ The course outline presetned in HTML as a collapsed arrangement of modules. Expanding a module reveals a linear list of activities associated with that module, 
     * _topics_  The same course outline presented on an HTML page as a multi-column table.
+	* _epub_ : An e-book collection generated in
+      both `.epub` and `.mobi` formats.
 
 
 
@@ -198,7 +200,7 @@ As a general rule, graphics for use with HTML output formats should be
 in PNG format.  Graphics to be imported into PDF output formats should
 themselves be in PDF files.
 
-If graphics are present in `.gif` or `.eps`` formats, they will be
+If graphics are present in `.gif` or `.eps` formats, they will be
 automatically converted into these other formats.
 
 Similarly, diagrams produced by `xfig` or `dia` are autmatically
@@ -346,6 +348,7 @@ courseTitle=Introduction to Software Engineering
 semester=Spring 2014
 sem=s14
 instructor=Steven J Zeil
+instructorEmail=zeil@cs.odu.edu
 copyright=2014, Old Dominion Univ.
 baseurl=https://secweb.cs.odu.edu/~zeil/cs350/s14
 homeurl=https://secweb.cs.odu.edu/~zeil/cs350/s14/Directory/topics.html

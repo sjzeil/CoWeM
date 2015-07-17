@@ -23,6 +23,7 @@ few, I have settled on
 [MultMarkdown](http://fletcherpenney.net/multimarkdown/), (version 4).
 
 
+
 # Standard Markdown Features
 
 I won't attempt a full listing of Markdown features as those can be
@@ -31,7 +32,8 @@ found in the
 and
 [Syntax Cheat Sheet](https://rawgithub.com/fletcher/human-markdown-reference/master/index.html).
 
-\bSidebar
+\bSidebar{60}
+
 ```
 But the essence of Markdown is that it appears as "natural" ASCII text
 in its source format, with relatively obvious markings.
@@ -58,7 +60,12 @@ Numbered lists are similarly natural.
    you later rearrange your list items, the actual
    output will be numbered appropriately.
 ```
+
 \eSidebar
+
+
+
+
 But the essence of Markdown is that it appears as "natural" ASCII text
 in its source format, with relatively obvious markings.
 
@@ -84,7 +91,8 @@ Numbered lists are similarly natural.
    you later rearrange your list items, the actual
    output will be numbered appropriately.
 
-\bSidebar
+\bSidebar{60}
+
 ```
 
 Text can be marked with asterisks to indicate *emphasis* or **strong
@@ -127,6 +135,8 @@ indentation as significant. Anything less is considered accidental and
 
 \eSidebar
 
+
+
 Text can be marked with asterisks to indicate *emphasis* or **strong
 emphasis**. You can also use underscores to indicate _emphasis_ or
 __strong emphasis__.
@@ -158,7 +168,10 @@ indentation as significant. Anything less is considered accidental and
 > at the start of the line.
 
 
+
+
 \bSidebar
+
 ```
 You can have [links](http://www.cs.odu.edu/~zeil).
 
@@ -166,6 +179,7 @@ You can add graphics:
 ![lab icon](lab.png "lab")
 
 ```
+
 \eSidebar
 
 You can have [links](http://www.cs.odu.edu/~zeil).
@@ -174,17 +188,22 @@ You can add graphics:
 ![lab icon](lab.png "lab")
 
 
-\bSidebar
+\bSidebar{60}
+
 ```
 There are  a couple of ways to introduce section headings. I tend to
 use the technique of placing #, ##, ###, etc., at the start of
 a paragraph. For example:
 
+
 ## Special text in Markdown
 
 
 ```
+
 \eSidebar
+
+
 
 There are  a couple of ways to introduce section headings. I tend to
 use the technique of placing #, ##, ###, etc., at the start of
@@ -195,7 +214,8 @@ a paragraph. For example:
 Markdown is compatible with some of the nicer Javascript-based tools
 for dealing with mathematics and with programming code.
 
-\bSidebar
+\bSidebar{60}
+
 ```
 With the aid of [MathJax](http://www.mathjax.org/), you cna enter
 mathmatics in LaTeX notation, both for displayed
@@ -206,6 +226,7 @@ and for inline ( \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\) )
 mathematics. $a^b_c$ also works.
 
 ```
+
 \eSidebar
 
 With the aid of [MathJax](http://www.mathjax.org/), you cna enter
@@ -216,7 +237,8 @@ mathmatics in LaTeX notation, both for displayed
 and for inline ( \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\) )
 mathematics. $a^b_c$ also works.
 
-\bSidebar
+\bSidebar{60}
+
 ```
 Using [HighlightJS](http://highlightjs.org/), syntax highlighting can
 be added to code:
@@ -236,6 +258,7 @@ class Book {
 };
 ```
 <pre>```</pre>
+
 \eSidebar
 
 Using [HighlightJS](http://highlightjs.org/), syntax highlighting can
@@ -277,14 +300,16 @@ the Markdown dialect that I use in my own documents.
 %define {\incr} {} {>>>}
 
 \bSidebar
+
 ```
-* Lists can be marked as incremental \incr
+* Lists can be marked as incremental \incr 
 * so that, during slide shows (see [below](#slides)),
 * the list elements will be revealed one at a time.
 ```
+
 \eSidebar
 
-* Lists can be marked as incremental >>>
+* Lists can be marked as incremental >>> 
 * so that, during slide shows (see [below](#slides)),
 * the list elements will be revealed one at a time.
 
@@ -292,7 +317,8 @@ the Markdown dialect that I use in my own documents.
 %define {\\} {x} {\}
 
 
-\bSidebar
+\bSidebar{60}
+
 ```
 I have a number of specialized markups that I use for inline
 text. These are styled like LaTeX commands. Many of these are intended
@@ -305,6 +331,7 @@ distinguish these items from generic "code": \\{}type{data types},
 
 [^fileNameFoot]: So, I'm not always consistent.
 ```
+
 \eSidebar
 
 I have a number of specialized markups that I use for inline
@@ -319,16 +346,16 @@ distinguish these items from generic "code": \type{data types},
 [^fileNameFoot]: So, I'm not always consistent.
 
 
-%if _ignore
-%else
 
-\bSidebar
+\bSidebar{60}
+
 ```
 More significant, I have a markup for \\{}firstterm{new terms} being
 introduced for the first time in a document, and for
 \\{}emph{very strong emphasis}.  I also occasionally need to
 \\{}sout{strike something out}.
 ```
+
 \eSidebar
 
 More significant, I have a markup for \firstterm{new terms} being
@@ -339,14 +366,20 @@ introduced for the first time in a document, and for
 A limitation of all of these LaTeX-command-style markups is that the
 processor currently does not allow line breaks between the { }.
 
+
 \bSidebar
+
 ```
-I also have a set of markups for highlighting text in \\{}hli{one},
-\\{}hlii{two}, \\{}hliii{three}, and \\{}hliv{four colors}. I have commands to
-generate callout numbers \\{}co1 , \\{}co2 , ..., \\{}co9 . Both the callout
-numbers and color highlighting are generally used in conjunction with
+I also have a set of markups for highlighting text
+in \\{}hli{one}, \\{}hlii{two}, \\{}hliii{three},
+and \\{}hliv{four colors}.
+I have commands to generate callout numbers \\{}co1 ,
+\\{}co2 , ..., \\{}co9 . Both the callout
+numbers and color highlighting are generally used
+in conjunction with
 the code markups discussed [later](#post-processing).
 ```
+
 \eSidebar
 
 I also have a set of markups for highlighting text in \hli{one},
@@ -359,7 +392,8 @@ the code markups discussed [later](#post-processing).
 %define {\rev} {x} {^^^}
 
 
-\bSidebar
+\bSidebar{60}
+
 ```
 \rev{}[click to reveal]
 
@@ -371,6 +405,7 @@ converted to a Javascript function during my
 [post-processing](#post-processing).
 \rev{}
 ```
+
 \eSidebar
 
 ^^^[click to reveal]
@@ -384,7 +419,9 @@ converted to a Javascript function during my
 
 ^^^
 
-\bSidebar
+
+\bSidebar{60}
+
 ```
 A variation on this is the ability to load long code listings,
 contained in a separate file providing both a link to the code as a
@@ -397,6 +434,7 @@ in place.
 Files processed in this way can end with `.h`, `.cpp`, `.java`, or
 `.listing` file names.
 ```
+
 \eSidebar
 
 A variation on this is the ability to load long code listings,
@@ -411,29 +449,45 @@ Files processed in this way can end with `.h`, `.cpp`, `.java`, or
 
 
 \bSidebar
+
 ```
 \\{}bSidebar
+
 Finally, I do like an occasional sidebar.
+
 \\{}eSidebar`
 ```
+
 \eSidebar
+
 Finally, I do like an occasional sidebar.
 
 
-\bSidebar{25}
-```
-\\{}bSidebar{25}
-Sidebars can be width-constrained so that they will not extend
-horizontally past a certain percentage of the page width. Any multiple
-of 5 can be given as a maximum with. If no value is given, the
-default is 50.
+\bSidebar{33}
 
-If the sidebar contents have a "natural" width less than the value
-given, it will stay that wide. the value is only used to set a maximum
+```
+\\{}bSidebar{33}
+
+Sidebars can be width-constrained
+so that they will not extend
+horizontally past a certain
+percentage of the page width.
+Any multiple of 5 can be given as
+a maximum with. If no value is
+given, the default is 50.
+
+If the sidebar contents have a
+"natural" width less than the value
+given, it will stay that wide.
+The value is only used to set a maximum
 width.
+
 \\{}eSidebar`
 ```
+
 \eSidebar
+
+
 Sidebars can be width-constrained so that they will not extend
 horizontally past a certain percentage of the page width. Any multiple
 of 5 can be given as a maximum with. If not value is given, the
@@ -443,14 +497,14 @@ If the sidebar contents have a "natural" width less than the value
 given, it will stay that wide. the value is only used to set a maximum
 width.
 
-%endif
+
 
 
 ### Graphics
 
-\bSidebar
-```
+\bSidebar{60}
 
+```
 Markdown already has support for inserting graphics into a page. You
 can place graphics inline like this: ![lab icon](lab.png "lab"). A
 somewhat more flexible approach is to place simply a marker inline
@@ -466,6 +520,7 @@ leading to a confusing layout.
 
 [list]: bookLL.png "A linked list" align=right
 ```
+
 \eSidebar
 
 Markdown already has support for inserting graphics into a page. You
@@ -486,20 +541,23 @@ leading to a confusing layout.
 
 
 \bSidebar
+
 ```
-![array][] As a fix for this, I provide a CSS style class  noFloat
-with the attribute clear:both.  This can be inserted as an empty paragraph:
+![array][] As a fix for this, I provide a CSS style
+class  `noFloat` with the attribute clear:both.  This
+can be inserted as an empty paragraph:
 
 <div class="noFloat"> </div>
 
-![list][] This has the effect of forcing any following text and
- graphics to be positioned after the end of floating graphics,
- sidebars, or other floating content.
+![list][] This has the effect of forcing any following
+ text and graphics to be positioned after the end of
+ floating graphics, sidebars, or other floating content.
 
 ```
- \eSidebar
 
-![array][] As a fix for this, I provide a CSS style class  noFloat
+\eSidebar
+
+![array][] As a fix for this, I provide a CSS style class  `noFloat`
 with the attribute clear:both.  This can be inserted as an empty paragraph:
 
 <div class="noFloat"> </div>
@@ -514,19 +572,24 @@ over and over, so I have some shortcut commands. The command
 
 ```
 <div class="noFloat"></div>
-<img src="filename.png" align="right" style="max-width: pct%/>"
+<img src="filename.png" align="right"
+     style="max-width: pct%/>"
 ```
+
 
 It drops below any existing floating content, then inserts a floating
 graphic on the right, reducing the graphic's size only if it exceeds a
 width of _pct_%.
 
 \bSidebar
+
 ```
 \\{}picOnLeft(bookarray,25)
 
-Similarly, I can insert graphics on the left instead of on the right.
+Similarly, I can insert graphics on the left
+instead of on the right.
 ```
+
 \eSidebar
 
 \picOnLeft(bookarray,25)
@@ -534,17 +597,21 @@ Similarly, I can insert graphics on the left instead of on the right.
 Similarly, I can insert graphics on the left instead of on the right.
 
 \bSidebar
+
 ```
 \\{}centerPic(bookLL,50)
 
 Or I can put them centered with nothing flowing around them.
 
 ```
+
 \eSidebar
 
 \centerPic(bookLL,50)
 
 Or I can put them centered with nothing flowing around them.
+
+
 
 
 ## Post-processing
@@ -596,18 +663,25 @@ The macro processor I use for pre-processing documents has support for
 conditional text, allowing a single source document to serve for both
 abbreviated slides and a lengthier full-text version.
 
+
 %define {\macro} {x} {%}
+
 \bSidebar
+
 ```
 \macro{}if _slides
 > This text, for example, will only appear in slides.
 \macro{}endif
 
-\macro{}if _printable
-> This text, on the other hand, will not appear in slides but appears in
-> the HTML and Pages formats.
+```
+`\macro{}if` _`printable`
+
+```
+> This text, on the other hand, will not appear in slides
+> but appears in the HTML and Pages formats.
 \macro{}endif
 ```
+
 \eSidebar
 
 %if _slides

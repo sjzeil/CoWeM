@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<outline xmlns:axle="http://www.cs.odu.edu/~zeil/axle">
+<!DOCTYPE outline SYSTEM "../../section.dtd" >
+<outline>
   <!-- Sample course outline: The outline is divided into topics.
        Topics are titled and may be nested inside other topics. 
        Topics may also include items. Each item is a short 
        descriptive text, with optional date, kind, and href attributes.
        -->
-  <!-- FILE TO EDIT -->
+
   <preamble>
     <info>
       <title>Miscellaneous Topics</title>
@@ -14,27 +15,30 @@
   </preamble>
 
   <topic title="Software for Courses">
-    <item kind="lecturenotes"
-	  targetdoc="courseWebsite">Course Websites</item>
-    <item kind="lecturenotes"
-	  href="http://www.cs.odu.edu/~zeil/websubmit/websubmit.pdf">
-      Web-based Assignment Submission
-    </item>
-    <item kind="lecturenotes"
-	  href="http://www.cs.odu.edu/~zeil/websubmit/autograde.pdf">
-      Automatic Grading
-    </item>
-    <item kind="lecturenotes"
-	  targetdoc="assignments">Assignments</item>
-    <item kind="lecturenotes"
-	  targetdoc="markdown"/>
+    <topic title="Course Websites &amp; Documents">
+      <item kind="lecturenotes"
+	    targetdoc="courseWebsite">Course Websites</item>
+      <item kind="lecturenotes"
+	    targetdoc="markdown"/>
+    </topic>
+    <topic title="Assignments">
+      <item kind="lecturenotes"
+	    href="http://www.cs.odu.edu/~zeil/websubmit/websubmit.pdf">
+	Web-based Assignment Submission
+      </item>
+      <item kind="lecturenotes"
+	    href="http://www.cs.odu.edu/~zeil/websubmit/autograde.pdf">
+	Automatic Grading
+      </item>
+      <item kind="lecturenotes"
+	    targetdoc="assignments">Assignments</item>
+    </topic>
   </topic>
-
   <topic title="Resources">
     <item kind="lecturenotes"
 	  targetdoc="registrationFAQ"/>
     <item kind="lecturenotes"
-	  targetdoc="testYourBrowser"/>
+	  targetdoc="appointmentSignupSheets"/>
   </topic>
 
   <topic title="Other Stuff">
