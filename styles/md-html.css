@@ -167,9 +167,9 @@ div.pct33 {max-width: 33%}
 div.pct66 {max-width: 66%}
 div.pct67 {max-width: 67%}
 
-div.leftColumn {display: inline-block; vertical-align: top; max-width: 48%; margin: 1ex; padding: 1ex; border-right: dashed 1px;}
+div.leftColumn {display: inline-block; vertical-align: top; max-width: 47.5%; margin: 1ex; padding: 1ex; border-right: dashed 1px;}
 
-div.rightColumn {display: inline-block; vertical-align: top; max-width: 48%; margin: 1ex; padding: 1ex;}
+div.rightColumn {display: inline-block; vertical-align: top; max-width: 47.5%; margin: 1ex; padding: 1ex;}
 
 .MathJax_Display {
   text-align: left !important;

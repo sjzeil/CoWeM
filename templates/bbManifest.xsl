@@ -394,11 +394,6 @@
     <xsl:apply-templates select="description | topic | item | subject" mode="resources"/>
   </xsl:template>
 
-  <xsl:template match="topic" mode="events">
-    <xsl:apply-templates select="topic | item | subject" 
-			 mode="events"/>
-  </xsl:template>
-
 
   <xsl:template match="description">
     <xsl:variable name="descriptionID" select="generate-id()"/>
@@ -599,10 +594,6 @@
 
 
 
-  <xsl:template match="subject" mode="events">
-    <xsl:apply-templates select="item | subject" mode="events"/>
-  </xsl:template>
-
 
   <xsl:template match="item">
     <xsl:variable name="itemID" select="generate-id()"/>
@@ -635,7 +626,7 @@
 	  
 	<xsl:when test="@assignment">
 	  <xsl:value-of select="concat($webContentDir, '/Protected/Assts/', 
-				       @target, '.mmd.html')"/>
+				       @assignment '.mmd.html')"/>
 	</xsl:when>
 	  
 	<xsl:when test="starts-with(@href, '../../')">
@@ -936,150 +927,6 @@
 
 
 
-
-  <xsl:template match="item" mode="events">
-    <xsl:variable name="itemID" select="generate-id()"/>
-    <xsl:if test="@date|@due">
-      <event xmlns="http://canvas.instructure.com/xsd/cccv1p0"
-	     identifier="{concat('event-',$itemID)}">
-	<title>
-	  <xsl:call-template name="kindPrefix"/>
-	  <xsl:call-template name="getTitle"/>
-	  <xsl:if test="@enddate != ''">
-	    <xsl:call-template name="dateAttributes"/>
-	  </xsl:if>
-	  <xsl:if test="@date != '' and @due != ''">
-	    <xsl:call-template name="dateAttributes"/>
-	  </xsl:if>
-	</title>
-	<description>
-	  <!-- if there is a link associated with this item, 
-	       use the link in the calendar description
-	  -->
-	  <xsl:variable 
-	      name="descriptionPrefix">
-	    <xsl:text>&lt;p&gt;&lt;a class=" instructure_file_link" title="event details" href="</xsl:text>
-	  </xsl:variable>
-	  <xsl:variable 
-	      name="fileAreaDesignation"
-	      select="'%24IMS-CC-FILEBASE%24/'"/>
-	  <xsl:variable 
-	      name="descriptionSuffix">
-	    <xsl:text>?canvas_download=1&amp;amp;canvas_qs_wrap=1"&gt;event details&lt;/a&gt;&lt;/p&gt;</xsl:text>	  
-	  </xsl:variable>
-	  <xsl:choose>
-	    <xsl:when test="@targetdoc != ''">
-	      <xsl:value-of select="$descriptionPrefix"/>
-	      <xsl:value-of select="$fileAreaDesignation"/>
-	      <xsl:text>Public/@targetdoc/index.html</xsl:text>
-	      <xsl:value-of select="$descriptionSuffix"/>
-	    </xsl:when>
-	    <xsl:when test="@target != ''">
-	      <xsl:value-of select="$descriptionPrefix"/>
-	      <xsl:value-of select="$fileAreaDesignation"/>
-	      <xsl:text>Public/@target/index.html</xsl:text>
-	      <xsl:value-of select="$descriptionSuffix"/>
-	    </xsl:when>
-	    <xsl:when test="@assignment != ''">
-	      <xsl:value-of select="$descriptionPrefix"/>
-	      <xsl:value-of select="$fileAreaDesignation"/>
-	      <xsl:text>Protected/Assts/@targetdoc.mmd.html</xsl:text>
-	      <xsl:value-of select="$descriptionSuffix"/>
-	    </xsl:when>
-	    
-	    <xsl:when test="starts-with(@href, '../../')">
-	      <xsl:value-of select="$descriptionPrefix"/>
-	      <xsl:value-of select="$fileAreaDesignation"/>
-	      <xsl:value-of select="substring-after(@href,'../../')"/>
-	    </xsl:when>
-	    
-	    <xsl:when test="@href != ''">
-	      <xsl:text>&lt;p&gt;&lt;a title="event details" href="</xsl:text>
-	      <xsl:value-of select="@href"/>
-	      <xsl:text>"&gt;details&lt;a&gt;&lt;/p&gt;</xsl:text>
-	    </xsl:when>
-	  </xsl:choose>
-	</description>
-	  
-	<xsl:choose>
-	  <xsl:when test="@enddate != ''">
-	    <start_at>
-	      <xsl:call-template name="bbDate">
-		<xsl:with-param name="date"
-				select="@date"/>
-		</xsl:call-template>
-	    </start_at>
-	    <end_at>
-	      <xsl:call-template name="bbEndDate">
-		<xsl:with-param name="date"
-				select="@enddate"/>
-		</xsl:call-template>
-	    </end_at>
-	  </xsl:when>
-	  
-	  <xsl:when test="@date != '' and @due != ''">
-	    <start_at>
-	      <xsl:call-template name="bbDate">
-		<xsl:with-param name="date"
-				select="@date"/>
-		</xsl:call-template>
-	    </start_at>
-	    <end_at>
-	      <xsl:call-template name="bbEndDate">
-		<xsl:with-param name="date"
-				select="@due"/>
-		</xsl:call-template>
-	    </end_at>
-	  </xsl:when>
-
-	  <xsl:when test="@date != '' or @due != ''">
-	    <xsl:variable name="startDateTime">
-	      <xsl:choose>
-		<xsl:when test="@date != ''">
-		  <xsl:call-template name="bbDate">
-		    <xsl:with-param name="date" select="@date"/>
-		  </xsl:call-template>
-		</xsl:when>
-		<xsl:otherwise>
-		  <xsl:call-template name="bbEndDate">
-		    <xsl:with-param name="date" select="@due"/>
-		  </xsl:call-template>
-		</xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-
-	    <start_at>
-	      <xsl:value-of select="$startDateTime"/>
-	    </start_at>
-
-	    <xsl:variable name="oneSecondLater">
-	      <xsl:value-of 
-		  xmlns:date="java:java.util.Date"
-		  xmlns:sdf="java:java.text.SimpleDateFormat"
-		  select='sdf:format(
-                    sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
-                    date:new(
-                      date:getTime(
-                        sdf:parse(
-                          sdf:new("yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX"), 
-                          $startDateTime)) 
-                      + 1000))'/>
-	    </xsl:variable>
-	    <!--
-	    <xsl:message>
-	      <xsl:value-of select="$startDateTime"/>
-	      <xsl:text> - </xsl:text>
-	      <xsl:value-of select="$oneSecondLater"/>
-	    </xsl:message>
-	    -->
-	    <end_at>
-	      <xsl:value-of select="$oneSecondLater"/>
-	    </end_at>
-	  </xsl:when>
-	</xsl:choose>
-      </event>
-    </xsl:if>
-  </xsl:template>
 
   <xsl:template match="file" mode="resources">
     <resource
