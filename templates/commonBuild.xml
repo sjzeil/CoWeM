@@ -208,38 +208,38 @@
 
     <available property="dia-is-installed" 
 	       file="dia" filepath="${env.PATH}"/>
-    <uptodate property="diaConversion.notRequired">
-      <srcfiles dir= ".">
-	<include name="*.dia"/>
-      </srcfiles>
-      <globmapper from="*.dia" to="${basedir}/*.eps"/>
-    </uptodate>
-
-    <target name="diaGraphics" depends="logging" 
-	    if="dia-is-installed"
-	    unless="diaConversion.notRequired" >
-      <apply executable="dia" parallel="false" force="false">
-	<arg value="-t"/>
-	<arg value="eps-builtin"/>
-	<fileset dir="." includes="*.dia"/>
-	<globmapper from="*.dia" to="${basedir}/*.eps"/>
-      </apply>
-    </target>
+	<uptodate property="diaConversion.notRequired">
+	  <srcfiles dir= ".">
+		<include name="*.dia"/>
+	  </srcfiles>
+	  <globmapper from="*.dia" to="${basedir}/*.png"/>
+	</uptodate>
+	
+	<target name="diaGraphics" depends="logging" 
+			if="dia-is-installed"
+			unless="diaConversion.notRequired" >
+	  <apply executable="dia" parallel="false" force="false">
+		<arg value="-t"/>
+		<arg value="pixbuf-png"/>
+		<fileset dir="." includes="*.dia"/>
+		<globmapper from="*.dia" to="${basedir}/*.png"/>
+	  </apply>
+	</target>
     
     
     <available property="fig2dev-is-installed" 
 	       file="fig2dev" filepath="${env.PATH}"/>
     
-    <target name="figGraphics" depends="logging" if="fig2dev-is-installed">
-      <apply executable="fig2dev" parallel="false">
-	<arg value="-L"/>
-	<arg value="eps"/>
-	<srcfile/>
-	<targetfile/>
-	<fileset dir="." includes="*.fig"/>
-	<globmapper from="*.fig" to="${basedir}/*.eps"/>
-      </apply>
-    </target>
+	<target name="figGraphics" depends="logging" if="fig2dev-is-installed">
+	  <apply executable="fig2dev" parallel="false">
+		<arg value="-L"/>
+		<arg value="png"/>
+		<srcfile/>
+		<targetfile/>
+		<fileset dir="." includes="*.fig"/>
+		<globmapper from="*.fig" to="${basedir}/*.png"/>
+	  </apply>
+	</target>
     
     <available property="convert-is-installed" 
 	       file="convert" filepath="${env.PATH}"/>
