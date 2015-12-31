@@ -282,7 +282,8 @@ Columns
 
 Generating the submission button for assignments:
 
-%define <\submitButton> <submissionControlFile> {<form><p><input type="button" value="Submit this assignment" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>
-%define <\gradeButton> <submissionControlFile> {<form><p><input type="button" value="View Grade Report" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>
+%define <\submitButton> <submissionControlFile> {<form><p><input type="button" value="Submit this assignment" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>}
+
+%define <\gradeButton> <submissionControlFile> {<form><p><input type="button" value="View Grade Report" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>}
 
 }
