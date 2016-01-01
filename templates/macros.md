@@ -277,7 +277,7 @@ Columns
 %endif
 
 
-%define <\Rightarrow> <> [<span>&#x21D2;</span>]
+%define <\Implies> <> [<span>&#x21D2;</span>]
 
 
 Generating the submission button for assignments:
