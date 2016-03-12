@@ -27,7 +27,7 @@
   <xsl:param name="email" select="''"/>
   <xsl:param name="stylesDir" select="'../../styles'"/>
 
-  <xsl:output method="xml" encoding="utf-8"/>
+  <xsl:output method="xml" encoding="iso-8859-1"/>
 
 
   <xsl:template match="/">
