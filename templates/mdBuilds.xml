@@ -139,7 +139,7 @@
       </xslt>
 
       <copy file="@{file}__@{format}.xml" tofile="@{file}__@{format}.html"  
-	    overwrite="yes">
+	    overwrite="yes" outputencoding="iso-8859-1">
 	<filterset>
 	  <filtersfile file="../../course.properties"/>
 	  <filtersfile file="@{file}.properties"/>
