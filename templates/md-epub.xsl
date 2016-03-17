@@ -245,6 +245,22 @@
       </div>
     </div>
   </xsl:template>
+  
+  
+  <xsl:template match="example">
+    <xsl:variable name="exampleCounter" 
+		  select="1 + count(preceding::example)"/>
+    <blockquote class="details" id="example{$exampleCounter}">
+      <div class="exampleTitle">
+	<xsl:text>Example </xsl:text>
+	<xsl:value-of select="$exampleCounter"/>
+	<xsl:text>: </xsl:text>
+	<xsl:apply-templates select="title/node()"/>
+      </div>
+      <xsl:apply-templates select="*[local-name() != 'title'] | text()"/>
+    </blockquote>
+  </xsl:template>
+  
 
   <xsl:template match="longlisting">
     <div class="details">
