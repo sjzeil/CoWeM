@@ -67,6 +67,13 @@ code {background-color: transparent; }
 div.exampleTitle {color: #000040; font-weight: bold; font-size: 110%;}
 figcaption {font-weight: bold;}
 
+div.slideshowslide {border-bottom: 1px dotted black; }
+div.slideshow {clear: both; border-style: outset;}
+
+table.slideshowcontrol {clear: both; border-style: none; }
+tr.slideshowcontrol { border-style: none; }
+td.slideshowcontrol { border-style: none; }
+a.slideshowcontrol { color: blue; }
 
 
 table { border: 2px solid black; border-collapse: collapse; }

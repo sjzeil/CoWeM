@@ -222,6 +222,19 @@ summaryText
 %endif
 %endif
 
+Slideshow
+
+%define <\bSlideshow> () {<div class="noFloat"> </div><div class="slideshow" markdown="1">
+}
+%define <\eSlideshow> () {
+</p></div><p>
+}
+%define <\bSlide> () {<div class="slideshowslide" markdown="1">
+}
+%define <\eSlide> () {
+</p></div><p>
+} 
+
 
 Sidebars
 
