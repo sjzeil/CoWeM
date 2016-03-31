@@ -213,6 +213,69 @@
       <xsl:apply-templates select="*[local-name() != 'title'] | text()"/>
     </blockquote>
   </xsl:template>
+  
+  
+   <xsl:template match="div[@class = 'slideshow']">
+    <xsl:variable name="slideshowNum" select="1 + count(preceding::div[@class = 'slideshow'])"/>
+    <xsl:variable name="slideCount" select="count(./div[@class = 'slideshowslide'])"/>
+    <xsl:copy>
+       <xsl:copy-of select="@*"/>
+       <xsl:apply-templates select="*|text()"/>
+       <div id="slideshowControl{$slideshowNum}">
+          <script>
+             <xsl:text>sshowControl</xsl:text>
+             <xsl:value-of select="$slideshowNum"/>
+             <xsl:text> = { counter: 1,
+             showNumber: </xsl:text>
+             <xsl:value-of select="$slideshowNum"/>
+             <xsl:text>, max: </xsl:text>
+             <xsl:value-of select="$slideCount"/>
+             <xsl:text>};
+             </xsl:text>          
+          </script>
+          <table class="slideshowcontrol">
+             <tr class="slideshowcontrol">
+               <td class="slideshowcontrol">
+                   <a class="slideshowcontrol" onclick="sshowback(sshowControl{$slideshowNum})" title="previous">
+                      <xsl:text>&#x25C0;</xsl:text>
+                   </a>
+               </td>
+               <td id="slideshowposition{$slideshowNum}" class="slideshowcontrol">
+                  <xsl:text>1 of </xsl:text>
+                  <xsl:value-of select="$slideCount"/>
+               </td>
+            
+               <td class="slideshowcontrol">
+                   <a class="slideshowcontrol" onclick="sshowforward(sshowControl{$slideshowNum})" title="next">
+                      <xsl:text>&#x25B6;</xsl:text>
+                   </a>
+               </td>
+             </tr>
+          </table>
+       </div>
+    </xsl:copy>
+  </xsl:template>
+  
+  
+  <xsl:template match="div[@class = 'slideshowslide']">
+    <xsl:variable name="slideshowNum" select="1 + count(preceding::div[@class = 'slideshow'])"/>
+    <xsl:variable name="slideNum" select="count(preceding-sibling::div[@class = 'slideshowslide'])"/>
+    <xsl:copy>
+      <xsl:attribute name="id">
+         <xsl:text>slide-</xsl:text>
+         <xsl:value-of select="$slideshowNum"/>
+         <xsl:text>-</xsl:text>
+         <xsl:value-of select="$slideNum"/>
+      </xsl:attribute>
+      <xsl:if test="$slideNum != 0">
+         <xsl:attribute name="style">
+            <xsl:text>display: none;</xsl:text>
+         </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="*|text()"/>
+    </xsl:copy>
+  </xsl:template>
+  
 
 
   <xsl:template match="longlisting">

@@ -155,6 +155,15 @@ div.pct33 {max-width: 33%}
 div.pct66 {max-width: 66%}
 div.pct67 {max-width: 67%}
 
+div.islideshowslide {border-bottom: 1px dotted black; }
+div.islideshow {clear: both; border-style: groove;}
+
+table.islideshowcontrol {clear: both; border-style: none; background-color: #e0e0e0; width: 100%;}
+tr.islideshowcontrol { border-style: none; }
+td.islideshowcontrol { border-style: none; text-align: center; }
+a.islideshowcontrol { color: blue; }
+
+
 
 div.leftColumn {display: inline-block; vertical-align: top; max-width: 48%; margin: 1ex; padding: 1ex; border-right: dashed 1px;}
 

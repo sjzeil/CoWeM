@@ -14,6 +14,58 @@ function toggleDisplay (sectionName)
 };
 
 
+function sshowforward (control) {
+    var oldDisplayed = control.counter;
+    var newDisplayed = control.counter + 1;
+	if (newDisplayed >= control.max) {
+        newDisplayed = control.max;
+    } else if (newDisplayed < 1) {
+        newDisplayed = 1;
+    }
+	control.counter = newDisplayed;
+    var displayText = "" + newDisplayed + " of " + control.max;
+
+	--oldDisplayed;
+	--newDisplayed;
+    var oldSlideID = "slide-" + control.showNumber + "-" + oldDisplayed;
+    var newSlideID = "slide-" + control.showNumber + "-" + newDisplayed;
+	var oldSlide = document.getElementById(oldSlideID);
+	var newSlide = document.getElementById(newSlideID);
+    oldSlide.style.display = "none";
+    newSlide.style.display = "block";
+
+	var positionIndicatorID = "islideshowposition"  + control.showNumber;
+	var posTR = document.getElementById(positionIndicatorID);
+    posTR.textContent = displayText;
+};
+
+function sshowback (control) {
+    var oldDisplayed = control.counter;
+    var newDisplayed = control.counter - 1;
+	if (newDisplayed >= control.max) {
+        newDisplayed = control.max;
+    } else if (newDisplayed < 1) {
+        newDisplayed = 1;
+    }
+	control.counter = newDisplayed;
+    var displayText = "" + newDisplayed + " of " + control.max;
+
+	--oldDisplayed;
+	--newDisplayed;
+    var oldSlideID = "slide-" + control.showNumber + "-" + oldDisplayed;
+    var newSlideID = "slide-" + control.showNumber + "-" + newDisplayed;
+	var oldSlide = document.getElementById(oldSlideID);
+	var newSlide = document.getElementById(newSlideID);
+    oldSlide.style.display = "none";
+    newSlide.style.display = "block";
+
+	var positionIndicatorID = "islideshowposition"  + control.showNumber;
+	var posTR = document.getElementById(positionIndicatorID);
+    posTR.textContent = displayText;
+};
+
+
+/*
 var modify_toolbar = function () {
     var toolbar = w3c_slidy.toolbar;
     var counter, page;
@@ -43,7 +95,7 @@ var modify_toolbar = function () {
 
     var gap1 = document.createTextNode(" ");
     left.appendChild(gap1);
-    
+*/    
     /*
     var discuss = w3c_slidy.create_element("a");
     discuss.setAttribute("href", "#(" + w3c_slidy.slides.length + ")");
@@ -54,8 +106,9 @@ var modify_toolbar = function () {
 
     var gap2 = document.createTextNode(" ");
     left.appendChild(gap2);
-    /*
+    */
 
+/*
     var copyright = w3c_slidy.find_copyright();
 
     if (copyright)
@@ -84,8 +137,10 @@ var modify_toolbar = function () {
     w3c_slidy.toolbar.appendChild(counter);
     w3c_slidy.slide_number_element = counter;
 }
-
+*/
+/*
 if (typeof window.addEventListener != "undefined")
     window.addEventListener("load", modify_toolbar, false);
 else
     window.attachEvent("onload", modify_toolbar);
+*/
