@@ -226,18 +226,18 @@
              <xsl:text>sshowControl</xsl:text>
              <xsl:value-of select="$slideshowNum"/>
              <xsl:text> = { counter: 1,
-             show: </xsl:text>
+             showNumber: </xsl:text>
              <xsl:value-of select="$slideshowNum"/>
              <xsl:text>, max: </xsl:text>
              <xsl:value-of select="$slideCount"/>
              <xsl:text>};
              </xsl:text>          
           </script>
-          <table class="slideshowcontrol" width="80%">
+          <table class="slideshowcontrol">
              <tr class="slideshowcontrol">
                <td class="slideshowcontrol">
-                   <a class="slideshowcontrol" onclick="sshowback(sshowControl{$slideshowNum})">
-                      prev
+                   <a class="slideshowcontrol" onclick="sshowback(sshowControl{$slideshowNum})" title="previous">
+                      <xsl:text>&#x25C0;</xsl:text>
                    </a>
                </td>
                <td id="slideshowposition{$slideshowNum}" class="slideshowcontrol">
@@ -246,8 +246,8 @@
                </td>
             
                <td class="slideshowcontrol">
-                   <a class="slideshowcontrol" onclick="sshowforward(sshowControl{$slideshowNum})">
-                      next
+                   <a class="slideshowcontrol" onclick="sshowforward(sshowControl{$slideshowNum})" title="next">
+                      <xsl:text>&#x25B6;</xsl:text>
                    </a>
                </td>
              </tr>
@@ -258,7 +258,7 @@
   
   
   <xsl:template match="div[@class = 'slideshowslide']">
-    <xsl:variable name="slideshowNum" select="count(preceding::div[@class = 'slideshow'])"/>
+    <xsl:variable name="slideshowNum" select="1 + count(preceding::div[@class = 'slideshow'])"/>
     <xsl:variable name="slideNum" select="count(preceding-sibling::div[@class = 'slideshowslide'])"/>
     <xsl:copy>
       <xsl:attribute name="id">

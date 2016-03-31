@@ -68,11 +68,11 @@ div.exampleTitle {color: #000040; font-weight: bold; font-size: 110%;}
 figcaption {font-weight: bold;}
 
 div.slideshowslide {border-bottom: 1px dotted black; }
-div.slideshow {clear: both; border-style: outset;}
+div.slideshow {clear: both; border-style: groove;}
 
-table.slideshowcontrol {clear: both; border-style: none; }
+table.slideshowcontrol {clear: both; border-style: none; background-color: #e0e0e0; width: 100%;}
 tr.slideshowcontrol { border-style: none; }
-td.slideshowcontrol { border-style: none; }
+td.slideshowcontrol { border-style: none; text-align: center; }
 a.slideshowcontrol { color: blue; }
 
 
