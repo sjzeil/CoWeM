@@ -48,6 +48,8 @@ function sshowback (control) {
         newDisplayed = 1;
     }
 	control.counter = newDisplayed;
+    var displayText = "" + newDisplayed + " of " + control.max;
+
 	--oldDisplayed;
 	--newDisplayed;
     var oldSlideID = "slide-" + control.showNumber + "-" + oldDisplayed;
@@ -56,4 +58,8 @@ function sshowback (control) {
 	var newSlide = document.getElementById(newSlideID);
     oldSlide.style.display = "none";
     newSlide.style.display = "block";
+
+	var positionIndicatorID = "slideshowposition"  + control.showNumber;
+	var posTR = document.getElementById(positionIndicatorID);
+    posTR.textContent = displayText;
 };

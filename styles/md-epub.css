@@ -153,7 +153,7 @@ div.pct33 {max-width: 33%}
 div.pct66 {max-width: 66%}
 div.pct67 {max-width: 67%}
 
-div.slideshowslide {border-bottom: 1px dotted black; }
+div.slideshowslide {clear: both; border-bottom: 1px dotted black; }
 
 
 

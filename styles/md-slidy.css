@@ -133,3 +133,11 @@ div.pct67 {max-width: 67%}
 div.leftColumn {display: inline-block; vertical-align: top; max-width: 48%; margin: 1ex; padding: 1ex; border-right: dashed 1px;}
 
 div.rightColumn {display: inline-block; vertical-align: top; max-width: 48%; margin: 1ex; padding: 1ex;}
+
+div.islideshowslide {border-bottom: 1px dotted black; }
+div.islideshow {clear: both; border-style: groove;}
+
+table.islideshowcontrol {clear: both; border-style: none; background-color: #e0e0e0; width: 90%;}
+tr.islideshowcontrol { border-style: none; }
+td.islideshowcontrol { border-style: none; text-align: center; }
+a.islideshowcontrol { color: blue; }
