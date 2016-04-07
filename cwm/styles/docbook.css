@@ -1,0 +1,372 @@
+div.toc {
+        background-color: #90ffB0;
+        font-weight: bold;
+        margin-top: 1.5ex;
+        margin-bottom: 1.5ex;
+}
+
+div.example-output {
+  padding-left: 15px;
+  border-style: solid;
+  border-width: 0px;
+  border-left-width: 2px;
+  border-color: black;
+}
+
+pre.screen {
+  background: #E8E8FF;
+}
+
+code.computeroutput {
+  color: #000060;
+}
+
+.userinput {
+  color: #600000;
+}
+
+.programlisting span.emphasis {background-color:#FFFF80}
+
+pre.programlisting {
+  background: #E8E8E8;
+}
+
+div.example-source {
+  background: #E8E8E8;
+}
+
+p.publisher {
+  text-align: center;
+}
+
+body.book {
+/*  background-image: url(figures/htmltitlepage.gif); */
+/*  background-repeat: no-repeat; */
+/*  background-position: top center; */
+}
+
+div.component-title {
+  text-align: right;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: sans-serif;
+}
+
+h1.label {
+  font-size: 150pt;
+  font-weight: normal;
+  font-family: sans-serif;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+div.component-title h1.title {
+  font-family: sans-serif;
+  margin-top: 0px;
+  padding-top: 0px;
+  margin-right: 20px;
+  font-size: 36pt;
+}
+
+p.alpha-version {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+hr.component-separator {
+  height: 1px;
+}
+
+div.refentry div.titlepage {
+  margin-left: 20px;
+}
+
+div.titlepage {
+  text-align: center;
+  background-color:#338000;
+  color: #ddeedd;
+}
+
+
+/*
+h2.title  {
+	border-bottom-style:solid;
+}
+*/
+
+div.refentry div.titlepage h1.title {
+  margin-left: -20px;
+  margin-bottom: 0px;
+  font-size: 36pt;
+}
+
+body {
+/*  margin-top: 0px;
+  padding-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 0px;
+  padding-right: 0px; */
+}
+
+div.navheader {
+  padding-top: 2px;
+  background-color: #ccffcc;
+  padding-right: 2px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+div.navheader img {border: 0;}
+div.navfooter img {border: 0;}
+
+
+div.navfooter {
+  background-color: #ccffcc;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  padding-top: 2px;
+  clear: both;
+}
+
+div.copyrightfooter {
+  background-color: #c6bec6;
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 2px;
+}
+
+div.copyrightfooter p {
+  margin-top: 0px;
+  padding-top: 10px;
+}
+
+div.refentry,
+div.preface,
+div.chapter,
+div.appendix,
+div.reference,
+div.part,
+div.bibliography,
+div.glossary,
+div.index,
+div.colophon,
+div.legalnotice {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+div.book {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+thead {
+  background-color: black;
+  color: white;
+}
+
+table,
+tbody,thead,tfoot,
+tr,td {
+  border-color: #8F8F8F;
+}
+
+div.informaltable   { padding-bottom: 1em;
+                    }
+
+div.informalexample   {
+	background-color:#ddeeff;
+	padding: .5em;
+	border: 1px dashed black;
+                    }
+
+div.example   {
+	background-color:#ddeeff;
+	padding: .5em;
+	border: 1px dashed black;
+                    }
+
+.firstterm   { color: #000099;
+                    }
+
+span.type   { color: #000055;
+	      font-family: sans-serif;
+                    }
+
+span.emphasis   { color: #990000;
+                    }
+
+span.italic   { font-style:italic;
+                    }
+
+span.italics   { font-style:italic;
+                    }
+
+span.emphasis   { color: #990000;
+                    }
+
+.pattern { font-size: small; }
+
+dt {
+     padding-left: 1in;
+     text-indent: -1in;
+   }
+
+/* ======================================================================
+   Annotations
+*/
+
+div.annotation-list  { visibility: hidden;
+                     }
+
+div.annotation-nocss { position: absolute;
+                       visibility: hidden;
+                     }
+
+div.annotation-popup { position: absolute;
+                       z-index: 4;
+                       background-color: white;
+                       visibility: hidden;
+                       padding: 0px;
+                       margin: 2px;
+                       border: solid black 1px;
+                       width: 200px
+                     }
+
+div.annotation-title { padding: 1px;
+                       background-color: #afcfcf;
+                       font-weight: bold;
+                       border-bottom-color: black;
+                       border-bottom-style: solid;
+                       border-bottom-width: 1px;
+                     }
+
+div.annotation-body  { padding: 2px;
+                     }
+
+div.annotation-body p { margin-top: 0px;
+                        padding-top: 0px;
+                      }
+
+div.annotation-close { position: absolute;
+                       top: 2px;
+                       right: 2px;
+                     }
+
+div.example p.title { padding: 1px;
+                       font-weight: bold;
+                       border-bottom-style: solid;
+                       border-bottom-width: 1px;
+                     }
+
+div.informalexample-title { padding: 1px;
+                       font-weight: bold;
+                       border-bottom-style: solid;
+                       border-bottom-width: 1px;
+                     }
+
+.highlight {background-color:#FFFF80}
+.highlight1 {background-color:#FFFF80}
+.highlight2 {background-color:#FF80FF}
+.highlight3 {background-color:#80FFFF}
+.highlight4 {background-color:#B0FFB0}
+
+.sidebar {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+}
+
+.sidebar10 {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+    width: 10%;
+}
+
+.sidebar20 {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+    width: 20%;
+}
+
+
+.sidebar30 {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+    width: 30%;
+}
+
+.sidebar40 {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+    width: 40%;
+}
+
+.sidebar50 {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+    width: 50%;
+}
+
+.sidebar60 {
+    background-color:#DDDDDD; 
+    clear: right; float: 
+    right; padding-right: 1ex; 
+    border-style: outset; 
+    width: 60%;
+}
+
+.programlisting {color: #006000; }
+.hl-keyword {color:#000000;}
+.hl-string {color:#8E236B;}
+.hl-directive {color:#0000A0;}
+.hl-comment {color:#8c1717;}
+
+tr.question {
+  font-family: sans-serif;
+  background-color: #90ffB0;
+  font-weight: bold;
+  border-top-style: solid;
+  vertical-align: middle;
+}
+
+span.topic1 {
+   font-size: 16pt;
+   font-weight: bold;
+}
+
+span.topic2 {
+   font-size: 14pt;
+   font-weight: bold;
+}
+
+span.topic3 {
+   font-weight: bold;
+}
+
+span.topicSpacing {
+   width: 60pt;
+   display: block;
+}

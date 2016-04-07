@@ -1,0 +1,65 @@
+%%
+%%  beamersjz.sty, by Steven Zeil, Old Dominion University
+%%       zeil@cs.odu.edu
+%%
+%%  Personal augmentations to the beamer class and beamerarticle style
+%%
+\ProvidesPackage{beamersjz}[2013/01/02 v1.0]
+\NeedsTeXFormat{LaTeX2e}[1997/12/01]
+%
+\RequirePackage{beamercommonsjz}
+\RequirePackage{xr-hyper}
+
+\ProcessOptions\relax
+
+\hypersetup{%
+  pdfview=Fit,%
+  pdfpagemode=UseNone,%
+  colorlinks=true,%
+  linkcolor=gray,%
+  urlcolor=blue,%
+%  raiselinks=true,%
+  pdfmenubar=false,%
+  pdftoolbar=true,%
+  pdffitwindow=true,pdfcenterwindow=true,%
+  pdfwindowui=true,%
+  pdfnewwindow=true,%
+  pdfview=Fit,pdfstartview=Fit,%
+%  pdfborderstyle={/S/U/W 1},%
+  hyperfootnotes=true}
+
+\Slidestrue
+\Printablefalse
+\BandWtrue
+
+
+
+
+\newlength{\first@colWidth}
+\newlength{\second@colWidth}
+\newenvironment{sidebarfig}[2][0.4\linewidth]{\def\save@gcommand{#2}\setlength{\first@colWidth}{0.9\linewidth}\addtolength{\first@colWidth}{-#1}\setlength{\second@colWidth}{#1}\begin{columns}[b]\begin{column}{\first@colWidth}}{\end{column}\begin{column}{\second@colWidth}\save@gcommand\end{column}\end{columns}}
+
+\renewcommand{\bimarker}{\beamer@usesphere{item projected}{bigsphere}}
+
+\newcommand{\loadlisting}[2][cpp]{\par\textbf{\href{\baseurl/\relPath/\doc/#2.html}{#2}}}
+\newcommand{\citelisting}[1]{\textbf{\href{\baseurl/\relPath/\doc/#1.html}{#1}}}
+\newcommand{\citedlisting}[1]{}
+
+\newenvironment{alertlist}{\begin{itemize}[<+-| alert@+>]}{\end{itemize}}
+
+\newenvironment{titledblock}[1]{\begin{block}{#1}}{\end{block}}
+
+\newenvironment{titledExample}[1]{\begin{block}{#1}}{\end{block}}
+
+\usepackage[style=1]{mdframed}
+\newenvironment{ublock}{\begin{mdframed}[backgroundcolor=blue!10,leftmargin=1ex,rightmargin=1ex,roundcorner=5pt]}{\end{mdframed}}
+
+\lstnewenvironment{cpp}{\lstset{style=cpplst}}{}
+\lstnewenvironment{java}{\lstset{style=javalst}}{}
+\lstnewenvironment{screen}{\lstset{style=screenlst}}{}
+
+
+\newcommand{\@wrapSavedPic}[1][r]{\begin{wrapfigure}{#1}{\savedPicwd}\usebox{\savedPic}\end{wrapfigure}}
+
+
+\endinput

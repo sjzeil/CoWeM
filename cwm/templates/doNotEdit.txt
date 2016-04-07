@@ -1,0 +1,5 @@
+%
+% This file is generated autoamtically from a template
+% You probably should not edit this directly, as any changes
+% could be lost the next time documents are re-built.
+%

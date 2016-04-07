@@ -1,0 +1,149 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Autolist - 1/12/98 Steven J Zeil
+%
+%  Streamlines the typing of slides & presentations featuring
+%  many nested itemized lists:
+%
+%  ``Bulleted'' items can be introduced by the commands \bi, \bii,
+%  and \biii.  The i, ii, iii are list depths (in Roman numerals,
+%  because LaTeX does not permit numeric digits in command names).
+%  Each bulleted item introduced in this way will automatically be
+%  set at the right list depth.  E.g., 
+%
+%     The Waterfall model of Software Development
+%     \bi Requirements and Specification
+%     \bi Design
+%     \bii   High-level
+%     \biii     partitioning of the system
+%     \bii   Low-level
+%     \bi Implementation
+%     \bi Verification and Validation
+%     \EndLists
+%     
+%  Each of the \b... commands will issue the appropriate
+%  \begin{itemize}, \end{itemize}, and \item commands to set the
+%  subsequent text at the desired level.
+%
+%
+%  Similarly, numbered list items can be introduced with \ei, \eii,
+%  and \eiii.
+%
+%  Itemized and numbered lists can be mixed as long as they are at
+%  different levels:
+%     The Waterfall model of Software Development
+%     \ei Requirements and Specification
+%     \ei Design
+%     \bii   High-level
+%     \biii     partitioning of the system
+%     \bii   Low-level
+%     \ei Implementation
+%     \ei Verification and Validation
+%     \EndLists
+%
+%
+%  The \EndLists command is used to temrinate any open auto lists.
+%
+\def\@levelUnused{x}
+\def\@levelIsItem{i}
+\def\@levelIsEnum{e}
+\def\@levelIsAlert{a}
+\def\@autoleveli{x}
+\def\@autolevelii{x}
+\def\@autoleveliii{x}
+%
+\def\@autoexitii{\ifx\@autoleveliii\@levelIsItem
+\end{itemize}\gdef\@autoleveliii{x}%
+\else \ifx\@autoleveliii\@levelIsEnum
+\end{enumerate}\gdef\@autoleveliii{x}%
+\else \ifx\@autoleveliii\@levelIsAlert
+\end{alertlist}\gdef\@autoleveliii{x}%
+\fi
+\fi
+\fi
+}
+\def\@autoexiti{\@autoexitii
+\ifx\@autolevelii\@levelIsItem
+\end{itemize}\gdef\@autolevelii{x}%
+\else \ifx\@autolevelii\@levelIsEnum
+\end{enumerate}\gdef\@autolevelii{x}%
+\else \ifx\@autolevelii\@levelIsAlert
+\end{alertlist}\gdef\@autolevelii{x}%
+\fi
+\fi
+\fi
+}
+\def\@autoexito{\@autoexiti
+\ifx\@autoleveli\@levelIsItem
+\end{itemize}\gdef\@autoleveli{x}%
+\else \ifx\@autoleveli\@levelIsEnum
+\end{enumerate}\gdef\@autoleveli{x}%
+\else \ifx\@autoleveli\@levelIsAlert
+\end{alertlist}\gdef\@autoleveli{x}%
+\fi
+\fi
+\fi
+}
+%
+\def\@autoitemi{%
+%\show\@autoleveli
+%\show\@levelUnused
+\ifx\@autoleveli\@levelUnused%
+\gdef\@autoleveli{i}\begin{itemize}%
+\fi
+}
+\def\@autoalerti{%
+%\show\@autoleveli
+%\show\@levelUnused
+\ifx\@autoleveli\@levelUnused%
+\gdef\@autoleveli{a}\begin{alertlist}%
+\fi
+}
+\def\@autoitemii{\@autoitemi
+\ifx\@autolevelii\@levelUnused
+\gdef\@autolevelii{i}\begin{itemize}%
+\fi
+}
+\def\@autoitemiii{\@autoitemii
+\ifx\@autoleveliii\@levelUnused
+\gdef\@autoleveliii{i}\begin{itemize}%
+\fi
+}
+%
+\def\@autoenumi{%
+\ifx\@autoleveli\@levelUnused
+\gdef\@autoleveli{e}\begin{enumerate}%
+\fi
+}
+\def\@autoenumii{\@autoenumi
+\ifx\@autolevelii\@levelUnused
+\gdef\@autolevelii{e}\begin{enumerate}%
+\fi
+}
+\def\@autoenumiii{\@autoenumii
+\ifx\@autoleveliii\@levelUnused
+\gdef\@autoleveliii{e}\begin{enumerate}%
+\fi
+}
+%
+%
+\def\bi{\@autoexiti\@autoitemi\item}
+\def\bii{\@autoexitii\@autoitemii\item}
+\def\biii{\@autoitemiii\item}
+%
+\def\bai{\@autoexiti\@autoalerti\item}
+%
+\def\ei{\@autoexiti\@autoenumi\item}
+\def\eii{\@autoexitii\@autoenumii\item}
+\def\eiii{\@autoenumiii\item}
+%
+\def\EndLists{\@autoexito}
+\def\EL{\@autoexito}
+%
+% A cheap alternative to \bi - a non-indented paragraph with a bullet 
+% in front of it. This is useful when working with other environments that
+% reshape paragraphs such picins and floatingflt for flowing text aroung 
+% figures.
+%
+\def\bimarker{$\bullet$}
+\newcommand{\bpar}[1][\bimarker]{\vspace{\itemsep}\par\noindent#1~}
