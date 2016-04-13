@@ -11,5 +11,5 @@ build-job:
     - cd cwm
     - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
   only:
-    - master
+    - v2
 
