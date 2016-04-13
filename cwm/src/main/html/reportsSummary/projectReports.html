@@ -19,9 +19,7 @@
 	    <!-- For each graph to be displayed, create a named div element. -->
 	   	<div class="reportGraphs">
 	        <div id="junitGraph" class="graph">junit</div>
-	        <!--
-            <div id="jacocoGraph" class="graph">jacoco</div>
-            -->
+	        <div id="jacocoGraph" class="graph">jacoco</div>
         </div>
 	   	<div class="reportGraphs">
             <div id="pmdGraph" class="graph">PMD</div>
@@ -35,7 +33,7 @@
                 on the number of data series being plotted.  -->
 	    <script type="text/javascript">
 	        register2("junitGraph", "../tests.csv", "JUnit Tests", "Test Cases");
-	        //register2("jacocoGraph", "../jacoco.csv", "Test Coverage", "# Branches");
+	        register2("jacocoGraph", "../jacoco.csv", "Test Coverage", "# Branches");
 	        register1("pmdGraph", "../pmd.csv", "PMD", "Warnings");
 	        register1("checkstyleGraph", "../checkstyle.csv", "Checkstyle", "Warnings");
 	        //register2("findbugsGraph", "../findbugs.csv", "FindBugs", "Warnings");
@@ -53,7 +51,7 @@
 	   			<li>Tests:
 	   			    <ul>
 	   			        <li><a href="../tests/">JUnit test report</a></li>
-	    		        <!-- li><a href="../jacoco/test/html/index.html">Unit Test Coverage</a></li -->
+	    		        <li><a href="../jacoco/test/html/index.html">Unit Test Coverage</a></li>
 	    		    </ul></li>
 	    	    <li>Analysis:
 	    	        <ul>

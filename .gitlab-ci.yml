@@ -1,0 +1,15 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  tags:
+    - atria
+  stage: build
+  script:
+    - cd cwm
+    - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
+  only:
+    - master
+

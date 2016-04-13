@@ -10,14 +10,15 @@ apply plugin: 'java'
 apply plugin: 'ivy-publish'
 apply plugin: 'project-report'
 apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    jcenter()
+    // jcenter()
 
-    // mavenCentral()
+    mavenCentral()
 
     
     // Use my own CS dept repo
