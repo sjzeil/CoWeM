@@ -1,0 +1,135 @@
+/*
+ * CWM v2 build file
+ * Steven J Zeil, Old Dominion Univ.
+ */
+
+
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'ivy-publish'
+apply plugin: 'project-report'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    jcenter()
+
+    // mavenCentral()
+
+    
+    // Use my own CS dept repo
+    ivy {
+        url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+    }
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    compile 'org.pegdown:pegdown:1.6.0+'
+    testCompile 'junit:junit:4.12'
+    testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
+}
+
+publishing {
+    publications {
+        ivyJava(IvyPublication) {
+            organisation 'edu.odu.cs.zeil'
+            module 'cwm'
+            revision '0.1'
+            descriptor.status = 'milestone'
+            descriptor.branch = 'master'
+
+            from components.java
+        }
+    }
+    repositories {
+        ivy {
+            name 'ivyRepo'
+            url 'sftp://linux.cs.odu.edu:22/home/zeil/secure_html/ivyrepo'
+            // Readable via https://www.cs.odu.edu/~zeil/ivyrepo    
+            credentials {
+                // Credentials are loaded from ~/.gradle/gradle.properties
+                username "$ivyRepoUser"
+                password "$ivyRepoPass"
+            }
+        }
+    }           
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Course Website Management',  
+        	'Implementation-Version': '0.1'
+    }
+    // from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+checkstyle {
+    ignoreFailures = true
+    showViolations = false
+    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/checkstyle.suppressions.xml')]   
+}
+
+
+pmd {
+   ruleSetFiles = files("config/pmd/pmd.xml")
+}
+
+tasks.withType(Checkstyle) {
+  reports {
+    html.destination rootProject.file("build/reports/checkstyle/main.html")
+  }
+}
+
+pmd {
+    ignoreFailures = true
+    consoleOutput = false
+}
+
+test.ignoreFailures=true
+checkstyleTest.enabled = false
+pmdTest.enabled = false
+check.dependsOn htmlDependencyReport
+
+task copyWebPages (type: Copy) {
+    from 'src/main/html'
+    into 'build/reports'
+}
+
+task copyDocs (type: Copy) {
+    from 'build/docs'
+    into 'build/reports/docs'
+    dependsOn 'javadoc'
+}
+
+task reports (dependsOn: ['htmlDependencyReport', 'javadoc', 'check', 
+                          'copyWebPages', 'copyDocs']) {
+    description 'Generate all reports for this project'
+}
+
+def theBuildNumber = '';
+if (project.hasProperty('buildNumber')) {
+   theBuildNumber = project.buildNumber
+}
+
+
+task reportStats (type: JavaExec) {
+    description 'Compute current project statistics from reports'
+    dependsOn 'reports'
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'edu.odu.cs.zeil.report_accumulator.Main';
+    args = [theBuildNumber, 
+            'http://www.cs.odu.edu/~zeil/gitlab/' + project.name + '/reports/', 
+            'build/reports']
+}
+
+task deployReports (type: Copy) {
+    description 'copy all reports to project web page'
+    dependsOn 'reportStats'
+    from 'build/reports'
+    into '/home/zeil/public_html/gitlab/' + project.name + '/reports'
+}
+
