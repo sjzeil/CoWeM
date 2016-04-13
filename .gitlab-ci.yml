@@ -10,8 +10,8 @@ build-job:
   script:
     - ls
     - cd cwm
-    - echo build number $CI_BUILD_REF
-    - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
+    - echo build number CI_BUILD_REF
+    - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=1
 
   only:
     - v2
