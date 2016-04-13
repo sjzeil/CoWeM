@@ -8,6 +8,7 @@ build-job:
     - atria
   stage: build
   script:
+    - ls
     - cd cwm
     - echo build number $CI_BUILD_REF
     - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
