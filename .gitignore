@@ -7,3 +7,5 @@
 **/epub/*
 /ant.log
 /course.info.tex
+/.gradle/
+/build/

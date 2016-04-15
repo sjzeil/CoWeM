@@ -1,5 +1,5 @@
 /*
- * CWM v2 build file
+ * CWM utils v1 build file
  * Steven J Zeil, Old Dominion Univ.
  */
 
@@ -34,31 +34,6 @@ dependencies {
     testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
 }
 
-publishing {
-    publications {
-        ivyJava(IvyPublication) {
-            organisation 'edu.odu.cs.zeil'
-            module 'cwm'
-            revision '0.1'
-            descriptor.status = 'milestone'
-            descriptor.branch = 'master'
-
-            from components.java
-        }
-    }
-    repositories {
-        ivy {
-            name 'ivyRepo'
-            url 'sftp://linux.cs.odu.edu:22/home/zeil/secure_html/ivyrepo'
-            // Readable via https://www.cs.odu.edu/~zeil/ivyrepo    
-            credentials {
-                // Credentials are loaded from ~/.gradle/gradle.properties
-                username "$ivyRepoUser"
-                password "$ivyRepoPass"
-            }
-        }
-    }           
-}
 
 jar {
     manifest {
@@ -71,7 +46,7 @@ jar {
 checkstyle {
     ignoreFailures = true
     showViolations = false
-    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/checkstyle.suppressions.xml')]   
+    configProperties = [ "suppressionFile" : file('config/checkstyle/checkstyle.suppressions.xml')]   
 }
 
 
