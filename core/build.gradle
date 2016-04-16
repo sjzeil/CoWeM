@@ -7,14 +7,19 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
-apply plugin: 'ivy-publish'
 apply plugin: 'project-report'
 apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 
-project.module = 'cwm-core';
+publishing {
+    publications {
+        ivyJava(IvyPublication) {
+            module 'cwm-core'
+        }
+    }
+}
 
 
 dependencies {

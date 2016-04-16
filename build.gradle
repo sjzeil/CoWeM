@@ -6,18 +6,24 @@
 
 
 subprojects {
+
+    apply plugin: 'ivy-publish'
+
     group = 'edu.odu.cs.zeil'
     version = '1.0'
  
     // Credentials are loaded from ~/.gradle/gradle.properties
-    ext.ivyRepoUser = "user";
-    if(hasProperty("ivyRepoUser")){
+    if(project.hasProperty("ivyRepoUser")){
        ext.ivyRepoUser = "$ivyRepoUser";
+    } else {
+       ext.ivyRepoUser = "user";
     }
-    ext.ivyRepoPass = "password";
-    if(hasProperty("ivyRepoPass")){
+    if(project.hasProperty("ivyRepoPass")){
        ext.ivyRepoPass = "$ivyRepoPass";
+    } else {
+       ext.ivyRepoPass = "password";
     }
+
 
     repositories {
         // jcenter()
@@ -35,7 +41,6 @@ subprojects {
         publications {
             ivyJava(IvyPublication) {
                 organisation 'edu.odu.cs.zeil'
-                module project.module
                 revision '1.0'
                 descriptor.status = 'milestone'
                 descriptor.branch = 'v1'
