@@ -7,6 +7,6 @@
 **/epub/*
 /ant.log
 /course.info.tex
-/.gradle/
+**/bin/
 /build/
 /.settings/
