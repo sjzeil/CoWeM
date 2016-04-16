@@ -3,5 +3,5 @@ rootProject.name = 'cwm'  // Course Website Managment
 
 
 include 'utils'
-//include 'core'
+include 'core'
 //include 'documentation'
