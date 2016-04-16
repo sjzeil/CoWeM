@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -83,13 +85,23 @@ public class TestMacroProc {
 	
 	
 	@Test
-	public void testInclude() {
+	public void testInclude() throws IOException {
 		MacroProcessor proc = new MacroProcessor();
 		
-		String s = proc.process("#include <code2html.css>");
+		Path testDirectory = Paths.get("build", "testData");
+		testDirectory.toFile().mkdirs();
+		File testFile = new File(testDirectory.toFile(), "includeTest.txt");
+		String rawText = "something\n#include<" + testFile.getPath() + ">\nsome other thing\n";
+		try (BufferedWriter out = new BufferedWriter(new FileWriter(testFile))) {
+			out.write("div.cssclass {\n   width: 50%;\n}\n");
+		}
+		String s = proc.process(rawText);
 		assertNotNull(s);
-		assertTrue (s.contains("}"));
-		assertTrue (s.contains("{"));
+		assertTrue (s.contains("something"));
+		assertTrue (s.contains("some other thing"));
+		assertTrue (s.contains("width: 50%"));
+		assertTrue (s.contains("\n}"));
+		testFile.delete();
 	}
 		
 
