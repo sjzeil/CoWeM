@@ -13,21 +13,9 @@ apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
+project.module = 'cwm-utils';
 
-// In this section you declare where to find the dependencies of your project
-repositories {
-    // jcenter()
 
-    mavenCentral()
-
-    
-    // Use my own CS dept repo
-    ivy {
-        url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
-    }
-}
-
-// In this section you declare the dependencies for your production and test code
 dependencies {
     compile 'org.pegdown:pegdown:1.6.0+'
     testCompile 'junit:junit:4.12'
