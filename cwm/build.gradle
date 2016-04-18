@@ -1,0 +1,67 @@
+/*
+ * CWM v1 build file
+ * Steven J Zeil, Old Dominion Univ.
+ */
+
+
+
+subprojects {
+
+    apply plugin: 'ivy-publish'
+
+    group = 'edu.odu.cs.zeil'
+    version = '1.0'
+ 
+    // Credentials are loaded from ~/.gradle/gradle.properties
+    if(project.hasProperty("ivyRepoUser")){
+       ext.ivyRepoUser = "$ivyRepoUser";
+    } else {
+       ext.ivyRepoUser = "user";
+    }
+    if(project.hasProperty("ivyRepoPass")){
+       ext.ivyRepoPass = "$ivyRepoPass";
+    } else {
+       ext.ivyRepoPass = "password";
+    }
+
+
+    repositories {
+        // jcenter()
+
+        mavenCentral()
+
+    
+        // Use my own CS dept repo
+        ivy {
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+    }
+}
+
+configure(subprojects.findAll {it.name != 'documentation'}) {
+    publishing {
+        publications {
+            ivyJava(IvyPublication) {
+                organisation 'edu.odu.cs.zeil'
+                revision '1.0'
+                descriptor.status = 'milestone'
+                descriptor.branch = 'v1'
+
+                from components.java
+            }
+        }
+    
+        repositories {
+            ivy {
+                name 'ivyRepo'
+                url 'sftp://linux.cs.odu.edu:22/home/zeil/secure_html/ivyrepo'
+                // Readable via https://www.cs.odu.edu/~zeil/ivyrepo    
+                credentials {
+                    username project.ivyRepoUser
+                    password project.ivyRepoPass
+                }
+            }
+        }           
+    }
+}
+

@@ -1,0 +1,76 @@
+External document references:
+
+You can do an ordinary link as
+   \href{URL}{some text}
+
+All labels in LaTeX documents are added as bookmarks to the PDF file, so you can do:
+    document1.tex:   \section{Introduction}\label{intro}
+    document2.tex:   As explained \href{URLOfDocument1#intro}{here}
+And if you know page numbers, you can do
+    document2.tex:   As explained \href{URLOfDocument1#page.5}{here}
+
+Be aware, however, that not all browser/PDF viewr combinations will
+process the # part of a URL when openign a PDF file. In particular,
+Android (and Apple?) devices don't seem to handle that.
+
+For documents being created under the Public directory, you can do 
+    \doclink{docName}{some text}
+to create a link to the indicated "sibling" document in the same format as the
+linking document (i.e., all 10-16x10 PDFs link to one another).
+
+ \olink{docName}{labelWithinThatDocument}{some text} 
+is my attempt to circumvent the fact that # linking does not always
+work by typesettign a page number as part of the visible link,
+allowing people to know what page you want them to go to.
+
+This only works for "sibling" Public documents. To set this up, you need to put
+   \references{docName}
+into the file documentName.ext.tex.  You also need to make sure that
+the external document has been processed before the one that
+references it.
+
+===============
+
+Internal references:
+
+Use \hyperlink{label}{some text} to link to anchors that have been marked as
+\hypertarget{label}{target text, possibly empty} or as 
+\hyperlabel[some text, possibly empty]{label}
+
+Avoid the label= option of beamer frames. It doesn't work at all in article mode. Create hypertargets within the slides instead.
+
+hyperlabel creates a hypertarget and a label and a special label for
+use when assmbling multiple documents into a combined book. When used 
+with slides with overlays, will produce messages about duplicate labels
+(but should still work).
+
+You can also use the old LaTeX \ref to get a hyperlinked section number.
+\nameref works as well, but is not hyperlinked in slide mode. 
+
+A test:
+
+\begin{frame}[allowframebreaks]{Trying Out Links}
+This is a \hyperlink{memtest}{hyperlink} to the last section.
+This is a \hyperlink{nonsense}{hyperlink} to content within a slide.
+
+This is a doc \hyperlink{testingcpp--memtest}{hyperlink} to the last section.
+This is a doc \hyperlink{testingcpp-nonsense}{hyperlink} to content within a slide.
+
+This is a \doclink{syllabus}{doclink} to the syllabus. This is an \olink{syllabus}{grading}{olink} to a section within the syllabus. 
+
+This is a ref \ref{memtest} to the last section.
+This is a ref \ref{testBookConstructors} to the last labelled slide.
+This is a ref \ref{nonsense} to content within a slide.
+
+This is a pageref \pageref{memtest} to the last section.
+This is a pageref \pageref{testBookConstructors} to the last labelled slide.
+This is a pageref \pageref{nonsense} to content within a slide.
+
+This is a nameref \nameref{memtest} to the last section.
+This is a nameref \nameref{testBookConstructors} to the last labelled slide.
+This is a nameref \nameref{nonsense} to content within a slide.
+
+This is an autoref \autoref{memtest} to the last section.
+This is an autoref \autoref{testBookConstructors} to the last labelled slide.
+This is an autoref \autoref{nonsense} to content within a slide.
+\end{frame}

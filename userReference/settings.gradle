@@ -1,0 +1,7 @@
+// CWM (Course Website Managment)
+// Reference Manual & Sample Course
+rootProject.name = 'cwm-userRef'  
+
+include 'Directory'
+include 'Public'
+include 'Protected'

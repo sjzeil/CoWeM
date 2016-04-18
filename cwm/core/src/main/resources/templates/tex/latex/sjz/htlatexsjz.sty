@@ -1,0 +1,196 @@
+%%
+%%  htlatexsjz.sty, by Steven Zeil, Old Dominion University
+%%       zeil@cs.odu.edu
+%%
+%%  Personal augmentations to the beamerarticle style
+%%
+\ProvidesPackage{htlatexsjz}[2013/05/18 v1.0]
+\NeedsTeXFormat{LaTeX2e}[1997/12/01]
+\RequirePackage{xr-hyper}
+\RequirePackage{beamerarticle}
+%  Font choices
+%
+%
+% Fourier for math | Utopia (scaled) for rm | Helvetica for ss | Latin Modern for tt
+%\RequirePackage{fourier} % math & rm
+%\RequirePackage[scaled=0.875]{helvet} % ss
+%\renewcommand{\ttdefault}{lmtt} %tt
+%
+\RequirePackage{beamercommonsjz}
+%
+\RequirePackage{sectsty}
+\RequirePackage{fancyhdr}
+\RequirePackage[%
+  urlcolor=blue,%
+  hyperfootnotes=true,
+  implicit=false]{hyperref}
+
+\ProcessOptions\relax
+
+
+\Slidesfalse
+\Printabletrue
+\BandWfalse
+\HTMLtrue
+
+
+
+
+
+%% \newdimen\@Leftmargin   \@Leftmargin=0cm
+%% \newdimen\@Rightmargin  \@Rightmargin=0cm
+%% \newdimen\@Topmargin    \@Topmargin=0cm
+%% \newdimen\@Bottommargin \@Bottommargin=0cm
+%% %
+%% \def\InitLayout{
+%%   \setlength{\headheight}{1.25em}
+%%   \setlength{\textwidth}{\paperwidth}
+%%   \addtolength{\textwidth}{-\@Leftmargin}
+%%   \addtolength{\textwidth}{-\@Rightmargin}
+%%   \setlength{\textheight}{\paperheight}
+%%   \addtolength{\textheight}{-\@Topmargin}
+%%   \addtolength{\textheight}{-\@Bottommargin}
+%%   \addtolength{\textheight}{-\headheight}
+%%   \addtolength{\textheight}{-\headsep}
+%%   \addtolength{\textheight}{-\footskip}
+%%   \setlength{\oddsidemargin}{\@Leftmargin}
+%%   \addtolength{\oddsidemargin}{-1in}
+%%   \setlength{\evensidemargin}{\@Rightmargin}
+%%   \addtolength{\evensidemargin}{-1in}
+%%   \setlength{\topmargin}{\@Topmargin}
+%%   \addtolength{\topmargin}{-1in}
+%% }
+%% \InitLayout
+
+%% \def\screensize#1#2{\paperheight=#1%
+%%   \paperwidth=#2
+%%   \InitLayout
+%% }
+%% \def\marginsize#1#2#3#4{
+%%   \@Leftmargin=#1
+%%   \@Rightmargin=#2
+%%   \@Topmargin=#3
+%%   \@Bottommargin=#4
+%%   \InitLayout
+%% }
+
+%% \marginsize{1in}{1in}{1.5in}{1in}
+%% \screensize{11in}{8.5in} %{height}{width}
+
+%% %
+%% % Screen size notes:
+%% % 
+%% % IPad, 9.7" diagonal, 4:3 ratio, 1024 x 768
+%% % Kindle Fire, 7" diagonal, 6" x 3.5", 1024x600
+%% % Nexus 7, 7" diagonal 16:10, 1280x800
+%% % Kindle: 3.6in x 4.8in, 6" diagonal, 600x800 (768x1024 in 5th gen)
+%% %
+
+
+\definecolor{titleColor}{rgb}{0,0.4,0}
+\definecolor{partColor}{rgb}{0,0,0}
+\definecolor{chapterColor}{rgb}{0,0.2,0}
+\definecolor{sectionColor}{rgb}{0,0.4,0}
+\definecolor{subsectionColor}{rgb}{0,0.6,0}
+\definecolor{subsubsectionColor}{rgb}{0,0.75,0}
+
+\partfont{\color{partColor}}
+\chapterfont{\color{chapterColor}}
+\sectionfont{\color{sectionColor}}
+\subsectionfont{\color{subsectionColor}}
+\subsubsectionfont{\color{subsubsectionColor}}
+
+
+%% %\rhead{\thepage}
+%% \rhead{}
+%% \lhead{\textcolor{titleColor}{\theTitle}}
+%% \lfoot{\textcolor{titleColor}{\courseName}}
+%% %\cfoot{}
+%% \rfoot{\textcolor{darkblue}{\navigationSymbols}}
+%% \setlength{\headsep}{1em}
+%% \setlength{\footskip}{2em}
+
+
+
+
+\renewenvironment{columns}[1][]{\HCode{<table><tr>}}{\HCode{</tr></table>}}
+\renewenvironment{column}[1]{\HCode{<td><div>}\begin{minipage}{#1}}{\end{minipage}\HCode{</div></td>}}
+
+
+
+\newenvironment{sidebarfig}[2][0.4\linewidth]{\begin{wrapfigure}{r}{#1}\end{wrapfigure}}{}
+
+
+\renewenvironment{cpplisting}{\HCode{<div class="cpplisting">}\begin{alltt}}{\end{alltt}\HCode{</div>}}
+\renewenvironment{screenlisting}{\HCode{<div class="screenlisting">}\begin{alltt}}{\end{alltt}\HCode{</div>}}
+\renewcommand{\lstkwd}[1]{\HCode{<b>}#1\HCode{</b>}}
+\renewcommand{\lststring}[1]{\HCode{<i>}#1\HCode{</i>}}
+\renewenvironment{lstdirective}{\HCode{<span class="lstdirective">}}{\HCode{</span>}}
+\renewenvironment{lstcomment}{\HCode{<span class="lstcomment">}}{\HCode{</span>}}
+
+\renewcommand{\emph}[1]{\HCode{<span class="emph">}#1\HCode{</span>}}
+\renewcommand{\hli}[1]{\HCode{<span class="hli">}#1\HCode{</span>}}
+\renewcommand{\hlii}[1]{\HCode{<span class="hlii">}#1\HCode{</span>}}
+\renewcommand{\hlii}[1]{\HCode{<span class="hliii">}#1\HCode{</span>}}
+\renewcommand{\hliiii}[1]{\HCode{<span class="hliv">}#1\HCode{</span>}}
+\renewcommand{\hliv}[1]{\HCode{<span class="hliv">}#1\HCode{</span>}}
+
+
+\newcommand{\loadlisting}[2][cpp]{\shortlisting[#1]{#2}}
+\newcommand{\citelisting}[1]{\href{#1.html}{#1}}
+\newcommand{\citedlisting}[1]{}
+
+
+\def\insertframetitle{}
+\def\insertframesubtitle{}
+
+\setbeamertemplate{frame end}{\par\noindent\hfill\dotfill\hfill}
+
+\usepackage[tikz]{bclogo}
+\newenvironment{titledblock}[1]{\HCode{<div class="ublock">}\textbf{#1}\HCode{<br/>}}{\HCode{</div>}}
+
+\newenvironment{ublock}{\HCode{<div class="ublock">}}{\HCode{</div>}}
+
+
+\newenvironment{titledExample}[1]{\begin{titledblock}[#1]}{\end{titledblock}}
+
+
+
+
+\setbeamertemplate{frame end}{\HCode{<div style="clear: both;"/><hr style="width: 75\%;"/>}}
+
+
+\newenvironment{alertlist}{\begin{itemize}}{\end{itemize}}
+
+\renewcommand{\smvdots}{~~~~\HCode{&\#x22EE;}}
+
+
+\lstnewenvironment{cpp}{\lstset{style=cpplst}\HCode{<div class="cpplisting">}}{\HCode{</div>}}
+\lstnewenvironment{java}{\lstset{style=javalst}\HCode{<div class="javalisting">}}{\HCode{</div>}}
+\lstnewenvironment{screen}{\lstset{style=screenlst}\HCode{<div class="screenlisting">}}{\HCode{</div>}}
+
+
+
+\def\emailURL{\baseurl/sendEmail.html?subject=\courseName:\%20(enter\%20a\%20descriptive\%20subject)\string&body=In\%20regards\%20to\%20\docurl\%0A\%0A(enter\%20your\%20message)}
+\def\navigationSymbols{\Link[\homeurl]{}{}\Picture[Course Home]{\baseurl/graphics/home.png}\EndLink~~~\Link[\emailURL]{}{}\Picture[e-mail]{\baseurl/graphics/email.png}\EndLink}
+
+\renewcommand{\doclink}[2]{\href{../#1/#1-html.main.html}{#2}}
+\renewcommand{\olink}[3]{\href{../#1/#1-html.html}{#3}}
+\renewcommand{\references}[1]{}
+
+
+\renewcommand{\wrapPic}[2][40]{\HCode{<div class="noFloat"/><img style="float: right; max width=#1\%;" src="#2.png"/>}}
+
+\renewenvironment{picOnRight}[2][40]{\HCode{<div class="noFloat"/><img style="float:right; max width=#1\%" src="#2.png"/>}}{\EL}
+
+\renewenvironment{picOnLeft}[2][40]{\HCode{<div class="noFloat"/><img style="float:left; max width=#1\%" src="#2.png"/>}}{\EL}
+
+\renewcommand{\centerPic}[2][90]{\HCode{<div class="noFloat"/><div><img style="align: center; max width=#1\%" src="#2.png"/></div>}}
+
+\newcommand{\visibleVSpacing}{~~~~~$\vdots$\HCode{<br/>}}
+\newcommand{\visibleVSpacingv}{\visibleVSpacing\visibleVSpacing\visibleVSpacing\visibleVSpacing\visibleVSpacing}
+\newcommand{\visibleVSpacingxx}{\visibleVSpacingv\visibleVSpacingv\visibleVSpacingv\visibleVSpacingv}
+
+\renewenvironment{qanswer}{\visibleVSpacingxx\par\textbf{Answer:} }{\par\noindent\hfill\dotfill\hfill}
+
+\endinput

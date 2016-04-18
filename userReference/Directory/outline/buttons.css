@@ -1,0 +1,48 @@
+html    {background: transparent;}
+body	{background: transparent;
+	margin-top: 100px;}
+
+
+input.but {
+  color: #000000;
+  background: #3366FF;
+  font-weight: bold;
+  font-family: serif;
+  font-size: 10pt;
+  width: 95;
+}
+
+td.but  {
+  color: #000000;
+  background: #936C20;
+
+  font-weight: bold;
+  font-family: serif;
+  font-size: 10pt;
+  border-width: thin;
+  border-style: outset;
+  text-decoration: none;
+}
+
+a.but:link {
+  color: #003300;
+}
+a.but:visited {
+  color: #003300;
+}
+
+tr.separator	{
+  height: 20px;
+}
+
+p.footer {
+    display: none;
+}
+
+div.commentaryBlock {
+    display: none;
+}
+
+hr {
+    display: none;
+}

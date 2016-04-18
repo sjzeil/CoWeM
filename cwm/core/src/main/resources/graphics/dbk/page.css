@@ -1,0 +1,73 @@
+div.toc {
+        background-color: #90B0ff;
+        font-weight: bold;
+        margin-top: 1.5ex;
+        margin-bottom: 1.5ex;
+}
+
+
+div.titlepage {
+  text-align: center;
+  background-color:#ffffff;
+  color: #000000;
+  clear: both;
+}
+
+h3.author {
+  text-align: center;
+}
+
+div.article # div:first-child # div {
+  text-align: center;
+  background-color:#330080;
+  color: #ddddee;
+}
+
+h2 {
+  text-align: left;
+}
+
+h3 {
+  text-align: left;
+}
+
+h4 {
+  text-align: center;
+}
+
+
+div.navheader {
+  padding-top: 2px;
+  background-color: #ccccff;
+  padding-right: 2px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+div.navfooter {
+  background-color: #ccccff;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  padding-top: 2px;
+}
+
+div.copyrightfooter {
+  background-color: #c6c6be;
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 2px;
+}
+
+
+
+.programlisting {color: #006000; }
+.hl-keyword {color:#000000;}
+.hl-string {color:#8E236B;}
+.hl-directive {color:#0000A0;}
+.hl-comment {color:#8c1717;}

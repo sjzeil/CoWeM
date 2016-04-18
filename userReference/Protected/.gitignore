@@ -1,0 +1,16 @@
+**/title.xml
+**/index.html
+**/*.properties
+**/*~
+**/*__*
+/*.epub
+/*.mobi
+**/epub
+**/epub/*
+**/epub.contents*
+**/ant.log
+**/*.h.html
+**/*.cpp.html
+**/*.java.html
+**/*.listing.html
+

@@ -1,0 +1,385 @@
+<project>
+
+  <property name="md.macros.file" location="../../templates/macros.md"/>
+
+  <macrodef name="preprocessMD">
+    <attribute name="format" default="html"/>
+    <attribute name="extension" default="md"/>
+    <attribute name="file" default="${doc}"/>
+    <element name="defined" optional="yes"/> 
+    <sequential>
+      <java classname="edu.odu.cs.macroproc.MacroProcessor" 
+	    fork="true" dir="${basedir}"
+	    >
+	<classpath>
+	  <pathelement location="../../templates/codeAnnotation.jar"/>
+	</classpath>
+	<arg value="-c%"/>
+	<arg value="-o@{file}__@{format}.md"/>
+	<arg value="-D_@{format}"/>
+	<arg value="-D${courseName}"/>
+	<arg value="-D${delivery}"/>
+	<defined/>
+	<arg value="-i${md.macros.file}"/>
+	<arg value="@{file}.@{extension}"/>
+      </java>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="codeFilter">
+    <attribute name="file"/>
+    <sequential>
+      <replace
+	  file="@{file}">
+	<replacefilter token='/*...*/' value="&amp;#x22ee;"/>
+	<replacefilter token='/*1*/' value="&amp;#x2780;"/>
+	<replacefilter token='/*2*/' value="&amp;#x2781;"/>
+	<replacefilter token='/*3*/' value="&amp;#x2782;"/>
+	<replacefilter token='/*4*/' value="&amp;#x2783;"/>
+	<replacefilter token='/*5*/' value="&amp;#x2784;"/>
+	<replacefilter token='/*6*/' value="&amp;#x2785;"/>
+	<replacefilter token='/*7*/' value="&amp;#x2786;"/>
+	<replacefilter token='/*8*/' value="&amp;#x2787;"/>
+	<replacefilter token='/*9*/' value="&amp;#x2788;"/>
+	<replacefilter token='/*+*/' value='&lt;span class=&quot;hli&quot;&gt;'/>
+	<replacefilter token='/*-*/' value='&lt;/span&gt;&lt;!-- class=&quot;hli&quot; --&gt;'/>
+	<replacefilter token='/*+1*/' value='&lt;span class=&quot;hli&quot;&gt;'/>
+	<replacefilter token='/*-1*/' value='&lt;/span&gt;&lt;!-- class=&quot;hli&quot; --&gt;'/>
+	<replacefilter token='/*+2*/' value='&lt;span class=&quot;hlii&quot;&gt;'/>
+	<replacefilter token='/*-2*/' value='&lt;/span&gt;&lt;!-- class=&quot;hlii&quot; --&gt;'/>
+	<replacefilter token='/*+3*/' value='&lt;span class=&quot;hliii&quot;&gt;'/>
+	<replacefilter token='/*-3*/' value='&lt;/span&gt;&lt;!-- class=&quot;hliii&quot; --&gt;'/>
+	<replacefilter token='/*+4*/' value='&lt;span class=&quot;hliv&quot;&gt;'/>
+	<replacefilter token='/*-4*/' value='&lt;/span&gt;&lt;!-- class=&quot;hliv&quot; --&gt;'/>
+	<replacefilter token='/*+i*/' value='&lt;i&gt;'/>
+	<replacefilter token='/*-i*/' value='&lt;/i&gt;'/>
+	<replacefilter token='/*+=*/' value='&lt;span class=&quot;strike&quot;&gt;'/>
+	<replacefilter token='/*-=*/' value='&lt;/span&gt;'/>
+	<replacefilter token='\%' value='%'/>
+	<replacefilter token='[_' value='&lt;span class=&quot;userinput&quot;&gt;'/>
+	<replacefilter token='_]' value='&lt;/span&gt;&lt;!-- class=&quot;userinput&quot; --&gt;'/>
+      </replace>
+    </sequential>
+  </macrodef>
+
+
+
+  <macrodef name="codeFilterEpub">
+    <attribute name="file"/>
+    <sequential>
+      <replace
+	  file="@{file}">
+	<replacefilter token='/*...*/' value="&amp;#x22ee;"/>
+	<replacefilter token='/*1*/' value="&amp;#x2780;"/>
+	<replacefilter token='/*2*/' value="&amp;#x2781;"/>
+	<replacefilter token='/*3*/' value="&amp;#x2782;"/>
+	<replacefilter token='/*4*/' value="&amp;#x2783;"/>
+	<replacefilter token='/*5*/' value="&amp;#x2784;"/>
+	<replacefilter token='/*6*/' value="&amp;#x2785;"/>
+	<replacefilter token='/*7*/' value="&amp;#x2786;"/>
+	<replacefilter token='/*8*/' value="&amp;#x2787;"/>
+	<replacefilter token='/*9*/' value="&amp;#x2788;"/>
+	<replacefilter token='/*+*/' value='&lt;span class=&quot;hli&quot;&gt;&#x2460;&#8594;'/>
+	<replacefilter token='/*-*/' value='&#8592;&#x2460;&lt;/span&gt;'/>
+	<replacefilter token='/*+1*/' value='&lt;span class=&quot;hli&quot;&gt;&#x2460;&#8594;'/>
+	<replacefilter token='/*-1*/' value='&#8592;&#x2460;&lt;/span&gt;'/>
+	<replacefilter token='/*+2*/' value='&lt;span class=&quot;hlii&quot;&gt;&#x2461;&#8594;'/>
+	<replacefilter token='/*-2*/' value='&#8592;&#x2461;&lt;/span&gt;'/>
+	<replacefilter token='/*+3*/' value='&lt;span class=&quot;hliii&quot;&gt;&#x2462;&#8594;'/>
+	<replacefilter token='/*-3*/' value='&#8592;&#x2462;&lt;/span&gt;'/>
+	<replacefilter token='/*+4*/' value='&lt;span class=&quot;hliv&quot;&gt;&#x2463;&#8594;'/>
+	<replacefilter token='/*-4*/' value='&#8592;&#x2463;&lt;/span&gt;'/>
+	<replacefilter token='/*+i*/' value='&lt;i&gt;'/>
+	<replacefilter token='/*-i*/' value='&lt;/i&gt;'/>
+	<replacefilter token='/*+=*/' value='&lt;span class=&quot;strike&quot;&gt;'/>
+	<replacefilter token='/*-=*/' value='&lt;/span&gt;'/>
+	<replacefilter token='[_' value='&lt;span class=&quot;userinput&quot;&gt;'/>
+	<replacefilter token='_]' value='&lt;/span&gt;&lt;!-- class=&quot;userinput&quot; --&gt;'/>
+      </replace>
+    </sequential>
+  </macrodef>
+
+
+
+
+
+
+
+  <makeurl file="." property="md.pwdURL"/>
+  <macrodef name="postprocessMDHTML">
+    <attribute name="format" default="html"/>
+    <attribute name="file" default="${doc}"/>
+    <attribute name="altformats" default="yes"/>
+    <sequential>
+      <replaceregexp file="@{file}__@{format}.html"
+		   flags="sg"
+		   byline="false"
+		   match='\&lt;p\&gt;\&lt;/div\&gt;(.*?)\&lt;/p\&gt;'
+		   replace='\&lt;/div\&gt;\1'/>
+      <xslt in="@{file}__@{format}.html" 
+	    out="@{file}__@{format}.xml"
+	    style="../../templates/md-@{format}.xsl"
+	    >
+	<param name="doc" expression="@{file}"/>
+	<param name="format" expression="@{format}"/>
+	<param name="pwdURL" expression="${md.pwdURL}"/>
+	<param name="courseName" expression="${courseName}"/>
+	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
+	<param name="graphicsDir" expression="${graphicsURL}" if="graphicsURL"/>
+	<param name="homeURL" expression="${homeurl}" if="homeurl"/>
+	<param name="email" expression="${email}" if="email"/>
+	<param name="forum" expression="${forum}" if="forum"/>
+	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="bbURL" expression="${bbURL}" if="bbURL"/>
+	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
+	<param name="highlightjsURL" expression="${highlightjsURL}" 
+	       if="highlightjsURL"/> 
+	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
+	<param name="altformats" expression="@{altformats}"/>
+      </xslt>
+
+      <copy file="@{file}__@{format}.xml" tofile="@{file}__@{format}.html"  
+	    overwrite="yes" outputencoding="iso-8859-1">
+	<filterset>
+	  <filtersfile file="../../course.properties"/>
+	  <filtersfile file="@{file}.properties"/>
+	  <filter token="docModDate" value="${doc.modDate}"/>
+	</filterset>
+      </copy>
+      <codeFilter file="@{file}__@{format}.html"/>
+    </sequential>
+  </macrodef>
+
+
+  <macrodef name="postprocessMDXHTML">
+    <attribute name="format" default="html"/>
+    <attribute name="file" default="${doc}"/>
+    <sequential>
+      <replaceregexp file="@{file}__@{format}.html"
+		   flags="sg"
+		   byline="false"
+		   match='\&lt;p\&gt;\&lt;/div\&gt;(.*?)\&lt;/p\&gt;'
+		   replace='\&lt;/div\&gt;\1'/>
+      <xslt in="@{file}__@{format}.html" 
+	    out="@{file}__@{format}.xml"
+	    style="../../templates/md-@{format}.xsl"
+	    >
+	<classpath location="../../templates/saxon.jar" />
+	<param name="doc" expression="@{file}"/>
+	<param name="pwdURL" expression="${md.pwdURL}"/>
+	<param name="courseName" expression="${courseName}"/>
+	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
+	<param name="graphicsDir" expression="${graphicsURL}" if="graphicsURL"/>
+	<param name="homeURL" expression="${homeurl}" if="homeurl"/>
+	<param name="email" expression="${email}" if="email"/>
+	<param name="forum" expression="${forum}" if="forum"/>
+	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
+	<param name="highlightjsURL" expression="${highlightjsURL}" 
+	       if="highlightjsURL"/> 
+	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
+	<param name="baseURL" expression="${baseurl}"/>
+      </xslt>
+
+      <copy file="@{file}__@{format}.xml" tofile="@{file}__@{format}.html"  
+	    overwrite="yes">
+	<filterset>
+	  <filtersfile file="../../course.properties"/>
+	  <filtersfile file="@{file}.properties"/>
+	  <filter token="docModDate" value="${doc.modDate}"/>
+	</filterset>
+      </copy>
+      <codeFilterEpub file="@{file}__@{format}.html"/>
+      <replaceregexp file="@{file}__@{format}.html"
+		   flags="mg"
+		   byline="true"
+		   match='"(#?)fn:([0-9]+)"'
+		   replace='"\1fn--\2"'/>
+      <replaceregexp file="@{file}__@{format}.html"
+		   flags="mg"
+		   byline="true"
+		   match='"(#?)fnref:([0-9]+)"'
+		   replace='"\1fnref--\2"'/>
+      <replaceregexp file="@{file}__@{format}.html"
+		   flags="m"
+		   byline="true"
+		   match='&lt;meta charset='
+		   replace='&lt;meta name="charset" content='/>
+    </sequential>
+  </macrodef>
+
+
+
+
+
+  <dependset>
+    <srcfileset dir=".">
+      <include name="${doc}.md"/>
+      <include name="*.h"/>
+      <include name="*.cpp"/>
+      <include name="*.java"/>
+      <include name="*.listing"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__*.html"/>
+      <include name="${doc}.epub"/>
+      <include name="${doc}.mobi"/>
+    </targetfileset>
+  </dependset>
+
+
+
+  <available property="html.md.exists" file="${doc}__html.html"/>
+  <target name="md2html" unless="html.md.exists">
+    <preprocessMD format="html">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessMD>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__html.md"/>
+    </exec>
+    <postprocessMDHTML format="html"/>
+  </target>
+
+
+  <available property="canvas.md.exists" file="${doc}__canvas.html"/>
+  <target name="md2canvas" unless="canvas.md.exists">
+    <preprocessMD format="canvas">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessMD>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__canvas.md"/>
+    </exec>
+    <postprocessMDHTML format="canvas"/>
+  </target>
+
+
+  <available property="pages.md.exists" file="${doc}__pages.html"/>
+  <target name="md2pages" unless="pages.md.exists">
+    <preprocessMD format="pages">
+      <defined>
+	<arg value="-D_printable"/>
+	<arg value="-D_html"/>
+      </defined>
+    </preprocessMD>
+    <echo file="${doc}__pages.md" append="yes"></echo>
+    <echo file="${doc}__pages.md" append="yes">&lt;div style="border-top-style: dotted;"/&gt;</echo>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__pages.md"/>
+    </exec>
+    <postprocessMDHTML format="pages"/>
+  </target>
+
+
+  <available property="slidy.md.exists" file="${doc}__slidy.html"/>
+  <target name="md2slidy" unless="slidy.md.exists">
+    <preprocessMD format="slidy">
+      <defined>
+	<arg value="-D_slides"/>
+	<arg value="-D_html"/>
+      </defined>
+    </preprocessMD>
+    <echo file="${doc}__slidy.md" append="yes"></echo>
+    <echo file="${doc}__slidy.md" append="yes">&lt;div style="border-top-style: dotted;"/&gt;</echo>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__slidy.md"/>
+    </exec>
+    <postprocessMDHTML format="slidy"/>
+  </target>
+
+  <available property="directory.md.exists" file="${doc}__directory.html"/>
+  <target name="md2directory" unless="directory.md.exists">
+    <preprocessMD format="directory">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessMD>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__directory.md"/>
+    </exec>
+    <postprocessMDHTML format="directory"/>
+  </target>
+
+
+  <uptodate property="epub.md.exists" 
+	    targetfile="${doc}__epub.html"
+	    srcfile="${doc}.md"/>
+  <target name="md2epub" unless="epub.md.exists">
+    <preprocessMD format="epub">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessMD>
+    <exec executable="multimarkdown">
+      <arg value="-b"/>
+      <arg value="${doc}__epub.md"/>
+    </exec>
+    <postprocessMDXHTML format="epub"/>
+
+    <exec executable="latex">
+      <arg value="${doc}__epub.math.tex"/>
+    </exec>
+    <exec executable="dvipng">
+      <arg value="-T"/>
+      <arg value="tight"/>
+      <arg value="-bg"/>
+      <arg value="transparent"/>
+      <arg value="${doc}__epub.math.dvi"/>
+    </exec>
+  </target>
+
+
+
+  <condition property="do.mobi1">
+    <and>
+      <not>
+	  <available file="${doc}.mobi"/>
+      </not>
+      <available file="ebook-convert"
+		 filepath="${env.PATH}"/>
+    </and>
+  </condition>
+  <condition property="do.mobi1">
+    <and>
+      <not>
+	  <available file="${doc}.mobi"/>
+      </not>
+      <not>
+	<available file="ebook-convert"
+		   filepath="${env.PATH}"/>
+      </not>
+      <available file="kindlegen"
+		 filepath="${env.PATH}"/>
+    </and>
+  </condition>
+
+  <target name="md2mobi1" depends="md2epub" 
+	  if="do.mobi1"> 
+    <exec executable="ebook-convert">
+      <arg value="${doc}.epub"/>
+      <arg value="${doc}.mobi"/>
+    </exec>
+  </target>
+
+  <target name="md2mobi2" depends="md2epub" 
+	  if="do.mobi2"> 
+    <exec executable="kindlegen">
+      <arg value="${doc}.epub"/>
+    </exec>
+  </target>
+
+  <target name="md2mobi" depends="md2mobi1, md2mobi2"> 
+  </target>
+
+
+
+
+</project>

@@ -1,0 +1,825 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <meta name="Author" content="Made by 'tree'">
+ <meta name="GENERATOR" content="$Version: $ tree v1.6.0 (c) 1996 - 2011 by Steve Baker, Thomas Moore, Francesc Rocher, Kyosuke Tokoro $">
+ <title>Directory Tree</title>
+ <style type="text/css">
+  <!-- 
+  BODY { font-family : ariel, monospace, sans-serif; }
+  P { font-weight: normal; font-family : ariel, monospace, sans-serif; color: black; background-color: transparent;}
+  B { font-weight: normal; color: black; background-color: transparent;}
+  A:visited { font-weight : normal; text-decoration : none; background-color : transparent; margin : 0px 0px 0px 0px; padding : 0px 0px 0px 0px; display: inline; }
+  A:link    { font-weight : normal; text-decoration : none; margin : 0px 0px 0px 0px; padding : 0px 0px 0px 0px; display: inline; }
+  A:hover   { color : #000000; font-weight : normal; text-decoration : underline; background-color : yellow; margin : 0px 0px 0px 0px; padding : 0px 0px 0px 0px; display: inline; }
+  A:active  { color : #000000; font-weight: normal; background-color : transparent; margin : 0px 0px 0px 0px; padding : 0px 0px 0px 0px; display: inline; }
+  .VERSION { font-size: small; font-family : arial, sans-serif; }
+  .NORM  { color: black;  background-color: transparent;}
+  .FIFO  { color: purple; background-color: transparent;}
+  .CHAR  { color: yellow; background-color: transparent;}
+  .DIR   { color: blue;   background-color: transparent;}
+  .BLOCK { color: yellow; background-color: transparent;}
+  .LINK  { color: aqua;   background-color: transparent;}
+  .SOCK  { color: fuchsia;background-color: transparent;}
+  .EXEC  { color: green;  background-color: transparent;}
+  -->
+ </style>
+</head>
+<body>
+	<h1>Directory Tree</h1><p>
+	.<br>
+	├── build.xml<br>
+	├── course.properties<br>
+	├── Directory<br>
+	│   ├── ebooks<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── ebooks.md<br>
+	│   ├── library<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── library.md<br>
+	│   ├── outline<br>
+	│   │   ├── activity.gif<br>
+	│   │   ├── asst-cons.png<br>
+	│   │   ├── asst.gif<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── buttons.css<br>
+	│   │   ├── buttons.xml<br>
+	│   │   ├── construct.gif<br>
+	│   │   ├── directory.css<br>
+	│   │   ├── event.gif<br>
+	│   │   ├── exam.gif<br>
+	│   │   ├── footer.xml<br>
+	│   │   ├── lab.gif<br>
+	│   │   ├── lecture.gif<br>
+	│   │   ├── outline.xml<br>
+	│   │   ├── project.gif<br>
+	│   │   ├── quiz.gif<br>
+	│   │   ├── reading.gif<br>
+	│   │   ├── recitation.gif<br>
+	│   │   ├── selfassess.gif<br>
+	│   │   ├── text.gif<br>
+	│   │   ├── video.gif<br>
+	│   ├── policies<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── policies.md<br>
+	├── index.html<br>
+	├── Protected<br>
+	│   ├── Assts<br>
+	│   │   ├── Assts.md<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── displayCSVgrades.cgi<br>
+	│   │   └── displayGradeReport.cgi<br>
+	│   ├── categorization<br>
+	│   │   └── categorization.md<br>
+	│   ├── categorizationDesign<br>
+	│   │   ├── categorizationDesign.md<br>
+	│   │   ├── instances.java<br>
+	│   │   ├── instances.java.html<br>
+	│   │   ├── weather.arff.listing<br>
+	│   │   └── weather.arff.listing.html<br>
+	│   ├── categorizationStoryNotes<br>
+	│   │   └── categorizationStoryNotes.md<br>
+	│   ├── codecompProject<br>
+	│   │   ├── codecompProject.md<br>
+	│   │   ├── lexicalAnalysis.dia<br>
+	│   │   └── subsystems.dia<br>
+	│   ├── mutation<br>
+	│   │   └── mutation.md<br>
+	│   └── references<br>
+	│   &nbsp;&nbsp;&nbsp; ├── rsdimuReqtsDefinition.pdf<br>
+	│   &nbsp;&nbsp;&nbsp; └── SWEBOKv3.pdf<br>
+	├── Public<br>
+	│   ├── accountSetup<br>
+	│   │   ├── accountSetup.md<br>
+	│   │   ├── build.xml<br>
+	│   ├── adtTesting<br>
+	│   │   ├── adtTesting.md<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── fixture.cpp<br>
+	│   │   ├── fullTest.cpp<br>
+	│   │   ├── mailinglist.h<br>
+	│   │   ├── shouldBeEqual.cpp<br>
+	│   │   ├── skeleton.cpp<br>
+	│   │   ├── testAdd1.cpp<br>
+	│   │   ├── testAdd2.cpp<br>
+	│   │   ├── testAdd.cpp<br>
+	│   │   ├── testAsst.cpp<br>
+	│   │   └── testCons1.cpp<br>
+	│   ├── agile<br>
+	│   │   ├── 450px-Scrum_task_board.jpg<br>
+	│   │   ├── 800px-User_Story_Map_in_Action.png<br>
+	│   │   ├── agile.md<br>
+	│   │   ├── agilePractices.png<br>
+	│   │   ├── amateurs.mmd<br>
+	│   │   ├── build.xml<br>
+	│   ├── analysis<br>
+	│   │   ├── analysis.md<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cfgBB.dia<br>
+	│   │   ├── cfgBB.eps<br>
+	│   │   ├── cfgBB.pdf<br>
+	│   │   ├── cfgBB.png<br>
+	│   │   ├── cfg.dia<br>
+	│   │   ├── cfg.eps<br>
+	│   │   ├── cfg.fig<br>
+	│   │   ├── cfg.pdf<br>
+	│   │   ├── cfg.png<br>
+	│   │   ├── compilers0.eps<br>
+	│   │   ├── compilers0.fig<br>
+	│   │   ├── compilers0.pdf<br>
+	│   │   ├── compilers0.png<br>
+	│   │   ├── compilers.eps<br>
+	│   │   ├── compilers.fig<br>
+	│   │   ├── compilers.pdf<br>
+	│   │   ├── compilers.png<br>
+	│   │   ├── dataflow_cfg.eps<br>
+	│   │   ├── dataflow_cfg.fig<br>
+	│   │   ├── dataflow_cfg.pdf<br>
+	│   │   ├── dataflow_cfg.png<br>
+	│   │   ├── dataflow.pdf<br>
+	│   │   ├── exprast.eps<br>
+	│   │   ├── exprast.fig<br>
+	│   │   ├── exprast.pdf<br>
+	│   │   ├── exprast.png<br>
+	│   │   ├── functasg.eps<br>
+	│   │   ├── functasg.fig<br>
+	│   │   ├── functasg.pdf<br>
+	│   │   ├── functasg.png<br>
+	│   │   ├── functast.eps<br>
+	│   │   ├── functast.fig<br>
+	│   │   ├── functast.pdf<br>
+	│   │   ├── functast.png<br>
+	│   │   ├── hybrid.eps<br>
+	│   │   ├── hybrid.fig<br>
+	│   │   ├── hybrid.pdf<br>
+	│   │   ├── hybrid.png<br>
+	│   │   ├── ifast.eps<br>
+	│   │   ├── ifast.fig<br>
+	│   │   ├── ifast.pdf<br>
+	│   │   ├── ifast.png<br>
+	│   │   ├── interp1.eps<br>
+	│   │   ├── interp1.fig<br>
+	│   │   ├── interp1.pdf<br>
+	│   │   ├── interp1.png<br>
+	│   │   ├── interp2.eps<br>
+	│   │   ├── interp2.fig<br>
+	│   │   ├── interp2.pdf<br>
+	│   │   ├── interp2.png<br>
+	│   │   ├── interpreters.eps<br>
+	│   │   ├── interpreters.fig<br>
+	│   │   ├── interpreters.pdf<br>
+	│   │   ├── interpreters.png<br>
+	│   │   └── leaktracer.listing<br>
+	│   ├── ant<br>
+	│   │   ├── ant.md<br>
+	│   │   ├── build-Linux.paths.listing<br>
+	│   │   ├── build-Windows7.paths.listing<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── build.xml.espreadsheet2.listing<br>
+	│   │   ├── build.xml.espreadsheet.listing<br>
+	│   │   ├── codeAnnotation.build.listing<br>
+	│   │   ├── commonBuild.listing<br>
+	│   │   ├── pdfGen-build.listing<br>
+	│   │   ├── simplebuild.xml.listing<br>
+	│   │   ├── simplemake2.listing<br>
+	│   │   ├── simplemake.listing<br>
+	│   │   ├── tasks.dia<br>
+	│   │   ├── tasks.eps<br>
+	│   │   ├── tasks.pdf<br>
+	│   │   ├── tasks.png<br>
+	│   │   └── topProject-build.listing<br>
+	│   ├── antLab<br>
+	│   │   ├── antLab.md<br>
+	│   │   ├── build.xml<br>
+	│   ├── autoconf<br>
+	│   │   ├── autoconf.md<br>
+	│   │   ├── build.xml<br>
+	│   │   └── config.h<br>
+	│   ├── bugTracking<br>
+	│   │   ├── bugTracking.md<br>
+	│   │   ├── bugzilla.jpg<br>
+	│   │   ├── Bugzilla-Lifecycle.png<br>
+	│   │   ├── bugzilla.png<br>
+	│   │   ├── build.xml<br>
+	│   │   └── mylyn-overview-full.jpg<br>
+	│   ├── buildManagers<br>
+	│   │   ├── buildManagers.md<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── dependency.dia<br>
+	│   │   ├── dependency.eps<br>
+	│   │   ├── dependency.pdf<br>
+	│   │   ├── dependency.png<br>
+	│   │   ├── hello.cpp<br>
+	│   │   ├── tasks.dia<br>
+	│   │   ├── tasks.eps<br>
+	│   │   ├── tasks.pdf<br>
+	│   │   └── tasks.png<br>
+	│   ├── choosingTests<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cfg.eps<br>
+	│   │   ├── cfg.fig<br>
+	│   │   ├── cfg.pdf<br>
+	│   │   ├── cfg.png<br>
+	│   │   ├── choosingTests.md<br>
+	│   │   ├── cleanroom.eps<br>
+	│   │   ├── cleanroom.fig<br>
+	│   │   ├── cleanroom.pdf<br>
+	│   │   ├── cleanroom.png<br>
+	│   │   ├── f16.mmd<br>
+	│   │   ├── fit2colora.eps<br>
+	│   │   ├── fit2colora.pdf<br>
+	│   │   ├── fit2colora.png<br>
+	│   │   ├── fit2colorb.eps<br>
+	│   │   ├── fit2colorb.pdf<br>
+	│   │   ├── fit2colorb.png<br>
+	│   │   ├── fit2colorc.eps<br>
+	│   │   ├── fit2colorc.pdf<br>
+	│   │   ├── fit2colorc.png<br>
+	│   │   ├── fit2colord.eps<br>
+	│   │   ├── fit2colord.pdf<br>
+	│   │   ├── fit2colord.png<br>
+	│   │   ├── testing.md<br>
+	│   │   ├── testproc.eps<br>
+	│   │   ├── testproc.pdf<br>
+	│   │   └── testproc.png<br>
+	│   ├── communications<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── communications.md<br>
+	│   │   ├── communications.md~<br>
+	│   ├── construction<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── constructionActivities.jpeg<br>
+	│   │   ├── construction.md<br>
+	│   │   └── questions.mmd<br>
+	│   ├── continuousInteg<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── continuousInteg.md<br>
+	│   ├── cvs<br>
+	│   │   ├── branched.dia<br>
+	│   │   ├── branched.eps<br>
+	│   │   ├── branched.pdf<br>
+	│   │   ├── branched.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cvs.md<br>
+	│   │   ├── diffsChain.dia<br>
+	│   │   ├── diffsChain.eps<br>
+	│   │   ├── diffsChain.pdf<br>
+	│   │   ├── diffsChain.png<br>
+	│   │   ├── diffsChainShort.dia<br>
+	│   │   ├── diffsChainShort.eps<br>
+	│   │   ├── diffsChainShort.pdf<br>
+	│   │   ├── diffsChainShort.png<br>
+	│   │   ├── drift.dia<br>
+	│   │   ├── drift.eps<br>
+	│   │   ├── drift.pdf<br>
+	│   │   ├── drift.png<br>
+	│   │   ├── eclipseCompareScreenshot.png<br>
+	│   │   ├── merged.dia<br>
+	│   │   ├── merged.eps<br>
+	│   │   ├── merged.pdf<br>
+	│   │   ├── merged.png<br>
+	│   │   ├── multimerge.dia<br>
+	│   │   ├── multimerge.eps<br>
+	│   │   ├── multimerge.pdf<br>
+	│   │   ├── multimerge.png<br>
+	│   │   ├── premerged.dia<br>
+	│   │   ├── premerged.eps<br>
+	│   │   ├── premerged.pdf<br>
+	│   │   ├── premerged.png<br>
+	│   │   ├── revisionChain.dia<br>
+	│   │   ├── revisionChain.eps<br>
+	│   │   ├── revisionChain.pdf<br>
+	│   │   ├── revisionChain.png<br>
+	│   │   ├── svnRepo.dia<br>
+	│   │   ├── svnRepo.eps<br>
+	│   │   ├── svnRepo.pdf<br>
+	│   │   └── svnRepo.png<br>
+	│   ├── docgen<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── docgen.md<br>
+	│   │   ├── junitreport.xml.listing<br>
+	│   │   └── SegmentationTransformer.java<br>
+	│   ├── eclipseCppLab<br>
+	│   │   ├── eclipse.png<br>
+	│   │   ├── emacsx-cpp.png<br>
+	│   │   ├── findPrimes.zip<br>
+	│   │   ├── gdbx.jpg<br>
+	│   │   └── nemiver.png<br>
+	│   ├── eclipseJavaLab<br>
+	│   │   ├── eclipseNewProject.png<br>
+	│   │   ├── Pie.java<br>
+	│   │   ├── PieSlicer.java<br>
+	│   │   └── PieView.java<br>
+	│   ├── eliciting<br>
+	│   │   ├── 800px-User_Story_Map_in_Action.png<br>
+	│   │   ├── analysisBorders.gif<br>
+	│   │   ├── analysisBorders.png<br>
+	│   │   ├── analysisModel1.gif<br>
+	│   │   ├── analysisModel1.png<br>
+	│   │   ├── analysisModel2.gif<br>
+	│   │   ├── analysisModel2.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── domainModel.gif<br>
+	│   │   ├── domainModel.png<br>
+	│   │   ├── eliciting.md<br>
+	│   │   ├── IEEE830.pdf<br>
+	│   │   └── rsdimu_formal_spec.pdf<br>
+	│   ├── feedback<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── feedback.md<br>
+	│   ├── forges<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── forges.md<br>
+	│   ├── git<br>
+	│   │   ├── badPush.dia<br>
+	│   │   ├── badPush.eps<br>
+	│   │   ├── badPush.pdf<br>
+	│   │   ├── badPush.png<br>
+	│   │   ├── breakingTheBuild.mmd<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── gitBranch2.dia<br>
+	│   │   ├── gitBranch2.eps<br>
+	│   │   ├── gitBranch2.pdf<br>
+	│   │   ├── gitBranch2.png<br>
+	│   │   ├── gitBranch.dia<br>
+	│   │   ├── gitBranch.eps<br>
+	│   │   ├── gitBranch.pdf<br>
+	│   │   ├── gitBranch.png<br>
+	│   │   ├── gitCloned2.dia<br>
+	│   │   ├── gitCloned2.eps<br>
+	│   │   ├── gitCloned2.pdf<br>
+	│   │   ├── gitCloned2.png<br>
+	│   │   ├── gitCloned.dia<br>
+	│   │   ├── gitCloned.eps<br>
+	│   │   ├── gitCloned.pdf<br>
+	│   │   ├── gitCloned.png<br>
+	│   │   ├── gitFetched.dia<br>
+	│   │   ├── gitFetched.eps<br>
+	│   │   ├── gitFetched.pdf<br>
+	│   │   ├── gitFetched.png<br>
+	│   │   ├── git.md<br>
+	│   │   ├── gitPulled.dia<br>
+	│   │   ├── gitPulled.eps<br>
+	│   │   ├── gitPulled.pdf<br>
+	│   │   ├── gitPulled.png<br>
+	│   │   ├── gitPushed1.dia<br>
+	│   │   ├── gitPushed1.eps<br>
+	│   │   ├── gitPushed1.pdf<br>
+	│   │   ├── gitPushed1.png<br>
+	│   │   ├── gitRebase1.dia<br>
+	│   │   ├── gitRebase1.eps<br>
+	│   │   ├── gitRebase1.pdf<br>
+	│   │   ├── gitRebase1.png<br>
+	│   │   ├── gitRebase2.dia<br>
+	│   │   ├── gitRebase2.eps<br>
+	│   │   ├── gitRebase2.pdf<br>
+	│   │   └── gitRebase2.png<br>
+	│   ├── gitLab<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── gitLab.md<br>
+	│   ├── grading<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── grading.md<br>
+	│   ├── IDEs<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── emacsscreen.jpg<br>
+	│   │   ├── IDEs.md<br>
+	│   ├── introduction<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── introduction.md<br>
+	│   │   └── openingDiscussion.mmd<br>
+	│   ├── ivy<br>
+	│   │   ├── build.publish.listing<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── build.xml0.listing<br>
+	│   │   ├── build.xml1.listing<br>
+	│   │   ├── build.xml2.listing<br>
+	│   │   ├── build.xml3.listing<br>
+	│   │   ├── ivy.md<br>
+	│   │   ├── ivysettings.publish.listing<br>
+	│   │   └── ivysettings.xml.listing<br>
+	│   ├── jenkinsLab<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── jenkinsLab.md<br>
+	│   ├── make<br>
+	│   │   ├── asst.listing<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cppMake.head.listing<br>
+	│   │   ├── cppMake.tail.listing<br>
+	│   │   ├── dependency.dia<br>
+	│   │   ├── dependency.eps<br>
+	│   │   ├── dependency.pdf<br>
+	│   │   ├── dependency.png<br>
+	│   │   ├── make.md<br>
+	│   │   ├── selfBuilding.listing<br>
+	│   │   └── ssModel.listing<br>
+	│   ├── maven<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── maven.md<br>
+	│   │   ├── pom.xml.jflex.listing<br>
+	│   │   ├── pom.xml.reports.listing<br>
+	│   │   ├── pom.xml.website.listing<br>
+	│   │   └── settings.xml.listing<br>
+	│   ├── maven-build<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── maven-build.md<br>
+	│   │   └── perspective.mmd<br>
+	│   ├── mock<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── Cell.java<br>
+	│   │   ├── contact.h<br>
+	│   │   ├── contactnmad.h<br>
+	│   │   ├── Expression.java<br>
+	│   │   ├── GraphicsStub.java<br>
+	│   │   ├── ITestCLI.java<br>
+	│   │   ├── ITestSpreadSheet.java<br>
+	│   │   ├── linesegTest.java<br>
+	│   │   ├── mock.md<br>
+	│   │   ├── MockTestSpreadSheet.java<br>
+	│   │   ├── NumericLiteral.java<br>
+	│   │   ├── TestCLI.java<br>
+	│   │   └── TestNumericLiteral.java<br>
+	│   ├── navigating<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── emailMsg.png<br>
+	│   │   ├── feed-icon16x16.png<br>
+	│   │   ├── home.gif<br>
+	│   │   ├── home.png<br>
+	│   │   ├── mail.gif<br>
+	│   │   ├── mail.png<br>
+	│   │   ├── navigating.md<br>
+	│   │   ├── newThread.png<br>
+	│   │   ├── next.gif<br>
+	│   │   ├── next.png<br>
+	│   │   ├── prev.gif<br>
+	│   │   ├── prev.png<br>
+	│   │   ├── printable.gif<br>
+	│   │   ├── printable.png<br>
+	│   │   ├── up.gif<br>
+	│   │   └── up.png<br>
+	│   ├── oracle<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── contact.h<br>
+	│   │   ├── Contact.java<br>
+	│   │   ├── mailinglist.cpp<br>
+	│   │   ├── mailinglistCppBoost.zip<br>
+	│   │   ├── mailingListCppBoost.zip<br>
+	│   │   ├── mailingListCppGtest.zip<br>
+	│   │   ├── mailinglist.h<br>
+	│   │   ├── MailingList.java<br>
+	│   │   ├── MailingListTests2.cpp<br>
+	│   │   ├── MailingListTests.cpp<br>
+	│   │   ├── oracle.md<br>
+	│   │   ├── TestMailingList.java<br>
+	│   │   ├── testmlConst.java<br>
+	│   │   ├── testproc.eps<br>
+	│   │   ├── testproc.pdf<br>
+	│   │   ├── testproc.png<br>
+	│   │   ├── vandvv.eps<br>
+	│   │   ├── vandvv.fig<br>
+	│   │   ├── vandvv.pdf<br>
+	│   │   └── vandvv.png<br>
+	│   ├── orientation<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── orientation.md<br>
+	│   │   └── orientationSession.mmd<br>
+	│   ├── processModels<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── designproc.eps<br>
+	│   │   ├── designproc.fig<br>
+	│   │   ├── designproc.pdf<br>
+	│   │   ├── designproc.png<br>
+	│   │   ├── Development-iterative.gif<br>
+	│   │   ├── Development-iterative.png<br>
+	│   │   ├── evolution.eps<br>
+	│   │   ├── evolution.fig<br>
+	│   │   ├── evolution.pdf<br>
+	│   │   ├── evolution.png<br>
+	│   │   ├── localOptimization.mmd<br>
+	│   │   ├── process1.gif<br>
+	│   │   ├── process1.png<br>
+	│   │   ├── process2.gif<br>
+	│   │   ├── process2.png<br>
+	│   │   ├── processModels.md<br>
+	│   │   ├── spiral0.eps<br>
+	│   │   ├── spiral0.pdf<br>
+	│   │   ├── spiral0.png<br>
+	│   │   ├── spiral.eps<br>
+	│   │   ├── spiral.fig<br>
+	│   │   ├── spiral.gif<br>
+	│   │   ├── spiral.pdf<br>
+	│   │   ├── spiral.png<br>
+	│   │   ├── spiralsUnified.gif<br>
+	│   │   ├── spiralsUnified.png<br>
+	│   │   ├── t.md<br>
+	│   │   ├── vandvv.eps<br>
+	│   │   ├── vandvv.fig<br>
+	│   │   ├── vandvv.gif<br>
+	│   │   ├── vandvv.pdf<br>
+	│   │   ├── vandvv.png<br>
+	│   │   ├── waterfall0.eps<br>
+	│   │   ├── waterfall0.fig<br>
+	│   │   ├── waterfall0.gif<br>
+	│   │   ├── waterfall0.pdf<br>
+	│   │   ├── waterfall0.png<br>
+	│   │   ├── waterfallv.gif<br>
+	│   │   └── waterfallv.png<br>
+	│   ├── profile<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── profile.md<br>
+	│   │   └── toolbar.png<br>
+	│   ├── projectPhases<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── projectPhases.md<br>
+	│   ├── questions<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── emailMsg.png<br>
+	│   │   ├── feed-icon16x16.png<br>
+	│   │   ├── home.gif<br>
+	│   │   ├── home.png<br>
+	│   │   ├── mail.gif<br>
+	│   │   ├── mail.png<br>
+	│   │   ├── newThread.png<br>
+	│   │   ├── next.gif<br>
+	│   │   ├── next.png<br>
+	│   │   ├── prev.gif<br>
+	│   │   ├── prev.png<br>
+	│   │   ├── printable.gif<br>
+	│   │   ├── printable.png<br>
+	│   │   ├── questions.md<br>
+	│   │   ├── up.gif<br>
+	│   │   └── up.png<br>
+	│   ├── rcs<br>
+	│   │   ├── branched.dia<br>
+	│   │   ├── branched.eps<br>
+	│   │   ├── branched.pdf<br>
+	│   │   ├── branched.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── diffsChain.dia<br>
+	│   │   ├── diffsChain.eps<br>
+	│   │   ├── diffsChain.pdf<br>
+	│   │   ├── diffsChain.png<br>
+	│   │   ├── diffsChainShort.dia<br>
+	│   │   ├── diffsChainShort.eps<br>
+	│   │   ├── diffsChainShort.pdf<br>
+	│   │   ├── diffsChainShort.png<br>
+	│   │   ├── drift.dia<br>
+	│   │   ├── drift.eps<br>
+	│   │   ├── drift.pdf<br>
+	│   │   ├── drift.png<br>
+	│   │   ├── merged.dia<br>
+	│   │   ├── merged.eps<br>
+	│   │   ├── merged.pdf<br>
+	│   │   ├── merged.png<br>
+	│   │   ├── multimerge.dia<br>
+	│   │   ├── multimerge.eps<br>
+	│   │   ├── multimerge.pdf<br>
+	│   │   ├── multimerge.png<br>
+	│   │   ├── premerged.dia<br>
+	│   │   ├── premerged.eps<br>
+	│   │   ├── premerged.pdf<br>
+	│   │   ├── premerged.png<br>
+	│   │   ├── rcs.md<br>
+	│   │   ├── revisionChain.dia<br>
+	│   │   ├── revisionChain.eps<br>
+	│   │   ├── revisionChain.pdf<br>
+	│   │   └── revisionChain.png<br>
+	│   ├── recitationIDE<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── recitationIDE.md<br>
+	│   ├── reflections<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── reflections.md<br>
+	│   ├── regression<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── regression.md<br>
+	│   ├── reqts<br>
+	│   │   ├── 800px-User_Story_Map_in_Action.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── IEEE830.pdf<br>
+	│   │   ├── reqts.md<br>
+	│   │   ├── rsdimu_formal_spec.pdf<br>
+	│   │   ├── rsdimu-pyramid.png<br>
+	│   │   ├── rsdimu-sensors.png<br>
+	│   │   ├── zedPattern.dia<br>
+	│   │   ├── zedPattern.eps<br>
+	│   │   ├── zedPattern.pdf<br>
+	│   │   ├── zedPattern.png<br>
+	│   │   ├── zedSpec.dia<br>
+	│   │   ├── zedSpec.eps<br>
+	│   │   ├── zedSpec.pdf<br>
+	│   │   └── zedSpec.png<br>
+	│   ├── scm<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── changeProp1.dia<br>
+	│   │   ├── changeProp1.eps<br>
+	│   │   ├── changeProp1.pdf<br>
+	│   │   ├── changeProp1.png<br>
+	│   │   ├── changeProp2.dia<br>
+	│   │   ├── changeProp2.eps<br>
+	│   │   ├── changeProp2.pdf<br>
+	│   │   ├── changeProp2.png<br>
+	│   │   ├── codeBaseLines.dia<br>
+	│   │   ├── codeBaseLines.eps<br>
+	│   │   ├── codeBaseLines.pdf<br>
+	│   │   ├── codeBaseLines.png<br>
+	│   │   ├── codeLinesForward.dia<br>
+	│   │   ├── codeLinesForward.eps<br>
+	│   │   ├── codeLinesForward.pdf<br>
+	│   │   ├── codeLinesForward.png<br>
+	│   │   ├── scm.md<br>
+	│   ├── scrum<br>
+	│   │   ├── 450px-Scrum_task_board.jpg<br>
+	│   │   ├── 640px-ST_vs_Gloucester_-_Match_-_23.JPG<br>
+	│   │   ├── agilePractices.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── SampleBurndownChart.png<br>
+	│   │   ├── scrum.md<br>
+	│   ├── spreadsheetRD<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── spreadsheetRD.md<br>
+	│   ├── spreadsheetSRS<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── spreadsheetSRS.md<br>
+	│   ├── spreadsheetStories<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── spreadsheetStories.md<br>
+	│   ├── sshLab<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── sshLab.md<br>
+	│   ├── staffing<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── designproc.eps<br>
+	│   │   ├── designproc.fig<br>
+	│   │   ├── designproc.pdf<br>
+	│   │   ├── designproc.png<br>
+	│   │   ├── Development-iterative.gif<br>
+	│   │   ├── Development-iterative.png<br>
+	│   │   ├── evolution.eps<br>
+	│   │   ├── evolution.fig<br>
+	│   │   ├── evolution.pdf<br>
+	│   │   ├── evolution.png<br>
+	│   │   ├── process1.gif<br>
+	│   │   ├── process1.png<br>
+	│   │   ├── process2.gif<br>
+	│   │   ├── process2.png<br>
+	│   │   ├── spiral0.eps<br>
+	│   │   ├── spiral0.pdf<br>
+	│   │   ├── spiral0.png<br>
+	│   │   ├── spiral.eps<br>
+	│   │   ├── spiral.fig<br>
+	│   │   ├── spiral.gif<br>
+	│   │   ├── spiral.pdf<br>
+	│   │   ├── spiral.png<br>
+	│   │   ├── spiralsUnified.gif<br>
+	│   │   ├── spiralsUnified.png<br>
+	│   │   ├── staffing.md<br>
+	│   │   ├── t.md<br>
+	│   │   ├── vandvv.eps<br>
+	│   │   ├── vandvv.fig<br>
+	│   │   ├── vandvv.gif<br>
+	│   │   ├── vandvv.pdf<br>
+	│   │   ├── vandvv.png<br>
+	│   │   ├── waterfall0.eps<br>
+	│   │   ├── waterfall0.fig<br>
+	│   │   ├── waterfall0.gif<br>
+	│   │   ├── waterfall0.pdf<br>
+	│   │   ├── waterfall0.png<br>
+	│   │   ├── waterfallv.gif<br>
+	│   │   └── waterfallv.png<br>
+	│   ├── staticCppLab<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── staticCppLab.md<br>
+	│   ├── staticCPPLab<br>
+	│   │   └── staticCppLab.md<br>
+	│   ├── stories<br>
+	│   │   ├── 450px-Scrum_task_board.jpg<br>
+	│   │   ├── 800px-User_Story_Map_in_Action.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── dependencies.dia<br>
+	│   │   ├── dependencies.eps<br>
+	│   │   ├── dependencies.pdf<br>
+	│   │   ├── dependencies.png<br>
+	│   │   ├── IEEE830.pdf<br>
+	│   │   ├── incremental.dia<br>
+	│   │   ├── incremental.eps<br>
+	│   │   ├── incremental.pdf<br>
+	│   │   ├── incremental.png<br>
+	│   │   ├── layers.dia<br>
+	│   │   ├── layers.eps<br>
+	│   │   ├── layers.pdf<br>
+	│   │   ├── layers.png<br>
+	│   │   ├── rsdimu_formal_spec.pdf<br>
+	│   │   ├── stories.md<br>
+	│   ├── submitting<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── submitting.md<br>
+	│   ├── syllabus<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── syllabus.md<br>
+	│   ├── systemTest<br>
+	│   │   ├── arrayUtils.h<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cfg.eps<br>
+	│   │   ├── cfg.fig<br>
+	│   │   ├── cfg.pdf<br>
+	│   │   ├── cfg.png<br>
+	│   │   ├── gcovDemo.cpp<br>
+	│   │   ├── jacoco-build.xml.listing<br>
+	│   │   ├── jacoco-ivy.xml.listing<br>
+	│   │   ├── jacoco-screenshot.png<br>
+	│   │   ├── systemTest.md<br>
+	│   ├── testing<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cfg.eps<br>
+	│   │   ├── cfg.fig<br>
+	│   │   ├── cfg.pdf<br>
+	│   │   ├── cfg.png<br>
+	│   │   ├── cleanroom.eps<br>
+	│   │   ├── cleanroom.fig<br>
+	│   │   ├── cleanroom.pdf<br>
+	│   │   ├── cleanroom.png<br>
+	│   │   ├── fit2colora.eps<br>
+	│   │   ├── fit2colora.pdf<br>
+	│   │   ├── fit2colora.png<br>
+	│   │   ├── fit2colorb.eps<br>
+	│   │   ├── fit2colorb.pdf<br>
+	│   │   ├── fit2colorb.png<br>
+	│   │   ├── fit2colorc.eps<br>
+	│   │   ├── fit2colorc.pdf<br>
+	│   │   ├── fit2colorc.png<br>
+	│   │   ├── fit2colord.eps<br>
+	│   │   ├── fit2colord.pdf<br>
+	│   │   ├── fit2colord.png<br>
+	│   │   ├── testing.md<br>
+	│   │   ├── testproc.eps<br>
+	│   │   ├── testproc.pdf<br>
+	│   │   ├── testproc.png<br>
+	│   │   ├── vandvv.eps<br>
+	│   │   ├── vandvv.fig<br>
+	│   │   ├── vandvv.gif<br>
+	│   │   ├── vandvv.pdf<br>
+	│   │   ├── vandvv.png<br>
+	│   │   └── whyDoWeTest.mmd<br>
+	│   ├── testingjava<br>
+	│   │   ├── mailinglist<br>
+	│   │   │   ├── Contact.java<br>
+	│   │   │   ├── MailingList.java<br>
+	│   │   │   ├── package.html<br>
+	│   │   │   └── TestMailingList.java<br>
+	│   ├── unitTestLab<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── unitTestLab.md<br>
+	│   ├── vAndV<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── cleanroom.eps<br>
+	│   │   ├── cleanroom.fig<br>
+	│   │   ├── cleanroom.pdf<br>
+	│   │   ├── cleanroom.png<br>
+	│   │   ├── testproc.eps<br>
+	│   │   ├── testproc.pdf<br>
+	│   │   ├── testproc.png<br>
+	│   │   ├── vAndV.md<br>
+	│   │   ├── vandvv.eps<br>
+	│   │   ├── vandvv.fig<br>
+	│   │   ├── vandvv.gif<br>
+	│   │   ├── vandvv.pdf<br>
+	│   │   ├── vandvv.png<br>
+	│   │   ├── waterfall0.gif<br>
+	│   │   ├── waterfall0.png<br>
+	│   │   ├── waterfallv.gif<br>
+	│   │   └── waterfallv.png<br>
+	│   ├── versionControl<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── versionControl.md<br>
+	│   ├── workingInGroups1<br>
+	│   │   ├── appsbutton.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── chatIcon.png<br>
+	│   │   ├── hangout-plugins.png<br>
+	│   │   ├── hangoutsLink.png<br>
+	│   │   ├── main-controls.png<br>
+	│   │   ├── screenshare.png<br>
+	│   │   ├── upcomingEvent.png<br>
+	│   │   ├── workingInGroups1.md<br>
+	│   ├── workingInGroups2<br>
+	│   │   ├── appsbutton.png<br>
+	│   │   ├── build.xml<br>
+	│   │   ├── chatIcon.png<br>
+	│   │   ├── chooseLinks.png<br>
+	│   │   ├── eventCreation.png<br>
+	│   │   ├── startAHangout.png<br>
+	│   │   ├── workingInGroups2.md<br>
+	│   └── xprogram<br>
+	│   &nbsp;&nbsp;&nbsp; ├── agilePractices.png<br>
+	│   &nbsp;&nbsp;&nbsp; ├── build.xml<br>
+	│   &nbsp;&nbsp;&nbsp; ├── xpPractices_beck-fig3.png<br>
+	│   &nbsp;&nbsp;&nbsp; ├── xpPrimaryPractices.png<br>
+	│   &nbsp;&nbsp;&nbsp; ├── xprogram.md<br>
+	├── section.dtd<br>
+	├── sendEmail.html<br>
+	<br><br>
+	</p>
+</body>
+</html>

@@ -1,0 +1,72 @@
+\documentclass[11pt]{article}
+\usepackage{htlatexsjz}
+
+%\marginsize{0.5in}{0.25in}{0in}{0.25in}
+%\screensize{6in}{8in} %{height}{width}
+
+
+\input{../../course.info}
+
+\title{@doc.title@}
+\author{@doc.author@}
+\date{\input{@doc@.content.date}}
+\def\doc{@doc@}
+\def\format{@format@}
+\input{@doc@.ext}
+
+\def\relPath{@relPath@}
+\def\partialDocURL{\baseurl/\relPath/@doc@/@doc@-}
+
+
+
+\begin{document}
+\Css{div.lstlisting {font-family: monospace; white-space: nowrap; margin-top:0.5em; margin-bottom:0.5em; background-color: \#E0C0C0; }}
+\Css{div.cpplisting {font-family: monospace; white-space: nowrap; margin-top:0.5em; margin-bottom:0.5em; background-color: \#D0D0D0; }}
+\Css{div.javalisting {font-family: monospace; white-space: nowrap; margin-top:0.5em; margin-bottom:0.5em; background-color: \#D0D0D0; }}
+\Css{div.screenlisting {font-family: monospace; white-space: nowrap; margin-top:0.5em; margin-bottom:0.5em; background-color: \#C0C0FF; }}
+
+\Css{div.slide {background-color: cyan; }}
+\Css{div.ublock {background-color: \#add8e6; 
+    margin: 5px 15px 5px 20px; 
+    border: 1px solid black; padding: 5px; }}
+
+
+\Css{span.lstdirective {color: \#600000; }}
+\Css{span.lstcomment {color: \#006000; }}
+\Css{.crosslinks {text-decoration:none; }}
+
+
+\Css{span.emph {font-style:italic; color: rgb(128,0,0); }}
+\Css{span.hli {background-color: \#ffff99; }}
+\Css{span.hlii {background-color: \#66ccff; }}
+\Css{span.hliii {background-color: \#cc33ff; }}
+\Css{span.hliv {background-color: \#ff6000; }}
+\Css{div.noFloat {clear: both; }}
+\Configure{crosslinks}
+   {~}{~~~~~}
+   {\Picture[Previous]{../../graphics/next.png}}
+   {\Picture[Previous]{../../graphics/prev.png}}
+   {}{}{}{\Picture[Up]{../../graphics/up.png}}
+\Configure{crosslinks*}
+  {prev}
+  {up}
+  {next}
+  {}
+\Configure{crosslinks+}{}{\navigationSymbols}{}{\navigationSymbols}
+\Configure{next}{\Picture[Previous]{../../graphics/next.png}}
+
+\maketitle
+
+\navigationSymbols
+
+%\tableofcontents
+
+\input{@doc@.content.ltx}
+
+%\hrulefill
+
+%\navigationSymbols
+
+
+\end{document}
+

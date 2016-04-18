@@ -1,0 +1,104 @@
+/*
+ * CWM utils v1 build file
+ * Steven J Zeil, Old Dominion Univ.
+ */
+
+
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'project-report'
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+apply plugin: 'pmd'
+
+
+publishing {
+    publications {
+        ivyJava(IvyPublication) {
+            module 'cwm-core'
+        }
+    }
+}
+
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
+}
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Course Website Management',  
+        	'Implementation-Version': '0.1'
+    }
+    // from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+checkstyle {
+    ignoreFailures = true
+    showViolations = false
+    configProperties = [ "suppressionFile" : file('config/checkstyle/checkstyle.suppressions.xml')]   
+}
+
+
+pmd {
+   ruleSetFiles = files("config/pmd/pmd.xml")
+}
+
+tasks.withType(Checkstyle) {
+  reports {
+    html.destination rootProject.file("build/reports/checkstyle/main.html")
+  }
+}
+
+pmd {
+    ignoreFailures = true
+    consoleOutput = false
+}
+
+test.ignoreFailures=true
+checkstyleTest.enabled = false
+pmdTest.enabled = false
+check.dependsOn htmlDependencyReport
+
+task copyWebPages (type: Copy) {
+    from 'src/main/html'
+    into 'build/reports'
+}
+
+task copyDocs (type: Copy) {
+    from 'build/docs'
+    into 'build/reports/docs'
+    dependsOn 'javadoc'
+}
+
+task reports (dependsOn: ['htmlDependencyReport', 'javadoc', 'check', 
+                          'copyWebPages', 'copyDocs']) {
+    description 'Generate all reports for this project'
+}
+
+def theBuildNumber = '';
+if (project.hasProperty('buildNumber')) {
+   theBuildNumber = project.buildNumber
+}
+
+
+task reportStats (type: JavaExec) {
+    description 'Compute current project statistics from reports'
+    dependsOn 'reports'
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'edu.odu.cs.zeil.report_accumulator.Main';
+    args = [theBuildNumber, 
+            'http://www.cs.odu.edu/~zeil/gitlab/' + project.name + '/reports/', 
+            'build/reports']
+}
+
+task deployReports (type: Copy) {
+    description 'copy all reports to project web page'
+    dependsOn 'reportStats'
+    from 'build/reports'
+    into '/home/zeil/public_html/gitlab/' + project.name + '/reports'
+}
+

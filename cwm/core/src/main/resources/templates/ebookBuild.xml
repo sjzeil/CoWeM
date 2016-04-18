@@ -1,0 +1,334 @@
+<project xmlns:antcontrib="antlib:net.sf.antcontrib">
+  
+  
+  <property name="epub.name" value="${courseName}.epub"/>
+  <property name="mobi.name" value="${courseName}.mobi"/>
+  
+  <property name="epub.check.jar" location="templates/epubcheck-3.0.0.1/epubcheck-3.0.0.1.jar"/>
+
+  <resourcecount property="epub.content.count">
+    <fileset dir="Public" includes="*/build.xml">
+      <contains text="epub"/>
+    </fileset>
+  </resourcecount>
+  
+  <condition property="epub.content.exists">
+    <not>
+      <equals arg1="${epub.content.count}" arg2="0"/>
+    </not>
+  </condition>
+  
+  <uptodate property="epub.content.uptodate" 
+            targetfile="${epub.name}"
+            >
+    <srcfiles dir="Public" includes="**/*__epub.html"/>
+  </uptodate>
+  <uptodate property="mobi.content.uptodate" 
+            targetfile="${mobi.name}"
+            >
+    <srcfiles dir="Public" includes="**/*__epub.html"/>
+  </uptodate>
+  
+  <target name="debugepub">
+    <echo>epub.content.count ${epub.content.count}</echo>
+    <echo>epub.content.exists ${epub.content.exists}</echo>
+    <echo>epub.content.uptodate ${epub.content.uptodate}</echo>
+    <echo>mobi.content.uptodate ${mobi.content.uptodate}</echo>
+  </target>
+  
+  <target name="generateEpub" depends="generateDocs" 
+          if="epub.content.exists"
+          unless="epub.content.uptodate">
+    <echo>building the ebook ${epub.name}</echo>
+    <delete file="${epub.name}"/>
+    <delete file="${mobi.name}"/>
+    <delete dir="epub"/>
+    <mkdir dir="epub/META-INF"/>
+    <mkdir dir="epub/OEPBS"/>
+    <copy todir="epub/OEPBS">
+      <fileset dir="Public">
+        <include name="*/*__epub.html"/>
+        <include name="*/*.png"/>
+        <include name="*/*.jpg"/>
+        <include name="*/*.gif"/>
+        <include name="*/*.css"/>
+        <include name="*/*.h.html"/>
+        <include name="*/*.cpp.html"/>
+        <include name="*/*.java.html"/>
+        <include name="*/*.listing.html"/>
+        <include name="*/*.mmd.html"/>
+      </fileset>
+    </copy>
+    <echo file="epub/mimetype">application/epub+zip</echo>
+    <copy file="styles/md-epub.css" todir="epub/OEPBS"/>
+    <copy file="styles/epub-code.css" tofile="epub/OEPBS/code.css"/>
+    <copy file="templates/epub-container.xml"
+          tofile="epub/META-INF/container.xml"
+          >
+      <filterset>
+        <filter token="contentFile" value="OEPBS/content.opf"/>
+      </filterset>
+    </copy> 
+    <fileset id="epub.contents.set" dir="epub/OEPBS">
+      <include name="**/*.png"/>
+      <include name="**/*.html"/>
+      <include name="**/*.css"/>
+      <exclude name="**/content.opf"/>
+      <exclude name="**/mimetype"/>
+    </fileset>
+    <pathconvert pathsep="${line.separator}" 
+                 property="epub.contents" 
+                 refid="epub.contents.set">
+      <mapper>
+        <regexpmapper from=".*/OEPBS/(.*)" to="\1"/>
+      </mapper>
+    </pathconvert>
+    <echo file="epub.contents" append="false">${epub.contents}</echo>
+    <replaceregexp file="epub.contents"
+                   flags="m"
+                   byline="true"
+                   match="^"
+                   replace="&lt;file&gt;"/>
+    <replaceregexp file="epub.contents"
+                   flags="m"
+                   byline="true"
+                   match="$"
+                   replace="&lt;/file&gt;"/>
+    <echo file="epub.contents.xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;!DOCTYPE outline SYSTEM "section.dtd" &gt;
+    &lt;epub&gt;
+    &lt;sem&gt;${sem}&lt;/sem&gt;
+    &lt;title&gt;${courseTitle}: ${semester}&lt;/title&gt;
+    &lt;author&gt;${courseName}&lt;/author&gt;
+    &lt;courseName&gt;${courseName}&lt;/courseName&gt;
+    &lt;files&gt;
+    </echo>
+    <concat destfile="epub.contents.xml" append="yes">
+      <filelist dir="." files="epub.contents"/> 
+    </concat>
+    <echo file="epub.contents.xml" append="true">&lt;/files&gt;
+    &lt;!--
+    </echo>
+    <concat destfile="epub.contents.xml" append="true">
+      <fileset dir="Directory/outline" includes="outline.xml"/>
+    </concat>
+    <concat destfile="epub.contents.xml" append="true">
+      <fileset dir="Directory/outline" includes="titleTable.xml"/>
+    </concat>
+    <replace file="epub.contents.xml" 
+             token="&lt;outline&gt;" 
+             value="--&gt; &lt;outline&gt;"/>
+    <echo file="epub.contents.xml" append="true">&lt;/epub&gt;</echo>
+    
+    <xslt in="epub.contents.xml"
+          out="epub/OEPBS/content.opf"
+          style="templates/book-opf.xsl"
+          >
+      <classpath location="templates/saxon.jar" />
+      <param name="doc" expression="OEPBS"/>
+      <param name="baseURL" expression="${baseurl}"/>
+    </xslt>
+    
+    <copy file="templates/epub-container.xml"
+          tofile="epub/META-INF/container.xml"
+          >
+      <filterset>
+        <filter token="contentFile" value="OEPBS/content.opf"/>
+      </filterset>
+    </copy> 
+    
+    <xslt in="epub.contents.xml"
+          out="epub/OEPBS/toc.ncx"
+          style="templates/book-ncx.xsl"
+          >
+      <classpath location="templates/saxon.jar" />
+      <param name="doc" expression="OEPBS"/>
+      <param name="baseURL" expression="${baseurl}"/>
+    </xslt>
+    
+    <tstamp>
+      <format property="now" pattern="MMMM dd, yyyy, hh:mm aa"/>
+    </tstamp>
+    <copy file="styles/epub-cover.html"
+          tofile="epub/OEPBS/cover.html">
+      <filterset>
+        <filtersfile file="course.properties"/>
+        <filter token="doc.title" value="${courseTitle}"/>
+        <filter token="doc.author" value="Dept. of Computer Science"/>
+        <filter token="semester" value="${semester}"/>
+        <filter token="docModDate" value="${now}"/>
+      </filterset>
+    </copy>
+    <copy file="Directory/outline/outline__epubOverview.html"
+          tofile="epub/OEPBS/epub-overview.html">
+      <filterset>
+        <filtersfile file="course.properties"/>
+      </filterset>
+    </copy>
+    <copy file="templates/epub-appendix.html"
+          tofile="epub/OEPBS/epub-appendix.html">
+      <filterset>
+        <filtersfile file="course.properties"/>
+      </filterset>
+    </copy>
+    <copy file="styles/epub-cover.png"
+          tofile="epub/OEPBS/cover.png"/>
+    
+    <replaceregexp match="xmlns=.http://www.w3.org/1999/xhtml." replace="">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="xmlns=&quot;&quot;"
+                   flags="g"
+                   replace="">
+      <fileset dir="epub">
+        <include name="**/**.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="fnref--"
+                   flags="g"
+                   replace="fnref-">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="fn--"
+                   flags="g"
+                   replace="fn-">
+      <fileset dir="epub">
+        <include name="*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="class=.[cC]++."
+                   flags="g"
+                   replace="class='cpp'">
+      <fileset dir="epub">
+        <include name="**/**.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match="&lt;html"
+                   replace="&lt;html xmlns='http://www.w3.org/1999/xhtml'">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp flags="m"
+                   byline="true"
+                   match='&lt;meta charset='
+                   replace='&lt;meta name="charset" content='>
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='&lt;link.*?highlight[.]js.*?/&gt;'
+                   replace=''
+                   flags="sg">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='&lt;script.*?&lt;/script&gt;'
+                   replace=''
+                   flags="sg">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='href="../../styles/'
+                   replace='href=../"'
+                   flags="sg">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    <replaceregexp match='(&lt;/[a-z0-9]*&gt;)'
+                   replace='\1&#10;'
+                   flags="g">
+      <fileset dir="epub">
+        <include name="**/*.html"/>
+      </fileset>
+    </replaceregexp>
+    
+    
+    <delete file="${courseName}.epub"/>
+    <exec executable="zip" dir="epub">
+      <arg value="-0Xq"/>
+      <arg value="${courseName}.epub"/>
+      <arg value="mimetype"/>
+    </exec>
+    <exec executable="zip" dir="epub">
+      <arg value="-Xr9Dq"/>
+      <arg value="${courseName}.epub"/>
+      <arg value="META-INF"/>
+      <arg value="OEPBS"/>
+    </exec>
+    
+    <move file="epub/${courseName}.epub" tofile="${courseName}.epub"/>
+    
+    <java jar="${epub.check.jar}" fork="true">
+      <arg value="${courseName}.epub"/>
+    </java>
+    
+    <delete file="epub.contents"/>
+    <delete file="epub.contents.xml"/>
+    <!-- delete dir="epub"/ -->
+    
+  </target>
+  
+  <property environment="envir"/>
+  <property name="zeil.ebc.bin" 
+            location="/home/zeil/bin/ebook-convert"/> 
+  
+  <condition property="do.xmobi1">
+    <and>
+      <istrue value="${epub.content.exists}"/>
+      <available  file="ebook-convert"
+                  filepath="${envir.path}"/>
+    </and>
+  </condition>
+  
+  <condition property="do.xmobi2">
+    <and>
+      <istrue value="${epub.content.exists}"/>
+      <not>
+        <available file="ebook-convert"
+                   filepath="${envir.path}"/>
+      </not>
+      <available file="${zeil.ebc.bin}"/>
+    </and>
+  </condition>
+  
+  
+  <target name="debugmobi">
+    <echo>epub.content.exists ${epub.content.exists}</echo>
+    <echo>mobi.content.uptodate ${mobi.content.uptodate}</echo>
+    <echo>ebook-convert installed? ${do.xmobi1}</echo>
+    <echo>available in ~zeil? ${do.xmobi2}</echo>
+  </target>
+  
+  <target name="genmobi1" depends="generateEpub,debugmobi" 
+          if="do.xmobi1" unless="mobi.content.uptodate"> 
+    <echo>building the ebook ${mobi.name}</echo>
+    <exec executable="ebook-convert">
+      <arg value="${epub.name}"/>
+      <arg value="${mobi.name}"/>
+    </exec>
+  </target>
+  
+  <target name="genmobi2" depends="generateEpub,debugmobi" 
+          if="do.xmobi2" unless="mobi.content.uptodate"> 
+    <echo>building the ebook ${mobi.name}</echo>
+    <exec executable="${zeil.ebc.bin}">
+      <arg value="${epub.name}"/>
+      <arg value="${mobi.name}"/>
+    </exec>
+  </target>
+  
+  <target name="generateMobi" depends="genmobi1,genmobi2"/>
+  
+  <target name="generateEbooks" depends="generateEpub,generateMobi">
+    <delete dir="epub"/>
+  </target>
+  
+</project>

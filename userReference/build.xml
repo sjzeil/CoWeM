@@ -1,0 +1,150 @@
+<project name="course" default="build" basedir=".">
+
+  <record name="ant.log" action="start" append="false" />
+
+  <!-- Invoke this build file as
+     ant
+       - to build the desired documents
+     ant clean
+       - to clean out all generated files
+
+  -->
+
+  <property file="course.properties"/>
+
+  <import file="templates/ebookBuild.xml"/>
+
+  <macrodef name="iterate">
+    <attribute name="target"/>
+    <sequential>
+      <subant target="@{target}" failonerror="false" verbose="true">
+	<fileset dir=".">
+	  <include name="*/**/build.xml"/>
+	  <exclude name="Directory/outline/**"/>
+	  <exclude name="templates/**"/>
+	  <exclude name="styles/**"/>
+	  <exclude name="graphics/**"/>
+	  <exclude name="AlgAE/**"/>
+	</fileset>
+      </subant>
+      <subant target="@{target}" failonerror="false" verbose="true">
+	<fileset dir=".">
+	  <include name="Directory/outline/build.xml"/>
+	</fileset>
+      </subant>
+    </sequential>
+  </macrodef>
+
+  <dependset>
+    <srcfileset file="course.properties"/>
+    <targetfileset file="course.info.tex"/>
+  </dependset>    
+  <available property="course.info.tex.exists" file="course.info.tex"/>
+
+
+  <target name="courseSetup" unless="course.info.tex.exists">
+    <copy file="templates/course.info.tex" toFile="course.info.tex">
+      <filterset>
+	<filtersfile file="course.properties"/>
+      </filterset>
+    </copy>
+    <replace file="course.info.tex" token="~" value="\%7E"/>
+    <echo file="course.info.tex" append="true">
+      % This file is generated automatically from course.properties
+    </echo>
+    <echo file="course.info.tex" append="true">
+      % Do not edit. Any changes are likely to be overwritten.
+    </echo>
+  </target>
+
+  <target name="emailSetup">
+    <copy todir=".">
+      <fileset dir='.' file="templates/sendEmail.html"/>
+      <filterset>
+	<filtersfile file="course.properties"/>
+      </filterset>
+    </copy>
+  </target>
+
+  <target name="setup" depends="courseSetup,emailSetup"
+	    description="Prepare all source files prior to running LaTeX"
+	    >
+    <iterate target="setup"/>
+  </target>
+
+  <target name="generateDocs"  depends="courseSetup,emailSetup"
+	  description="Generate all documents">
+    <iterate target="build"/>
+  </target>
+
+  <target name="build"  depends="generateDocs,generateEbooks"
+	  description="Generate all documents and ebooks">
+  </target>
+
+  <target name="zip" depends="build"
+	  description="Generate all documents and prepare a zip file that can be uploaded to and unpacked on a webserver"
+	  >
+    <tstamp>
+      <format property="today" pattern="yyyy-MM-dd_hh-mm"/>
+    </tstamp>
+    <zip destfile="${courseName}_${today}.zip" level="9">
+      <fileset dir=".">
+	<exclude name="**/*~"/>
+	<exclude name="**/*.aux"/>
+	<exclude name="**/*.fdb_latexmk"/>
+	<exclude name="**/*.fls"/>
+	<exclude name="**/*.log"/>
+	<exclude name="**/*.out"/>
+	<exclude name="**/*.toc"/>
+	<exclude name="**/*.nav"/>
+	<exclude name="**/*.snm"/>
+	<exclude name="**/*.vrb"/>
+	<exclude name="**/*.tex"/>
+	<exclude name="**/*.ltx"/>
+	<exclude name="**/*.md"/>
+      </fileset>
+    </zip>
+  </target>
+
+  <target name="deploy" depends="build"
+	  description="Generate all documents and sync with the deployment directory (usually a website)"
+	  >
+    <sync todir="${deploymentDestination}" 
+	  includeEmptyDirs="true" granularity="2000">
+      <fileset dir=".">
+	<exclude name="**/*~"/>
+	<exclude name="**/*.aux"/>
+	<exclude name="**/*.fdb_latexmk"/>
+	<exclude name="**/*.fls"/>
+	<exclude name="**/*.log"/>
+	<exclude name="**/*.out"/>
+	<exclude name="**/*.toc"/>
+	<exclude name="**/*.nav"/>
+	<exclude name="**/*.snm"/>
+	<exclude name="**/*.vrb"/>
+	<exclude name="**/*.tex"/>
+	<exclude name="**/*.ltx"/>
+      </fileset>
+      <preserveintarget>
+	<include name="**/.ht*"/>
+      </preserveintarget>
+    </sync>
+  </target>
+
+
+  <target name="clean">
+    <iterate target="clean"/>
+  </target>
+
+  <target name="cleaner">
+    <iterate target="cleaner"/>
+    <delete file="${courseName}.epub"/>
+    <delete file="${courseName}.mobi"/>
+  </target>
+
+  <target name="cleanest">
+    <iterate target="cleanest"/>
+  </target>
+
+  
+</project>

@@ -1,0 +1,10 @@
+<project name="docs" default="build">
+
+  <import file="../../templates/commonBuild.xml"/>
+
+  <target name="documents" depends="setup">
+    <docformat from="md" format="html" index="1"/>
+  </target>
+
+
+</project>

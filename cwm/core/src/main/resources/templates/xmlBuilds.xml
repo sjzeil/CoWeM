@@ -1,0 +1,156 @@
+<project>
+
+  <property name="xml.macros.file" location="../../templates/macros.md"/>
+
+  <macrodef name="preprocessXML">
+    <attribute name="format"/>
+    <element name="defined" optional="yes"/> 
+    <sequential>
+      <echo file="${doc}.properties">doc.title=@Course@ Outline and Topics</echo>
+      <echo file="titleTable0.xml">&lt;table&gt;</echo>
+      <concat destFile="titleTable.xml">
+	<fileset dir=".">
+	  <include name="titleTable0.xml"/>
+	</fileset>
+	<fileset dir="../..">
+	  <include name="*/*/title.xml"/>
+	</fileset>
+      </concat>
+      <echo file="titleTable.xml" append="true">&lt;/table&gt;</echo>
+      <delete>
+	<fileset file="titleTable0.xml"/>
+      </delete>
+    </sequential>
+  </macrodef>
+
+
+  <makeurl file="." property="xml.pwdURL"/>
+  <macrodef name="postprocessXMLHTML">
+    <attribute name="format"/>
+    <sequential>
+      <xslt in="${doc}.xml" 
+	    out="${doc}__@{format}.xml"
+	    style="../../templates/xml-@{format}.xsl">
+	<param name="doc" expression="@{file}"/>
+	<param name="format" expression="@{format}"/>
+	<param name="pwdURL" expression="${xml.pwdURL}"/>
+	<param name="courseName" expression="${courseName}"/>
+	<param name="stylesURL" expression="${stylesURL}" if="stylesURL"/>
+	<param name="graphicsDir" expression="${graphicsURL}" if="graphicsURL"/>
+	<param name="homeURL" expression="${homeurl}" if="homeurl"/>
+	<param name="email" expression="${email}" if="email"/>
+	<param name="forum" expression="${forum}" if="forum"/>
+	<param name="forumsURL" expression="${forums}" if="forums"/>
+	<param name="bbURL" expression="${bbURL}" if="bbURL"/>
+	<param name="MathJaxURL" expression="${MathJaxURL}" if="MathJaxURL"/>
+	<param name="highlightjsURL" expression="${highlightjsURL}" 
+	       if="highlightjsURL"/> 
+	<param name="slidyURL" expression="${slidyURL}" if="slidyURL"/>
+      </xslt>
+      <copy file="${doc}__@{format}.xml" tofile="${doc}__@{format}.html"  
+	    overwrite="yes">
+	<filterset>
+	  <filtersfile file="../../course.properties"/>
+	  <filtersfile file="${doc}.properties"/>
+	  <filter token="docModDate" value="${docModDate}"/>
+	</filterset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+
+  <dependset>
+    <srcfileset dir=".">
+      <include name="${doc}.xml"/>
+    </srcfileset>
+    <targetfileset dir=".">
+      <include name="${doc}__*.html"/>
+    </targetfileset>
+  </dependset>
+
+
+  <available property="topics.xml.exists" file="${doc}__topics.html"/>
+  <target name="xml2topics" unless="topics.xml.exists">
+    <preprocessXML format="topics">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessXML>
+    <postprocessXMLHTML format="topics"/>
+  </target>
+
+  <available property="modules.xml.exists" file="${doc}__modules.html"/>
+  <target name="xml2modules" unless="modules.xml.exists">
+    <preprocessXML format="modules">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessXML>
+    <postprocessXMLHTML format="modules"/>
+  </target>
+
+
+  <available property="epubOverview.xml.exists" file="${doc}__epubOverview.html"/>
+  <target name="xml2epubOverview" unless="epubOverview.xml.exists">
+    <preprocessXML format="epubOverview">
+      <defined>
+	<arg value="-D_printable"/>
+      </defined>
+    </preprocessXML>
+    <postprocessXMLHTML format="epubOverview"/>
+  </target>
+
+
+
+  <uptodate property="epub.xml.exists" targetfile="${courseName}.epub">
+    <srcfiles dir="../../Public" includes="**/*.epub"/>
+  </uptodate>
+  <target name="xml2epub" depends="xml2epubOverview" unless="epub.xml.exists">
+  </target>
+
+  <condition property="do.xmobi1">
+    <and>
+      <not>
+	  <available file="${courseName}.mobi"/>
+      </not>
+      <available file="ebook-convert"
+		 filepath="${env.PATH}"/>
+    </and>
+  </condition>
+  <condition property="do.xmobi2">
+    <and>
+      <not>
+	  <available file="${courseName}.mobi"/>
+      </not>
+      <not>
+	<available file="ebook-convert"
+		   filepath="${env.PATH}"/>
+      </not>
+      <available file="kindlegen"
+		 filepath="${env.PATH}"/>
+    </and>
+  </condition>
+
+  <target name="xml2mobi1" depends="xml2epub" 
+	  if="do.xmobi1"> 
+    <exec executable="ebook-convert">
+      <arg value="${courseName}.epub"/>
+      <arg value="${doc}.mobi"/>
+    </exec>
+  </target>
+
+  <target name="xml2mobi2" depends="xml2epub" 
+	  if="do.xmobi2"> 
+    <exec executable="kindlegen">
+      <arg value="${courseName}.epub"/>
+    </exec>
+  </target>
+
+  <target name="xml2mobi" depends="xml2mobi1, xml2mobi2"> 
+  </target>
+
+
+
+
+
+</project>
