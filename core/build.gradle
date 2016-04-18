@@ -23,7 +23,6 @@ publishing {
 
 
 dependencies {
-    compile 'org.pegdown:pegdown:1.6.0+'
     testCompile 'junit:junit:4.12'
     testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
 }
