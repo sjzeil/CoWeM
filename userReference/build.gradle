@@ -4,6 +4,24 @@
  */
 
 
+allprojects {
+
+    repositories {
+        // jcenter()
+
+        mavenCentral()
+
+    
+        // Use my own CS dept repo
+        ivy {
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+    }
+}
+
+
+
+
 configurations {
     setup
     build
@@ -83,9 +101,14 @@ dependencies {
      dependsOn configurations.setup
      into file('build/cwm')     
      from ({ zipTree(configurations.setup.singleFile) }) {  
-         include 'templates/**'
+         include 'edu/odu/cs/cwm/core/templates/**'
      }
  }
+
+ setup_cwm << {
+     
+ }
+
  
  task setup_copy_website_defaults (type: Copy) {
      dependsOn configurations.setup

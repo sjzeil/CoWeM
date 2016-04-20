@@ -36,9 +36,8 @@ subprojects {
             url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
         }
     }
-}
 
-configure(subprojects.findAll {it.name != 'documentation'}) {
+
     publishing {
         publications {
             ivyJava(IvyPublication) {

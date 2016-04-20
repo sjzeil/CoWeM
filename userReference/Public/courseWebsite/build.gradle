@@ -1,0 +1,36 @@
+/*
+ * CWM course documentset v1 build file
+ * Steven J Zeil, Old Dominion Univ.
+ */
+
+
+configurations {
+    build
+}
+
+dependencies {
+    build 'edu.odu.cs.zeil:cwm-utils:1.0+'
+}
+
+/*
+ * Tasks for course documentset construction
+ *
+ * build: creates primary & secondary documents in ../../build/website
+ *
+ * deploy: (optional) copy document set output to local destination
+ *
+ * publish: (optional) copy document set output to remote destination (via rsync or scp)
+ *
+ */
+ 
+ 
+ 
+ task build {
+     description 'Prepare document set output'
+     dependsOn ':setup'
+ }
+ 
+ build << {
+     println "In documentset build"
+ }
+ 
