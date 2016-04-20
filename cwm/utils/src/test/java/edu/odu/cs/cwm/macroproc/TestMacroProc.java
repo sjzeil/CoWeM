@@ -1,4 +1,4 @@
-package edu.odu.cs.macroproc;
+package edu.odu.cs.cwm.macroproc;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import edu.odu.cs.cwm.macroproc.MacroProcessor;
 
 public class TestMacroProc {
 

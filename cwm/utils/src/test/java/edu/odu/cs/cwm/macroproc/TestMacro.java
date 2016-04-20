@@ -1,4 +1,4 @@
-package edu.odu.cs.macroproc;
+package edu.odu.cs.cwm.macroproc;
 
 import static org.junit.Assert.assertEquals;
 
