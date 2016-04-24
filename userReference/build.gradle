@@ -29,8 +29,8 @@ configurations {
 }
 
 dependencies {
-    setup 'edu.odu.cs.zeil:cwm-core:1.0+'
-    build 'edu.odu.cs.zeil:cwm-utils:1.0+'
+    setup 'edu.odu.cs.zeil:cwm-core:latest.integration'
+    build 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
 }
 
 /*
@@ -102,21 +102,22 @@ dependencies {
      into file('build/cwm')     
      from ({ zipTree(configurations.setup.singleFile) }) {  
          include 'edu/odu/cs/cwm/core/templates/**'
+         include 'edu/odu/cs/cwm/core/graphics/**'
+         include 'edu/odu/cs/cwm/core/styles/**'
      }
  }
 
  setup_cwm << {
-     
+    ant.move (file: "${projectDir}/build/cwm/edu/odu/cs/cwm/core/templates", 
+              tofile: "${projectDir}/build/cwm/templates") 
  }
 
  
  task setup_copy_website_defaults (type: Copy) {
-     dependsOn configurations.setup
+     from 'build/cwm/edu/odu/cs/cwm/core'
      into 'build/website'
-     from ({ zipTree(configurations.setup.singleFile) }) {  
-         include 'graphics/**'
-         include 'styles/**'
-     }
+     include 'graphics/**'
+     include 'styles/**'
  }  
  
  task setup_copy_website_overrides (dependsOn: setup_copy_website_defaults) << {

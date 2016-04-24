@@ -8,6 +8,6 @@
 /ant.log
 /course.info.tex
 **/bin/
-/build/
-/.settings/
+build/
+.settings/
 .gradle/
