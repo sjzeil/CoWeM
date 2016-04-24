@@ -10,7 +10,7 @@ subprojects {
     apply plugin: 'ivy-publish'
 
     group = 'edu.odu.cs.zeil'
-    version = '1.0'
+    version = '1.0-SNAPSHOT'
  
     // Credentials are loaded from ~/.gradle/gradle.properties
     if(project.hasProperty("ivyRepoUser")){
@@ -42,8 +42,8 @@ subprojects {
         publications {
             ivyJava(IvyPublication) {
                 organisation 'edu.odu.cs.zeil'
-                revision '1.0'
-                descriptor.status = 'milestone'
+                revision project.version
+                descriptor.status = 'integration'   // milestone, release
                 descriptor.branch = 'v1'
 
                 from components.java
