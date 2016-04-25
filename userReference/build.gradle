@@ -3,6 +3,8 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
+project.ext.deployDestination = file('build/websiteFakeDeploy/')
+
 
 allprojects {
 
@@ -18,8 +20,6 @@ allprojects {
         }
     }
 }
-
-
 
 
 configurations {
@@ -152,8 +152,11 @@ dependencies {
  
  
  
- task deploy(dependsOn: 'build') {
- 
+ task deploy(type: Sync, dependsOn: 'build') {
+     from 'build/website'
+     into rootProject.deployDestination
+     dirMode 0775
+     includeEmptyDirs true   
  }
  
  task publish(dependsOn: 'build') {
