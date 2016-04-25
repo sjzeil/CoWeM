@@ -31,6 +31,11 @@ dependencies {
  }
  
  build << {
-     println "In documentset build"
+     println "In courseWebsite document build"
+          
+     new File("build/website/courseWebsite.txt").withWriter{ it << 'hello\n' } 
+     
  }
+ 
+  rootProject.tasks['build'].dependsOn(build)
  

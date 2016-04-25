@@ -42,7 +42,7 @@ dependencies {
  *        processes each document set
  *        processes course outline
  *
- * package: (optional) prepare course cartridges
+ * packages: (optional) prepare course cartridges
  *              available formats are imscc, bb, bbthin, canvas, canvasthin, epub, mobi
  *
  * deploy: (optional) copy website to local destination
@@ -139,15 +139,18 @@ dependencies {
      dependsOn setup_cwm, setup_website
  }
  
- /*
+ 
  task build(dependsOn: 'setup') {
      description 'Process documents and course outline to prepare the basic course website.'
- 
+
  }
  
- task package(dependsOn: 'build') {
+ 
+ task packages(dependsOn: 'build')  {
      description 'prepare optional course cartridges'
  }
+ 
+ 
  
  task deploy(dependsOn: 'build') {
  
@@ -157,4 +160,4 @@ dependencies {
  
  }
  
- */
+ 
