@@ -9,7 +9,7 @@ configurations {
 }
 
 dependencies {
-    build 'edu.odu.cs.zeil:cwm-utils:1.0+'
+    build 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
 }
 
 /*
