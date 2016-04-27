@@ -23,19 +23,62 @@ dependencies {
  *
  */
  
+ def buildArea = file('../../build')
+ def workArea = file('../../build/cwm/work/' + project.parent.name + "/" + project.name + '/')
+ def finalArea = file('../../build/website/' + project.parent.name + "/" + project.name + '/')
+ def chosenFormat = 'html';
+ def chosenDelivery = 'online';
  
+ task doc_setup (type: Copy, dependsOn: rootProject.tasks['setup']) {
+     from file('.')
+     into workArea
+    
+     exclude ('build.gradle')
+     exclude ('.*')
+     exclude ('*/**/*')
+     exclude ('**/*~')
+ }
  
- task build {
+
+ task doc_mainDoc (dependsOn: [doc_setup, configurations.build]) << {
+     // Preprocess .md file
+	 //    Run macro processor, parameters include format, delivery, courseName
+	 edu.odu.cs.cwm.macroproc.MacroProcessor macroProc = new edu.odu.cs.cwm.macroproc.MacroProcessor('%')
+	 macroProc.defineMacro(new edu.odu.cs.cwm.macroproc.Macro('_' + chosenFormat, ""));
+	 macroProc.defineMacro(new edu.odu.cs.cwm.macroproc.Macro('_' + delivery, chosenDelivery));
+	 macroProc.process (file(buildArea + '/cwm/templates/macros.md'))
+	 results = macroProc.process (file(workArea + '/' + project.name + '.md'))
+	 file(workArea + '/' + project.name + '.mac.md').withWriter('UTF-8') {
+	     it.writeLine(results)
+	 }
+	 // Process markdown
+	 //    Extract metadata?
+	 //    Run peg markdown
+	 // Format-specific post-processing
+	 //    Clean up XML (may have been only an artifact of multimarkdown)
+	 //    Paginate if appropriate to format
+	 //    XSLT md-format.xsl, extensive property list
+	 //    Text substitutions: course properties, local properties file if present, modification date?
+	 //    Test substitution: code filter
+ }
+ 
+ task doc_secondaryDocs (dependsOn: doc_setup) {
+ 
+ }
+ 
+ task doc_Listings (dependsOn: doc_setup) {
+ 
+ }
+ 
+ task build (type: Copy, dependsOn: [doc_mainDoc, doc_secondaryDocs, doc_Listings]) {
      description 'Prepare document set output'
      dependsOn ':setup'
+     from workArea
+     into finalArea
+     exclude '*.md'
+     exclude '*.mmd'
  }
  
- build << {
-     println "In courseWebsite document build"
-          
-     new File("build/website/courseWebsite.txt").withWriter{ it << 'hello\n' } 
-     
- }
  
   rootProject.tasks['build'].dependsOn(build)
  
