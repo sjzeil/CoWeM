@@ -1,5 +1,5 @@
 /*
- * CWM course documentset v1 build file
+ * CWM documentset v1 build file
  * Steven J Zeil, Old Dominion Univ.
  */
 
@@ -8,9 +8,25 @@ configurations {
     build
 }
 
-dependencies {
-    build 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
+buildscript {
+    repositories {
+        // jcenter()
+
+        mavenCentral()
+
+        // Use my own CS dept repo
+        ivy {
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+    }
+
+    dependencies {
+        classpath 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
+        classpath 'org.pegdown:pegdown:1.6.0+'
+    }
 }
+
+import edu.odu.cs.cwm.macroproc.*
 
 /*
  * Tasks for course documentset construction
@@ -40,20 +56,32 @@ dependencies {
  }
  
 
- task doc_mainDoc (dependsOn: [doc_setup, configurations.build]) << {
+ task doc_mainDoc (dependsOn: doc_setup)
+ 
+ doc_mainDoc << {
      // Preprocess .md file
 	 //    Run macro processor, parameters include format, delivery, courseName
-	 edu.odu.cs.cwm.macroproc.MacroProcessor macroProc = new edu.odu.cs.cwm.macroproc.MacroProcessor('%')
-	 macroProc.defineMacro(new edu.odu.cs.cwm.macroproc.Macro('_' + chosenFormat, ""));
-	 macroProc.defineMacro(new edu.odu.cs.cwm.macroproc.Macro('_' + delivery, chosenDelivery));
-	 macroProc.process (file(buildArea + '/cwm/templates/macros.md'))
-	 results = macroProc.process (file(workArea + '/' + project.name + '.md'))
-	 file(workArea + '/' + project.name + '.mac.md').withWriter('UTF-8') {
-	     it.writeLine(results)
+	 MacroProcessor macroProc = new MacroProcessor("%")
+	 macroProc.defineMacro(new Macro('_' + chosenFormat, ""));
+	 macroProc.defineMacro(new Macro('_delivery', chosenDelivery));
+	 macroProc.process (file(buildArea.toString() + '/cwm/templates/macros.md'))
+	 File mdDoc = file(workArea.toString() + '/' + project.name + '.md')
+	 String macResults = macroProc.process (mdDoc)
+	 File expandedMD = file(workArea.toString() + '/' + project.name + '.mac.md') 
+	 expandedMD.withWriter('UTF-8') {
+	     it.writeLine(macResults)
 	 }
 	 // Process markdown
 	 //    Extract metadata?
 	 //    Run peg markdown
+	 pdOptions = org.pegdown.Extensions.ALL
+	 org.pegdown.PegDownProcessor pdProc = new org.pegdown.PegDownProcessor(pdOptions)
+	 String pdResults = pdProc.markdownToHtml(macResults)
+	 File htmlV1 = file(workArea.toString() + '/' + project.name + '__html.v1.html') 
+     htmlV1.withWriter('UTF-8') {
+         it.writeLine(pdResults)
+     }
+	  
 	 // Format-specific post-processing
 	 //    Clean up XML (may have been only an artifact of multimarkdown)
 	 //    Paginate if appropriate to format
