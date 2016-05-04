@@ -5,6 +5,8 @@ package edu.odu.cs.cwm.documents;
 
 import java.io.File;
 import java.io.Reader;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -37,7 +39,7 @@ public class MarkdownDocument implements Document {
 	 * @see edu.odu.cs.cwm.documents.Document#transform(java.lang.String, java.util.Properties)
 	 */
 	@Override
-	public String transform(String format, Properties properties) {
+	public final String transform(String format, Properties properties) {
 		String preprocessed = preprocess (format, properties);
 		org.w3c.dom.Document htmlDoc = process (preprocessed);
 		String result = postprocess (htmlDoc, format, properties);
@@ -50,7 +52,7 @@ public class MarkdownDocument implements Document {
 	 * @param properties Properties to be defined to the macro processor.
 	 * @return  A Markdown document string ready for conversion to HTML.
 	 */
-	private String preprocess(String format, Properties properties) {
+	public String preprocess(String format, Properties properties) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -61,7 +63,7 @@ public class MarkdownDocument implements Document {
 	 * @param markDownText
 	 * @return  DOM tree of generated HTML
 	 */
-	private org.w3c.dom.Document process(String markDownText) {
+	public org.w3c.dom.Document process(String markDownText) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -76,11 +78,33 @@ public class MarkdownDocument implements Document {
 	 * @param properties a collection of key,value pairs for late substitution.
 	 * @return transformed HTML string
 	 */
-	private String postprocess(org.w3c.dom.Document htmlDoc, String format, 
+	public String postprocess(org.w3c.dom.Document htmlDoc, String format, 
 			Properties properties) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/**
+	 * Extracts a desired metadata field from the document. Metadata fields are
+	 * found at the start of a document in the form
+	 *    FieldName: value of field
+	 * 
+	 * Metadata fields become part of the property set that is
+	 * replaced in the document text as part of the post-processing,
+	 * in which "@FieldName@" is replaced by the value of
+	 * that property.  Some metadata field names are inserted as
+	 * part of early processing. These in include Title, Author, CSS,
+	 * Date, Copyright, and JaxenURL.
+	 *    
+	 * @param fieldName 
+	 * @return value of that metadata field extracted from the beginning of the
+	 *               document. 
+	 */
+	public Object getMetadata(String fieldName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 	
 
