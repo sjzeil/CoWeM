@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -225,6 +226,31 @@ public class TestMacroProc {
 		assertEquals ("abc[de](f\ng)h", proc.process("abc B(de,f\ng)h").trim());
 	}
 
+
+	@Test
+	public void testMacrosOnMultiLines2() {
+		String[] params1 = {"x"};
+		Macro m1 = new Macro("\\em", Collections.singletonList("x"), "<em>x</em>");
+		
+		MacroProcessor proc = new MacroProcessor();
+		proc.defineMacro(m1);
+
+		String mdInput = 
+				"Something in _italics_ and\n"
+				+ "something else in **bold**\n"
+				+ "and \\em{even\nemphasized}.\n"
+				+ "Lots of text.\n"
+				+ "and \\em(still more).\n";
+		
+		String preProcessed1 =
+				"Something in _italics_ and\n"
+				+ "something else in **bold**\n"
+				+ "and <em>even\nemphasized</em>.\n"
+				+ "Lots of text.\n"
+				+ "and <em>still more</em>.\n";
+
+		assertEquals (preProcessed1, proc.process(mdInput));
+	}
 
 	
 	@Test

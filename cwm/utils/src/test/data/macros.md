@@ -1,1 +1,1 @@
-%define \em {x} {<em>x</em>}
+%define {\em} {x} {<em>x</em>}

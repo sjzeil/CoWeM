@@ -3,11 +3,23 @@
  */
 package edu.odu.cs.cwm.documents;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
+
+import edu.odu.cs.cwm.macroproc.Macro;
+import edu.odu.cs.cwm.macroproc.MacroProcessor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Document written in Markdown that can be transformed to
@@ -19,19 +31,44 @@ import java.util.Properties;
  */
 public class MarkdownDocument implements Document {
 	
-	private Reader documentIn;
+	/**
+	 * For logging error messages.
+	 */
+	private static Logger logger = LoggerFactory.getLogger(MarkdownDocument.class);
+	
+	/**
+	 * Source for text of the document. 
+	 */
+	private BufferedReader documentIn;
+	
+	/**
+	 * Metadata extracted from lines at the beginning of the document in the form 
+	 *    FieldName: value
+	 */
 	private Properties metadata;
 	
+	/**
+	 * Last line of text read from documentIn.
+	 */
+	private String line = "";
+	
 	public MarkdownDocument(String input) {
-		// TODO Auto-generated constructor stub
+		documentIn = new BufferedReader (new StringReader (input));
+		metadata = null;
 	}
 	
 	public MarkdownDocument(File input) {
-		// TODO Auto-generated constructor stub
+		try {
+			documentIn = new BufferedReader (new FileReader (input));
+		} catch (FileNotFoundException e) {
+			logger.warn("Unable to read from " + input + ": " + e);
+		}
+		metadata = null;
 	}
 	
 	public MarkdownDocument(Reader input) {
-		// TODO Auto-generated constructor stub
+		documentIn = new BufferedReader(input);
+		metadata = null;
 	}
 	
 
@@ -53,8 +90,95 @@ public class MarkdownDocument implements Document {
 	 * @return  A Markdown document string ready for conversion to HTML.
 	 */
 	public String preprocess(String format, Properties properties) {
-		// TODO Auto-generated method stub
-		return null;
+		MacroProcessor macroProc = new MacroProcessor("%");
+		macroProc.defineMacro(new Macro("_" + format, "1"));
+		Path defaultMacros = (Path)(properties.get("_defaultMacros"));
+		if (defaultMacros != null) {
+			macroProc.process(defaultMacros.toFile());
+		}
+		
+		extractMetdataIfNecessary();
+		
+		// Add any files listed in Macro: lines to the macro processor.
+		if (metadata.containsKey("Macro")) {
+			String macroFilesList = metadata.getProperty("Macro");
+			String[] macroFiles = macroFilesList.split("\t");
+			for (String macroFileName: macroFiles) {
+				File macroFile = new File(macroFileName);
+				if (macroFile.exists()) {
+					macroProc.process(macroFile);
+				} else {
+					logger.warn("Could not find macro file " + macroFileName);
+				}
+			}
+		}
+		// Add any properties that begin with "_" as macros
+		for (Object fieldNameObj: properties.keySet()) {
+			String fieldName = (String)fieldNameObj;
+			if (fieldName.startsWith("_")) {
+				macroProc.defineMacro(new Macro(fieldName, properties.getProperty(fieldName)));
+			}
+		}
+		
+		StringBuffer documentBody = new StringBuffer(line + "\n");
+		try {
+			while ((line = documentIn.readLine()) != null) {
+				documentBody.append(line);
+				documentBody.append("\n");
+			}
+		} catch (IOException e) {
+			logger.error("Unexpected problem reading document: " + e);
+		}
+		
+		String result = macroProc.process(documentBody.toString());
+		return result;
+	}
+
+	/**
+	 * Read through the opening lines of the document, extracting metadata from
+	 * lines matching the pattern:
+	 *    Fieldname: value
+	 * 
+	 */
+	private void extractMetdataIfNecessary() {
+		if (metadata == null) {
+			metadata = new Properties();
+			Pattern metadataLine = Pattern.compile("[^ :]+: .*");
+			try {
+				while ((line = documentIn.readLine()) != null && metadataLine.matcher(line).matches()) {
+					int pos = line.indexOf(':');
+					String fieldName = line.substring(0, pos);
+					++pos;
+					while (pos < line.length() && line.charAt(pos) == ' ') {
+						++pos;
+					}
+					String fieldValue = line.substring(pos);
+					if (fieldIsCumulative(fieldName)) {
+						if (!metadata.containsKey(fieldName)) {
+							metadata.put(fieldName, fieldValue);
+						} else {
+							metadata.put(fieldName, metadata.getProperty(fieldName) + "\t" + fieldValue);
+						}
+					} else {
+						metadata.put(fieldName, fieldValue);
+					}
+				}
+			} catch (IOException e) {
+				logger.error("Unexpected problem reading metadata from document: " + e);
+			}
+			
+		}
+	}
+
+	/**
+	 * A few metadata fields may be specified multiple times to build up a list of values.
+	 * At the moment, these fields are: Macros, & CSS
+	 * 
+	 * @param fieldName a metadata field name
+	 * @return true iff the field can be specified multiple times.
+	 */
+	private boolean fieldIsCumulative(String fieldName) {
+		return fieldName.equals("Macros") || fieldName.equals("CSS");
 	}
 
 	/**
@@ -101,8 +225,8 @@ public class MarkdownDocument implements Document {
 	 *               document. 
 	 */
 	public Object getMetadata(String fieldName) {
-		// TODO Auto-generated method stub
-		return null;
+		extractMetdataIfNecessary();
+		return metadata.getProperty(fieldName);
 	}
 
 	

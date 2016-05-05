@@ -45,7 +45,7 @@ public class TestMarkdownDocument {
 			+ "Author: John Doe\n"
 			+ "Date: Jan 1, 2012\n\n"
 			+ "# Section 1\n\n"
-			+ "%if _incudeThis\n"
+			+ "%if _includeThis\n"
 			+ "## Section 1.1\n\n"
 			+ "A paragraph in\nsection 1.1\n\n"
 			+ "%endif\n\n"
@@ -56,10 +56,10 @@ public class TestMarkdownDocument {
 			+ "and \\em{even\nemphasized}.\n";
 	
 	private String preProcessed1 =
-			"# Section 1\n\n"
+			"\n# Section 1\n\n\n"
 			+ "## Section 1.1\n\n"
 			+ "A paragraph in\nsection 1.1\n\n"
-			+ "\n"
+			+ "\n\n"
 			+ "## Section 1.2\n\n"
 			+ "A paragraph in\nsection 1.2\n\n"
 			+ "Something in _italics_ and\n"
@@ -67,8 +67,8 @@ public class TestMarkdownDocument {
 			+ "and <em>even\nemphasized</em>.\n";
 	
 	private String preProcessed2 = 
-			"# Section 1\n\n"
-            + "\n"
+			"\n# Section 1\n\n"
+			+ "\n\n"
 			+ "## Section 1.2\n\n"
 			+ "A paragraph in\nsection 1.2\n\n"
 			+ "Something in _italics_ and\n"
@@ -147,7 +147,7 @@ public class TestMarkdownDocument {
 	@Test
 	public void testPreprocess1() {
 		MarkdownDocument doc = new MarkdownDocument(mdInput);
-		properties.put("_includeThis", 1);
+		properties.put("_includeThis", "1");
 		
 		String preprocessed = doc.preprocess("html", properties);
 		
