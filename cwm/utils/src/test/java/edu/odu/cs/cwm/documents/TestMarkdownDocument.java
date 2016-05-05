@@ -459,8 +459,8 @@ public class TestMarkdownDocument {
 		MarkdownDocument doc = new MarkdownDocument(mdInput);
 		String htmlResult = doc.postprocess(basicHtml, "html", properties);
 		
-		assertTrue (htmlResult.contains("paragraph1"));
-		assertTrue (htmlResult.contains("paragraph4"));
+		assertTrue (htmlResult.contains("paragraph 1"));
+		assertTrue (htmlResult.contains("paragraph 4"));
 		assertTrue (htmlResult.contains("Section 1.1"));
 		assertTrue (htmlResult.contains("Title of Document"));
 		

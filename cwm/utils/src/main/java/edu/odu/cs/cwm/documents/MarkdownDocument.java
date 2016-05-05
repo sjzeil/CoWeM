@@ -10,14 +10,26 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import edu.odu.cs.cwm.macroproc.Macro;
 import edu.odu.cs.cwm.macroproc.MacroProcessor;
@@ -37,6 +49,50 @@ import org.xml.sax.SAXException;
  *
  */
 public class MarkdownDocument implements Document {
+	
+	private final static String DefaultMacrosProperty = "_defaultMacros";
+	
+	private final static String CWMTemplatesProperty = "_CWM";
+	
+	private final static String[] specialSubstitutionValues = {
+			"/*...*/", "&#x22ee;",
+			"/*1*/", "&#x2780;",
+			"/*2*/", "&#x2781;",
+			"/*3*/", "&#x2782;",
+			"/*4*/", "&#x2783;",
+			"/*5*/", "&#x2784;",
+			"/*6*/", "&#x2785;",
+			"/*7*/", "&#x2786;",
+			"/*8*/", "&#x2787;",
+			"/*9*/", "&#x2788;",
+			"/*+*/", "<span class='hli'>",
+			"/*-*/", "</span>",
+			"/*+1*/", "<span class='hli'>",
+			"/*-1*/", "</span>",
+			"/*+2*/", "<span class='hlii'>",
+			"/*-2*/", "</span>",
+			"/*+3*/", "<span class='hliii'>",
+			"/*-3*/", "</span>",
+			"/*+4*/", "<span class='hliv'>",
+			"/*-4*/", "</span>",
+			"/*+i*/", "<i>",
+			"/*-i*/", "</i>",
+			"/*+=*/", "<span class='strike'>",
+			"/*-=*/", "</span>",
+			"\\%", "%",
+			"[_", "<span class='userinput'>",
+			"_]", "</span>"
+	};
+	
+	private final static TreeMap<String, String> specialSubstitutions;
+	static {
+		specialSubstitutions = new TreeMap<>();
+		for (int i = 0; i < specialSubstitutionValues.length; i += 2)
+		specialSubstitutions.put(specialSubstitutionValues[i],
+				specialSubstitutionValues[i+1]);
+	}
+	
+	
 	
 	/**
 	 * For logging error messages.
@@ -99,7 +155,7 @@ public class MarkdownDocument implements Document {
 	public String preprocess(String format, Properties properties) {
 		MacroProcessor macroProc = new MacroProcessor("%");
 		macroProc.defineMacro(new Macro("_" + format, "1"));
-		Path defaultMacros = (Path)(properties.get("_defaultMacros"));
+		Path defaultMacros = (Path)(properties.get(DefaultMacrosProperty));
 		if (defaultMacros != null) {
 			macroProc.process(defaultMacros.toFile());
 		}
@@ -232,8 +288,69 @@ public class MarkdownDocument implements Document {
 	 */
 	public String postprocess(org.w3c.dom.Document htmlDoc, String format, 
 			Properties properties) {
-		// TODO Auto-generated method stub
-		return null;
+		final Path cwmTemplates = (Path)properties.get(CWMTemplatesProperty);
+		final Path formatConversionSheetFile = cwmTemplates.resolve(
+				"md-" + format + ".xsl");
+		// Paginate.
+		// Flatten the pagination and remove empty pages.
+		// Transform basic HTML into the selected format
+		
+		
+		System.setProperty("javax.xml.transform.TransformerFactory", 
+				"net.sf.saxon.TransformerFactoryImpl"); 
+		Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
+		TransformerFactory transFact = TransformerFactory.newInstance();
+		String htmlText = "<html><body>Document generation failed.</body></html>\n";
+		try {
+			Templates template = transFact.newTemplates(xslSource);
+			Transformer xform = template.newTransformer();
+			xform.setParameter("format", format);
+			// Copy properties into parameters?
+			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
+			StringWriter htmlString = new StringWriter();
+			Result htmlOut = new StreamResult(htmlString);
+			xform.transform(xmlIn, htmlOut);
+			htmlText = htmlString.toString();
+		} catch (TransformerConfigurationException e) {
+			logger.error ("Problem parsing XSLT2 stylesheet " 
+					+ formatConversionSheetFile + ": " + e);
+		} catch (TransformerException e) {
+			logger.error ("Problem applying stylesheet " 
+					+ formatConversionSheetFile + ": " + e);
+		}
+
+		// Apply property and other final substitutions.
+		StringBuilder buffer = new StringBuilder();
+		int start = 0;
+		while (start < htmlText.length()) {
+			int newStart = htmlText.indexOf('@', start);
+			if (newStart < 0) {
+				buffer.append(htmlText.substring(start));
+				break;
+			}
+			int stop = htmlText.indexOf('@', newStart+1);
+			if (stop < 0) {
+				buffer.append(htmlText.substring(start));
+				break;
+			}
+			String possibleProperty = htmlText.substring(newStart+1, stop);
+			Object value = properties.getProperty(possibleProperty);
+			if (value != null) {
+				buffer.append(htmlText.substring(start, newStart-1));
+				buffer.append(value.toString());
+				start = stop + 1;
+			} else {
+				buffer.append(htmlText.substring(start, newStart+1));
+				start = newStart+1;
+			}
+		}
+		String result = buffer.toString();
+		for (String target: specialSubstitutions.keySet()) {
+			String value = specialSubstitutions.get(target);
+			result = result.replace(target, value);
+		}
+		
+		return result;
 	}
 
 	/**
