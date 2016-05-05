@@ -91,11 +91,18 @@ public class TestMarkdownDocument {
 		properties.put("_defaultMacros",  defaultmacros);
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
+	
+	public Element getElementById (org.w3c.dom.Document doc, String id) {
+		Element root = doc.getDocumentElement();
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node n;
+		try {
+			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
+					root, XPathConstants.NODE);
+		} catch (XPathExpressionException e) {
+			return null;
+		}
+		return (Element)n;
 	}
 
 	/**
@@ -215,7 +222,7 @@ public class TestMarkdownDocument {
 		
 		NodeList paragraphs = (NodeList)xPath.evaluate("/html/body//p",
 				root, XPathConstants.NODESET);
-		assertEquals(2, paragraphs.getLength());
+		assertEquals(3, paragraphs.getLength());
 		
 		String p1 = paragraphs.item(0).getTextContent();
 		assertTrue(p1.contains("A paragraph in"));
@@ -235,7 +242,7 @@ public class TestMarkdownDocument {
 		
 		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
 		
-		Element brEl= basicHtml.getElementById("br0");
+		Element brEl= getElementById(basicHtml, "br0");
 		assertNotNull (brEl);
 		assertEquals ("br", brEl.getTagName());
 	}
@@ -251,7 +258,7 @@ public class TestMarkdownDocument {
 		
 		org.w3c.dom.Document basicHtml = doc.process(passThrough2);
 		
-		Element spanEl= basicHtml.getElementById("span0");
+		Element spanEl= getElementById(basicHtml, "span0");
 		assertNotNull (spanEl);
 		assertEquals ("span", spanEl.getTagName());
 		assertEquals ("an internal span", spanEl.getTextContent());
@@ -264,15 +271,15 @@ public class TestMarkdownDocument {
 		
 		String passThrough3 =
 				"# Section 1\n\n"
-				+ "A paragraph with <arbitraryXML id='xml0'>an\n"
+				+ "A paragraph with <arbitraryXML id='xml0' markdown='0'>an\n"
 						+ "  xml element</arbitraryXML>.\n";
 		
 		org.w3c.dom.Document basicHtml = doc.process(passThrough3);
 		
-		Element xmlEl= basicHtml.getElementById("xml0");
+		Element xmlEl= getElementById(basicHtml, "xml0");
 		assertNotNull (xmlEl);
 		assertEquals ("arbitraryXML", xmlEl.getTagName());
-		assertEquals ("an\n  xml element", xmlEl.getTextContent());
+		assertEquals ("an xml element", xmlEl.getTextContent());
 	}
 
 	
@@ -287,12 +294,12 @@ public class TestMarkdownDocument {
 		org.w3c.dom.Document basicHtml = doc.process(passThrough4);
 		Element root = basicHtml.getDocumentElement();
 		
-		Element spanEl= basicHtml.getElementById("span0");
+		Element spanEl= getElementById(basicHtml, "span0");
 		assertNotNull (spanEl);
 		assertEquals ("span", spanEl.getTagName());
 		
 		XPath xPath = XPathFactory.newInstance().newXPath();
-		Node italicsNode = (Node)xPath.evaluate("/html/body/p/span/i",
+		Node italicsNode = (Node)xPath.evaluate("/html/body/p/span/em",
 				root, XPathConstants.NODE);
 		assertNotNull (italicsNode);
 		assertEquals ("marked up", italicsNode.getTextContent());
@@ -317,7 +324,7 @@ public class TestMarkdownDocument {
 		org.w3c.dom.Document basicHtml = doc.process(passThrough);
 		Element root = basicHtml.getDocumentElement();
 		
-		Element spanEl= basicHtml.getElementById("span0");
+		Element spanEl= getElementById(basicHtml, "span0");
 		assertNotNull (spanEl);
 		assertEquals ("span", spanEl.getTagName());
 		
@@ -328,19 +335,111 @@ public class TestMarkdownDocument {
 		assertEquals ("li", liEl.getTagName());
 
 	
-		Element divEl= basicHtml.getElementById("div0");
+		Element divEl= getElementById(basicHtml, "div0");
 		assertNotNull (divEl);
-		assertEquals ("dic", divEl.getTagName());
+		assertEquals ("div", divEl.getTagName());
 		
-		Element parEl2 = (Element)divEl.getParentNode();
-		assertEquals ("p", parEl2.getTagName());
-		
-		Element liEl2 = (Element)parEl2.getParentNode();
+		Element liEl2 = (Element)divEl.getParentNode();
 		assertEquals ("li", liEl2.getTagName());
 
 	}
+
 	
-	
+	// @Test
+	// Not supported by PegDown processor 
+	public void testSubSuperscripts() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		
+		String passThrough1 =
+				"# Section 1\n\n"
+				+ "A paragraph with subscripts x~i,j and superscripts 2^k \n\n"
+				+ "A paragraph with subscripts x~i,j~ and superscripts 2^k+1^ \n\n";	
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
+		Element root = basicHtml.getDocumentElement();
+		
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node n = (Node)xPath.evaluate("/head/body/p[1]/sub",
+					root, XPathConstants.NODE);
+		assertNotNull(n);
+		assertEquals ("i", n.getTextContent());		
+	}
+
+
+	@Test
+	public void testInlineMath() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		
+		String passThrough1 =
+				"# Section 1\n\n"
+				+ "A paragraph with inline math $k+1$.\n\n"
+				+ "A paragraph with inline math \\\\( k < m )\\\\.\n\n"
+				+ "Math should suppress ordinary markup:\n"
+				+ " \\\\( x *i + y* j \\\\) is not the same as\n"	
+				+ " x *i + y* j.\n";	
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
+		Element root = basicHtml.getDocumentElement();
+		
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		NodeList nl = (NodeList)xPath.evaluate("//em",
+					root, XPathConstants.NODESET);
+		assertEquals (1, nl.getLength());
+		
+		nl = (NodeList)xPath.evaluate("//p",
+				root, XPathConstants.NODESET);
+		assertEquals (3, nl.getLength());
+
+		Node p = nl.item(0);
+		assertTrue (p.getTextContent().contains("\\("));
+		assertTrue (p.getTextContent().contains("\\)"));
+
+		p = nl.item(1);
+		assertTrue (p.getTextContent().contains("\\("));
+		assertTrue (p.getTextContent().contains("\\)"));
+		
+		p = nl.item(2);
+		assertTrue (p.getTextContent().contains("\\("));
+		assertTrue (p.getTextContent().contains("\\)"));
+	}
+
+
+	@Test
+	public void testDisplayMath() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		
+		String passThrough1 =
+				"# Section 1\n\n"
+				+ "$$ k+1 $$\n\n"
+				+ "\\[ x *i + y* j \\]\n\n"	
+				+ "\\\\[ x *i + y* j \\\\]\n\n"	
+				+ " x *i + y* j.\n";	
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
+		Element root = basicHtml.getDocumentElement();
+		
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		NodeList nl = (NodeList)xPath.evaluate("//em",
+					root, XPathConstants.NODESET);
+		assertEquals (1, nl.getLength());
+		
+		nl = (NodeList)xPath.evaluate("//p",
+				root, XPathConstants.NODESET);
+		assertEquals (3, nl.getLength());
+
+		Node p = nl.item(0);
+		assertTrue (p.getTextContent().contains("\\("));
+		assertTrue (p.getTextContent().contains("\\)"));
+
+		p = nl.item(1);
+		assertTrue (p.getTextContent().contains("\\("));
+		assertTrue (p.getTextContent().contains("\\)"));
+		
+		p = nl.item(2);
+		assertTrue (p.getTextContent().contains("\\("));
+		assertTrue (p.getTextContent().contains("\\)"));
+	}
+
 	
 	@Test
 	public void testPostprocess() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
@@ -430,7 +529,7 @@ public class TestMarkdownDocument {
 		Element[] p = new Element[5];
 		Element[] par = new Element[5];
 		for (int i = 0; i < 5; ++i) {
-			p[i] = finalHtml.getElementById("p" + i);
+			p[i] = getElementById(finalHtml, "p" + i);
 			assertNotNull(p[i]);
 			par[i] = (Element)p[i].getParentNode();
 			assertEquals("page", par[i].getAttribute("class"));

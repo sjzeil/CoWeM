@@ -15,11 +15,18 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import edu.odu.cs.cwm.macroproc.Macro;
 import edu.odu.cs.cwm.macroproc.MacroProcessor;
 
+import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * A Document written in Markdown that can be transformed to
@@ -181,6 +188,11 @@ public class MarkdownDocument implements Document {
 		return fieldName.equals("Macros") || fieldName.equals("CSS");
 	}
 
+	
+	private static final String HTMLheader = "<html>\n<head>\n"
+			+ "<title>@Title@</title>\n</head>\n<body>\n";
+	private static final String HTMLtrailer = "</body>\n</html>\n";
+	
 	/**
 	 * Convert Markdown text to an HTML structure.
 	 *  
@@ -188,8 +200,24 @@ public class MarkdownDocument implements Document {
 	 * @return  DOM tree of generated HTML
 	 */
 	public org.w3c.dom.Document process(String markDownText) {
-		// TODO Auto-generated method stub
-		return null;
+		int pdOptions = org.pegdown.Extensions.ALL;
+		PegDownProcessor pdProc = new PegDownProcessor(pdOptions);
+		String pdResults = pdProc.markdownToHtml(markDownText);
+		String htmlText = HTMLheader + pdResults + HTMLtrailer;
+		
+		org.w3c.dom.Document basicHtml = null;
+		try {
+			DocumentBuilder b 
+			= DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			basicHtml = b.parse(new InputSource(new StringReader(htmlText)));
+		} catch (ParserConfigurationException e) {
+			logger.error ("Could not set up XML parser: " + e);
+		} catch (SAXException e) {
+			logger.error("Unable to parse output from Markdown processor: " + e);
+		} catch (IOException e) {
+			logger.error("Unable to parse output from Markdown processor: " + e);
+		}
+		return basicHtml;
 	}
 
 	/**
