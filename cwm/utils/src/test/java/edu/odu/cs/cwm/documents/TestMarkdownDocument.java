@@ -221,6 +221,126 @@ public class TestMarkdownDocument {
 		assertTrue(p1.contains("A paragraph in"));
 		assertTrue(p1.contains("section 1.1"));
 	}
+
+	
+	@Test
+	public void testPassthrough1() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		
+		String passThrough1 =
+				"# Section 1\n\n"
+				+ "A paragraph with <br id='br0'/> a forced line break.\n";
+		
+		
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
+		
+		Element brEl= basicHtml.getElementById("br0");
+		assertNotNull (brEl);
+		assertEquals ("br", brEl.getTagName());
+	}
+
+	
+	@Test
+	public void testPassthrough2() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		
+		String passThrough2 =
+				"# Section 1\n\n"
+				+ "A paragraph with <span id='span0'>an internal span</span>.\n";
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough2);
+		
+		Element spanEl= basicHtml.getElementById("span0");
+		assertNotNull (spanEl);
+		assertEquals ("span", spanEl.getTagName());
+		assertEquals ("an internal span", spanEl.getTextContent());
+	}
+
+	
+	@Test
+	public void testPassthrough3() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		
+		String passThrough3 =
+				"# Section 1\n\n"
+				+ "A paragraph with <arbitraryXML id='xml0'>an\n"
+						+ "  xml element</arbitraryXML>.\n";
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough3);
+		
+		Element xmlEl= basicHtml.getElementById("xml0");
+		assertNotNull (xmlEl);
+		assertEquals ("arbitraryXML", xmlEl.getTagName());
+		assertEquals ("an\n  xml element", xmlEl.getTextContent());
+	}
+
+	
+	@Test
+	public void testPassthrough4() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);		
+
+		String passThrough4 =
+				"# Section 1\n\n"
+				+ "A paragraph with <span id='span0'>a _marked up_ span</span>.\n";
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough4);
+		Element root = basicHtml.getDocumentElement();
+		
+		Element spanEl= basicHtml.getElementById("span0");
+		assertNotNull (spanEl);
+		assertEquals ("span", spanEl.getTagName());
+		
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node italicsNode = (Node)xPath.evaluate("/html/body/p/span/i",
+				root, XPathConstants.NODE);
+		assertNotNull (italicsNode);
+		assertEquals ("marked up", italicsNode.getTextContent());
+	}
+
+	
+	@Test
+	public void testPassthrough5() throws XPathExpressionException {
+		MarkdownDocument doc = new MarkdownDocument(mdInput);		
+
+		String passThrough =
+				"# Section 1\n\n"
+				+ "A paragraph\n\n"
+				+ "* list element 1\n\n"
+				+ "    A nested paragraph\n\n"
+				+ "    <div id='div0'>\n"
+				+ "    content within div\n"
+				+ "    </div>\n\n"
+				+ "    Another <span id='span0'>nested</span> paragraph\n\n"
+				+ "* list element 2";
+		
+		org.w3c.dom.Document basicHtml = doc.process(passThrough);
+		Element root = basicHtml.getDocumentElement();
+		
+		Element spanEl= basicHtml.getElementById("span0");
+		assertNotNull (spanEl);
+		assertEquals ("span", spanEl.getTagName());
+		
+		Element parEl = (Element)spanEl.getParentNode();
+		assertEquals ("p", parEl.getTagName());
+		
+		Element liEl = (Element)parEl.getParentNode();
+		assertEquals ("li", liEl.getTagName());
+
+	
+		Element divEl= basicHtml.getElementById("div0");
+		assertNotNull (divEl);
+		assertEquals ("dic", divEl.getTagName());
+		
+		Element parEl2 = (Element)divEl.getParentNode();
+		assertEquals ("p", parEl2.getTagName());
+		
+		Element liEl2 = (Element)parEl2.getParentNode();
+		assertEquals ("li", liEl2.getTagName());
+
+	}
+	
+	
 	
 	@Test
 	public void testPostprocess() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
