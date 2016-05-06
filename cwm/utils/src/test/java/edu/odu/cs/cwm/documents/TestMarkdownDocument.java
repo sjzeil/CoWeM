@@ -118,7 +118,6 @@ public class TestMarkdownDocument {
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
 		assertTrue (htmlContent.contains("<em>even"));
-		assertTrue (htmlContent.contains("applied md2html.xsl"));
 	}
 	
 
@@ -133,7 +132,6 @@ public class TestMarkdownDocument {
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
 		assertTrue (htmlContent.contains("<em>even"));
-		assertTrue (htmlContent.contains("applied md2html.xsl"));
 	}
 
 	
@@ -147,7 +145,6 @@ public class TestMarkdownDocument {
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
 		assertTrue (htmlContent.contains("<em>even"));
-		assertTrue (htmlContent.contains("applied md2html.xsl"));
 	}
 
 	
@@ -447,6 +444,7 @@ public class TestMarkdownDocument {
 				+ "<p id='p1'>paragraph 1</p>\n"
 				+ "<h1>Section 1</h1>\n"
 				+ "<p>paragraph 1</p>\n"
+				+ "<img src='something.png'/>\n"
 				+ "<hr/>\n"
 				+ "<p id='p2'>paragraph 2</p>\n"
 				+ "<h2>Section 1.1</h2>"
@@ -475,7 +473,7 @@ public class TestMarkdownDocument {
 				root, XPathConstants.NODESET);
 		assertEquals(5, paragraphs.getLength());
 		
-		String actualPar3 = (String)xPath.evaluate("/html/head/p[@id = 'p3']", root);
+		String actualPar3 = (String)xPath.evaluate("/html/body/p[@id = 'p3']", root);
 		assertEquals ("paragraph 3", actualPar3);
 		
 		NodeList pages = (NodeList)xPath.evaluate("/html/body/div[@class='page']",
@@ -503,8 +501,8 @@ public class TestMarkdownDocument {
 		MarkdownDocument doc = new MarkdownDocument(mdInput);
 		String htmlResult = doc.postprocess(basicHtml, "pages", properties);
 		
-		assertTrue (htmlResult.contains("paragraph1"));
-		assertTrue (htmlResult.contains("paragraph4"));
+		assertTrue (htmlResult.contains("paragraph 1"));
+		assertTrue (htmlResult.contains("paragraph 4"));
 		assertTrue (htmlResult.contains("Section 1.1"));
 		assertTrue (htmlResult.contains("Title of Document"));
 		
@@ -542,6 +540,28 @@ public class TestMarkdownDocument {
 	}
 	
 	
+	@Test
+	public void testLinks() 
+			throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		String html0 = "<html><head><title>@Title@</title></head><body>\n"
+				+ "<p>An <a id='a0' href='./foo'>ordinary link</a></p>\n"
+				+ "<p>A link to a <a id='a1' href='public:bar'>public document</a></p>\n"
+				+ "<p>A link to a <a id='a2' href='targetDoc:baz'>public document</a></p>\n"
+				+ "<p>A link to a <a id='a3' href='protected:foobar'>private document</a></p>\n"
+				+ "<p>A link to an <a id='a3' href='asst:foobaz'>assignment</a></p>\n"
+				+ "</body></html>";
+		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
+		
+		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		String htmlResult = doc.postprocess(basicHtml, "html", properties);
+		
+		assertTrue (htmlResult.contains("./foo"));
+		assertTrue (htmlResult.contains("../../Public/bar/index.html"));
+		assertTrue (htmlResult.contains("../../Public/baz/index.html"));
+		assertTrue (htmlResult.contains("../../Protected/foobar/index.html"));
+		assertTrue (htmlResult.contains("../../Protected/Assts/foobaz.mmd.html"));
+	}
 	
 	
 }

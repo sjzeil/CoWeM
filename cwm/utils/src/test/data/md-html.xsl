@@ -12,12 +12,15 @@
        divided at each <h1>, <h2>, and <hr/> marker
   -->
 
+  <xsl:param name="meta_Author" select="''"/>
+  <xsl:param name="meta_Date" select="''"/>
+
   <xsl:param name="doc" select="'doc'"/>
   <xsl:param name="format" select="'html'"/>
   <xsl:param name="pwdURL" select="'./'"/>
-  <xsl:param name="MathJaxURL" select="'../../styles/MathJax'"/>
-  <xsl:param name="highlightjsURL" select="'../../styles/highlight.js'"/>
-  <xsl:param name="courseName" select="'CS'"/>
+  <xsl:param name="MathJaxURL" select="'@MathjaxURL@'"/>
+  <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
+  <xsl:param name="courseName" select="'@courseName@'"/>
   <xsl:param name="stylesURL" select="'../../styles'"/>
   <xsl:param name="graphicsURL" select="'../../graphics'"/>
   <xsl:param name="homeURL" select="''"/>
@@ -70,13 +73,15 @@
 	<h1>
 	  <xsl:value-of select="/html/head/title/text()"/>
 	</h1>
-	<h2>
-	  <xsl:value-of select="/html/head/meta[@name='author']/@content"/>
-	</h2>
-	<xsl:if test="/html/head/meta[@name='date']">
+	<xsl:if test="$meta_Author != ''">
+	    <h2>
+	      <xsl:value-of select="$meta_Author"/>
+	    </h2>
+	</xsl:if>
+	<xsl:if test="$meta_Date != ''">
 	  <p>
 	    <xsl:text>Last modified: </xsl:text>
-	    <xsl:value-of select="/html/head/meta[@name='date']/@content"/>
+	    <xsl:value-of select="$meta_Date"/>
 	  </p>
 	</xsl:if>
       </div>

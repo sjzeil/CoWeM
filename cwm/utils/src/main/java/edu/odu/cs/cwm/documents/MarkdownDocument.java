@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -28,6 +29,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -37,6 +39,7 @@ import edu.odu.cs.cwm.macroproc.MacroProcessor;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -291,35 +294,133 @@ public class MarkdownDocument implements Document {
 		final Path cwmTemplates = (Path)properties.get(CWMTemplatesProperty);
 		final Path formatConversionSheetFile = cwmTemplates.resolve(
 				"md-" + format + ".xsl");
-		// Paginate.
-		// Flatten the pagination and remove empty pages.
-		// Transform basic HTML into the selected format
-		
-		
+		final Path paginationSheetFile = cwmTemplates.resolve("paginate.xsl");
+		extractMetdataIfNecessary();
+
 		System.setProperty("javax.xml.transform.TransformerFactory", 
 				"net.sf.saxon.TransformerFactoryImpl"); 
-		Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
 		TransformerFactory transFact = TransformerFactory.newInstance();
+		
 		String htmlText = "<html><body>Document generation failed.</body></html>\n";
+		DocumentBuilder dBuilder = null;
 		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			dBuilder = dbFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			logger.error ("Problem creating new XML document ", e); 
+			return htmlText;		
+		}
+		
+		
+		
+
+		// Paginate.
+		org.w3c.dom.Document paginatedDoc = null;
+		try {
+			Source xslSource = new StreamSource(paginationSheetFile.toFile());
+			paginatedDoc = dBuilder.newDocument();
 			Templates template = transFact.newTemplates(xslSource);
 			Transformer xform = template.newTransformer();
 			xform.setParameter("format", format);
-			// Copy properties into parameters?
 			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
-			StringWriter htmlString = new StringWriter();
-			Result htmlOut = new StreamResult(htmlString);
+			Result htmlOut = new StreamResult(System.out); xform.setOutputProperty(OutputKeys.INDENT, "yes"); 	xform.setOutputProperty(OutputKeys.METHOD, "xml");
+			//DOMResult htmlOut = new DOMResult(paginatedDoc);
 			xform.transform(xmlIn, htmlOut);
-			htmlText = htmlString.toString();
 		} catch (TransformerConfigurationException e) {
 			logger.error ("Problem parsing XSLT2 stylesheet " 
-					+ formatConversionSheetFile + ": " + e);
+					+ paginationSheetFile, e);
+			return htmlText;
 		} catch (TransformerException e) {
 			logger.error ("Problem applying stylesheet " 
-					+ formatConversionSheetFile + ": " + e);
+					+ paginationSheetFile, e);
+			return htmlText;			
+		}
+		
+		
+		
+		// Transform basic HTML into the selected format
+		
+		org.w3c.dom.Document formattedDoc = null;		
+		try {
+			Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
+			formattedDoc = dBuilder.newDocument();
+			Templates template = transFact.newTemplates(xslSource);
+			Transformer xform = template.newTransformer();
+			xform.setParameter("format", format);
+			for (Object okey: properties.keySet()) {
+				String key = okey.toString();
+				xform.setParameter(key, properties.getProperty(key));
+			}
+			for (Object okey: metadata.keySet()) {
+				String key = okey.toString();
+				xform.setParameter("meta_" + key, metadata.getProperty(key));
+			}
+			Source xmlIn = new DOMSource(paginatedDoc.getDocumentElement());
+			DOMResult htmlOut = new DOMResult(formattedDoc);
+			xform.transform(xmlIn, htmlOut);
+		} catch (TransformerConfigurationException e) {
+			logger.error ("Problem parsing XSLT2 stylesheet " 
+					+ formatConversionSheetFile, e);
+			return htmlText;
+		} catch (TransformerException e) {
+			logger.error ("Problem applying stylesheet " 
+					+ formatConversionSheetFile, e);
+			return htmlText;			
 		}
 
+		// URL transformation
+		transformURLs (formattedDoc);
+		
+		// Generate result text
+		try {
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			DOMSource source = new DOMSource(formattedDoc);
+			StringWriter htmlString = new StringWriter();
+			StreamResult htmlOut = new StreamResult(htmlString);
+			transformer.transform(source, htmlOut);
+			htmlText = htmlString.toString();
+		} catch (TransformerConfigurationException e) {
+			logger.error ("Problem creating empty stylesheet " 
+					+ ": " + e);
+		} catch (TransformerException e) {
+			logger.error ("Problem serializing formatted document " 
+					+ e);
+		}
+		
 		// Apply property and other final substitutions.
+		String result = performTextSubstitutions(properties, htmlText);
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Replace URL shortcuts by a legal URL form.  Shortcuts recognized are:
+	 * 
+	 *  targetDoc:foo  ../../Public/foo/index.html    (deprecated)
+     *  public::foo  ../../Public/foo/index.html
+	 *  protected:foo  ../../Protected/foo/index.html
+	 *  asst:foo  ../../Protected/Assts/foo.mmd.html
+	 *  
+	 *  Possibly in the future:
+	 *  bblink:foo   A link to an internal page of a Blackboard course
+	 *  bbassess:foo A link to a test/quiz/survey in a Blacokbaord course
+	 */
+	private void transformURLs (org.w3c.dom.Document htmlDoc) {
+		
+	}
+
+	/**
+	 * Substitutes metadata, property, and special values (see specialSubstitutions, above)
+	 * occurring in the HTML text. 
+	 * 
+	 * @param properties  property values for the course/document
+	 * @param htmlText  text in which to perform the substitutions
+	 * @return  htmlText with all substitutions performed.
+	 */
+	private String performTextSubstitutions(Properties properties, String htmlText) {
 		StringBuilder buffer = new StringBuilder();
 		int start = 0;
 		while (start < htmlText.length()) {
@@ -334,9 +435,12 @@ public class MarkdownDocument implements Document {
 				break;
 			}
 			String possibleProperty = htmlText.substring(newStart+1, stop);
-			Object value = properties.getProperty(possibleProperty);
+			Object value = metadata.getProperty(possibleProperty);
+			if (value == null) {
+				value = properties.getProperty(possibleProperty);
+			}
 			if (value != null) {
-				buffer.append(htmlText.substring(start, newStart-1));
+				buffer.append(htmlText.substring(start, newStart));
 				buffer.append(value.toString());
 				start = stop + 1;
 			} else {
@@ -344,12 +448,12 @@ public class MarkdownDocument implements Document {
 				start = newStart+1;
 			}
 		}
+		
 		String result = buffer.toString();
 		for (String target: specialSubstitutions.keySet()) {
 			String value = specialSubstitutions.get(target);
 			result = result.replace(target, value);
 		}
-		
 		return result;
 	}
 
