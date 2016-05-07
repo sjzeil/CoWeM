@@ -141,6 +141,12 @@ div.details {
    border-left-color: #8080FF;
 }
 
+blockquote.details {
+   padding-left: 1ex;
+   border-left-style: ;
+   border-left-color: #407F40;
+}
+
 
 .summary {
    font-style: italic;
