@@ -39,6 +39,37 @@ import edu.odu.cs.cwm.macroproc.*
  *
  */
  
+ 
+ /*
+    What I would like to eventually have:
+  
+ documents {
+    mainDocument 'courseWebsite.md' // defaults to project.name + ".md"
+    index        'html'             // defaults to formats[0]
+    formats <<    'html'            // adds 'html' to formats
+    // or
+    formats       ['html', 'pages', 'slides', 'epub', 'directory', 'topics', 'modules', 'navigation']
+    
+    docs        fileset('.') { include '*.mmd' } 
+    listings    fileset('.') { 
+                  include '*.java' 
+                  include '*.h' 
+                  include '*.cpp' 
+                  include '*.listing' 
+                  } 
+     support     fileset(.') {
+                  include '*.html' 
+                  include '*.css' 
+                  include '*.js' 
+                  include '*.png' 
+                  include '*.gif' 
+                  include '*.jpg'
+                  } 
+ }  
+    
+*/ 
+ 
+ 
  def buildArea = file('../../build')
  def workArea = file('../../build/cwm/work/' + project.parent.name + "/" + project.name + '/')
  def finalArea = file('../../build/website/' + project.parent.name + "/" + project.name + '/')
