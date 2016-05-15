@@ -3,35 +3,12 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
+apply plugin: edu.odu.cs.zeil.cwm.CourseWebsite
+
 project.ext.deployDestination = file('build/websiteFakeDeploy/')
 
 
-allprojects {
 
-    repositories {
-        // jcenter()
-
-        mavenCentral()
-
-    
-        // Use my own CS dept repo
-        ivy {
-            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
-        }
-    }
-}
-
-
-configurations {
-    setup
-    build
-    deploy
-}
-
-dependencies {
-    setup 'edu.odu.cs.zeil:cwm-core:latest.integration'
-    build 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
-}
 
 /*
  * Tasks for course website construction:
@@ -97,81 +74,13 @@ dependencies {
  * |--|- cartridges/  generated cartridges
  */
  
- task setup_cwm (type: Copy) {
-     dependsOn configurations.setup
-     into file('build/cwm')     
-     from ({ zipTree(configurations.setup.singleFile) }) {  
-         include 'edu/odu/cs/cwm/core/templates/**'
-         include 'edu/odu/cs/cwm/core/graphics/**'
-         include 'edu/odu/cs/cwm/core/styles/**'
-     }
- }
+  
+// edu.odu.cs.zeil.cwm.Course course = new edu.odu.cs.zeil.cwm.Course() 
 
- setup_cwm << {
-    ant.move (file: "${projectDir}/build/cwm/edu/odu/cs/cwm/core/templates", 
-              tofile: "${projectDir}/build/cwm/templates") 
- }
+course {
+    sem = "f16"
+}
 
  
- task setup_copy_website_defaults (type: Copy, dependsOn: setup_cwm) {
-     from 'build/cwm/edu/odu/cs/cwm/core'
-     into 'build/website'
-     include 'graphics/**'
-     include 'styles/**'
- }  
- 
- task setup_copy_website_overrides (dependsOn: setup_copy_website_defaults) << {
-     copy  {
-         from 'graphics'
-         into 'build/website/graphics'
-     }
-     copy  {
-         from 'styles'
-         into 'build/website/styles'
-     }
-     if (file('index.html').exists()) {
-         copy  {
-             from 'index.html'
-             into 'build/website/'
-         }
-     } else {
-         copy  {
-             from 'cwm/templates/default-index.html'
-             into 'build/website/'
-         }
-     }
- }  
- 
- task setup_website (dependsOn: 'setup_copy_website_overrides')
 
-
- task setup {
-     description 'Prepare output and support directories'
-     dependsOn setup_cwm, setup_website
- }
- 
- 
- task build(dependsOn: 'setup') {
-     description 'Process documents and course outline to prepare the basic course website.'
- } << {
- }
- 
- 
- task packages(dependsOn: 'build')  {
-     description 'prepare optional course cartridges'
- }
- 
- 
- 
- task deploy(type: Sync, dependsOn: 'build') {
-     from 'build/website'
-     into rootProject.deployDestination
-     dirMode 0775
-     includeEmptyDirs true   
- }
- 
- task publish(dependsOn: 'build') {
- 
- }
- 
  
