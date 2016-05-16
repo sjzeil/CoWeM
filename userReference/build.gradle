@@ -3,11 +3,7 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
-apply plugin: edu.odu.cs.zeil.cwm.CourseWebsite
-
-project.ext.deployDestination = file('build/websiteFakeDeploy/')
-
-
+apply plugin: edu.odu.cs.cwm.CourseWebsite
 
 
 /*
@@ -75,10 +71,19 @@ project.ext.deployDestination = file('build/websiteFakeDeploy/')
  */
  
   
-// edu.odu.cs.zeil.cwm.Course course = new edu.odu.cs.zeil.cwm.Course() 
 
 course {
-    sem = "f16"
+	courseName        = 'Course_Websites'
+	courseTitle       = 'Course Website Management Tools'
+	semester          = '2016'
+	sem               = 'latest'
+	instructor        = 'Steven J Zeil'
+	email             = 'zeil@cs.odu.edu'
+	copyright         = '2013-2016, Old Dominion Univ.'
+	baseurl           = 'https://www.cs.odu.edu/~zeil/miscTopics/'
+	homeurl           = 'https://www.cs.odu.edu/~zeil/miscTopics/'
+	deployDestination = '/home/zeil/secure_html/miscTopics/'
+	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/miscTopics/'
 }
 
  

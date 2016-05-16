@@ -26,7 +26,11 @@ buildscript {
     }
 }
 
-import edu.odu.cs.cwm.macroproc.*
+import java.nio.file.Path;;
+import edu.odu.cs.cwm.Course
+import edu.odu.cs.cwm.DocumentSet
+import edu.odu.cs.cwm.documents.MarkdownDocument
+
 
 /*
  * Tasks for course documentset construction
@@ -39,6 +43,15 @@ import edu.odu.cs.cwm.macroproc.*
  *
  */
  
+DocumentSet docSet = new DocumentSet(project)
+
+task('listProperties') << {
+	println "All docSet properties:\n" + docSet.properties.collect{it}.join('\n')
+	println "\n secondaryDocuments:\t" + docSet.secondaryDocuments.collect{it}.join(' ')
+	println " listingDocuments:\t" + docSet.listingDocuments.collect{it}.join(' ')
+	println " supportDocuments:\t" + docSet.supportDocuments.collect{it}.join(' ')
+}
+
  
  /*
     What I would like to eventually have:
@@ -70,74 +83,98 @@ import edu.odu.cs.cwm.macroproc.*
 */ 
  
  
- def buildArea = file('../../build')
- def workArea = file('../../build/cwm/work/' + project.parent.name + "/" + project.name + '/')
- def finalArea = file('../../build/website/' + project.parent.name + "/" + project.name + '/')
- def chosenFormat = 'html';
- def chosenDelivery = 'online';
+def buildArea = file('../../build')
+def workArea = file('../../build/cwm/work/' + project.parent.name + "/" + project.name + '/')
+def templatesArea = file('../../build/cwm/templates/')
+def finalArea = file('../../build/website/' + project.parent.name + "/" + project.name + '/')
  
- task doc_setup (type: Copy, dependsOn: rootProject.tasks['setup']) {
-     from file('.')
-     into workArea
-    
-     exclude ('build.gradle')
-     exclude ('.*')
-     exclude ('*/**/*')
-     exclude ('**/*~')
- }
- 
+task doc_setup (type: Copy, dependsOn: rootProject.tasks['setup']) {
+    from file('.')
+    into workArea
+   
+    exclude ('build.gradle')
+    exclude ('.*')
+    exclude ('*/**/*')
+    exclude ('**/*~')
+} << {
+    finalArea.mkdirs();
+}
 
- task doc_mainDoc (dependsOn: doc_setup)
- 
- doc_mainDoc << {
-     // Preprocess .md file
-	 //    Run macro processor, parameters include format, delivery, courseName
-	 MacroProcessor macroProc = new MacroProcessor("%")
-	 macroProc.defineMacro(new Macro('_' + chosenFormat, ""));
-	 macroProc.defineMacro(new Macro('_delivery', chosenDelivery));
-	 macroProc.process (file(buildArea.toString() + '/cwm/templates/macros.md'))
-	 File mdDoc = file(workArea.toString() + '/' + project.name + '.md')
-	 String macResults = macroProc.process (mdDoc)
-	 File expandedMD = file(workArea.toString() + '/' + project.name + '.mac.md') 
-	 expandedMD.withWriter('UTF-8') {
-	     it.writeLine(macResults)
-	 }
-	 // Process markdown
-	 //    Extract metadata?
-	 //    Run peg markdown
-	 pdOptions = org.pegdown.Extensions.ALL
-	 org.pegdown.PegDownProcessor pdProc = new org.pegdown.PegDownProcessor(pdOptions)
-	 String pdResults = pdProc.markdownToHtml(macResults)
-	 File htmlV1 = file(workArea.toString() + '/' + project.name + '__html.v1.html') 
-     htmlV1.withWriter('UTF-8') {
-         it.writeLine(pdResults)
-     }
-	  
-	 // Format-specific post-processing
-	 //    Clean up XML (may have been only an artifact of multimarkdown)
-	 //    Paginate if appropriate to format
-	 //    XSLT md-format.xsl, extensive property list
-	 //    Text substitutions: course properties, local properties file if present, modification date?
-	 //    Test substitution: code filter
- }
- 
- task doc_secondaryDocs (dependsOn: doc_setup) {
- 
- }
- 
- task doc_Listings (dependsOn: doc_setup) {
- 
- }
- 
- task build (type: Copy, dependsOn: [doc_mainDoc, doc_secondaryDocs, doc_Listings]) {
-     description 'Prepare document set output'
-     dependsOn ':setup'
-     from workArea
-     into finalArea
-     exclude '*.md'
-     exclude '*.mmd'
- }
- 
- 
-  rootProject.tasks['build'].dependsOn(build)
- 
+task doc_mainDoc (dependsOn: [doc_setup, configurations.build])
+
+doc_mainDoc << {
+	Properties docProperties = new Properties()
+	docProperties.put('_' + rootProject.course.delivery, '1')
+	rootProject.course.properties.each { prop, value ->
+		docProperties.put(prop, value.toString())
+	}
+	docSet.properties.each { prop, value ->
+		docProperties.put(prop, value.toString())
+	}
+	docProperties.put('_CWM', templatesArea.toPath());
+	Path defaultmacros = templatesArea.toPath().resolve("macros.md");
+	docProperties.put("_defaultMacros",  defaultmacros);
+	MarkdownDocument doc = new MarkdownDocument(docSet.primaryDocument);
+	for (String format: docSet.formats) {
+		docProperties.put('_' + format, '1')
+		String result = doc.transform(format, docProperties)
+		String primaryName = docSet.primaryDocument.getName();
+		int k = primaryName.lastIndexOf('.');
+		if (k >= 0) {
+			primaryName = primaryName.substring(0, k);
+		}
+		File resultFile = file(finalArea.toString() + '/' + primaryName + "__" + format + ".html")
+		resultFile.withWriter('UTF-8') {
+	        it.writeLine(result)
+        }
+		docProperties.remove('_' + format)
+	}
+}
+    // Preprocess .md file
+//	 //    Run macro processor, parameters include format, delivery, courseName
+//	 MacroProcessor macroProc = new MacroProcessor("%")
+//	 macroProc.defineMacro(new Macro('_' + chosenFormat, ""));
+//	 macroProc.defineMacro(new Macro('_delivery', chosenDelivery));
+//	 macroProc.process (file(buildArea.toString() + '/cwm/templates/macros.md'))
+//	 File mdDoc = file(workArea.toString() + '/' + project.name + '.md')
+//	 String macResults = macroProc.process (mdDoc)
+//	 File expandedMD = file(workArea.toString() + '/' + project.name + '.mac.md') 
+//	 expandedMD.withWriter('UTF-8') {
+//	     it.writeLine(macResults)
+//	 }
+//	 // Process markdown
+//	 //    Extract metadata?
+//	 //    Run peg markdown
+//	 pdOptions = org.pegdown.Extensions.ALL
+//	 org.pegdown.PegDownProcessor pdProc = new org.pegdown.PegDownProcessor(pdOptions)
+//	 String pdResults = pdProc.markdownToHtml(macResults)
+//	 File htmlV1 = file(workArea.toString() + '/' + project.name + '__html.v1.html') 
+//     htmlV1.withWriter('UTF-8') {
+//         it.writeLine(pdResults)
+//     }
+//	  
+//	 // Format-specific post-processing
+//	 //    Clean up XML (may have been only an artifact of multimarkdown)
+//	 //    Paginate if appropriate to format
+//	 //    XSLT md-format.xsl, extensive property list
+//	 //    Text substitutions: course properties, local properties file if present, modification date?
+//	 //    Test substitution: code filter
+// }
+// 
+
+task doc_secondaryDocs (dependsOn: doc_setup) {
+
+}
+
+task doc_Listings (dependsOn: doc_setup) {
+
+}
+
+task build (dependsOn: [doc_mainDoc, doc_secondaryDocs, doc_Listings]) {
+    description 'Prepare document set output'
+    dependsOn ':setup'
+}
+
+
+rootProject.tasks['build'].dependsOn(build)
+

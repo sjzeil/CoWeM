@@ -1,4 +1,4 @@
-package edu.odu.cs.zeil.cwm
+package edu.odu.cs.cwm
 
 
 class Course {
@@ -103,7 +103,7 @@ class Course {
      *
      * If null, deploy will fail.
      */
-    File deployDestination = null;
+    String deployDestination = null;
 
     /**
      * An ssh URL, usually on a remote machine, to which course materials

@@ -1,4 +1,4 @@
-package edu.odu.cs.zeil.cwm
+package edu.odu.cs.cwm
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
