@@ -104,7 +104,7 @@ class CourseWebsite implements Plugin<Project> {
        project.task(type: Copy,  'setup_cwm') {
             dependsOn project.configurations.setup
             into project.file('build/cwm')     
-            from ({ zipTree(configurations.setup.singleFile) }) {  
+            from ({ project.zipTree(project.configurations.setup.singleFile) }) {  
                 include 'edu/odu/cs/cwm/core/templates/**'
                 include 'edu/odu/cs/cwm/core/graphics/**'
                 include 'edu/odu/cs/cwm/core/styles/**'
@@ -112,8 +112,8 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         project.setup_cwm << {
-           ant.move (file: "${projectDir}/build/cwm/edu/odu/cs/cwm/core/templates", 
-                     tofile: "${projectDir}/build/cwm/templates") 
+           ant.move (file: "build/cwm/edu/odu/cs/cwm/core/templates", 
+                     tofile: "build/cwm/templates") 
         }
 
 
@@ -126,21 +126,21 @@ class CourseWebsite implements Plugin<Project> {
         }  
 
         project.task (dependsOn: 'setup_copy_website_defaults', 'setup_copy_website_overrides') << {
-            copy  {
+            project.copy  {
                 from 'graphics'
                 into 'build/website/graphics'
             }
-            copy  {
+            project.copy  {
                 from 'styles'
                 into 'build/website/styles'
             }
-            if (file('index.html').exists()) {
-                copy  {
+            if (project.file('index.html').exists()) {
+                project.copy  {
                     from 'index.html'
                     into 'build/website/'
                 }
             } else {
-                copy  {
+                project.copy  {
                     from 'cwm/templates/default-index.html'
                     into 'build/website/'
                 }
@@ -170,7 +170,7 @@ class CourseWebsite implements Plugin<Project> {
 
         project.task (type: Sync, dependsOn: 'build', 'deploy') {
             from 'build/website'
-            into project.rootProject.deployDestination
+            into project.course.deployDestination
             dirMode 0775
             includeEmptyDirs true   
         }

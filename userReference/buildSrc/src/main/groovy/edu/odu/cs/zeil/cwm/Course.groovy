@@ -103,7 +103,7 @@ class Course {
      *
      * If null, deploy will fail.
      */
-    File deploymentDestination = null;
+    File deployDestination = null;
 
     /**
      * An ssh URL, usually on a remote machine, to which course materials
@@ -111,7 +111,7 @@ class Course {
      *
      * If null, deployBySsh will fail.
      */
-    String deploymentURL = null;
+    String sshDeployURL = null;
 
     /**
      * An ssh key used for deploying to a remote machine.
@@ -119,7 +119,7 @@ class Course {
      * If null, deployBySsh will use an existing ssh agent or will
      * prompt for credentials.
      */
-    File sshDeploymentKey = null;
+    File sshDeployKey = null;
     
     /**
      * Allow application of a closure to a Course.
