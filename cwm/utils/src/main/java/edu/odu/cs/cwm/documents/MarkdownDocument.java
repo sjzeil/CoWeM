@@ -57,6 +57,42 @@ public class MarkdownDocument implements Document {
 	
 	private final static String CWMTemplatesProperty = "_CWM";
 	
+	private final static String[] commonEntities = {
+			"cent", 	"#162",	 
+			"pound", "#163",
+			"sect", "#167",
+			"copy", "#169",
+			"laquo", "#171",
+			"raquo", "#187",
+			"reg", "#174",
+			"deg", "#176",
+			"plusmn", "#177",
+			"para", "#182",
+			"middot", "#183",
+			"frac12", "#188",
+			"ndash", "#8211",
+			"mdash", "#8212",
+			"lsquo", "#8216",
+			"rsquo", "#8217",
+			"sbquo", "#8218",
+			"ldquo", "#8220", 
+			"rdquo", "#8221",
+			"bdquo", "#8222",
+			"dagger", "#8224",
+			"Dagger", "#8225",
+			"bull", "#8226",
+			"hellip", "#8230",
+			"prime", "#8242",
+			"Prime", "#8243",
+			"euro", "#8364",
+			"trade", "#8482",
+			"asymp", "#8776",
+			"ne", "#8800",
+			"le", "#8804",
+			"ge", "#8805"
+	};
+
+	
 	private final static String[] specialSubstitutionValues = {
 			"/*...*/", "&#x22ee;",
 			"/*1*/", "&#x2780;",
@@ -263,6 +299,7 @@ public class MarkdownDocument implements Document {
 		PegDownProcessor pdProc = new PegDownProcessor(pdOptions);
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTMLheader + pdResults + HTMLtrailer;
+		htmlText = performEntitySubstitutions(htmlText);
 		
 		org.w3c.dom.Document basicHtml = null;
 		try {
@@ -272,9 +309,11 @@ public class MarkdownDocument implements Document {
 		} catch (ParserConfigurationException e) {
 			logger.error ("Could not set up XML parser: " + e);
 		} catch (SAXException e) {
-			logger.error("Unable to parse output from Markdown processor: " + e);
+			logger.error("Unable to parse output from Markdown processor: ", e);
+			logger.error("Text was:\n" + htmlText);
 		} catch (IOException e) {
-			logger.error("Unable to parse output from Markdown processor: " + e);
+			logger.error("Unable to parse output from Markdown processor: ", e);
+			logger.error("Text was:\n" + htmlText);
 		}
 		return basicHtml;
 	}
@@ -323,8 +362,8 @@ public class MarkdownDocument implements Document {
 			Transformer xform = template.newTransformer();
 			xform.setParameter("format", format);
 			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
-			Result htmlOut = new StreamResult(System.out); xform.setOutputProperty(OutputKeys.INDENT, "yes"); 	xform.setOutputProperty(OutputKeys.METHOD, "xml");
-			//DOMResult htmlOut = new DOMResult(paginatedDoc);
+			//Result htmlOut = new StreamResult(System.out); xform.setOutputProperty(OutputKeys.INDENT, "yes"); 	xform.setOutputProperty(OutputKeys.METHOD, "xml");
+			DOMResult htmlOut = new DOMResult(paginatedDoc);
 			xform.transform(xmlIn, htmlOut);
 		} catch (TransformerConfigurationException e) {
 			logger.error ("Problem parsing XSLT2 stylesheet " 
@@ -457,6 +496,29 @@ public class MarkdownDocument implements Document {
 		return result;
 	}
 
+	
+	/**
+	 * Substitutes common symbolic entities by numeric codes 
+	 * to allow PegDown output to be loaded as XML.
+	 * 
+	 * @param htmlText  text in which to perform the substitutions
+	 * @return  htmlText with all substitutions performed.
+	 */
+	private String performEntitySubstitutions(String htmlText) {
+		String result = htmlText;
+		for (int i = 0; i < commonEntities.length; i +=2) {
+			String target = "&" + commonEntities[i] + ";";
+			String value = "&" + commonEntities[i+1] + ";";
+			result = result.replace(target, value);
+		}
+		return result;
+	}
+
+	
+	
+	
+	
+	
 	/**
 	 * Extracts a desired metadata field from the document. Metadata fields are
 	 * found at the start of a document in the form
