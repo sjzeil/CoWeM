@@ -31,7 +31,7 @@
   <xsl:param name="stylesDir" select="'../../styles'"/>
   <xsl:param name="altformats" select="'yes'"/>
 
-  <xsl:output method="xml" encoding="iso-8859-1"/>
+  <xsl:output method="xml" encoding="UTF-8"/>
 
 
 
