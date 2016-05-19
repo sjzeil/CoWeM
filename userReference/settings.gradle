@@ -2,15 +2,18 @@
 // Reference Manual & Sample Course
 rootProject.name = 'cwm-userRef'  
 
+rootProject.buildFileName = "website.gradle"
 
 
 def includeFrom = {
-    dir ->  new File(rootDir,dir).eachFileRecurse { f ->
-        if ( f.name == "build.gradle" ) {
-            String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
-            String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
-            include projectName
-        }
+	dir ->  new File(rootDir,dir).eachFileRecurse { f ->
+		if ( f.name == "website.gradle" ) {
+			String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
+			String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
+			println "found " + projectName
+			include projectName
+			project(projectName).buildFileName = "website.gradle"
+		}
    }
 }
 
@@ -18,4 +21,6 @@ def includeFrom = {
 includeFrom('Directory')
 includeFrom('Public')
 includeFrom('Protected')
+
+
 
