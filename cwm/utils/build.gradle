@@ -3,10 +3,19 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
-
+ buildscript {
+	 repositories {
+		 jcenter()
+	 }
+	 dependencies {
+		 classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.2.0+'
+	 }
+ }
+ 
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+apply plugin: 'org.unbroken-dome.test-sets'
 apply plugin: 'project-report'
 apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
@@ -20,7 +29,9 @@ publishing {
     }
 }
 
-
+testSets {
+	integrationTest
+}
 
 dependencies {
     compile 'org.pegdown:pegdown:1.6.0+'
@@ -30,6 +41,7 @@ dependencies {
     testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
     testRuntime 'org.slf4j:slf4j-simple:1.7.0+'
 }
+
 
 
 jar {
