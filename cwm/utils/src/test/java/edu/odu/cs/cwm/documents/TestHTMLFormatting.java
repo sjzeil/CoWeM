@@ -133,31 +133,36 @@ public class TestHTMLFormatting {
 	 */
 	@Test
 	public void testSimpleDoc() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {
+		String titleString = "A Title";
+		String line1 = "A short";
+		String line2 = "paragraph";
+		
 		String[] htmlInput = {
 				"<html>",
 				"<head>",
-				"<title> A Title</title>",
+				"<title>" + titleString + "</title>",
 				"</head>",
 				"<body>",
-				"<p>A short paragraph.</p></body>",
+				"<p>" + line1,
+				line2 + "</p></body>",
 				"</html>"	
 		};
 
 
 		org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
-		String htmlContent = basicHtml.getTextContent();
-
-		assertTrue (htmlContent.contains("A Title"));
-		assertTrue (htmlContent.contains("a short"));
-		assertTrue (htmlContent.contains("paragraph."));
-
 		Element root = basicHtml.getDocumentElement();
+		String htmlContent = root.getTextContent();
+
+		assertTrue (htmlContent.contains(titleString));
+		assertTrue (htmlContent.contains(line1));
+		assertTrue (htmlContent.contains(line2));
+
 		XPath xPath = XPathFactory.newInstance().newXPath();
 
 		assertEquals ("html", root.getLocalName());
 
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
-		assertEquals ("Title of Document", actualTitle);
+		assertEquals (titleString, actualTitle);
 
 		NodeList pages = root.getElementsByTagName("page");
 		assertEquals (0, pages.getLength());
@@ -171,7 +176,7 @@ public class TestHTMLFormatting {
 				"div[@class='title']", titleBlock,
 				XPathConstants.NODE);
 		assertNotNull(titleDiv);
-		assertEquals ("Title of Document", titleDiv.getTextContent());
+		assertEquals (titleString, titleDiv.getTextContent());
 
 		NodeList pars = (NodeList)xPath.evaluate(
 				"/html/body/p", root,
@@ -181,9 +186,9 @@ public class TestHTMLFormatting {
 		for (int i = 0; i < pars.getLength(); ++i) {
 			Node p = pars.item(i);
 			String pt = p.getTextContent(); 
-			if (pt.contains("a short")) {
+			if (pt.contains(line1)) {
 				found = true;
-				assertTrue (pt.contains("paragraph"));
+				assertTrue (pt.contains(line2));
 				break;
 			}
 		}
@@ -201,11 +206,13 @@ public class TestHTMLFormatting {
 				"net.sf.saxon.TransformerFactoryImpl"); 
 		TransformerFactory transFact = TransformerFactory.newInstance();
 
-		String htmlText = "<html><body>Document generation failed.</body></html>\n";
-		DocumentBuilder dBuilder = null;
-
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		dBuilder = dbFactory.newDocumentBuilder();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		org.w3c.dom.Document inputDoc = dBuilder.parse(
+				new InputSource(
+						new StringReader(
+								String.join(System.getProperty("line.separator"),
+										htmlInput))));
 
 		Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
 		formattedDoc = dBuilder.newDocument();
@@ -217,9 +224,6 @@ public class TestHTMLFormatting {
 			xform.setParameter(key, properties.getProperty(key));
 		}
 
-		org.w3c.dom.Document inputDoc = parseHTML(
-				String.join(System.getProperty("line.separator"),
-						htmlInput));
 		Source xmlIn = new DOMSource(inputDoc);
 		DOMResult htmlOut = new DOMResult(formattedDoc);
 		xform.transform(xmlIn, htmlOut);
