@@ -379,7 +379,7 @@ public class TestPaginationTransforms {
 		NodeList sections = root.getElementsByTagName("section");
 
 		for (int i = 0; i < ids.length; ++i) {
-			System.err.println("i=" + i + " id =" + ids[i]);
+			//System.err.println("i=" + i + " id =" + ids[i]);
 			Node n = getElementById(basicHtml, ids[i]);
 			assertNotNull(n);
 			Element parent = (Element)n.getParentNode();

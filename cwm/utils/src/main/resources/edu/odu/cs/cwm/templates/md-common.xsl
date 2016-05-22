@@ -57,14 +57,16 @@
   </xsl:if>
   <xsl:if test="$email != ''">
     <xsl:text>&#10;</xsl:text>
-    <a href="javascript:footerEmail('{$email}','{$courseName}')">
+    <a href="mailto:{$email}">
       <img src="{$baseURL}graphics/email.png" title="Email to instructor"/>
     </a>
   </xsl:if>
   <span style="margin: 0 32px;"></span>
-  <xsl:apply-templates 
-      select="document($buildURL)/project/target[@name='documents']/docformat" 
-      mode="options"/>
+  <xsl:for-each select="tokenize($formats,',')">
+      <xsl:call-template name="linkToFormat">
+          <xsl:with-param name="otherFormat" select="normalize-space(.)"/>
+      </xsl:call-template> 
+  </xsl:for-each>
 </xsl:template>
 
 <xsl:template name="insertHeader">
@@ -78,9 +80,6 @@
 
 <xsl:template name="insertFooter">
   <div class="footer">
-    <script src="{$baseURL}styles/communications.js"> 
-      <xsl:text>/* */</xsl:text>
-    </script>
     <div style="text-align: center; border-top: solid #000040; margin-top: 40px;">
       <xsl:call-template name="insertNavIcons"/>
     </div>
@@ -90,46 +89,46 @@
 
 
 
-<xsl:template match="docformat" mode="options">
+<xsl:template name="linkToFormat">
+  <xsl:param name="otherFormat"/>
   <xsl:if test="$altformats = 'yes'">
-    <xsl:text>&#10;</xsl:text>
-    <xsl:choose>
-      <xsl:when test="@format = 'topics'">
-      </xsl:when>
-      <xsl:when test="@format = 'modules'">
-      </xsl:when>
-      <xsl:when test="@format = 'epub'">
-	<a class="imgLink" href="../../Directory/ebooks/index.html">
-	  <img src="{$baseURL}graphics/{@format}.png" title="e-book for course"/>
-	</a>      
-      </xsl:when>
-      <xsl:when test="@format = 'mobi'"></xsl:when>
-      <xsl:otherwise>
-	<xsl:variable name="theTitle">
-	  <xsl:choose>
-	    <xsl:when test="@format = 'html'">
-	      <xsl:text>single-page HTML version</xsl:text>
+    <xsl:if test="$otherFormat != $format">
+      <xsl:text>&#10;</xsl:text>
+      <xsl:choose>
+        <xsl:when test="$otherFormat = 'topics'">
+        </xsl:when>
+        <xsl:when test="$otherFormat = 'modules'">
+        </xsl:when>
+        <xsl:when test="$otherFormat = 'epub'">
+	      <a class="imgLink" href="{$baseURL}Directory/ebooks/index.html">
+	        <img src="{$baseURL}graphics/{$otherFormat}.png" title="e-book for course"/>
+	      </a>      
+        </xsl:when>
+        <xsl:when test="$otherFormat = 'mobi'"></xsl:when>
+	    <xsl:when test="$otherFormat = 'html'">
+	        <a class="imgLink" href="{$primaryDocument}__{$otherFormat}.html">
+	          <img src="{$baseURL}graphics/{$otherFormat}.png" title="single-page HTML version"/>
+	        </a>
 	    </xsl:when>
-	    <xsl:when test="@format = 'pages'">
-	      <xsl:text>multi-page HTML version</xsl:text>
+	    <xsl:when test="$otherFormat = 'pages'">
+	        <a class="imgLink" href="{$primaryDocument}__{$otherFormat}.html">
+	          <img src="{$baseURL}graphics/{$otherFormat}.png" title="multi-page HTML version"/>
+	        </a>
 	    </xsl:when>
-	    <xsl:when test="@format = 'slidy'">
-	      <xsl:text>Slides for classroom lectures</xsl:text>
+	    <xsl:when test="$otherFormat = 'slides'">
+	        <a class="imgLink" href="{$primaryDocument}__{$otherFormat}.html">
+	          <img src="{$baseURL}graphics/{$otherFormat}.png" title="Slides for lectures"/>
+	        </a>
+	    </xsl:when>
+	    <xsl:when test="$otherFormat = 'slidy'">
+	        <a class="imgLink" href="{$primaryDocument}__{$otherFormat}.html">
+	          <img src="{$baseURL}graphics/{$otherFormat}.png" title="Slides for lectures"/>
+	        </a>
 	    </xsl:when>
 	  </xsl:choose>
-	</xsl:variable>
-	<xsl:if test="@format != $format">
-	  <a class="imgLink" href="{$primaryDocument}__{@format}.html">
-	    <img src="{$baseURL}graphics/{@format}.png" title="{$theTitle}"/>
-	  </a>
-	</xsl:if>
-      </xsl:otherwise>
-    </xsl:choose>
+    </xsl:if>
   </xsl:if>
 </xsl:template>
-
-
-
 
 
 </xsl:stylesheet>

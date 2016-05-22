@@ -5,6 +5,7 @@
 >
 
   <xsl:import href="./md-common.xsl"/>
+  <xsl:import href="./paginate.xsl"/>
   
   
   <xsl:param name="meta_Author" select="''"/>
@@ -40,19 +41,36 @@
     <xsl:apply-templates select="*|text()"/>
   </xsl:template>
 
+  <xsl:template match="html">
+  	<xsl:variable name="numbered">
+	  <xsl:apply-templates select="body" mode="sectionNumbering"/>    
+  	</xsl:variable>
+    <html>
+      <xsl:copy-of select="@*"/>
+	  <xsl:apply-templates select="head"/>  
+	    <xsl:message>
+    <xsl:text>Numbered </xsl:text>
+    <xsl:value-of select="normalize-space($numbered)"/>
+  </xsl:message>
+	    
+	  <xsl:apply-templates select="$numbered"/>    
+    </html>
+  </xsl:template>
+
   <xsl:template match="head">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
-	    href="{$stylesURL}/md-html.css" />
+	    href="{$stylesURL}/md-{$format}.css" />
+	  <xsl:call-template name="generateCSSLinks"/>
 	  <meta name="viewport" content="width=device-width, initial-scale=1"/>	
       <script type="text/javascript"
-	      src="{$stylesURL}/md-html.js">
-	<xsl:text> </xsl:text>
+	      src="{$stylesURL}/md-{$format}.js">
+	      <xsl:text> </xsl:text>
       </script>
       <script type="text/javascript"
 	      src="@MathJaxURL@/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-	<xsl:text> </xsl:text>
+	      <xsl:text> </xsl:text>
       </script>
       <link rel="stylesheet" 
 	    href="@highlightjsURL@/styles/googlecode.css"/>
@@ -62,6 +80,22 @@
       <script>hljs.initHighlightingOnLoad();</script>
       <xsl:copy-of select="*"/>
     </xsl:copy>
+	  <xsl:call-template name="generateJSLinks"/>
+  </xsl:template>
+  
+  <xsl:template name="generateCSSLinks">
+    <xsl:if test="$meta_CSS != ''">
+      <xsl:for-each select="tokenize($meta_CSS,',')">
+          <link 
+          	rel="stylesheet" 
+          	type="text/css" 
+          	media="screen, projection, print"
+	    	href="normalize-space(.)" />
+      </xsl:for-each>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="generateJSLinks">
   </xsl:template>
 
   <xsl:template match="body">
@@ -71,103 +105,52 @@
       <xsl:call-template name="insertHeader"/>
 
       <div class="titleblock">
-	<h1>
-	  <xsl:value-of select="/html/head/title/text()"/>
-	</h1>
-	<xsl:if test="$meta_Author != ''">
-	    <h2>
-	      <xsl:value-of select="$meta_Author"/>
-	    </h2>
-	</xsl:if>
-	<xsl:if test="$meta_Date != ''">
-	  <p>
-	    <xsl:text>Last modified: </xsl:text>
-	    <xsl:value-of select="$meta_Date"/>
-	  </p>
-	</xsl:if>
+	    <h1 class="title">
+	       <xsl:value-of select="$meta_Title"/>
+	    </h1>
+	    <xsl:if test="$meta_Author != ''">
+	      <h2 class="author">
+	        <xsl:value-of select="$meta_Author"/>
+	      </h2>
+	    </xsl:if>
+	    <xsl:if test="$meta_Date != ''">
+	      <div class="date">
+	        <xsl:text>Last modified: </xsl:text>
+	        <xsl:value-of select="$meta_Date"/>
+	       </div>
+	      </xsl:if>
       </div>
 
-      <xsl:if test="/html/head/meta[@name='toc']">
-	<div class="toc">
-	  <xsl:text>Contents:</xsl:text>
-	  <xsl:apply-templates select="h1 | h2" mode="toc"/>
-	</div>
+      <xsl:if test="meta_TOC != ''">
+	    <div class="toc">
+	      <xsl:text>Contents:</xsl:text>
+	        <xsl:apply-templates select="h1 | h2" mode="toc"/>
+	    </div>
       </xsl:if>
 
-      <xsl:apply-templates select="*|text()"/>
+      <xsl:apply-templates select="node()"/>
+      
       <xsl:call-template name="insertFooter"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="h1">
+  <xsl:template match="h1|h2|h3|h4|h5">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:value-of select="1 + count(preceding-sibling::h1)"/>
-      <xsl:text>. </xsl:text>
+      <xsl:value-of select="@sectionNumber"/>
       <xsl:apply-templates select="*|text()"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="h1" mode="toc">
-    <div class="toc-h1">
+  <xsl:template match="h1|h2|h3" mode="toc">
+    <div class="toc-{local-name(.)}">
       <a href="#{@id}">
-	<xsl:value-of select="1 + count(preceding-sibling::h1)"/>
-	<xsl:text>. </xsl:text>
-	<xsl:apply-templates select="*|text()"/>
+	    <xsl:value-of select="@sectionNumber"/>
+	    <xsl:apply-templates select="*|text()"/>
       </a>
     </div>
   </xsl:template>
 
-  <xsl:template match="h2">
-    <xsl:variable name="sectionNum" select="count(preceding-sibling::h1)"/>
-    <xsl:variable name="sectionNds" select="preceding-sibling::h1"/>
-    <xsl:choose>
-      <xsl:when test="count($sectionNds) &gt; 0">
-	<xsl:variable name="sectionNd" select="preceding-sibling::h1[1]"/>
-	<xsl:variable name="priors" select="count($sectionNd/preceding-sibling::h1 | $sectionNd/preceding-sibling::h2)"/>
-	<xsl:variable name="currents" select="count(preceding-sibling::h1 | preceding-sibling::h2)"/>
-	<xsl:variable name="subsectionNum" select="$currents - $priors"/>
-	<xsl:copy>
-	  <xsl:copy-of select="@*"/>
-	  <xsl:value-of select="$sectionNum"/>
-	  <xsl:text>.</xsl:text>
-	  <xsl:value-of select="$subsectionNum"/>
-	  <xsl:text> </xsl:text>
-	  <xsl:apply-templates select="*|text()"/>
-	</xsl:copy>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:copy>
-	  <xsl:copy-of select="@*"/>
-	  <xsl:apply-templates select="*|text()"/>
-	</xsl:copy>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="h2" mode="toc">
-    <xsl:variable name="sectionNum" select="count(preceding-sibling::h1)"/>
-    <xsl:variable name="sectionNds" select="preceding-sibling::h1"/>
-    <xsl:choose>
-      <xsl:when test="count($sectionNds) &gt; 0">
-	<xsl:variable name="sectionNd" select="preceding-sibling::h1[1]"/>
-	<xsl:variable name="priors" select="count($sectionNd/preceding-sibling::h1 | $sectionNd/preceding-sibling::h2)"/>
-	<xsl:variable name="currents" select="count(preceding-sibling::h1 | preceding-sibling::h2)"/>
-	<xsl:variable name="subsectionNum" select="$currents - $priors"/>
-	<div class="toc-h2">
-	  <a href="#{@id}">
-	    <xsl:value-of select="$sectionNum"/>
-	    <xsl:text>.</xsl:text>
-	    <xsl:value-of select="$subsectionNum"/>
-	    <xsl:text> </xsl:text>
-	    <xsl:apply-templates select="*|text()"/>
-	  </a>
-	</div>
-      </xsl:when>
-      <xsl:otherwise>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
 
   <xsl:template match="code">
     <xsl:choose>
@@ -329,6 +312,10 @@
 
 
   <xsl:template match="*">
+  <xsl:message>
+    <xsl:text>Default procesing of </xsl:text>
+    <xsl:value-of select="local-name(.)"/>
+  </xsl:message>
     <xsl:copy>
       <xsl:copy-of select='@*'/>
       <xsl:apply-templates select="*|text()"/>
