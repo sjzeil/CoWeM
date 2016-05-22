@@ -30,6 +30,7 @@
   <xsl:param name="email" select="''"/>
   <xsl:param name="copyright" select="''"/>
   <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
+  <xsl:param name="format" select="'html'"/>
   <xsl:param name="formats" select="'html'"/>
   <xsl:param name="MathJaxURL" select="'@MathjaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>

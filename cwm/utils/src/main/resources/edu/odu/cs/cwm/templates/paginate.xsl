@@ -31,6 +31,19 @@
     <xsl:apply-templates select="*|text()"/>
   </xsl:template>
 
+<!--  For testing purposes -->
+  <xsl:template match="html[@test = 'pagination']">
+      <xsl:apply-templates select="." mode="paginate"/>
+  </xsl:template>
+
+  <xsl:template match="html[@test = 'sectioning']">
+      <xsl:apply-templates select="." mode="sectioning"/>
+  </xsl:template>
+
+  <xsl:template match="html[@test = 'sectionNumbering']">
+      <xsl:apply-templates select="." mode="sectionNumbering"/>
+  </xsl:template>
+
 
 <!-- sectionNumbering -->
 
@@ -40,7 +53,7 @@
       <xsl:copy-of select="@*"/>
       <xsl:copy-of select="head"/>
       <xsl:apply-templates select="body" mode="sectionNumbering"/>
-    </copy>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="body" mode="sectionNumbering">
@@ -53,14 +66,14 @@
   <xsl:template match="h1" mode="sectionNumbering">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:if test="../body  and  $numberDepth &gt; 0">
-	<xsl:variable name="sectionNumber">
-	  <xsl:value-of select="1 + count(preceding-siblings::h1)"/>
-	</xsl:variable>
-	<xsl:attribute name="sectionNumber">
-	  <xsl:value-of select="concat($sectionNumber, '. ')"/>
-	</xsl:if>
-      </xsl:attribute>
+      <xsl:if test="(local-name(..) = 'body') and (number($numberDepth) &gt; 0)">
+	    <xsl:variable name="sectionNumber">
+	      <xsl:value-of select="1 + count(preceding-sibling::h1)"/>
+	    </xsl:variable>
+	    <xsl:attribute name="sectionNumber">
+	      <xsl:value-of select="concat($sectionNumber, ' ')"/>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:apply-templates select="node()" mode="sectionNumbering"/>
     </xsl:copy>
   </xsl:template>
@@ -68,24 +81,24 @@
   <xsl:template match="h2" mode="sectionNumbering">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:if test="../body  and  $numberDepth &gt; 1">
+      <xsl:if test="(local-name(..) = 'body') and (number($numberDepth) &gt; 1)">
 	<xsl:variable name="sectionNumber">
-	  <xsl:value-of select="1 + count(preceding-siblings::h1)"/>
+	  <xsl:value-of select="count(preceding-sibling::h1)"/>
 	</xsl:variable>
 	<xsl:variable name="subsectionNumber">
 	  <xsl:choose>
-	    <xsl:when test="preceding-siblings::h2">
-	      <xsl:value-of select="1 + count(preceding-siblings::h2) 
-				    - count(preceding-siblings::h1[1]/preceding-siblings::h2)"/>
+	    <xsl:when test="preceding-sibling::h2">
+	      <xsl:value-of select="1 + count(preceding-sibling::h2) 
+				    - count(preceding-sibling::h1[1]/preceding-sibling::h2)"/>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <xsl:value-of select="1 + count(preceding-siblings::h2)"/>
+	      <xsl:value-of select="1 + count(preceding-sibling::h2)"/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
 	<xsl:attribute name="sectionNumber">
 	  <xsl:value-of select="concat($sectionNumber, '.', 
-				$subsectionNumber, '. ')"/>
+				$subsectionNumber, ' ')"/>
 	</xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="node()" mode="sectionNumbering"/>
@@ -95,36 +108,36 @@
   <xsl:template match="h3" mode="sectionNumbering">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:if test="../body  and  $numberDepth &gt; 2">
+      <xsl:if test="(local-name(..) = 'body') and (number($numberDepth) &gt; 2)">
 	<xsl:variable name="sectionNumber">
-	  <xsl:value-of select="1 + count(preceding-siblings::h1)"/>
+	  <xsl:value-of select="count(preceding-sibling::h1)"/>
 	</xsl:variable>
 	<xsl:variable name="subsectionNumber">
 	  <xsl:choose>
-	    <xsl:when test="preceding-siblings::h2">
-	      <xsl:value-of select="1 + count(preceding-siblings::h2) 
-		- count(preceding-siblings::h1[1]/preceding-siblings::h2)"/>
+	    <xsl:when test="preceding-sibling::h2">
+	      <xsl:value-of select="count(preceding-sibling::h2) 
+		- count(preceding-sibling::h1[1]/preceding-sibling::h2)"/>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <xsl:value-of select="1 + count(preceding-siblings::h2)"/>
+	      <xsl:value-of select="1 + count(preceding-sibling::h2)"/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
 	<xsl:variable name="subsubsectionNumber">
 	  <xsl:choose>
-	    <xsl:when test="preceding-siblings::h2">
-	      <xsl:value-of select="1 + count(preceding-siblings::h3) 
-		- count(preceding-siblings::h2[1]/preceding-siblings::h3)"/>
+	    <xsl:when test="preceding-sibling::h2">
+	      <xsl:value-of select="1 + count(preceding-sibling::h3) 
+		- count(preceding-sibling::h2[1]/preceding-sibling::h3)"/>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <xsl:value-of select="1 + count(preceding-siblings::h3)"/>
+	      <xsl:value-of select="1 + count(preceding-sibling::h3)"/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
 	<xsl:attribute name="sectionNumber">
 	  <xsl:value-of select="concat($sectionNumber, '.', 
 				$subsectionNumber, '.',
-				$subsubsectionNumber, '. ')"/>
+				$subsubsectionNumber, ' ')"/>
 	</xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="node()" mode="sectionNumbering"/>
@@ -156,9 +169,9 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <page>
-	<xsl:if test="*">
-	  <xsl:apply-templates select="*[1]" mode="recurseOnPages"/>
-	</xsl:if>
+	    <xsl:if test="*">
+	      <xsl:apply-templates select="*[1]" mode="recurseOnPages"/>
+	    </xsl:if>
       </page>
     </xsl:copy>
   </xsl:template>
@@ -166,11 +179,11 @@
   <xsl:template match="h1|h2|h3" mode="recurseOnPages">
     <page>
       <xsl:copy>
-	<xsl:copy-of select="@*"/>
-	<xsl:copy-of select="node()"/>
-      </copy>
+	    <xsl:copy-of select="@*"/>
+	    <xsl:copy-of select="node()"/>
+      </xsl:copy>
       <xsl:if test="following-sibling::*">
-	<xsl:apply-templates select="following-sibling::*[1]" mode="recurseOnPages"/>
+	    <xsl:apply-templates select="following-sibling::*[1]" mode="recurseOnPages"/>
       </xsl:if>
     </page>
   </xsl:template>
@@ -202,142 +215,155 @@
 <!-- Flatten pages -->
 
 
-  <xsl:template match="page" mode="flatten">
+  <xsl:template match="page" mode="flattenPages">
     <xsl:choose>
         <xsl:when test="p|div">
             <!-- This page has at least one paragraph. Keep it. -->
-            <xsl:copy>
+            <page>
                <xsl:copy-of select='@*'/>
-               <xsl:apply-templates select="*[local-name() != 'page']|text()"  mode="flatten"/>
-            </xsl:copy>
-            <xsl:apply-templates select="page"  mode="flatten"/>
+               <xsl:copy-of select="*[local-name() != 'page']|text()"/>
+            </page>
+            <xsl:apply-templates select="page"  mode="flattenPages"/>
+        </xsl:when>
+        <xsl:when test="page/p | page/div">
+            <!-- This page has no paragraphs of its own, but the next one does. Merge with next page. -->
+            <page>
+               <xsl:copy-of select='@*'/>
+               <xsl:copy-of select="*[local-name() != 'page']|text()"/>
+               <xsl:copy-of select="page/*[local-name() != 'page']| page/text()"/>
+            </page>
+            <xsl:apply-templates select="page/page"  mode="flattenPages"/>
         </xsl:when>
         <xsl:otherwise>
-            <!-- This page has no paragraphs of its own. Merge with next page. -->
-            <xsl:copy>
+            <!-- This page has no paragraphs of its own. Neither does the next one. Merge with next two pages. -->
+            <page>
                <xsl:copy-of select='@*'/>
-               <xsl:apply-templates select="*[local-name() != 'page']|text()"  mode="flatten"/>
-               <xsl:apply-templates select="page/*"  mode="flatten"/>
-            </xsl:copy>
+               <xsl:copy-of select="*[local-name() != 'page']|text()"/>
+               <xsl:copy-of select="page/*[local-name() != 'page']| page/text()"/>
+               <xsl:copy-of select="page/page/*[local-name() != 'page']| page/page/text()"/>
+            </page>
+            <xsl:apply-templates select="page/page/page"  mode="flattenPages"/>
         </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
 
-  <xsl:template match="text()" mode="flatten">
+  <xsl:template match="text()" mode="flattenPages">
     <xsl:copy-of select='.'/>
   </xsl:template>
 
 
-  <xsl:template match="*" mode="flatten">
+  <xsl:template match="*" mode="flattenPages">
     <xsl:copy>
       <xsl:copy-of select='@*'/>
-      <xsl:apply-templates select="*|text()"  mode="flatten"/>
+      <xsl:apply-templates select="*|text()"  mode="flattenPages"/>
     </xsl:copy>
   </xsl:template>
 
 
 
-<!-- sectionize: Rearrange pages into a hierarchical section structure -->
+<!-- sectioning: Rearrange pages into a hierarchical section structure -->
 
-  <xsl:template match="html" mode="sectionize">
+  <xsl:template match="html" mode="sectioning">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:copy-of select="head"/>
-      <xsl:apply-templates select="body" mode="sectionize"/>
+      <xsl:apply-templates select="body" mode="sectioning"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="body" mode="sectionize">
+  <xsl:template match="body" mode="sectioning">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates select="node()[1]" mode="sectionize1"/>
+      <xsl:apply-templates select="node()[1]" mode="sectioning1"/>
     </xsl:copy>
   </xsl:template>
 
 
-  <xsl:template match="h1" mode="sectionize1">
-    <section>
+  <xsl:template match="h1" mode="sectioning1">
+    <section depth="1">
       <xsl:copy-of select="."/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize2"/>
+			   mode="sectioning2"/>
     </section>
     <xsl:apply-templates select="./following-sibling::h1[1]"
-			 mode="sectionize1"/>
+			 mode="sectioning1"/>
   </xsl:template>
 
-  <xsl:template match="node()" mode="sectionize1">
+  <xsl:template match="node()" mode="sectioning1">
       <xsl:copy-of select='.'/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize1"/>
-  </xsl:text>
+			   mode="sectioning1"/>
+  </xsl:template>
 
-  <xsl:template match="h2" mode="sectionize2">
-    <section>
+  <xsl:template match="h2" mode="sectioning2">
+    <section depth="2">
       <xsl:copy-of select="."/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize3"/>
+			   mode="sectioning3"/>
     </section>
     <xsl:apply-templates select="./following-sibling::h2[1]"
-			 mode="sectionize2"/>
+			 mode="sectioning2"/>
   </xsl:template>
 
-  <xsl:template match="h1" mode="sectionize2">
+  <xsl:template match="h1" mode="sectioning2">
   </xsl:template>
 
-  <xsl:template match="node()" mode="sectionize2">
+  <xsl:template match="node()" mode="sectioning2">
       <xsl:copy-of select='.'/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize2"/>
-  </xsl:text>
+			   mode="sectioning2"/>
+  </xsl:template>
 
 
-  <xsl:template match="h3" mode="sectionize3">
-    <section>
+  <xsl:template match="h3" mode="sectioning3">
+    <section depth="3">
       <xsl:copy-of select="."/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize4"/>
+			   mode="sectioning4"/>
     </section>
     <xsl:apply-templates select="./following-sibling::h3[1]"
-			 mode="sectionize3"/>
+			 mode="sectioning3"/>
   </xsl:template>
 
-  <xsl:template match="h1|h2" mode="sectionize3">
+  <xsl:template match="h1|h2" mode="sectioning3">
   </xsl:template>
 
-  <xsl:template match="node()" mode="sectionize3">
+  <xsl:template match="node()" mode="sectioning3">
       <xsl:copy-of select='.'/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize3"/>
-  </xsl:text>
+			   mode="sectioning3"/>
+  </xsl:template>
 
 
-  <xsl:template match="h4" mode="sectionize4">
-    <section>
+  <xsl:template match="h4" mode="sectioning4">
+    <section depth="4">
       <xsl:copy-of select="."/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize5"/>
+			   mode="sectioning5"/>
     </section>
     <xsl:apply-templates select="./following-sibling::h4[1]"
-			 mode="sectionize4"/>
+			 mode="sectioning4"/>
   </xsl:template>
 
-  <xsl:template match="h1|h2|h3" mode="sectionize4">
+  <xsl:template match="h1|h2|h3" mode="sectioning4">
   </xsl:template>
 
-  <xsl:template match="node()" mode="sectionize4">
+  <xsl:template match="node()" mode="sectioning4">
       <xsl:copy-of select='.'/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize4"/>
-  </xsl:text>
-
-
-  <xsl:template match="h1|h2|h3|h4" mode="sectionize5">
+			   mode="sectioning4"/>
   </xsl:template>
 
-  <xsl:template match="node()" mode="sectionize5">
+
+  <xsl:template match="h1|h2|h3|h4" mode="sectioning5">
+  </xsl:template>
+
+  <xsl:template match="node()" mode="sectioning5">
       <xsl:copy-of select='.'/>
       <xsl:apply-templates select="./following-sibling::node()[1]"
-			   mode="sectionize5"/>
-  </xsl:text>
+			   mode="sectioning5"/>
+  </xsl:template>
+  
+</xsl:stylesheet>
 
