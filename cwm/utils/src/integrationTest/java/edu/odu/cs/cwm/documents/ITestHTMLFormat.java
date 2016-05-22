@@ -123,12 +123,6 @@ public class ITestHTMLFormat {
 		for (int i = 0; i < documentSetProperties.length; i += 2) {
 			properties.put (documentSetProperties[i], documentSetProperties[i+1]);
 		}
-		
-		
-		Path cwmSupportFiles = Paths.get("src", "test", "data");
-		properties.put("_CWM", cwmSupportFiles);
-		Path defaultmacros = cwmSupportFiles.resolve("macros.md");
-		properties.put("_defaultMacros",  defaultmacros);
 	}
 
 	

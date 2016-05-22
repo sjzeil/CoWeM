@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -330,17 +331,29 @@ public class MarkdownDocument implements Document {
 	 */
 	public String postprocess(org.w3c.dom.Document htmlDoc, String format, 
 			Properties properties) {
-		final Path cwmTemplates = (Path)properties.get(CWMTemplatesProperty);
-		final Path formatConversionSheetFile = cwmTemplates.resolve(
-				"md-" + format + ".xsl");
-		final Path paginationSheetFile = cwmTemplates.resolve("paginate.xsl");
+		
+		final String xsltLocation  = "/edu/odu/cs/cwm/templates/";
+		final InputStream formatConversionSheet = MarkdownDocument.class.getResourceAsStream(
+				xsltLocation + "md-" + format + ".xsl");
+
+		String htmlText = "<html><body>Document generation failed.</body></html>\n";
+		if (formatConversionSheet == null) {
+			logger.error("Unsupported output format: " + format);
+			return htmlText;
+		}
+
+
 		extractMetdataIfNecessary();
 
 		System.setProperty("javax.xml.transform.TransformerFactory", 
 				"net.sf.saxon.TransformerFactoryImpl"); 
 		TransformerFactory transFact = TransformerFactory.newInstance();
+		transFact.setURIResolver((href, base) -> {
+			System.err.println("resolving URI for " + href);
+		    final InputStream s = this.getClass().getResourceAsStream(xsltLocation + href);
+		    return new StreamSource(s);
+		});
 		
-		String htmlText = "<html><body>Document generation failed.</body></html>\n";
 		DocumentBuilder dBuilder = null;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -351,37 +364,11 @@ public class MarkdownDocument implements Document {
 		}
 		
 		
-		
-
-		// Paginate.
-		org.w3c.dom.Document paginatedDoc = null;
-		try {
-			Source xslSource = new StreamSource(paginationSheetFile.toFile());
-			paginatedDoc = dBuilder.newDocument();
-			Templates template = transFact.newTemplates(xslSource);
-			Transformer xform = template.newTransformer();
-			xform.setParameter("format", format);
-			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
-			//Result htmlOut = new StreamResult(System.out); xform.setOutputProperty(OutputKeys.INDENT, "yes"); 	xform.setOutputProperty(OutputKeys.METHOD, "xml");
-			DOMResult htmlOut = new DOMResult(paginatedDoc);
-			xform.transform(xmlIn, htmlOut);
-		} catch (TransformerConfigurationException e) {
-			logger.error ("Problem parsing XSLT2 stylesheet " 
-					+ paginationSheetFile, e);
-			return htmlText;
-		} catch (TransformerException e) {
-			logger.error ("Problem applying stylesheet " 
-					+ paginationSheetFile, e);
-			return htmlText;			
-		}
-		
-		
-		
 		// Transform basic HTML into the selected format
 		
 		org.w3c.dom.Document formattedDoc = null;		
 		try {
-			Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
+			Source xslSource = new StreamSource(formatConversionSheet);
 			formattedDoc = dBuilder.newDocument();
 			Templates template = transFact.newTemplates(xslSource);
 			Transformer xform = template.newTransformer();
@@ -393,17 +380,19 @@ public class MarkdownDocument implements Document {
 			for (Object okey: metadata.keySet()) {
 				String key = okey.toString();
 				xform.setParameter("meta_" + key, metadata.getProperty(key));
+				System.err.println("passing metadata field " + "meta_" + key + " as " + metadata.getProperty(key));
 			}
-			Source xmlIn = new DOMSource(paginatedDoc.getDocumentElement());
+			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
 			DOMResult htmlOut = new DOMResult(formattedDoc);
 			xform.transform(xmlIn, htmlOut);
+			logger.info("format transformation completed");
 		} catch (TransformerConfigurationException e) {
 			logger.error ("Problem parsing XSLT2 stylesheet " 
-					+ formatConversionSheetFile, e);
+					+ formatConversionSheet, e);
 			return htmlText;
 		} catch (TransformerException e) {
 			logger.error ("Problem applying stylesheet " 
-					+ formatConversionSheetFile, e);
+					+ formatConversionSheet, e);
 			return htmlText;			
 		}
 
@@ -415,7 +404,7 @@ public class MarkdownDocument implements Document {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			DOMSource source = new DOMSource(formattedDoc);
+			Source source = new DOMSource(formattedDoc.getDocumentElement());
 			StringWriter htmlString = new StringWriter();
 			StreamResult htmlOut = new StreamResult(htmlString);
 			transformer.transform(source, htmlOut);

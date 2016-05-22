@@ -42,7 +42,12 @@ dependencies {
     testRuntime 'org.slf4j:slf4j-simple:1.7.0+'
 }
 
-
+sourceSets {
+	integrationTest {
+		resources.srcDirs =['src/main/resources']
+		output.resourcesDir = "build/classes/integrationTest"
+	}
+}
 
 jar {
     manifest {

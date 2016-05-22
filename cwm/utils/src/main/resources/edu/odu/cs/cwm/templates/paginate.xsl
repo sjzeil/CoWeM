@@ -145,10 +145,13 @@
   </xsl:template>
 
 
-  <xsl:template match="node()" mode="sectionNumber">
+  <xsl:template match="*" mode="sectionNumbering">
     <xsl:copy-of select='.'/>
   </xsl:template>
 
+  <xsl:template match="text()" mode="sectionNumbering">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
 
 
 <!-- Paginate -->  

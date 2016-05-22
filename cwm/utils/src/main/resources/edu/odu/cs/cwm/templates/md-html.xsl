@@ -31,6 +31,7 @@
   <xsl:param name="homeURL" select="'../../index.html'"/>
 
   <xsl:param name="altformats" select="'yes'"/>
+  <xsl:param name="numberingDepth" select="'3'"/>
 
   <xsl:output method="xml" encoding="UTF-8"/>
 
@@ -45,6 +46,11 @@
   	<xsl:variable name="numbered">
 	  <xsl:apply-templates select="body" mode="sectionNumbering"/>    
   	</xsl:variable>
+  	<xsl:message>
+  	  <xsl:text>Numbering built </xsl:text>
+  	  <xsl:value-of select="count($numbered//*)"/>
+  	  <xsl:text> nodes. </xsl:text>
+  	</xsl:message>
     <html>
       <xsl:copy-of select="@*"/>
 	  <xsl:apply-templates select="head"/>  
