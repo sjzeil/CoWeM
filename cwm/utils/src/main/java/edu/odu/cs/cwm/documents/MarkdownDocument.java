@@ -359,7 +359,7 @@ public class MarkdownDocument implements Document {
 				"net.sf.saxon.TransformerFactoryImpl"); 
 		TransformerFactory transFact = TransformerFactory.newInstance();
 		transFact.setURIResolver((href, base) -> {
-			System.err.println("resolving URI to: " + xsltLocation + href);
+			//System.err.println("resolving URI to: " + xsltLocation + href);
 		    final InputStream s = this.getClass().getResourceAsStream(xsltLocation + href);
 		    return new StreamSource(s);
 		});

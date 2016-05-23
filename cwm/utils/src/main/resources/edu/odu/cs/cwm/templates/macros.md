@@ -17,7 +17,6 @@
 
 Assorted text decorations (from docbook, originally)
 
-%ifdef _html
 %define <\firstterm> {newterm} {<span class="firstterm" markdown="1">newterm</span>}
 %define <\emph> {newterm} {<span class="emph" markdown="1">newterm</span>}
 %define <\type> {newterm} {<span class="type" markdown="1">newterm</span>}
@@ -30,39 +29,12 @@ Assorted text decorations (from docbook, originally)
 %define <\replaceable> {newterm} {<span class="replaceable" markdown="1">newterm</span>}
 %define <\sout> <strikePhrase> {<span class='strike' markdown='1'>strikePhrase</span>}
 %define <\anchor> <anchorID> {<span id='anchorID'></span>}
-%endif
-
-
-%ifdef _epub
-%define <\firstterm> {newterm} {<span class="firstterm" markdown="1">newterm</span>}
-%define <\emph> {newterm} {<span class="emph" markdown="1">newterm</span>}
-%define <\type> {newterm} {<span class="type" markdown="1">newterm</span>}
-%define <\varname> {newterm} {<span class="varname" markdown="1">newterm</span>}
-%define <\code> {newterm} {<span class="code" markdown="1">newterm</span>}
-%define <\function> {newterm} {<span class="function" markdown="1">newterm</span>}
-%define <\file> {newterm} {<span class="file" markdown="1">newterm</span>}
-%define <\filename> {newterm} {<span class="file" markdown="1">newterm</span>}
-%define <\command> {newterm} {<span class="command" markdown="1">newterm</span>}
-%define <\replaceable> {newterm} {<span class="replaceable" markdown="1">newterm</span>}
-%define <\sout> <strikePhrase> {<span class='strike' markdown='1'>strikePhrase</span>}
-%define <\anchor> <anchorID> {<span id='anchorID'></span>}
-%endif
 
 
 
   Conversion for older docbook olinks as translated into LaTeX
-%ifdef _html
 %define <\olink> {document,linkedText} {[linkedText](../document/)}
-%else
-%define <\olink> {document,linkedText} {\doclink{document}{linkedText}}
-%endif
 
-
-%ifdef _epub
-%define <\olink> {document,linkedText} {[linkedText](../document/)}
-%else
-%define <\olink> {document,linkedText} {\doclink{document}{linkedText}}
-%endif
 
 
 
@@ -85,7 +57,6 @@ Assorted text decorations (from docbook, originally)
 
 
 Callout numbers
-%ifdef _html
 %define <\co1> <> [<span>&#x2780;</span>]
 %define <\co2> <> [<span>&#x2781;</span>]
 %define <\co3> <> [<span>&#x2782;</span>]
@@ -95,36 +66,9 @@ Callout numbers
 %define <\co7> <> [<span>&#x2786;</span>]
 %define <\co8> <> [<span>&#x2787;</span>]
 %define <\co9> <> [<span>&#x2788;</span>]
-%else
-
-%ifdef _epub
-%define <\co1> <> [<span>&#x2780;</span>]
-%define <\co2> <> [<span>&#x2781;</span>]
-%define <\co3> <> [<span>&#x2782;</span>]
-%define <\co4> <> [<span>&#x2783;</span>]
-%define <\co5> <> [<span>&#x2784;</span>]
-%define <\co6> <> [<span>&#x2785;</span>]
-%define <\co7> <> [<span>&#x2786;</span>]
-%define <\co8> <> [<span>&#x2787;</span>]
-%define <\co9> <> [<span>&#x2788;</span>]
-
-%else
-
-%define <\co1> <> [\ding{192}]
-%define <\co2> <> [\ding{193}]
-%define <\co3> <> [\ding{194}]
-%define <\co4> <> [\ding{195}]
-%define <\co5> <> [\ding{196}]
-%define <\co6> <> [\ding{197}]
-%define <\co7> <> [\ding{198}]
-%define <\co8> <> [\ding{199}]
-%define <\co9> <> [\ding{200}]
-%endif
-%endif
 
 Image processing:
 
-%ifdef _html
 %define <\bPicOnRight> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: right; max-width: pctwidth%;"/>}
 %define <\picOnRight> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: right; max-width: pctwidth%;"/>}
 %define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
@@ -132,33 +76,9 @@ Image processing:
 %define <\centerPic> (file,pctwidth) {<div class="noFloat"> </div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
 %define <\icon> (file,linkURL) {<span class="linkedIcon"><a href="linkURL" target="_blank"><img src="file"/></a></span>}
 %define <\noFloat> <> {<div class="noFloat"> </div>}
-%else
-%ifdef _epub
-%define <\bPicOnRight> (file,pctwidth) {<div class="noFloat"> </div><div><img src="file.png" style="float: right; max-width: pctwidth%;"/></div>}
-%define <\picOnRight> (file,pctwidth) {<div class="noFloat"> </div><div><img src="file.png" style="float: right; max-width: pctwidth%;"/></div>}
-%define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat"> </div><div><img src="file.png" style="float: left; max-width: pctwidth%;"/></div>}
-%define <\picOnLeft> (file,pctwidth) {<div class="noFloat"> </div><div><img src="file.png" style="float: left; max-width: pctwidth%;"/></div>}
-%define <\centerPic> (file,pctwidth) {<div class="noFloat"> </div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
-%define <\icon> (file,linkURL) {<span class="linkedIcon"><a href="linkURL" target="_blank"><img src="file"/></a></span>}
-%define <\noFloat> <> {<div class="noFloat"/>}
-%else
-%define <\bPicOnRight> (file,pctwidth) <\begin{picOnRight}[pctwidth]{file}>
-%define <\bPicOnLeft> (file,pctwidth) <\begin{picOnLeft}[pctwidth]{file}>
-%define <\centerPic> (file,pctwidth) <\n\n\centerPic[pctwidth]{file}\n\n>
-%endif
-%ifdef _html
+
 %define <\ePicOnRight> () <>
 %define <\ePicOnLeft> () <>
-%else
-%ifdef _epub
-%define <\ePicOnRight> () <>
-%define <\ePicOnLeft> () <>
-%else
-%define <\ePicOnRight> () <\end{picOnRight}>
-%define <\ePicOnLeft> () <\end{picOnRight}>
-%endif
-%endif
-%endif
 
 
 
@@ -184,43 +104,14 @@ Listings:
 %endif
 %endif
 
-%ifdef _html
-%define {\bExample} {theTitle} {</p><example markdown="1"><title
- markdown="1">theTitle</title><p>}
-%define {\eExample} {} {</p></example><p>}
-%endif
-%ifdef _epub
-%define {\bExample} {theTitle} {</p><example markdown="1"><title
- markdown="1">theTitle</title><p>}
-%define {\eExample} {} {</p></example><p>}
-%endif
+%define {\bExample} {theTitle} {<example markdown="1"><title markdown="1">theTitle</title>}
+%define {\eExample} {} {</example>}
+
 
 Click to reveal
-%ifdef _html
 %define {^^^} {summaryText} {</p><details markdown="1">
 <summary markdown="1">summaryText</summary><div markdown="1"><p>}
 %define {^^^} {} {</p></div></details><p>}
-%else
-%ifdef _epub
-%define {^^^} {summaryText} {</p><details markdown="1">
-<summary markdown="1">summaryText</summary><div markdown="1"><p>}
-%define {^^^} {} {</p></div></details><p>}
-%else
-
-%define {^^^} {summaryText} {
-
----
-
-summaryText
-
-}
-%define {^^^} {} {
-
----
-
-}
-%endif
-%endif
 
 Slideshow
 
@@ -238,30 +129,12 @@ Slideshow
 
 Sidebars
 
-%ifdef _html
-%define <\bSidebar> (sidebarWidth) {<div class="noFloat"> </div><div class="sidebar pctsidebarWidth" markdown="1">
-}
-%define <\bSidebar> () {<div class="noFloat"> </div><div class="sidebar pct50" markdown="1">
-}
-%define <\eSidebar> () {
-</p></div><p>
-} 
-%else
-%ifdef _epub
-%define <\bSidebar> (sidebarWidth) {<div class="noFloat"> </div><div class="sidebar pctsidebarWidth" markdown="1">
-}
-%define <\bSidebar> () {<div class="noFloat"> </div><div class="sidebar pct50" markdown="1">
-}
-%define <\eSidebar> () {
-</p></div><p>
-} 
-%endif
-%endif
+%define <\bSidebar> (sidebarWidth) {<sidebar width="sidebarWidth">}
+%define <\eSidebar> () {</sidebar>}
 
 
 Columns
 
-%ifdef _html
 %define <\bSplitColumns> () {<div markdown="1"><div class="leftColumn" markdown="1">
 }
 %define <\eSplitColumns> () {
@@ -273,21 +146,6 @@ Columns
 %define <\splitColumn> () {
 </p></div><div class="rightColumn" markdown="1"><p>
 } 
-%else
-%ifdef _epub
-%define <\bSplitColumns> () {<div markdown="1"><div class="leftColumn" markdown="1">
-}
-%define <\eSplitColumns> () {
-</p></div></div><p>
-} 
-%define <\splitColumns> () {
-</p></div><div class="rightColumn" markdown="1"><p>
-} 
-%define <\splitColumn> () {
-</p></div><div class="rightColumn" markdown="1"><p>
-} 
-%endif
-%endif
 
 
 %define <\Implies> <> [<span>&#x21D2;</span>]

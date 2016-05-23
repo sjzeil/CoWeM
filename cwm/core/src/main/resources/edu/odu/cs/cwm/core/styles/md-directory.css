@@ -28,6 +28,17 @@ div.leftPart {
   border-width: 0;
 }
 
+div.leftPart iframe {
+  height: 500px;
+  with: 100%;
+  background: transparent;
+  border-style: none;
+  border-width: 0;
+}
+
+
+
+
 div.leftPart table {
   background: #002441;
   color: #919693; 

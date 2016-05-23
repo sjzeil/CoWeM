@@ -38,15 +38,11 @@ import org.xml.sax.SAXException;
  * @author zeil
  *
  */
-public class ITestHTMLFormat {
+public class ITestDirectoryFormat {
 	
-	private static final String FORMAT = "html";
+	private static final String FORMAT = "directory";
 
 
-	private String[] deferredSubsitutions = {
-			"mathJaxURL","highlightjsURL", "slidyURL", 
-			"stylesURL", "graphicsURL", "baseURL", "homeURL"
-	};
 		
 	private String[] courseProperties = {
 			"courseName",         "Course_Websites",
@@ -70,44 +66,6 @@ public class ITestHTMLFormat {
 	
 	
 
-	private String mdInput = "Title: Title of Document\n"
-			+ "Author: John Doe\n"
-			+ "Date: Jan 1, 2012\n"
-			+ "TOC: yes\n"
-			+ "Macros: macro1.md\n"
-			+ "CSS: test1.css\n"
-			+ "Macros: macro2.md\n"
-			+ "CSS: test2.css\n"
-			+ "\n# Section 1\n\n"
-			+ "%if _includeThis\n"
-			+ "## Section 1.1\n\n"
-			+ "A paragraph in\nsection 1.1\n\n"
-			+ "%endif\n\n"
-			+ "## Section 1.2\n\n"
-			+ "A paragraph in\nsection 1.2\n\n"
-			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and \\em{even\nemphasized}.\n";
-	
-	private String preProcessed1 =
-			"\n# Section 1\n\n\n"
-			+ "## Section 1.1\n\n"
-			+ "A paragraph in\nsection 1.1\n\n"
-			+ "\n\n"
-			+ "## Section 1.2\n\n"
-			+ "A paragraph in\nsection 1.2\n\n"
-			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and <em>even\nemphasized</em>.\n";
-	
-	private String preProcessed2 = 
-			"\n# Section 1\n\n"
-			+ "\n\n"
-			+ "## Section 1.2\n\n"
-			+ "A paragraph in\nsection 1.2\n\n"
-			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and <em>even\nemphasized</em>.\n";
 	
 	
 	private Properties properties;

@@ -276,7 +276,7 @@ public class TestMarkdownDocument {
 		Element xmlEl= getElementById(basicHtml, "xml0");
 		assertNotNull (xmlEl);
 		assertEquals ("arbitraryXML", xmlEl.getTagName());
-		assertEquals ("an xml element", xmlEl.getTextContent());
+		assertEquals ("an  xml element", xmlEl.getTextContent());
 	}
 
 	

@@ -71,6 +71,7 @@ class Documents implements Plugin<Project> {
 		'doc_mainDoc') {
 		    inputs.file project.documents.primaryDocument
 			outputs.file new File(websiteArea, 'index.html')
+			println ("From " + project.documents.primaryDocument + " to " + new File(websiteArea, 'index.html'))
 		}
 
 		project.doc_mainDoc << {
@@ -89,6 +90,9 @@ class Documents implements Plugin<Project> {
 			if (k >= 0) {
 				primaryName = primaryName.substring(0, k);
 			}
+			if (!websiteArea.exists()) {
+				websiteArea.mkdirs();
+			}
 			for (String format: project.documents.formats) {
 				docProperties.put('_' + format, '1')
 				String result = doc.transform(format, docProperties)
@@ -99,6 +103,9 @@ class Documents implements Plugin<Project> {
 					it.writeLine(result)
 				}
 				docProperties.remove('_' + format)
+			}
+			if (project.documents.indexFormat.length() == 0) {
+				project.documents.indexFormat = project.documents.formats[0]
 			}
 			File indexSource = new File(websiteArea,
 				    primaryName + "__" 

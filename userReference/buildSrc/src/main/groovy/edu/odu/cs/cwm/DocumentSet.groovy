@@ -31,7 +31,7 @@ class DocumentSet {
 	 * Name of the format that will be selected for the
 	 * 'index.html' of the website directory.
 	 */
-	String indexFormat = "html";
+	String indexFormat = "";
 	
 	/**
 	 * Sets the name of the index format.

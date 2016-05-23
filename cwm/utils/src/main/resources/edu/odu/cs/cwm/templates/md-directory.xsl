@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE xsl:stylesheet> 
 <xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -22,8 +22,8 @@
   <xsl:param name="email" select="''"/>
   <xsl:param name="copyright" select="''"/>
   <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
-  <xsl:param name="format" select="'html'"/>
-  <xsl:param name="formats" select="'html'"/>
+  <xsl:param name="format" select="'directory'"/>
+  <xsl:param name="formats" select="'directory'"/>
   <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
 
@@ -43,13 +43,10 @@
   </xsl:template>
 
   <xsl:template match="html">
-  	<xsl:variable name="numbered">
-	  <xsl:apply-templates select="body" mode="sectionNumbering"/>    
-  	</xsl:variable>
     <html>
       <xsl:copy-of select="@*"/>
-	  <xsl:apply-templates select="head"/>  
-	  <xsl:apply-templates select="$numbered"/>    
+      <xsl:apply-templates select="head"/>  
+      <xsl:apply-templates select="body"/>    
     </html>
   </xsl:template>
 
@@ -57,70 +54,62 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
-	    href="{$stylesURL}/md-{$format}.css" />
-	  <xsl:call-template name="generateCSSLinks"/>
-	  <meta name="viewport" content="width=device-width, initial-scale=1"/>	
+        href="{$stylesURL}/md-{$format}.css" />
+      <xsl:call-template name="generateCSSLinks"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/> 
       <script type="text/javascript"
-	      src="{$stylesURL}/md-{$format}.js">
-	      <xsl:text> </xsl:text>
+          src="{$stylesURL}/md-{$format}.js">
+          <xsl:text> </xsl:text>
       </script>
       <script type="text/javascript"
-	      src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-	      <xsl:text> </xsl:text>
+          src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+          <xsl:text> </xsl:text>
       </script>
       <link rel="stylesheet" 
-	    href="@highlightjsURL@/styles/googlecode.css"/>
+        href="@highlightjsURL@/styles/googlecode.css"/>
       <script src="@highlightjsURL@/highlight.pack.js">
-	<xsl:text> </xsl:text>
+    <xsl:text> </xsl:text>
       </script>
       <script>hljs.initHighlightingOnLoad();</script>
       <xsl:copy-of select="*"/>
     </xsl:copy>
-	  <xsl:call-template name="generateJSLinks"/>
+      <xsl:call-template name="generateJSLinks"/>
   </xsl:template>
-  
 
   <xsl:template match="body">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-
-      <xsl:call-template name="insertHeader"/>
-
-      <div class="titleblock">
-	    <h1 class="title">
-	       <xsl:value-of select="$meta_Title"/>
-	    </h1>
-	    <xsl:if test="$meta_Author != ''">
-	      <h2 class="author">
-	        <xsl:value-of select="$meta_Author"/>
-	      </h2>
-	    </xsl:if>
-	    <xsl:if test="$meta_Date != ''">
-	      <div class="date">
-	        <xsl:text>Last modified: </xsl:text>
-	        <xsl:value-of select="$meta_Date"/>
-	       </div>
-	      </xsl:if>
-      </div>
-
-      <xsl:if test="$meta_TOC != ''">
-	    <div class="toc">
-	      <xsl:text>Contents:</xsl:text>
-	        <xsl:apply-templates select="h1 | h2" mode="toc"/>
-	    </div>
-      </xsl:if>
-
-      <xsl:apply-templates select="node()"/>
       
-      <xsl:call-template name="insertFooter"/>
+      <div class="titleblock">
+        <div class="courseName">@courseName@, @semester@</div>
+        <h1 class="title">
+           <xsl:value-of select="$meta_Title"/>
+        </h1>
+        <xsl:if test="$meta_Author != ''">
+          <h2 class="author">
+            <xsl:value-of select="$meta_Author"/>
+          </h2>
+        </xsl:if>
+        <xsl:if test="$meta_Date != ''">
+          <div class="date">
+            <xsl:text>Last modified: </xsl:text>
+            <xsl:value-of select="$meta_Date"/>
+           </div>
+          </xsl:if>
+      </div>
+      
+      <div class="center">
+	    <div class="leftPart">
+	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
+	    </div>
+	    <div class="rightPart">
+	      <xsl:apply-templates select="node()"/>
+	      <xsl:call-template name="insertFooter"/>
+	    </div>
+      </div>
     </xsl:copy>
   </xsl:template>
-
-
-
-
-
-
+    
 
   <xsl:template match="text()">
     <xsl:copy-of select='.'/>
@@ -133,5 +122,6 @@
       <xsl:apply-templates select="*|text()"/>
     </xsl:copy>
   </xsl:template>
+
 
 </xsl:stylesheet>
