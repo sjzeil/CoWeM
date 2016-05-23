@@ -82,9 +82,6 @@ class Documents implements Plugin<Project> {
 			project.documents.properties.each { prop, value ->
 				docProperties.put(prop, value.toString())
 			}
-			docProperties.put('_CWM', templatesArea.toPath());
-			Path defaultmacros = templatesArea.toPath().resolve("macros.md");
-			docProperties.put("_defaultMacros",  defaultmacros);
 			MarkdownDocument doc =
 					new MarkdownDocument(project.documents.primaryDocument);
 			String primaryName = project.documents.primaryDocument.name;

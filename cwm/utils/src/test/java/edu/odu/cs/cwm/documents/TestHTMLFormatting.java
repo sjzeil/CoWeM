@@ -53,7 +53,7 @@ public class TestHTMLFormatting {
 	private static final String FORMAT = "html";
 
 	private String[] deferredSubsitutions = {
-			"MathJaxURL","highlightjsURL", "slidyURL", 
+			"mathJaxURL","highlightjsURL", "slidyURL", 
 			"stylesURL", "graphicsURL", "baseURL", "homeURL"
 	};
 

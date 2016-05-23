@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 public class ITestHTMLFormat {
 
 	private String[] deferredSubsitutions = {
-			"MathJaxURL","highlightjsURL", "slidyURL", 
+			"mathJaxURL","highlightjsURL", "slidyURL", 
 			"stylesURL", "graphicsURL", "baseURL", "homeURL"
 	};
 		

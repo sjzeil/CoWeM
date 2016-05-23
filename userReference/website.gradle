@@ -73,15 +73,14 @@ apply plugin: edu.odu.cs.cwm.CourseWebsite
   
 
 course {
-	courseName        = 'Course_Websites'
+	courseName        = 'CS 000'
 	courseTitle       = 'Course Website Management Tools'
 	semester          = '2016'
 	sem               = 'latest'
 	instructor        = 'Steven J Zeil'
 	email             = 'zeil@cs.odu.edu'
 	copyright         = '2013-2016, Old Dominion Univ.'
-	baseurl           = 'https://www.cs.odu.edu/~zeil/miscTopics/'
-	homeurl           = 'https://www.cs.odu.edu/~zeil/miscTopics/'
+	homeURL           = 'https://www.cs.odu.edu/~zeil/miscTopics/'
 	deployDestination = '/home/zeil/secure_html/miscTopics/'
 	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/miscTopics/'
 }

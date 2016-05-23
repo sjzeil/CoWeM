@@ -9,9 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
@@ -53,11 +55,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class MarkdownDocument implements Document {
-	
-	private final static String DefaultMacrosProperty = "_defaultMacros";
-	
-	private final static String CWMTemplatesProperty = "_CWM";
-	
+		
 	private final static String[] commonEntities = {
 			"cent", 	"#162",	 
 			"pound", "#163",
@@ -193,18 +191,29 @@ public class MarkdownDocument implements Document {
 	 * @return  A Markdown document string ready for conversion to HTML.
 	 */
 	public String preprocess(String format, Properties properties) {
+		final String DefaultMacrosFile = "macros.md";
+		
 		MacroProcessor macroProc = new MacroProcessor("%");
 		macroProc.defineMacro(new Macro("_" + format, "1"));
-		Path defaultMacros = (Path)(properties.get(DefaultMacrosProperty));
-		if (defaultMacros != null) {
-			macroProc.process(defaultMacros.toFile());
+		
+		final String xsltLocation  = "/edu/odu/cs/cwm/templates/";
+		final InputStream macrosInStream = getClass().getResourceAsStream(
+				xsltLocation + DefaultMacrosFile);
+		try {
+			BufferedReader macrosIn = new BufferedReader(
+					new InputStreamReader(macrosInStream, "UTF-8"));
+			macroProc.process(macrosIn);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Unexpected error loading default macros.", e);
+		} catch (IOException e) {
+			logger.error("Unexpected error reading default macros.", e);
 		}
 		
 		extractMetdataIfNecessary();
 		
 		// Add any files listed in Macro: lines to the macro processor.
-		if (metadata.containsKey("Macro")) {
-			String macroFilesList = metadata.getProperty("Macro");
+		if (metadata.containsKey("meta_Macros")) {
+			String macroFilesList = metadata.getProperty("meta_Macros");
 			String[] macroFiles = macroFilesList.split("\t");
 			for (String macroFileName: macroFiles) {
 				File macroFile = new File(macroFileName);
@@ -377,10 +386,12 @@ public class MarkdownDocument implements Document {
 			for (Object okey: properties.keySet()) {
 				String key = okey.toString();
 				xform.setParameter(key, properties.getProperty(key));
+				//System.err.println("prop " + key + " => " + properties.getProperty(key));
 			}
 			for (Object okey: metadata.keySet()) {
 				String key = okey.toString();
 				xform.setParameter("meta_" + key, metadata.getProperty(key));
+				//System.err.println("prop " + "meta_" + key + " => " + metadata.getProperty(key));
 			}
 			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
 			DOMResult htmlOut = new DOMResult(formattedDoc);

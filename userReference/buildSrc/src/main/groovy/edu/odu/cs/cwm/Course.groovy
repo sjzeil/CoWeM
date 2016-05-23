@@ -7,7 +7,7 @@ class Course {
     /**
      *  URL used for mathematics rendering.
      */
-    URL MathJaxURL = new URL("https://cdn.mathjax.org/mathjax/latest");
+    URL mathJaxURL = new URL("https://cdn.mathjax.org/mathjax/latest");
     
     /**
      *  URL used for code highlighting.
@@ -19,15 +19,6 @@ class Course {
      */
     URL slidyURL = new URL("https://www.cs.odu.edu/~zeil/styles/Slidy2");
 
-    /**
-     *  Relative URL from document web pages to styles directory.
-     */
-    String stylesURL = "../../styles";
-
-    /**
-     *  Relative URL from document web pages to graphics directory.
-     */
-    String graphicsURL = "../../graphics";
 
     // Course Attributes
 
@@ -80,20 +71,17 @@ class Course {
     // Website Attributes
     
     /**
-     * Common string at the beginning of all course URLs after deployment.
-     * In general, we try to stick with relative URLs whenever possible so that
-     * the web content can be deployed in a wide variety of contexts (e.g., within
-     * an ordinary web site, within an Epub document, within a Blackboard course
-     * cartridge.  Since many of these don't provide ready access to an absolute URL,
-     * uses of this are under scrutiny to see if it can be eliminated.
+     * Relative URL back to the root directory of the course. (Deprecated,
+     * will probably be a computed string once variable depth documents are
+     * supported).
      */
-    String baseurl = "https://www.cs.odu.edu/~jdoe/cs999/" + sem + "/";
+    String baseURL = "../../";
     
     /**
      * URL used in "home" links from documents (generally in document footers).
      * If null or empty, such links should be suppressed.
      */
-    String homeurl = "../../Directory/outline/";
+    String homeURL = "../../Directory/outline/";
 
     // Build attributes
 

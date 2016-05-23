@@ -18,7 +18,7 @@
   <xsl:param name="doc" select="'doc'"/>
   <xsl:param name="format" select="'html'"/>
   <xsl:param name="pwdURL" select="'./'"/>
-  <xsl:param name="MathJaxURL" select="'@MathjaxURL@'"/>
+  <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
   <xsl:param name="courseName" select="'@courseName@'"/>
   <xsl:param name="stylesURL" select="'../../styles'"/>

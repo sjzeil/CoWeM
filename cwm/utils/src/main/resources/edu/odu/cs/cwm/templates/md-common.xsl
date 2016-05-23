@@ -32,7 +32,7 @@
   <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
   <xsl:param name="format" select="'html'"/>
   <xsl:param name="formats" select="'html'"/>
-  <xsl:param name="MathJaxURL" select="'@MathjaxURL@'"/>
+  <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
 
   <xsl:param name="baseURL" select="'../../'"/>
@@ -56,8 +56,10 @@
     </a>
   </xsl:if>
   <xsl:if test="$email != ''">
+    <xsl:variable name="subject" 
+       select="encode-for-uri(concat($courseName, ', ', $meta_Title))"/>
     <xsl:text>&#10;</xsl:text>
-    <a href="mailto:{$email}">
+    <a href="mailto:{$email}?subject={$subject}">
       <img src="{$baseURL}graphics/email.png" title="Email to instructor"/>
     </a>
   </xsl:if>
@@ -83,6 +85,12 @@
     <div style="text-align: center; border-top: solid #000040; margin-top: 40px;">
       <xsl:call-template name="insertNavIcons"/>
     </div>
+    <xsl:if test="$copyright != ''">
+      <div class="copyright">
+        <xsl:text>&#169; </xsl:text>
+        <xsl:value-of select="$copyright"/>
+     </div>
+   </xsl:if> 
   </div>
 </xsl:template>
 

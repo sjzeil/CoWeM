@@ -16,6 +16,9 @@ class CourseWebsite implements Plugin<Project> {
         project.extensions.create ("course", Course);
         
         project.allprojects {
+			
+			defaultTasks 'build'
+			
             repositories {
                  // jcenter()
                  mavenCentral()

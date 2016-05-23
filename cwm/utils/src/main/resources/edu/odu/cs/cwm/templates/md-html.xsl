@@ -24,7 +24,7 @@
   <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
   <xsl:param name="format" select="'html'"/>
   <xsl:param name="formats" select="'html'"/>
-  <xsl:param name="MathJaxURL" select="'@MathjaxURL@'"/>
+  <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
 
   <xsl:param name="baseURL" select="'../../'"/>
@@ -65,7 +65,7 @@
 	      <xsl:text> </xsl:text>
       </script>
       <script type="text/javascript"
-	      src="@MathJaxURL@/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	      src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 	      <xsl:text> </xsl:text>
       </script>
       <link rel="stylesheet" 
@@ -117,14 +117,13 @@
 	      </xsl:if>
       </div>
 
-      <xsl:if test="meta_TOC != ''">
+      <xsl:if test="$meta_TOC != ''">
 	    <div class="toc">
 	      <xsl:text>Contents:</xsl:text>
 	        <xsl:apply-templates select="h1 | h2" mode="toc"/>
 	    </div>
       </xsl:if>
 
-<p><b>end of toc</b></p>
       <xsl:apply-templates select="node()"/>
       
       <xsl:call-template name="insertFooter"/>
