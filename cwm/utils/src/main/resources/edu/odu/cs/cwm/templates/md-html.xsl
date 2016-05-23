@@ -4,8 +4,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
-  <xsl:import href="./md-common.xsl"/>
-  <xsl:import href="./paginate.xsl"/>
+  <xsl:import href="md-common.xsl"/>
+  <xsl:import href="paginate.xsl"/>
   
   
   <xsl:param name="meta_Author" select="''"/>
@@ -124,6 +124,7 @@
 	    </div>
       </xsl:if>
 
+<p><b>end of toc</b></p>
       <xsl:apply-templates select="node()"/>
       
       <xsl:call-template name="insertFooter"/>
@@ -132,9 +133,20 @@
 
   <xsl:template match="h1|h2|h3|h4|h5">
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:value-of select="@sectionNumber"/>
-      <xsl:apply-templates select="*|text()"/>
+      <xsl:copy-of select="@*[local-name() != 'sectionNumber']"/>
+      <xsl:choose>
+      	<xsl:when test="a[@name != '']">
+      	    <xsl:attribute name="id">
+      	    	<xsl:value-of select="a/@name"/> 
+      	    </xsl:attribute>
+	        <xsl:value-of select="@sectionNumber"/>
+    	    <xsl:apply-templates select="a/node()"/>
+      	</xsl:when>
+      	<xsl:otherwise>
+          <xsl:value-of select="@sectionNumber"/>
+          <xsl:apply-templates select="*|text()"/>
+      	</xsl:otherwise>
+      </xsl:choose>
     </xsl:copy>
   </xsl:template>
 

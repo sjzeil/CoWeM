@@ -1,6 +1,7 @@
 Title: Course Website Overview and Instructions
 Author: Steven Zeil
 Date: @docModDate@
+TOC: yes
 
 Some words of explanation about how I organize and maintain course
 websites.

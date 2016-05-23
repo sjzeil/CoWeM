@@ -297,6 +297,7 @@ public class MarkdownDocument implements Document {
 	 */
 	public org.w3c.dom.Document process(String markDownText) {
 		int pdOptions = org.pegdown.Extensions.ALL;
+		pdOptions -=  org.pegdown.Extensions.HARDWRAPS;
 		PegDownProcessor pdProc = new PegDownProcessor(pdOptions);
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTMLheader + pdResults + HTMLtrailer;
@@ -349,7 +350,8 @@ public class MarkdownDocument implements Document {
 				"net.sf.saxon.TransformerFactoryImpl"); 
 		TransformerFactory transFact = TransformerFactory.newInstance();
 		transFact.setURIResolver((href, base) -> {
-			final InputStream s = this.getClass().getResourceAsStream(xsltLocation + href);
+			System.err.println("resolving URI to: " + xsltLocation + href);
+		    final InputStream s = this.getClass().getResourceAsStream(xsltLocation + href);
 		    return new StreamSource(s);
 		});
 		
