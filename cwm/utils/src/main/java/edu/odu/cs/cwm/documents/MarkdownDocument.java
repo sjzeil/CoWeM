@@ -349,8 +349,7 @@ public class MarkdownDocument implements Document {
 				"net.sf.saxon.TransformerFactoryImpl"); 
 		TransformerFactory transFact = TransformerFactory.newInstance();
 		transFact.setURIResolver((href, base) -> {
-			System.err.println("resolving URI for " + href);
-		    final InputStream s = this.getClass().getResourceAsStream(xsltLocation + href);
+			final InputStream s = this.getClass().getResourceAsStream(xsltLocation + href);
 		    return new StreamSource(s);
 		});
 		
@@ -380,7 +379,6 @@ public class MarkdownDocument implements Document {
 			for (Object okey: metadata.keySet()) {
 				String key = okey.toString();
 				xform.setParameter("meta_" + key, metadata.getProperty(key));
-				System.err.println("passing metadata field " + "meta_" + key + " as " + metadata.getProperty(key));
 			}
 			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
 			DOMResult htmlOut = new DOMResult(formattedDoc);

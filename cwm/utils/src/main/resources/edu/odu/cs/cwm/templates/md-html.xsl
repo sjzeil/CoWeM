@@ -46,19 +46,9 @@
   	<xsl:variable name="numbered">
 	  <xsl:apply-templates select="body" mode="sectionNumbering"/>    
   	</xsl:variable>
-  	<xsl:message>
-  	  <xsl:text>Numbering built </xsl:text>
-  	  <xsl:value-of select="count($numbered//*)"/>
-  	  <xsl:text> nodes. </xsl:text>
-  	</xsl:message>
     <html>
       <xsl:copy-of select="@*"/>
 	  <xsl:apply-templates select="head"/>  
-	    <xsl:message>
-    <xsl:text>Numbered </xsl:text>
-    <xsl:value-of select="normalize-space($numbered)"/>
-  </xsl:message>
-	    
 	  <xsl:apply-templates select="$numbered"/>    
     </html>
   </xsl:template>
@@ -318,10 +308,6 @@
 
 
   <xsl:template match="*">
-  <xsl:message>
-    <xsl:text>Default procesing of </xsl:text>
-    <xsl:value-of select="local-name(.)"/>
-  </xsl:message>
     <xsl:copy>
       <xsl:copy-of select='@*'/>
       <xsl:apply-templates select="*|text()"/>
