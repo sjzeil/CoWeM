@@ -16,6 +16,7 @@
        have been given non-empty values/
   -->
 
+<!-- 
   <xsl:param name="meta_Author" select="''"/>
   <xsl:param name="meta_CSS" select="''"/>
   <xsl:param name="meta_Date" select="''"/>
@@ -40,8 +41,8 @@
 
   <xsl:param name="altformats" select="'yes'"/>
 
-
   <xsl:output method="xml" encoding="utf-8"/>
+-->
 
 
   <xsl:template name="generateCSSLinks">
