@@ -20,17 +20,16 @@
      section: Arranges the document into a hierarchy of sections based on
         h1..h5 headers.
   -->
-  
+
+<!--   
   <xsl:param name="format" select="'pages'"/>
+ -->
   <xsl:param name="numberDepth" select="'3'"/>
   
+ <!-- 
   <xsl:output method="xml" encoding="UTF-8"/>
+   -->
   
-  
-  <xsl:template match="/">
-    <xsl:apply-templates select="*|text()"/>
-  </xsl:template>
-
 <!--  For testing purposes -->
   <xsl:template match="html[@test = 'pagination']">
       <xsl:apply-templates select="." mode="paginate"/>

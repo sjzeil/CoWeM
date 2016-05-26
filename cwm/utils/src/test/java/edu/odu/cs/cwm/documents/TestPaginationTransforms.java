@@ -397,7 +397,8 @@ public class TestPaginationTransforms {
 			throws TransformerException, ParserConfigurationException, SAXException, IOException {
 		org.w3c.dom.Document formattedDoc = null;
 		Path formatConversionSheetFile = Paths.get("src", "main", "resources",
-				"edu", "odu", "cs", "cwm", "templates", "paginate.xsl");
+				"edu", "odu", "cs", "cwm", "templates", "md-html.xsl");
+		// Note md-html.xsl include's pagination, and supplies a template for select="/" 
 
 		System.setProperty("javax.xml.transform.TransformerFactory", 
 				"net.sf.saxon.TransformerFactoryImpl"); 
@@ -427,15 +428,6 @@ public class TestPaginationTransforms {
 		return formattedDoc;			
 	}
 
-
-	private org.w3c.dom.Document parseHTML (String htmlText) 
-			throws ParserConfigurationException, SAXException, IOException {
-		org.w3c.dom.Document basicHtml = null;
-		DocumentBuilder b 
-		= DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		basicHtml = b.parse(new InputSource(new StringReader(htmlText)));
-		return basicHtml;
-	}
 
 
 }

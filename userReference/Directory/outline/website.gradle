@@ -1,0 +1,8 @@
+
+apply plugin: edu.odu.cs.cwm.Documents
+
+ 
+documents {
+	formats = ['modules']
+}
+
