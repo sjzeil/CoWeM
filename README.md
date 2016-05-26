@@ -19,4 +19,10 @@ Learning Management Systems.
 
 # Project Status
 
-* [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cwm/utils/reports/reportsSummary/projectReports.html)This is a suite of scripts, graphics, style sheets & build files that
+* [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cwm/utils/reports/reportsSummary/projectReports.html)
+
+* The master branch version is currently in use for multiple courses. but is largely limited to Linux machines with a
+  fair amount of support software needing to be installed.
+  
+* The V1 branch currently under development is a pure Java&Gradle implementaiton that should run portably on
+  Linux, Windows, & OS/X
