@@ -105,6 +105,7 @@ if (project.hasProperty('buildNumber')) {
    theBuildNumber = project.buildNumber
 }
 
+def websiteDir = 'cwm/utils'
 
 task reportStats (type: JavaExec) {
     description 'Compute current project statistics from reports'
@@ -112,7 +113,7 @@ task reportStats (type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     main = 'edu.odu.cs.zeil.report_accumulator.Main';
     args = [theBuildNumber, 
-            'http://www.cs.odu.edu/~zeil/gitlab/' + project.name + '/reports/', 
+            'http://www.cs.odu.edu/~zeil/gitlab/' + websiteDir + '/reports/', 
             'build/reports']
 }
 
@@ -120,6 +121,6 @@ task deployReports (type: Copy) {
     description 'copy all reports to project web page'
     dependsOn 'reportStats'
     from 'build/reports'
-    into '/home/zeil/public_html/gitlab/' + project.name + '/reports'
+    into '/home/zeil/public_html/gitlab/' + websiteDir + '/reports'
 }
 
