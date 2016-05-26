@@ -11,13 +11,13 @@ import java.util.List;
  * 
  * Macros can be called as name or name(arg1, arg2, ...)
  * 
- * The ( ) in a macro call can be replaced by [ ] or { } or < > 
+ * The ( ) in a macro call can be replaced by [ ] or { } or &lt; &gt; 
  *  
  * Macro calls are replaced by the macro body, with substitution for the macro parameters.
  * A macro substitution also swallows a single blank preceding the macro name if the macro name
  * starts with an alphanumeric character and if the call 
  * is not at the beginning of the string) and a single blank following the macro call if the
- * macro call has no ( ), [ ], { }, or < >.
+ * macro call has no ( ), [ ], { }, or &lt; &gt;.
  * 
  * @author zeil
  *

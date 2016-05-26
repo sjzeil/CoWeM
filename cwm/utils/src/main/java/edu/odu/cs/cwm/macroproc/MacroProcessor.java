@@ -32,15 +32,15 @@ import java.util.HashSet;
  * 
  * defines a macro with the given name, a possibly empty, comma-separated arguments list, and
  * a body. In this command (and in the #include, above), the ( ) may be any matching pair of: (), [], 
- * {}, or <>.  The macro body may span multiple lines and the line feeds are considered part of the
+ * {}, or &lt;&gt;.  The macro body may span multiple lines and the line feeds are considered part of the
  * body.
  * 
  * Examples of macro definitions:
  *   #define (authorName) () (Steven Zeil)
- *   #define (slide) (title) <
+ *   #define (slide) (title) {
  *   \begin{slide}{title}
- *   >
- *   #define (picture)(file,sizepct) {<img src="file" style="max-width: sizepct%"/>}
+ *   }
+ *   #define (picture)(file,sizepct) {&lt;img src="file" style="max-width: sizepct%"/&gt;}
  * 
  * @author zeil
  *
