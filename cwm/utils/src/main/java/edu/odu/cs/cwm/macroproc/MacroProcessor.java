@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.odu.cs.cwm.macroproc;
 
 import java.io.BufferedReader;
@@ -30,45 +27,123 @@ import java.util.HashSet;
  * 
  * #define (macroName) (argslist) (macrobody)
  * 
- * defines a macro with the given name, a possibly empty, comma-separated arguments list, and
- * a body. In this command (and in the #include, above), the ( ) may be any matching pair of: (), [], 
- * {}, or &lt;&gt;.  The macro body may span multiple lines and the line feeds are considered part of the
- * body.
+ * defines a macro with the given name, a possibly empty, comma-separated
+ * arguments list, and a body. In this command (and in the #include, above),
+ * the ( ) may be any matching pair of: (), [],  {}, or &lt;&gt;.
+ * The macro body may span multiple lines and the line feeds are considered
+ * part of the body.
  * 
  * Examples of macro definitions:
  *   #define (authorName) () (Steven Zeil)
  *   #define (slide) (title) {
  *   \begin{slide}{title}
  *   }
- *   #define (picture)(file,sizepct) {&lt;img src="file" style="max-width: sizepct%"/&gt;}
+ *   #define (picture)(file,sizepct) {&lt;img src="file"
+ *            style="max-width: sizepct%"/&gt;}
  * 
  * @author zeil
  *
  */
 public class MacroProcessor {
-	
+
+	/**
+	 * Character used to introduce a basic macro command.
+	 */
 	private String commandPrefix = "#";
-	private ArrayList<Macro> macros;
-	private HashSet<String> macroNames;
-	private StringBuffer accumulated;
 	
+	/**
+	 * The macros defined in this processor.
+	 */
+	private ArrayList<Macro> macros;
+	
+	/**
+	 * Names of all defined macros.
+	 */
+	private HashSet<String> macroNames;
+	
+	/**
+	 * Partially processed text.
+	 */
+	private StringBuffer accumulated;
+
+	/**
+	 * Describes a stackable state during macro processing.
+	 * 
+	 * @author zeil
+	 */
 	private class InputState {
-		public char matching;
-		public boolean suppressed;
-		public Macro incompleteMacro;
+		/**
+		 * Indicates a character that opened a macro parameter list
+		 * or macro body that needs to be matched to close that construct.
+		 */
+		private char matching;
 		
-		public InputState (char m, boolean suppr) {
+		/**
+		 * Is copying of text to output suppresed due to a failed #if test? 
+		 */
+		private boolean suppressed;
+		
+		/**
+		 * Holds a macro that we are currnetly paring.
+		 */
+		private Macro incompleteMacro;
+
+		/**
+		 * Create a state.
+		 * @param m matching character
+		 * @param suppr true to suppress copying of text to output
+		 */
+		InputState (final char m, final boolean suppr) {
 			matching = m;
 			suppressed = suppr;
 			incompleteMacro = null;
 		}
+
+		/**
+		 * @return the matching
+		 */
+		public char getMatching() {
+			return matching;
+		}
+
+		/**
+		 * @param matching0 the matching to set
+		 */
+		public void setMatching(final char matching0) {
+			this.matching = matching0;
+		}
+
+		/**
+		 * @return the suppressed
+		 */
+		public boolean isSuppressed() {
+			return suppressed;
+		}
+
+
+		/**
+		 * @return the incompleteMacro
+		 */
+		public Macro getIncompleteMacro() {
+			return incompleteMacro;
+		}
+
+		/**
+		 * @param incompleteMacro0 the incompleteMacro to set
+		 */
+		public void setIncompleteMacro(final Macro incompleteMacro0) {
+			this.incompleteMacro = incompleteMacro0;
+		}
 	}
 
+	/**
+	 * Stack of states during document processing.
+	 */
 	private ArrayList<InputState> stack;
-	
+
 	/**
 	 * Defines a new macro processor with no currently defined macros,
-	 * using # as the command prefix
+	 * using # as the command prefix.
 	 */
 	public MacroProcessor () {
 		macros = new ArrayList<Macro>();
@@ -79,64 +154,74 @@ public class MacroProcessor {
 	}
 
 	/**
-	 * Defines a new macro processor with no currently defined macros
-	 * @param commandPrefix  character to use as the command prefix
+	 * Defines a new macro processor with no currently defined macros.
+	 * @param commandPrefix0  character to use as the command prefix
 	 */
-	public MacroProcessor (String commandPrefix) {
+	public MacroProcessor (final String commandPrefix0) {
 		macros = new ArrayList<Macro>();
 		macroNames = new HashSet<String>();
-		this.commandPrefix = commandPrefix;
+		this.commandPrefix = commandPrefix0;
 		stack = new ArrayList<>();
 		stack.add(new InputState(' ', false));
 		accumulated = new StringBuffer();
 	}
-	
+
 	/**
 	 * Add a new macro to the processor state.
 	 * @param macro macro
 	 */
-	public void defineMacro (Macro macro) {
+	public final void defineMacro (final Macro macro) {
 		//System.err.println ("Defining " + macro);
 		macros.add(macro);
 		macroNames.add(macro.name);
 	}
-	
+
 	/**
-	 * Process a single line of input, including commands and macro expansions
+	 * Process a single line of input, including commands and macro expansions.
 	 * 
 	 * @param line input line
 	 * @return processed input or null if line generates no input
 	 */
-	private String processLine (String line) {
-		InputState topState = stack.get(stack.size()-1);
-		if (topState.matching != ' ') {
-			int pos = line.indexOf(topState.matching);
+	private String processLine (final String line) {
+		InputState topState = stack.get(stack.size() - 1);
+		if (topState.getMatching() != ' ') {
+			int pos = line.indexOf(topState.getMatching());
 			if (pos < 0) {
-				topState.incompleteMacro.body = topState.incompleteMacro.body + "\n" + line;
+				topState.getIncompleteMacro().body = 
+						topState.getIncompleteMacro().body + "\n" + line;
 				return null;
 			} else {
-				topState.incompleteMacro.body = topState.incompleteMacro.body + "\n" + line.substring(0, pos);
-				stack.remove(stack.size()-1);
+				topState.getIncompleteMacro().body = 
+						topState.getIncompleteMacro().body 
+						+ "\n" + line.substring(0, pos);
+				stack.remove(stack.size() - 1);
 				return null;
 			}
 		}
-		
+
 		int pos = 0;
-		while (pos < line.length() && line.charAt(pos) == ' ')
+		while (pos < line.length() && line.charAt(pos) == ' ') {
 			++pos;
+		}
 		String trimmedString = line.substring(pos);
 		if (trimmedString.startsWith(commandPrefix)) {
 			String accumulation = accumulated.toString();
-			String result = (accumulation.length() > 0) ? processMacros(accumulation) : null;
+			String result = null;
+			if (accumulation.length() > 0) { 
+				result = processMacros(accumulation);
+			}
 			accumulated = new StringBuffer();
-			
+
 			if (trimmedString.startsWith(commandPrefix + "include")) {
-				return ((result == null) ? "" : result) + processInclude(trimmedString);
+				if (result == null) {
+					result = "";
+				}
+				return result + processInclude(trimmedString);
 			} else if (trimmedString.startsWith(commandPrefix + "ifdef")) {
-			    processIfDef (trimmedString, "ifdef");
+				processIfDef (trimmedString, "ifdef");
 				return result;
 			} else if (trimmedString.startsWith(commandPrefix + "if")) {
-			    processIfDef (trimmedString, "if");
+				processIfDef (trimmedString, "if");
 				return result;
 			} else if (trimmedString.startsWith(commandPrefix + "else")) {
 				processElse (trimmedString);
@@ -152,29 +237,41 @@ public class MacroProcessor {
 				accumulated.append(line);
 				accumulated.append(System.lineSeparator());
 			}
-		} else if (!topState.suppressed) {
+		} else if (!topState.isSuppressed()) {
 			accumulated.append(line);
 			accumulated.append(System.lineSeparator());
 		}
 		return null;
-/*
-		if (!topState.suppressed){
-			return processMacros (line);
-		} else {
-			return null;
-		}
-		*/
+		/*
+        if (!topState.suppressed){
+            return processMacros (line);
+        } else {
+            return null;
+        }
+		 */
 	}
-	
-	private String flush()
-	{
+
+	/**
+	 * Flush accumulated output to the output, clearing the accumulated buffer.
+	 * @return String to be flushed
+	 */
+	private String flush() {
 		String accumulation = accumulated.toString();
 		accumulated = new StringBuffer();
-		return (accumulation.length() > 0) ? processMacros(accumulation) : "";
+		if (accumulation.length() > 0) {
+			return processMacros(accumulation);
+		} else {
+			return "";
+		}
 	}
-	
-	
-	private String processMacros(String line) {
+
+
+	/**
+	 * Process any macros found in a line of text.
+	 * @param line Input text
+	 * @return output from macro processing.
+	 */
+	private String processMacros(final String line) {
 		String result = line;
 		for (Macro m: macros) {
 			result = m.apply(result);
@@ -183,8 +280,8 @@ public class MacroProcessor {
 	}
 
 	private void processDefine(String defineCommandStart) {
-		InputState topState = stack.get(stack.size()-1);
-		if (!topState.suppressed) {
+		InputState topState = stack.get(stack.size() - 1);
+		if (!topState.isSuppressed()) {
 			int start = commandPrefix.length() + "define".length();
 			ParseResult pr = parseEnclosure(defineCommandStart, start);
 			if (pr == null)
@@ -220,62 +317,62 @@ public class MacroProcessor {
 				}
 				Macro m = new Macro (name, Arrays.asList(args), defineCommandStart.substring(start));
 				defineMacro(m);
-				state.matching = closer;
-				state.incompleteMacro = m;
+				state.setMatching(closer);
+				state.setIncompleteMacro(m);
 				stack.add(state);
 			}
-			
+
 		}
 	}
 
 	private void processEndif(String endifCommand) {
 		if (stack.size() > 1)
-			stack.remove(stack.size()-1);
+			stack.remove(stack.size() - 1);
 	}
 
 	private void processElse(String elseCommand) {
 		if (stack.size() > 1) {
-			InputState topState = stack.get(stack.size()-1);
+			InputState topState = stack.get(stack.size() - 1);
 			InputState priorState = stack.get(stack.size()-2);
-			stack.remove(stack.size()-1);
-			stack.add (new InputState(' ', priorState.suppressed || !topState.suppressed));
+			stack.remove(stack.size() - 1);
+			stack.add (new InputState(' ', priorState.isSuppressed() || !topState.isSuppressed()));
 		}
 	}
 
-    private void processIfDef(String ifDefCommand, String ifdefLexeme) {
-	    InputState topState = stack.get(stack.size()-1);
-	    if (topState.suppressed) {
-		// Doesn't matter if the condition is true or not
-		stack.add (new InputState(' ', true));
-	    } else {
-		int start = commandPrefix.length() + ifdefLexeme.length();
-		while (start < ifDefCommand.length() && ifDefCommand.charAt(start) == ' ')
-		    ++start;
-		int stop = start;
-		while (stop < ifDefCommand.length() && ifDefCommand.charAt(stop) != ' ')
-		    ++stop;
-		if (start >= ifDefCommand.length() || stop == start) {
-		    stack.add (new InputState(' ', true));
+	private void processIfDef(String ifDefCommand, String ifdefLexeme) {
+		InputState topState = stack.get(stack.size() - 1);
+		if (topState.isSuppressed()) {
+			// Doesn't matter if the condition is true or not
+			stack.add (new InputState(' ', true));
 		} else {
-		    String macroName = ifDefCommand.substring(start, stop);
-		    stack.add (new InputState(' ', !macroNames.contains(macroName)));
+			int start = commandPrefix.length() + ifdefLexeme.length();
+			while (start < ifDefCommand.length() && ifDefCommand.charAt(start) == ' ')
+				++start;
+			int stop = start;
+			while (stop < ifDefCommand.length() && ifDefCommand.charAt(stop) != ' ')
+				++stop;
+			if (start >= ifDefCommand.length() || stop == start) {
+				stack.add (new InputState(' ', true));
+			} else {
+				String macroName = ifDefCommand.substring(start, stop);
+				stack.add (new InputState(' ', !macroNames.contains(macroName)));
+			}
 		}
-	    }
 	}
-    
+
 	private String processInclude(String includeCommand) {
-		InputState topState = stack.get(stack.size()-1);
-		if (!topState.suppressed) {
+		InputState topState = stack.get(stack.size() - 1);
+		if (!topState.isSuppressed()) {
 			ArrayList<InputState> savedStack = stack;
 			stack = new ArrayList<>();
 			stack.add(new InputState(' ', false));
 			String fileName;
 			try {
-			fileName = parseEnclosure(includeCommand, 
-				commandPrefix.length() + "include".length()).selectedString;
+				fileName = parseEnclosure(includeCommand, 
+						commandPrefix.length() + "include".length()).selectedString;
 			} catch (Exception e) {
-			    return "**Error " + includeCommand 
-				+ "\n: " + commandPrefix + "\n**";
+				return "**Error " + includeCommand 
+						+ "\n: " + commandPrefix + "\n**";
 			}
 			File input = new File(fileName);
 			if (input.exists()) {
@@ -292,7 +389,7 @@ public class MacroProcessor {
 	public class ParseResult {
 		String selectedString;
 		int stoppingPosition;
-		
+
 		public ParseResult (String sel, int stop)
 		{
 			selectedString = sel;
@@ -350,7 +447,7 @@ public class MacroProcessor {
 		return result;
 	}
 
-	
+
 	public String process (String inputString) {
 		String results = "";
 		BufferedReader input = null;
@@ -390,7 +487,7 @@ public class MacroProcessor {
 		}
 		return results;
 	}
-	
+
 
 	/**
 	 * Driver for macro processor.  Accepts args:
@@ -424,28 +521,31 @@ public class MacroProcessor {
 				inputFileName = args[i];
 			}
 		}
-		
+
 		BufferedReader mainInput;
 		if (inputFileName != null) {
 			mainInput = new BufferedReader(new FileReader(inputFileName));
 		} else {
 			mainInput = new BufferedReader(new InputStreamReader(System.in));
 		}
-		BufferedWriter mainOutput;	
+		BufferedWriter mainOutput;    
 		if (outputFileName != null) {
 			mainOutput = new BufferedWriter(new FileWriter(outputFileName));
 		} else {
-			mainOutput = new BufferedWriter(new OutputStreamWriter(System.out));
+			mainOutput = new BufferedWriter(
+					new OutputStreamWriter(System.out));
 		}
 		transformText (mainInput, mainOutput, processor);
 		if (outputFileName != null)
 			mainOutput.close();
-		if (inputFileName != null)
+		if (inputFileName != null) {
 			mainInput.close();
+		}
 	}
 
-	private static void transformText(BufferedReader input,
-			BufferedWriter output, MacroProcessor processor) throws IOException {
+	private static void transformText(final BufferedReader input,
+			final BufferedWriter output, final MacroProcessor processor)
+					throws IOException {
 		String line = input.readLine();
 		while (line != null) {
 			String processed = processor.processLine(line);

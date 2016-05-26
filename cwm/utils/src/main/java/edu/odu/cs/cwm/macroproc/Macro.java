@@ -66,7 +66,8 @@ public class Macro {
 				break;
 			}
 			char firstCharInName = name.charAt(0);
-			if (pos > start && Character.isLetterOrDigit(firstCharInName) && target.charAt(pos-1) != ' ') {
+			if (pos > start && Character.isLetterOrDigit(firstCharInName) 
+					&& target.charAt(pos - 1) != ' ') {
 				start = pos + 1;
 				continue;
 			}
@@ -92,7 +93,7 @@ public class Macro {
 			if (pos == start)
 				callStart = start;
 			else if (Character.isLetterOrDigit(firstCharInName)) {
-				callStart = pos-1;
+				callStart = pos - 1;
 			} else {
 				callStart = pos;
 			}

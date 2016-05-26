@@ -40,11 +40,11 @@
     -->
     <property name="severity" value="warning"/>
     
-
+    <!-- 
     <module name="SuppressionFilter">
         <property name="file" value="${suppressionFile}" />
     </module>
-    
+     -->
     
     <!-- Checks that a package-info.java file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage -->
@@ -64,7 +64,7 @@
 
     <!-- Checks for whitespace                               -->
     <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-    <module name="FileTabCharacter"/>
+    <!--  module name="FileTabCharacter"/  -->
 
     <!-- Miscellaneous other checks.                   -->
     <!-- See http://checkstyle.sf.net/config_misc.html -->
@@ -76,7 +76,8 @@
     </module -->
 
     <module name="TreeWalker">
-
+        <property name="tabWidth" value="4"/>
+        
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <module name="JavadocMethod"/>
