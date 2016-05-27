@@ -1,20 +1,11 @@
-/**
- * 
- */
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,7 +16,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Element;
@@ -47,13 +37,13 @@ public class ITestDirectoryFormat {
 	private String[] courseProperties = {
 			"courseName",         "Course_Websites",
 			"courseTitle",        "Course Website Management Tools",
-					"semester",          "2016",
-					"sem",               "latest",
-					"instructor",        "Steven J Zeil",
-					"email",             "zeil@cs.odu.edu",
-					"copyright",         "2013-2016, Old Dominion Univ.",
-					"delivery",  "online",
-					"_online", "1"
+			"semester",          "2016",
+			"sem",               "latest",
+			"instructor",        "Steven J Zeil",
+			"email",             "zeil@cs.odu.edu",
+			"copyright",         "2013-2016, Old Dominion Univ.",
+			"delivery",  "online",
+			"_online", "1"
 	};
 	
 	private String[] documentSetProperties = {

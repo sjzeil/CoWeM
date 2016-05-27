@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.odu.cs.cwm.documents;
 
 import java.util.Properties;
@@ -24,8 +21,8 @@ public interface Document {
 	 *         These are used both to customize the files (e.g., inserting
 	 *         the instructor's email address) and to access external
 	 *         support URLs (e.g., the URL used to access MathJax)   
-	 * @return
+	 * @return String containing HTML of page for web site.
 	 */
-	public String transform (String format, Properties properties); 
+	String transform (String format, Properties properties); 
 
 }

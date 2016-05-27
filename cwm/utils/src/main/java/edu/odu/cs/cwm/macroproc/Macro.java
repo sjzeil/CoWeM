@@ -13,10 +13,11 @@ import java.util.List;
  * 
  * The ( ) in a macro call can be replaced by [ ] or { } or &lt; &gt; 
  *  
- * Macro calls are replaced by the macro body, with substitution for the macro parameters.
- * A macro substitution also swallows a single blank preceding the macro name if the macro name
- * starts with an alphanumeric character and if the call 
- * is not at the beginning of the string) and a single blank following the macro call if the
+ * Macro calls are replaced by the macro body, with substitution for the
+ * macro parameters. A macro substitution also swallows a single blank
+ * preceding the macro name if the macro name starts with an alphanumeric
+ * character and if the call is not at the beginning of the string)
+ * and a single blank following the macro call if the
  * macro call has no ( ), [ ], { }, or &lt; &gt;.
  * 
  * @author zeil
@@ -24,41 +25,57 @@ import java.util.List;
  */
 public class Macro {
 	
-	public String name;
-	public ArrayList<String> formalParams;
-	public String body;
+    /**
+     * Name of this macro.
+     */
+	private String name;
 	
 	/**
-	 * Create a new macro
-	 * @param name  name of the macro - can be any string of visible characters
-	 * @param params list of formal parameter names. Names should be limited to alphanumerics and - _
-	 * @param body  body in which to replace params as a replacement for the macro call
+	 * List of parameter names for this macro.
 	 */
-	public Macro (String name,  List<String> params,  String body) {
-		this.name = name;
+	private ArrayList<String> formalParams;
+	
+	/**
+	 * The body (substitution part) of this macro.
+	 */
+	private String body;
+	
+	/**
+	 * Create a new macro.
+	 * @param name0  name of the macro - can be any string of visible characters
+	 * @param params list of formal parameter names. Names should be limited
+	 *               to alphanumerics and - _
+	 * @param body0  body in which to replace params as a replacement for
+	 *                the macro call
+	 */
+	public Macro (final String name0,  final List<String> params,  
+	              final String body0) {
+		this.name = name0;
 		this.formalParams = new ArrayList<String>();
 		this.formalParams.addAll(params);
-		this.body = body;
+		this.body = body0;
 	}
 
 	/**
-	 * Create a new macro with zero parameters
-	 * @param name  name of the macro - can be any string of visible characters
-	 * @param body  body to use as a replacement for the macro call
+	 * Create a new macro with zero parameters.
+	 * @param name0  name of the macro - can be any string of visible characters
+	 * @param body0  body to use as a replacement for the macro call
 	 */
-	public Macro (String name,  String body) {
-		this.name = name;
+	public Macro (final String name0,  final String body0) {
+		this.name = name0;
 		this.formalParams = new ArrayList<String>();
-		this.body = body;
+		this.body = body0;
 		
 	}
 	
 	/**
-	 * Apply the macro to a string 
-	 * @param target string to be processed via this macro. 
-	 * @return target with macro substitutions, unchanged if macro call could not be matched
+	 * Apply the macro to a string .
+	 * @param target0 string to be processed via this macro. 
+	 * @return target0 with macro substitutions, unchanged if macro call
+	 *           could not be matched
 	 */
-	public String apply (String target) {
+	public final String apply (final String target0) {
+	    String target = target0;
 		int start = 0;
 		while (start >= 0 && start < target.length()) {
 			int pos = target.indexOf(name, start);
@@ -73,8 +90,8 @@ public class Macro {
 			}
 
 			char opener = ' ';
-			if (pos+name.length() < target.length()) {
-				opener = target.charAt(pos+name.length());
+			if (pos + name.length() < target.length()) {
+				opener = target.charAt(pos + name.length());
 			}
 			char closer = ' ';
 			switch (opener) {
@@ -82,6 +99,7 @@ public class Macro {
 			case '[' : closer = ']'; break;
 			case '{' : closer = '}'; break;
 			case '<' : closer = '>'; break;
+			default:
 			}
 			if (!Character.isWhitespace(opener) && closer == ' ') {
 				// Not a valid macro call
@@ -90,9 +108,9 @@ public class Macro {
 			}
 			String[] actualParams;
 			int callStart = 0;
-			if (pos == start)
+			if (pos == start) {
 				callStart = start;
-			else if (Character.isLetterOrDigit(firstCharInName)) {
+            } else if (Character.isLetterOrDigit(firstCharInName)) {
 				callStart = pos - 1;
 			} else {
 				callStart = pos;
@@ -101,17 +119,20 @@ public class Macro {
 			String postMatch;
 			if (Character.isWhitespace(opener)) {
 				actualParams = new String[0];
-				postMatch = target.substring(Math.min(pos+name.length()+1, target.length()));
+				postMatch = target.substring(Math.min(pos + name.length() + 1,
+				                             target.length()));
 			} else {
-				int closePos = target.indexOf(closer, pos+name.length()+1);
+				int closePos = target.indexOf(closer, pos + name.length() + 1);
 				if (closePos < 0) {
 					start = pos + 1;
 					continue;
 				}
-				postMatch = target.substring(closePos+1);
-				String args = target.substring(pos+name.length()+1, closePos);
+				postMatch = target.substring(closePos + 1);
+				String args = target.substring(pos + name.length() + 1,
+				                               closePos);
 				if (formalParams.size() > 1) {
-					actualParams = args.split(",",20);
+				    final int splitLimit = 20;
+					actualParams = args.split(",", splitLimit);
 				} else {
 					actualParams = new String[1];
 					actualParams[0] = args;
@@ -128,7 +149,15 @@ public class Macro {
 		return target;
 	}
 
-	private String applySubstitutions(String[] actualParams) {
+	/**
+	 * Generate a version of the macro body with substitutions for all formal
+	 * parameters.
+	 * 
+	 * @param actualParams list of values to substitute for the corresponding
+	 *                     formal parameters.
+	 * @return  Macro body with substitutions.
+	 */
+	private String applySubstitutions(final String[] actualParams) {
 		String replacement = body;
 		int start = 0;
 		while (start < replacement.length()) {
@@ -142,18 +171,66 @@ public class Macro {
 					matched = i;
 				}
 			}
-			if (matched < 0) break;
+			if (matched < 0) {
+			    break;
+			}
 			replacement = replacement.substring(0, pos)
 					+ actualParams[matched]
-					+ replacement.substring(pos+formalParams.get(matched).length());
+					+ replacement.substring(pos 
+					        + formalParams.get(matched).length());
 			start = pos + actualParams[matched].length() + 1;
 		}
 		return replacement;
 	}
 	
-	public String toString()
-	{
+	/**
+	 * Render the macro as a string.
+	 * @return a readable version of the macro
+	 */
+	public final String toString() {
 		return name + "{" + formalParams + "}=>" + body;
 	}
+
+    /**
+     * @return the name
+     */
+    public final String getName() {
+        return name;
+    }
+
+    /**
+     * @param name0 the name to set
+     */
+    public final void setName(final String name0) {
+        this.name = name0;
+    }
+
+    /**
+     * @return the formalParams
+     */
+    public final ArrayList<String> getFormalParams() {
+        return formalParams;
+    }
+
+    /**
+     * @param formalParams0 the formalParams to set
+     */
+    public final void setFormalParams(final ArrayList<String> formalParams0) {
+        this.formalParams = formalParams0;
+    }
+
+    /**
+     * @return the body
+     */
+    public final String getBody() {
+        return body;
+    }
+
+    /**
+     * @param body0 the body to set
+     */
+    public final void setBody(final String body0) {
+        this.body = body0;
+    }
 
 }

@@ -3,18 +3,12 @@
  */
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,7 +19,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Element;
@@ -43,10 +36,6 @@ public class ITestHTMLFormat {
 	private static final String FORMAT = "html";
 
 
-	private String[] deferredSubsitutions = {
-			"mathJaxURL","highlightjsURL", "slidyURL", 
-			"stylesURL", "graphicsURL", "baseURL", "homeURL"
-	};
 		
 	private String[] courseProperties = {
 			"courseName",         "Course_Websites",
@@ -70,44 +59,6 @@ public class ITestHTMLFormat {
 	
 	
 
-	private String mdInput = "Title: Title of Document\n"
-			+ "Author: John Doe\n"
-			+ "Date: Jan 1, 2012\n"
-			+ "TOC: yes\n"
-			+ "Macros: macro1.md\n"
-			+ "CSS: test1.css\n"
-			+ "Macros: macro2.md\n"
-			+ "CSS: test2.css\n"
-			+ "\n# Section 1\n\n"
-			+ "%if _includeThis\n"
-			+ "## Section 1.1\n\n"
-			+ "A paragraph in\nsection 1.1\n\n"
-			+ "%endif\n\n"
-			+ "## Section 1.2\n\n"
-			+ "A paragraph in\nsection 1.2\n\n"
-			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and \\em{even\nemphasized}.\n";
-	
-	private String preProcessed1 =
-			"\n# Section 1\n\n\n"
-			+ "## Section 1.1\n\n"
-			+ "A paragraph in\nsection 1.1\n\n"
-			+ "\n\n"
-			+ "## Section 1.2\n\n"
-			+ "A paragraph in\nsection 1.2\n\n"
-			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and <em>even\nemphasized</em>.\n";
-	
-	private String preProcessed2 = 
-			"\n# Section 1\n\n"
-			+ "\n\n"
-			+ "## Section 1.2\n\n"
-			+ "A paragraph in\nsection 1.2\n\n"
-			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and <em>even\nemphasized</em>.\n";
 	
 	
 	private Properties properties;

@@ -98,7 +98,15 @@
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
 
-
+        
+        <!-- Make the @SuppressWarnings annotations available to Checkstyle -->
+        <module name="SuppressWarningsHolder" />
+        <module name="SuppressWarnings">
+           <property name="id" value="checkstyle:suppresswarnings"/>
+        </module>
+        
+        <module name="FileContentsHolder"/>
+        
         <!-- Checks for Headers                                -->
         <!-- See http://checkstyle.sf.net/config_header.html   -->
         <!-- <module name="Header">                            -->
@@ -193,5 +201,13 @@
         <module name="UpperEll"/>
 
     </module>
+    
+    <module name="SuppressWithNearbyCommentFilter">
+       <property name="commentFormat"
+               value="CHECKSTYLE IGNORE (\w+) FOR NEXT (\d+) LINES"/>
+       <property name="checkFormat" value="$1"/>
+       <property name="influenceFormat" value="$2"/>
+    </module>
+    
 
 </module>

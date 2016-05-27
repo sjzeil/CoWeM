@@ -83,7 +83,7 @@ task copyDocs (type: Copy) {
 }
 
 task reports (dependsOn: ['htmlDependencyReport', 'javadoc', 'check',
-	'copyWebPages', 'copyDocs']) {
+	'copyWebPages', 'copyDocs', 'jacocoTestReport']) {
 	description 'Generate all reports for this project'
 	group 'Reporting'
 }

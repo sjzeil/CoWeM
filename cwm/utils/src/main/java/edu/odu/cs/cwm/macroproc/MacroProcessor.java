@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Transforms a text file via application of macros.  Supported commands are
  * 
@@ -140,6 +143,14 @@ public class MacroProcessor {
 	 * Stack of states during document processing.
 	 */
 	private ArrayList<InputState> stack;
+	
+	
+	/**
+     * For logging error messages.
+     */
+    private static Logger logger 
+       = LoggerFactory.getLogger(MacroProcessor.class);
+
 
 	/**
 	 * Defines a new macro processor with no currently defined macros,
@@ -173,7 +184,7 @@ public class MacroProcessor {
 	public final void defineMacro (final Macro macro) {
 		//System.err.println ("Defining " + macro);
 		macros.add(macro);
-		macroNames.add(macro.name);
+		macroNames.add(macro.getName());
 	}
 
 	/**
@@ -187,13 +198,13 @@ public class MacroProcessor {
 		if (topState.getMatching() != ' ') {
 			int pos = line.indexOf(topState.getMatching());
 			if (pos < 0) {
-				topState.getIncompleteMacro().body = 
-						topState.getIncompleteMacro().body + "\n" + line;
+				topState.getIncompleteMacro().setBody(
+				        topState.getIncompleteMacro().getBody() + "\n" + line);
 				return null;
 			} else {
-				topState.getIncompleteMacro().body = 
-						topState.getIncompleteMacro().body 
-						+ "\n" + line.substring(0, pos);
+				topState.getIncompleteMacro().setBody(
+				        topState.getIncompleteMacro().getBody() 
+                + "\n" + line.substring(0, pos));
 				stack.remove(stack.size() - 1);
 				return null;
 			}
@@ -279,30 +290,41 @@ public class MacroProcessor {
 		return result;
 	}
 
-	private void processDefine(String defineCommandStart) {
+	/**
+	 * Parse and process a #define command.
+	 * @param defineCommandStart the opening phrase of the command
+	 */
+	private void processDefine(final String defineCommandStart) {
 		InputState topState = stack.get(stack.size() - 1);
 		if (!topState.isSuppressed()) {
 			int start = commandPrefix.length() + "define".length();
 			ParseResult pr = parseEnclosure(defineCommandStart, start);
-			if (pr == null)
+			if (pr == null) {
 				return;
-			String name = pr.selectedString;
-			pr = parseEnclosure(defineCommandStart, pr.stoppingPosition+1);
-			if (pr == null)
+			}
+			String name = pr.getSelectedString();
+			pr = parseEnclosure(defineCommandStart, 
+			        pr.getStoppingPosition() + 1);
+			if (pr == null) {
 				return;
-			String[] args = (pr.selectedString.length() > 0) ? pr.selectedString.split(",") : new String[0];
-			start = pr.stoppingPosition+1;
+			}
+			// CHECKSTYLE IGNORE AvoidInlineConditionals FOR NEXT 2 LINES
+			String[] args = (pr.getSelectedString().length() > 0) 
+			        ? pr.getSelectedString().split(",") : new String[0];
+			start = pr.getStoppingPosition() + 1;
 			pr = parseEnclosure(defineCommandStart, start);
 			if (pr != null) {
-				Macro m = new Macro(name, Arrays.asList(args), pr.selectedString);
+				Macro m = new Macro(name, Arrays.asList(args),
+				        pr.getSelectedString());
 				defineMacro(m);
 			} else {
 				InputState state = new InputState(' ', true);
 				char opener = ' ';
 				while (start < defineCommandStart.length() && opener == ' ') {
 					char c = defineCommandStart.charAt(start);
-					if (c == '(' || c == '[' || c == '{' || c == '<')
+					if (c == '(' || c == '[' || c == '{' || c == '<') {
 						opener = c;
+					}
 					++start;
 				}
 				if (start > defineCommandStart.length()) {
@@ -314,8 +336,10 @@ public class MacroProcessor {
 				case '[': closer = ']'; break;
 				case '{': closer = '}'; break;
 				case '<': closer = '>'; break;
+				default:
 				}
-				Macro m = new Macro (name, Arrays.asList(args), defineCommandStart.substring(start));
+				Macro m = new Macro (name, Arrays.asList(args), 
+				        defineCommandStart.substring(start));
 				defineMacro(m);
 				state.setMatching(closer);
 				state.setIncompleteMacro(m);
@@ -325,42 +349,68 @@ public class MacroProcessor {
 		}
 	}
 
-	private void processEndif(String endifCommand) {
-		if (stack.size() > 1)
-			stack.remove(stack.size() - 1);
-	}
-
-	private void processElse(String elseCommand) {
+	/**
+	 * Parse and process an #endif command.
+	 * @param endifCommand  Lexeme of the command.
+	 */
+	private void processEndif( final String endifCommand) {
 		if (stack.size() > 1) {
-			InputState topState = stack.get(stack.size() - 1);
-			InputState priorState = stack.get(stack.size()-2);
 			stack.remove(stack.size() - 1);
-			stack.add (new InputState(' ', priorState.isSuppressed() || !topState.isSuppressed()));
 		}
 	}
 
-	private void processIfDef(String ifDefCommand, String ifdefLexeme) {
+	/**
+	 * Parse and process an #else command.
+	 * @param elseCommand  Lexeme of the command.
+	 */
+	private void processElse(final String elseCommand) {
+		if (stack.size() > 1) {
+			InputState topState = stack.get(stack.size() - 1);
+			InputState priorState = stack.get(stack.size() - 2);
+			stack.remove(stack.size() - 1);
+			stack.add (new InputState(' ', 
+			        priorState.isSuppressed() || !topState.isSuppressed()));
+		}
+	}
+
+    /**
+     * Parse and process an #ifdef command.
+     * @param ifDefCommand  Lexeme of the command.
+     * @param ifdefLexeme Lexeme of the opening word of the command/
+     */
+	private void processIfDef(final String ifDefCommand, 
+	                          final String ifdefLexeme) {
 		InputState topState = stack.get(stack.size() - 1);
 		if (topState.isSuppressed()) {
 			// Doesn't matter if the condition is true or not
 			stack.add (new InputState(' ', true));
 		} else {
 			int start = commandPrefix.length() + ifdefLexeme.length();
-			while (start < ifDefCommand.length() && ifDefCommand.charAt(start) == ' ')
+			while (start < ifDefCommand.length() 
+			        && ifDefCommand.charAt(start) == ' ') {
 				++start;
+			}
 			int stop = start;
-			while (stop < ifDefCommand.length() && ifDefCommand.charAt(stop) != ' ')
+			while (stop < ifDefCommand.length() 
+			        && ifDefCommand.charAt(stop) != ' ') {
 				++stop;
+			}
 			if (start >= ifDefCommand.length() || stop == start) {
 				stack.add (new InputState(' ', true));
 			} else {
 				String macroName = ifDefCommand.substring(start, stop);
-				stack.add (new InputState(' ', !macroNames.contains(macroName)));
+				stack.add (new InputState(' ', 
+				        !macroNames.contains(macroName)));
 			}
 		}
 	}
 
-	private String processInclude(String includeCommand) {
+    /**
+     * Parse and process an #include command.
+     * @param includeCommand  Lexeme of the command.
+     * @return String to be inserted in place of the command
+     */
+	private String processInclude(final String includeCommand) {
 		InputState topState = stack.get(stack.size() - 1);
 		if (!topState.isSuppressed()) {
 			ArrayList<InputState> savedStack = stack;
@@ -369,7 +419,8 @@ public class MacroProcessor {
 			String fileName;
 			try {
 				fileName = parseEnclosure(includeCommand, 
-						commandPrefix.length() + "include".length()).selectedString;
+					commandPrefix.length() 
+					  + "include".length()).getSelectedString();
 			} catch (Exception e) {
 				return "**Error " + includeCommand 
 						+ "\n: " + commandPrefix + "\n**";
@@ -382,56 +433,122 @@ public class MacroProcessor {
 			} else {
 				return "\n\n** Missing file: " + fileName + " **\n\n";
 			}
-		} else
+		} else {
 			return null;
+		}
 	}
 
+	/**
+	 * A description of an attempted command parse.
+	 * 
+	 * @author zeil
+	 *
+	 */
 	public class ParseResult {
-		String selectedString;
-		int stoppingPosition;
+	    
+	    /**
+	     * A parsed construct.
+	     */
+		private String selectedString;
+		
+		/**
+		 * Position at which the recognized construct ended.
+		 */
+		private int stoppingPosition;
 
-		public ParseResult (String sel, int stop)
-		{
+		/**
+		 * Create a parse result.
+		 * @param sel the selected string
+		 * @param stop the stopping position
+		 */
+		public ParseResult (final String sel, final int stop) {
 			selectedString = sel;
 			stoppingPosition = stop;
 		}
+
+        /**
+         * @return the selectedString
+         */
+        final String getSelectedString() {
+            return selectedString;
+        }
+
+        /**
+         * @param selectedString0 the selectedString to set
+         */
+        final void setSelectedString(final String selectedString0) {
+            this.selectedString = selectedString0;
+        }
+
+        /**
+         * @return the stoppingPosition
+         */
+        final int getStoppingPosition() {
+            return stoppingPosition;
+        }
+
+        /**
+         * @param stoppingPosition0 the stoppingPosition to set
+         */
+        final void setStoppingPosition(final int stoppingPosition0) {
+            this.stoppingPosition = stoppingPosition0;
+        }
 	}
+	
+	
 	/**
 	 * Scan forward to next non-black character. Should be one of: ([{<.
 	 * Extract the string between that and the appropriate closing character.
 	 * 
-	 * @param includeCommand
-	 * @param startingAt
+	 * @param commandString command that is being parsed
+	 * @param startingAt position within string to start parsing
 	 * @return enclosed string or null if one cannot be found
 	 */
-	private ParseResult parseEnclosure(String includeCommand, int startingAt) {
+	private ParseResult parseEnclosure(final String commandString, 
+	                                   final int startingAt) {
 		int start = startingAt;
 		char opener = ' ';
-		while (start < includeCommand.length() && includeCommand.charAt(start) == ' ') {
+		while (start < commandString.length() 
+		        && commandString.charAt(start) == ' ') {
 			++start;
 		}
-		if (start < includeCommand.length())
-			opener = includeCommand.charAt(start);
+		if (start < commandString.length()) {
+			opener = commandString.charAt(start);
+		}
 		char closer = ' ';
 		switch (opener) {
 		case '(': closer = ')'; break;
 		case '{': closer = '}'; break;
 		case '[': closer = ']'; break;
 		case '<': closer = '>'; break;
+		default:
 		}
-		if (closer == ' ')
+		if (closer == ' ') {
 			return null;
+		}
 		int stop = start;
-		while (stop < includeCommand.length() && includeCommand.charAt(stop) != closer) {
+		while (stop < commandString.length() 
+		        && commandString.charAt(stop) != closer) {
 			++stop;
 		}
-		if (stop < includeCommand.length())
-			return new ParseResult(includeCommand.substring(start+1, stop), stop);
-		else
+		if (stop < commandString.length()) {
+			return new ParseResult(commandString.substring(start + 1, stop), 
+			                       stop);
+		} else {
 			return null;
+		}
 	}
 
-	public String process (BufferedReader input) throws IOException {
+	/**
+	 * Process a block of text obtained from a reader. Processing can both
+	 * alter the text (macro substitution) and affect the state of the
+	 * processor by defining new macros.
+	 * @param input  source of text to be processed
+	 * @return processed text
+	 * @throws IOException on failure of reader
+	 */
+	public final String process (final BufferedReader input)
+	        throws IOException {
 		StringBuffer results = new StringBuffer();
 		String line = input.readLine();
 		while (line != null) {
@@ -447,42 +564,61 @@ public class MacroProcessor {
 		return result;
 	}
 
-
-	public String process (String inputString) {
+	/**
+	 * Process a block of text. Processing can both
+     * alter the text (macro substitution) and affect the state of the
+     * processor by defining new macros.
+     * 
+	 * @param inputString text to process
+	 * @return processed text
+	 */
+	public final String process (final String inputString) {
 		String results = "";
 		BufferedReader input = null;
 		try {
 			input = new BufferedReader(new StringReader (inputString));
 			results = process (input);
 		} catch (IOException e) {
-			System.err.println ("**Unexpected I/O error in " + inputString + ": " + e);
+		    logger.error("**Unexpected I/O error in " + inputString, e);
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
-				System.err.println ("**Unexpected I/O error: " + e);
+			    logger.error("**Unexpected I/O error", e);
 			}
 		}
 		return results;
 	}
 
-	public String process (File inputFile) {
+    /**
+     * Process a block of text obtained from a file. Processing can both
+     * alter the text (macro substitution) and affect the state of the
+     * processor by defining new macros.
+     * 
+     * @param inputFile text to process
+     * @return processed text
+     */
+	public final String process (final File inputFile) {
 		String results = "";
 		BufferedReader input = null;
 		try {
 			input = new BufferedReader(new FileReader (inputFile));
 			results = process (input);
 		} catch (FileNotFoundException e) {
-			System.err.println ("**Could not open " + inputFile.getAbsolutePath());
+			logger.error ("**Could not open " + inputFile.getAbsolutePath(), e);
 		} catch (IOException e) {
-			System.err.println ("**Unexpected I/O error in " + inputFile.getAbsolutePath() + ": " + e);
+			logger.error ("**Unexpected I/O error in " 
+		         + inputFile.getAbsolutePath(), e);
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
-				System.err.println ("**Unexpected I/O error in " + inputFile.getAbsolutePath() + ": " + e);
+				logger.error ("**Unexpected I/O error in " 
+				    + inputFile.getAbsolutePath(), e);
 			}
 		}
 		return results;
@@ -493,13 +629,14 @@ public class MacroProcessor {
 	 * Driver for macro processor.  Accepts args:
 	 *   -c?       changes the macro prefix string (default is '#')
 	 *   -Dmacro   defines a macro name
-	 *   -iFile    processes File, ignoring output but keeping any macro definitions
+	 *   -iFile    processes File, ignoring output but keeping any 
+	 *               macro definitions
 	 *   -oFile    directs output to the indicated file
 	 *   fileName  input file name
-	 * @param args
-	 * @throws IOException 
+	 * @param args Command line parameters as described above
+	 * @throws IOException on input failure
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(final String[] args) throws IOException {
 		String inputFileName = null;
 		String outputFileName = null;
 		MacroProcessor processor = new MacroProcessor();
@@ -536,13 +673,21 @@ public class MacroProcessor {
 					new OutputStreamWriter(System.out));
 		}
 		transformText (mainInput, mainOutput, processor);
-		if (outputFileName != null)
+		if (outputFileName != null) {
 			mainOutput.close();
+		}
 		if (inputFileName != null) {
 			mainInput.close();
 		}
 	}
 
+	/**
+	 * Transforms text using a macro processor.
+	 * @param input  input text source
+	 * @param output output text destination
+	 * @param processor the macro processor to use
+	 * @throws IOException on input failure
+	 */
 	private static void transformText(final BufferedReader input,
 			final BufferedWriter output, final MacroProcessor processor)
 					throws IOException {
