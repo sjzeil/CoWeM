@@ -216,27 +216,26 @@ public class TestModulesFormatting {
 				"<title>A Title</title>",
 				"</head>",
 				"<body>",
-				"<h1 id='h11'>Section 1</h1>",
+				"<h1 id='h11'><a>Section 1</a></h1>",
 				"<ul>",
 				"<li id='li1'>item1</li>",
 				"<li id='li2'>item2</li>",
 				"</ul>",
-				"<h1 id='h12'>Section 2</h1>",
-				"<h2 id='h21'>Subsection 1</h2>",
+				"<h1 id='h12'><a>Section 2</a></h1>",
+				"<h2 id='h21'><a>Subsection 1</a></h2>",
 				"<ul>",
 				"<li id='li3'>item3</li>",
 				"<li id='li4'>item4</li>",
 				"</ul>",
-				"<h2 id='h22'>Subsection 2</h2>",
+				"<h2 id='h22'><a>Subsection 2</a></h2>",
 				"<ul>",
 				"<li id='li5'>item5</li>",
 				"</ul>",
-				"<h1 id='h13'>Organization</h1>",
-				"<h2 id='h23'>Preamble</h2>",
+				"<h1 id='h13'><a>Preamble</a></h1>",
 				"<p id='p1'>preamble text</p>",
-				"<h2 id='h24'>Postscript</h2>",
+				"<h1 id='h14'><a>Postscript</a></h1>",
 				"<p id='p2'>postscript text</p>",
-				"<h2 id='h24'>Presentation</h2>",
+				"<h1 id='h15'><a>Presentation</a></h1>",
 				"<p id='p4'>presentation text</p>",
 				"</body>",
 				"</html>"	
@@ -248,7 +247,7 @@ public class TestModulesFormatting {
 		String htmlContent = root.getTextContent();
 
 		assertTrue (htmlContent.contains("Section 1"));
-		assertFalse (htmlContent.contains("Organization"));
+		assertFalse (htmlContent.contains("presentation text"));
 		assertTrue (htmlContent.contains("preamble text"));
 		assertFalse (htmlContent.contains("Preamble"));
 		assertTrue (htmlContent.contains("postscript text"));

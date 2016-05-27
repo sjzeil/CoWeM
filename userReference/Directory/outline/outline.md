@@ -29,8 +29,8 @@ The **Course Website Manager** is a software package
 that allows creation of a course website containing slides and web pages, with all content originally written
 in Markdown.
 
-* [lecture] [Course Websites](public:courseWebsite)
-* [lecture] [TBD](public:markdown)
+* [lecture]() [Course Websites](public:courseWebsite)
+* [](lecture) [TBD](public:markdown)
 
 
 ## Assignment Submission and Grading
@@ -38,21 +38,20 @@ in Markdown.
 Support for submitting assignments via the web and
 triggering automatic grading.
 
-* [lecture] [Web-based Assignment Submission](../../Public/websubmit/websubmit.pdf)
-* [lecture] [Programming Assignments](public:assignments) 
-* [lecture] [Automatic Grading](../../Public/websubmit/autograde.pdf)
+* [](lecture) [Web-based Assignment Submission](../../Public/websubmit/websubmit.pdf)
+* [](lecture) [Programming Assignments](public:assignments) 
+* [](lecture) [Automatic Grading](../../Public/websubmit/autograde.pdf)
 
 # Resources
 
 Miscellaneous documents.
 
-* [lecture] [TBD](public:registrationFAQ)
-* [lecture] [TBD](public:appointmentSignupSheets)
-* [slides] [Provost's Conversation](public:provostConversationOct2013) 2013-10-10
+* [](lecture) [TBD](public:registrationFAQ)
+* [](lecture) [TBD](public:appointmentSignupSheets)
+* [](slides) [Provost's Conversation](public:provostConversationOct2013) 2013-10-10
 
-# Organization
 
-## Preamble
+# Preamble
 
 <!-- Material written here will appear above the outline. -->
 
@@ -61,7 +60,7 @@ support of putting course material online, whether
 for web-based or face-to-face course styles.
 
 
-## Postscript
+# Postscript
 
 <!-- Material written here will appear below the outline. -->
 
@@ -81,7 +80,7 @@ for web-based or face-to-face course styles.
 
 All times in this schedule are given in Eastern Time.
 
-## Presentation
+# Presentation
 
 
 <!-- The first table controls the number of columns in the table view and

@@ -109,7 +109,10 @@
 	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
 	    </div>
 	    <div class="rightPart">
-	      <!--  do preamble -->
+	      <xsl:variable name="preamble" select="section[normalize-space(./*[1]) = 'Preamble']"/>
+	      <xsl:if test="$preamble">
+	         <xsl:apply-templates select="$preamble/*[position() &gt; 1]"/>
+	      </xsl:if>
 	      <form action="">
             <div class="showHideControls">
 	          <input type="button" value="expand all" onclick="expandAll()"/>
@@ -120,8 +123,25 @@
             </div>
           </form>
 	      
-	      <xsl:apply-templates select="section[position() &lt; count(../section)]"/>
-	      <!--  do postscript -->
+	      <xsl:for-each select="section">
+	           <xsl:message>
+	               <xsl:text>Looping through top section </xsl:text>
+	               <xsl:value-of select="normalize-space(./*[1])"/>
+	           </xsl:message>
+	           <xsl:variable name="sectionName" select="normalize-space(*[1])"/>
+	           <xsl:choose>
+	               <xsl:when test="$sectionName = 'Preamble'"/>
+                   <xsl:when test="$sectionName = 'Postscript'"/>
+	               <xsl:when test="$sectionName = 'Presentation'"/>
+	               <xsl:otherwise>
+                      <xsl:apply-templates select="."/>
+	               </xsl:otherwise>
+	           </xsl:choose>
+	      </xsl:for-each>
+          <xsl:variable name="postscript" select="section[normalize-space(./*[1]) = 'Postscript']"/>
+          <xsl:if test="$postscript">
+             <xsl:apply-templates select="$postscript/*[position() &gt; 1]"/>
+          </xsl:if>
 	      <xsl:call-template name="insertFooter"/>
 	    </div>
       </div>
@@ -131,6 +151,10 @@
   
   <xsl:template match="section">
   	  <xsl:variable name="header" select="(h1|h2|h3|h4)[1]"/>
+  	  <xsl:message>
+  	  <xsl:text>header is </xsl:text>
+  	  <xsl:value-of select="$header"/>
+  	  </xsl:message>
   	  <xsl:variable name="toggleID" select="generate-id()"/>
       <div class="topic{@depth}">
       	<xsl:value-of select="$header/@sectionNumber"/>
@@ -145,6 +169,10 @@
       	    	       <xsl:value-of select="concat('but_topic_', $toggleID)"/>
       	    	    </xsl:attribute>
       	    	</input>
+      	    	<xsl:message>
+      	    	<xsl:text>still to process: </xsl:text>
+      	    	<xsl:value-of select="normalize-space($header/node()[1]/node())"/>
+      	    	</xsl:message>
       	        <xsl:apply-templates select="$header/node()"/>
       	    </xsl:otherwise>
       	</xsl:choose>
@@ -165,7 +193,7 @@
       	       </xsl:attribute>
       	       <xsl:choose>
       	           <xsl:when test="p|div">
-      	              <table>
+      	              <table width="100%">
       	                 <tr>
       	                 	<td class="moduleDescription">
       	                 	   <div class="moduleDescription">
@@ -218,9 +246,6 @@
            </li>
         </xsl:otherwise>
      </xsl:choose>
-     <ol>
-        <xsl:apply-templates select="*" mode="activities"/>
-     </ol>
   </xsl:template>
 
   <xsl:template match="p" mode="activities">
@@ -230,7 +255,23 @@
      </p>
   </xsl:template>
 
-
+  <xsl:template match="a">
+  <xsl:message>
+  <xsl:text>in 'a' node, parent is </xsl:text>
+  <xsl:value-of select="local-name(..)"/>
+  </xsl:message>
+      <xsl:choose>
+          <xsl:when test="../h1 | ../h2 | ../h3 | ../h4">
+              <xsl:apply-templates select="node()"/>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:copy>
+                  <xsl:copy-of select="@*"/>
+                  <xsl:apply-templates select="node()"/>
+              </xsl:copy>
+          </xsl:otherwise>
+      </xsl:choose>
+  </xsl:template>
 
   <xsl:template match="text()">
     <xsl:copy-of select='.'/>
