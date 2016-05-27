@@ -3,18 +3,17 @@
  */
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,7 +24,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Element;
@@ -319,7 +317,8 @@ public class TestMarkdownDocument {
 				+ "* list element 2";
 		
 		org.w3c.dom.Document basicHtml = doc.process(passThrough);
-		Element root = basicHtml.getDocumentElement();
+		@SuppressWarnings("unused")
+        Element root = basicHtml.getDocumentElement();
 		
 		Element spanEl= getElementById(basicHtml, "span0");
 		assertNotNull (spanEl);

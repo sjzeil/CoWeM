@@ -3,18 +3,14 @@
  */
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -23,7 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -34,10 +29,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -51,11 +44,6 @@ import org.xml.sax.SAXException;
 public class TestHTMLFormatting {
 
 	private static final String FORMAT = "html";
-
-	private String[] deferredSubsitutions = {
-			"mathJaxURL","highlightjsURL", "slidyURL", 
-			"stylesURL", "graphicsURL", "baseURL", "homeURL"
-	};
 
 	private String[] courseProperties = {
 			"courseName",         "Course_Websites",
@@ -231,14 +219,6 @@ public class TestHTMLFormatting {
 	}
 
 
-	private org.w3c.dom.Document parseHTML (String htmlText) 
-			throws ParserConfigurationException, SAXException, IOException {
-		org.w3c.dom.Document basicHtml = null;
-		DocumentBuilder b 
-		= DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		basicHtml = b.parse(new InputSource(new StringReader(htmlText)));
-		return basicHtml;
-	}
 
 
 }

@@ -1,6 +1,9 @@
 package edu.odu.cs.cwm.macroproc;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,8 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Test;
-
-import edu.odu.cs.cwm.macroproc.MacroProcessor;
 
 public class TestMacroProc {
 
@@ -229,7 +230,6 @@ public class TestMacroProc {
 
 	@Test
 	public void testMacrosOnMultiLines2() {
-		String[] params1 = {"x"};
 		Macro m1 = new Macro("\\em", Collections.singletonList("x"), "<em>x</em>");
 		
 		MacroProcessor proc = new MacroProcessor();
