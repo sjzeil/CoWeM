@@ -124,10 +124,6 @@
           </form>
 	      
 	      <xsl:for-each select="section">
-	           <xsl:message>
-	               <xsl:text>Looping through top section </xsl:text>
-	               <xsl:value-of select="normalize-space(./*[1])"/>
-	           </xsl:message>
 	           <xsl:variable name="sectionName" select="normalize-space(*[1])"/>
 	           <xsl:choose>
 	               <xsl:when test="$sectionName = 'Preamble'"/>
@@ -151,29 +147,21 @@
   
   <xsl:template match="section">
   	  <xsl:variable name="header" select="(h1|h2|h3|h4)[1]"/>
-  	  <xsl:message>
-  	  <xsl:text>header is </xsl:text>
-  	  <xsl:value-of select="$header"/>
-  	  </xsl:message>
   	  <xsl:variable name="toggleID" select="generate-id()"/>
       <div class="topic{@depth}">
       	<xsl:value-of select="$header/@sectionNumber"/>
       	<xsl:choose>
       	    <xsl:when test="./section">
-      		    <xsl:apply-templates select="$header/node()"/>
+      		    <xsl:apply-templates select="$header/node()" mode="activities"/>
       	    </xsl:when>
       	    <xsl:otherwise>
       	    	<input type="button" value="+" class="expandButton" 
-      	    	   onclick="toggleDisplay({concat('_topic_', $toggleID)})">
+      	    	   onclick="toggleDisplay('{concat('_topic_', $toggleID)}')">
       	    	    <xsl:attribute name="id">
       	    	       <xsl:value-of select="concat('but_topic_', $toggleID)"/>
       	    	    </xsl:attribute>
       	    	</input>
-      	    	<xsl:message>
-      	    	<xsl:text>still to process: </xsl:text>
-      	    	<xsl:value-of select="normalize-space($header/node()[1]/node())"/>
-      	    	</xsl:message>
-      	        <xsl:apply-templates select="$header/node()"/>
+      	        <xsl:apply-templates select="$header/node()"  mode="activities"/>
       	    </xsl:otherwise>
       	</xsl:choose>
       </div>
@@ -255,13 +243,11 @@
      </p>
   </xsl:template>
 
-  <xsl:template match="a">
-  <xsl:message>
-  <xsl:text>in 'a' node, parent is </xsl:text>
-  <xsl:value-of select="local-name(..)"/>
-  </xsl:message>
+  <xsl:template match="a" mode="activities">
+      <xsl:variable name="parentName" select="local-name(..)"/>
       <xsl:choose>
-          <xsl:when test="../h1 | ../h2 | ../h3 | ../h4">
+          <xsl:when test="($parentName = 'h1') or ($parentName = 'h2') 
+                      or ($parentName = 'h3') or ($parentName = 'h4')">
               <xsl:apply-templates select="node()"/>
           </xsl:when>
           <xsl:otherwise>
