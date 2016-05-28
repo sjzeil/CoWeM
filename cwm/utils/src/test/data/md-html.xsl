@@ -12,8 +12,8 @@
        divided at each <h1>, <h2>, and <hr/> marker
   -->
 
-  <xsl:param name="meta_Author" select="''"/>
-  <xsl:param name="meta_Date" select="''"/>
+  <xsl:param name="Author" select="''"/>
+  <xsl:param name="Date" select="''"/>
 
   <xsl:param name="doc" select="'doc'"/>
   <xsl:param name="format" select="'html'"/>
@@ -73,15 +73,15 @@
 	<h1>
 	  <xsl:value-of select="/html/head/title/text()"/>
 	</h1>
-	<xsl:if test="$meta_Author != ''">
+	<xsl:if test="$Author != ''">
 	    <h2>
-	      <xsl:value-of select="$meta_Author"/>
+	      <xsl:value-of select="$Author"/>
 	    </h2>
 	</xsl:if>
-	<xsl:if test="$meta_Date != ''">
+	<xsl:if test="$Date != ''">
 	  <p>
 	    <xsl:text>Last modified: </xsl:text>
-	    <xsl:value-of select="$meta_Date"/>
+	    <xsl:value-of select="$Date"/>
 	  </p>
 	</xsl:if>
       </div>

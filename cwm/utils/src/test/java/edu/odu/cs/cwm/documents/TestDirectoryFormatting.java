@@ -67,11 +67,11 @@ public class TestDirectoryFormatting {
 	};
 
 	private String[] metadataProperties = {
-			"meta_TOC", "1",
-			"meta_Title", "A Title",
-			"meta_Author", "Jane Author",
-			"meta_Date", "2016",
-			"meta_CSS", "file1.css,file2.css",
+			"TOC", "1",
+			"Title", "A Title",
+			"Author", "Jane Author",
+			"Date", "2016",
+			"CSS", "file1.css,file2.css",
 	};
 
 

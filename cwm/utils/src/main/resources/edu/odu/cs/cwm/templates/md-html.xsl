@@ -8,11 +8,11 @@
   <xsl:include href="paginate.xsl"/>
   
   
-  <xsl:param name="meta_Author" select="''"/>
-  <xsl:param name="meta_CSS" select="''"/>
-  <xsl:param name="meta_Date" select="''"/>
-  <xsl:param name="meta_Title" select="'@Title@'"/>
-  <xsl:param name="meta_TOC" select="''"/>
+  <xsl:param name="Author" select="''"/>
+  <xsl:param name="CSS" select="''"/>
+  <xsl:param name="Date" select="''"/>
+  <xsl:param name="Title" select="'@Title@'"/>
+  <xsl:param name="TOC" select="''"/>
 
   <xsl:param name="courseName" select="'@courseName@'"/>
   <xsl:param name="courseTitle" select="'@courseTitle@'"/>
@@ -88,22 +88,22 @@
 
       <div class="titleblock">
 	    <h1 class="title">
-	       <xsl:value-of select="$meta_Title"/>
+	       <xsl:value-of select="$Title"/>
 	    </h1>
-	    <xsl:if test="$meta_Author != ''">
+	    <xsl:if test="$Author != ''">
 	      <h2 class="author">
-	        <xsl:value-of select="$meta_Author"/>
+	        <xsl:value-of select="$Author"/>
 	      </h2>
 	    </xsl:if>
-	    <xsl:if test="$meta_Date != ''">
+	    <xsl:if test="$Date != ''">
 	      <div class="date">
 	        <xsl:text>Last modified: </xsl:text>
-	        <xsl:value-of select="$meta_Date"/>
+	        <xsl:value-of select="$Date"/>
 	       </div>
 	      </xsl:if>
       </div>
 
-      <xsl:if test="$meta_TOC != ''">
+      <xsl:if test="$TOC != ''">
 	    <div class="toc">
 	      <xsl:text>Contents:</xsl:text>
 	        <xsl:apply-templates select="h1 | h2" mode="toc"/>

@@ -140,7 +140,7 @@ public class ITestDirectoryFormat {
 		assertEquals ("Title of Document", titleDiv.getTextContent());
 
 		NodeList pars = (NodeList)xPath.evaluate(
-				"/html/body/p", root,
+				"/html/body//p", root,
 				XPathConstants.NODESET);
 		assertTrue(pars.getLength() > 0);
 		boolean found = false;

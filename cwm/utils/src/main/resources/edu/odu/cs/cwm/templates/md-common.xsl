@@ -17,11 +17,11 @@
   -->
 
 <!-- 
-  <xsl:param name="meta_Author" select="''"/>
-  <xsl:param name="meta_CSS" select="''"/>
-  <xsl:param name="meta_Date" select="''"/>
-  <xsl:param name="meta_Title" select="'@Title@'"/>
-  <xsl:param name="meta_TOC" select="''"/>
+  <xsl:param name="Author" select="''"/>
+  <xsl:param name="CSS" select="''"/>
+  <xsl:param name="Date" select="''"/>
+  <xsl:param name="Title" select="'@Title@'"/>
+  <xsl:param name="TOC" select="''"/>
 
   <xsl:param name="courseName" select="'@courseName@'"/>
   <xsl:param name="courseTitle" select="'@courseTitle@'"/>
@@ -46,8 +46,8 @@
 
 
   <xsl:template name="generateCSSLinks">
-    <xsl:if test="$meta_CSS != ''">
-      <xsl:for-each select="tokenize($meta_CSS,',')">
+    <xsl:if test="$CSS != ''">
+      <xsl:for-each select="tokenize($CSS,',')">
           <link 
             rel="stylesheet" 
             type="text/css" 
@@ -69,7 +69,7 @@
   </xsl:if>
   <xsl:if test="$email != ''">
     <xsl:variable name="subject" 
-       select="encode-for-uri(concat($courseName, ', ', $meta_Title))"/>
+       select="encode-for-uri(concat($courseName, ', ', $Title))"/>
     <xsl:text>&#10;</xsl:text>
     <a href="mailto:{$email}?subject={$subject}">
       <img src="{$baseURL}graphics/email.png" title="Email to instructor"/>

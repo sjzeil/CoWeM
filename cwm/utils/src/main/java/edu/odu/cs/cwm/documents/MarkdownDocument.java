@@ -91,7 +91,7 @@ public class MarkdownDocument implements Document {
      * Code to pre-pend to PegDown output. 
      */
     private static final String HTML_HEADER = "<html>\n<head>\n"
-            + "<title>@meta_Title@</title>\n</head>\n<body>\n";
+            + "<title>@Title@</title>\n</head>\n<body>\n";
     
     /**
      * Code to append to PegDown output.
@@ -212,8 +212,8 @@ public class MarkdownDocument implements Document {
 		extractMetdataIfNecessary();
 		
 		// Add any files listed in Macro: lines to the macro processor.
-		if (metadata.containsKey("meta_Macros")) {
-			String macroFilesList = metadata.getProperty("meta_Macros");
+		if (metadata.containsKey("Macros")) {
+			String macroFilesList = metadata.getProperty("Macros");
 			String[] macroFiles = macroFilesList.split("\t");
 			for (String macroFileName: macroFiles) {
 				File macroFile = new File(macroFileName);
@@ -398,8 +398,8 @@ public class MarkdownDocument implements Document {
 			}
 			for (Object okey: metadata.keySet()) {
 				String key = okey.toString();
-				xform.setParameter("meta_" + key, metadata.getProperty(key));
-				//System.err.println("prop " + "meta_" + key + " => " 
+				xform.setParameter("" + key, metadata.getProperty(key));
+				//System.err.println("prop " + "" + key + " => " 
 				//                           + metadata.getProperty(key));
 			}
 			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
@@ -472,7 +472,7 @@ public class MarkdownDocument implements Document {
 	 */
 	private String performTextSubstitutions(final String htmlText) {
 	    String result = new PropertySubstitutions(metadata).apply(htmlText);
-	    result = new PropertySubstitutions(properties).apply(htmlText);
+	    result = new PropertySubstitutions(properties).apply(result);
 	    result = new SourceCodeSubstitutions().apply(result);
 	    return result;
 	}

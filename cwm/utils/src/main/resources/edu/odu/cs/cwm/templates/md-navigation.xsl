@@ -8,11 +8,11 @@
   <xsl:import href="paginate.xsl"/>
   
   
-  <xsl:param name="meta_Author" select="''"/>
-  <xsl:param name="meta_CSS" select="''"/>
-  <xsl:param name="meta_Date" select="''"/>
-  <xsl:param name="meta_Title" select="'@Title@'"/>
-  <xsl:param name="meta_TOC" select="''"/>
+  <xsl:param name="Author" select="''"/>
+  <xsl:param name="CSS" select="''"/>
+  <xsl:param name="Date" select="''"/>
+  <xsl:param name="Title" select="'@Title@'"/>
+  <xsl:param name="TOC" select="''"/>
 
   <xsl:param name="courseName" select="'@courseName@'"/>
   <xsl:param name="courseTitle" select="'@courseTitle@'"/>

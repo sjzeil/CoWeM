@@ -94,7 +94,7 @@ public class TestMarkdownDocument {
 	@Before
 	public void setUp() throws Exception {
 		properties = new Properties();
-		properties.put("meta_Title", "Title of Document");
+		properties.put("Title", "Title of Document");
 	}
 
 	
@@ -205,7 +205,7 @@ public class TestMarkdownDocument {
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
-		assertEquals ("@meta_Title@", actualTitle);
+		assertEquals ("@Title@", actualTitle);
 
 		String actualSection = (String)xPath.evaluate("/html/body/h1", root);
 		assertEquals ("Section 1", actualSection);
@@ -435,7 +435,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPostprocess() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
-		String html0 = "<html><head><title>@meta_Title@</title></head><body>\n"
+		String html0 = "<html><head><title>@Title@</title></head><body>\n"
 				+ "<p id='p1'>paragraph 1</p>\n"
 				+ "<h1>Section 1</h1>\n"
 				+ "<p>paragraph 1</p>\n"
@@ -480,7 +480,7 @@ public class TestMarkdownDocument {
 	@Test
 	public void testPostprocessWithPaging() 
 			throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
-		String html0 = "<html><head><title>@meta_Title@</title></head><body>\n"
+		String html0 = "<html><head><title>@Title@</title></head><body>\n"
 				+ "<p id='p0'>paragraph 0</p>\n"
 				+ "<h1>Section 1</h1>"
 				+ "<p id='p1'>paragraph 1</p>\n"
