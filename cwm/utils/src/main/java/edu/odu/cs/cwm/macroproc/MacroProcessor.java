@@ -13,6 +13,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,92 +59,24 @@ public class MacroProcessor {
 	/**
 	 * The macros defined in this processor.
 	 */
-	private ArrayList<Macro> macros;
+	private List<Macro> macros;
 	
 	/**
 	 * Names of all defined macros.
 	 */
-	private HashSet<String> macroNames;
+	private Set<String> macroNames;
 	
 	/**
 	 * Partially processed text.
 	 */
+	@SuppressWarnings("PMD.AvoidStringBufferField")
 	private StringBuffer accumulated;
 
-	/**
-	 * Describes a stackable state during macro processing.
-	 * 
-	 * @author zeil
-	 */
-	private class InputState {
-		/**
-		 * Indicates a character that opened a macro parameter list
-		 * or macro body that needs to be matched to close that construct.
-		 */
-		private char matching;
-		
-		/**
-		 * Is copying of text to output suppresed due to a failed #if test? 
-		 */
-		private boolean suppressed;
-		
-		/**
-		 * Holds a macro that we are currnetly paring.
-		 */
-		private Macro incompleteMacro;
-
-		/**
-		 * Create a state.
-		 * @param m matching character
-		 * @param suppr true to suppress copying of text to output
-		 */
-		InputState (final char m, final boolean suppr) {
-			matching = m;
-			suppressed = suppr;
-			incompleteMacro = null;
-		}
-
-		/**
-		 * @return the matching
-		 */
-		public char getMatching() {
-			return matching;
-		}
-
-		/**
-		 * @param matching0 the matching to set
-		 */
-		public void setMatching(final char matching0) {
-			this.matching = matching0;
-		}
-
-		/**
-		 * @return the suppressed
-		 */
-		public boolean isSuppressed() {
-			return suppressed;
-		}
-
-
-		/**
-		 * @return the incompleteMacro
-		 */
-		public Macro getIncompleteMacro() {
-			return incompleteMacro;
-		}
-
-		/**
-		 * @param incompleteMacro0 the incompleteMacro to set
-		 */
-		public void setIncompleteMacro(final Macro incompleteMacro0) {
-			this.incompleteMacro = incompleteMacro0;
-		}
-	}
 
 	/**
 	 * Stack of states during document processing.
 	 */
-	private ArrayList<InputState> stack;
+	private List<InputState> stack;
 	
 	
 	/**
@@ -152,7 +86,45 @@ public class MacroProcessor {
        = LoggerFactory.getLogger(MacroProcessor.class);
 
 
-	/**
+    /**
+     * Describes a stackable state during macro processing.
+     * 
+     * @author zeil
+     */
+    private class InputState {
+        // CHECKSTYLE IGNORE VisibilityModifierCheck FOR NEXT 20 LINES
+        /**
+         * Indicates a character that opened a macro parameter list
+         * or macro body that needs to be matched to close that construct.
+         */
+        public char matching;
+        
+        /**
+         * Is copying of text to output suppresed due to a failed #if test? 
+         */
+        public boolean suppressed;
+        
+        /**
+         * Holds a macro that we are currnetly paring.
+         */
+        public Macro incompleteMacro;
+
+        /**
+         * Create a state.
+         * @param matching0 matching character
+         * @param suppr true to suppress copying of text to output
+         */
+        InputState (final char matching0, final boolean suppr) {
+            matching = matching0;
+            suppressed = suppr;
+            incompleteMacro = null;
+        }
+
+    }
+
+    
+    
+    /**
 	 * Defines a new macro processor with no currently defined macros,
 	 * using # as the command prefix.
 	 */
@@ -195,15 +167,15 @@ public class MacroProcessor {
 	 */
 	private String processLine (final String line) {
 		InputState topState = stack.get(stack.size() - 1);
-		if (topState.getMatching() != ' ') {
-			int pos = line.indexOf(topState.getMatching());
+		if (topState.matching != ' ') {
+			int pos = line.indexOf(topState.matching);
 			if (pos < 0) {
-				topState.getIncompleteMacro().setBody(
-				        topState.getIncompleteMacro().getBody() + "\n" + line);
+				topState.incompleteMacro.setBody(
+				        topState.incompleteMacro.getBody() + "\n" + line);
 				return null;
 			} else {
-				topState.getIncompleteMacro().setBody(
-				        topState.getIncompleteMacro().getBody() 
+				topState.incompleteMacro.setBody(
+				        topState.incompleteMacro.getBody() 
                 + "\n" + line.substring(0, pos));
 				stack.remove(stack.size() - 1);
 				return null;
@@ -248,7 +220,7 @@ public class MacroProcessor {
 				accumulated.append(line);
 				accumulated.append(System.lineSeparator());
 			}
-		} else if (!topState.isSuppressed()) {
+		} else if (!topState.suppressed) {
 			accumulated.append(line);
 			accumulated.append(System.lineSeparator());
 		}
@@ -296,7 +268,7 @@ public class MacroProcessor {
 	 */
 	private void processDefine(final String defineCommandStart) {
 		InputState topState = stack.get(stack.size() - 1);
-		if (!topState.isSuppressed()) {
+		if (!topState.suppressed) {
 			int start = commandPrefix.length() + "define".length();
 			ParseResult pr = parseEnclosure(defineCommandStart, start);
 			if (pr == null) {
@@ -341,8 +313,8 @@ public class MacroProcessor {
 				Macro m = new Macro (name, Arrays.asList(args), 
 				        defineCommandStart.substring(start));
 				defineMacro(m);
-				state.setMatching(closer);
-				state.setIncompleteMacro(m);
+				state.matching = closer;
+				state.incompleteMacro = m;
 				stack.add(state);
 			}
 
@@ -369,7 +341,7 @@ public class MacroProcessor {
 			InputState priorState = stack.get(stack.size() - 2);
 			stack.remove(stack.size() - 1);
 			stack.add (new InputState(' ', 
-			        priorState.isSuppressed() || !topState.isSuppressed()));
+			        priorState.suppressed || !topState.suppressed));
 		}
 	}
 
@@ -381,7 +353,7 @@ public class MacroProcessor {
 	private void processIfDef(final String ifDefCommand, 
 	                          final String ifdefLexeme) {
 		InputState topState = stack.get(stack.size() - 1);
-		if (topState.isSuppressed()) {
+		if (topState.suppressed) {
 			// Doesn't matter if the condition is true or not
 			stack.add (new InputState(' ', true));
 		} else {
@@ -412,8 +384,8 @@ public class MacroProcessor {
      */
 	private String processInclude(final String includeCommand) {
 		InputState topState = stack.get(stack.size() - 1);
-		if (!topState.isSuppressed()) {
-			ArrayList<InputState> savedStack = stack;
+		if (!topState.suppressed) {
+			List<InputState> savedStack = stack;
 			stack = new ArrayList<>();
 			stack.add(new InputState(' ', false));
 			String fileName;
@@ -560,8 +532,7 @@ public class MacroProcessor {
 			line = input.readLine();
 		}
 		results.append(flush());
-		String result = results.toString();
-		return result;
+		return results.toString();
 	}
 
 	/**

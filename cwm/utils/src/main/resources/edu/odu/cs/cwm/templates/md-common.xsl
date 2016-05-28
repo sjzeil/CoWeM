@@ -251,7 +251,14 @@
     </xsl:copy>
   </xsl:template>
   
-
+  <xsl:template match="sidebar">
+      <div class="noFloat"> </div>
+      <div class="sidebar">
+          <div style="width: {@width};">
+              <xsl:apply-templates select="node()"/>
+          </div>
+      </div>
+  </xsl:template>
 
   <xsl:template match="longlisting">
     <div class="details">

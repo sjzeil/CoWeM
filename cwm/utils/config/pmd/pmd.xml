@@ -3,6 +3,8 @@
   <description>Custom set of preferred, sane rules</description>
   <!-- This ruleset excludes things already covered by checkstyle. -->
 
+  <exclude-pattern>.*/src/test/.*</exclude-pattern>
+  <exclude-pattern>.*/src/integrationTest/.*</exclude-pattern>
   <rule ref="rulesets/java/design.xml">
     <!-- This ignores any explanation in the Javadoc. Bad. -->
     <exclude name="UncommentedEmptyConstructor"/>
@@ -14,6 +16,7 @@
     <exclude name="TooFewBranchesForASwitchStatement"/>
     <!-- Interacts poorly with Lombok and JCommander, but could be useful. -->
     <exclude name="ImmutableField"/>
+    <exclude name="UseVarargs"/>
   </rule>
   <rule ref="rulesets/java/basic.xml"/>
   <rule ref="rulesets/java/clone.xml"/>

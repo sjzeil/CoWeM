@@ -15,7 +15,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -52,95 +51,7 @@ import edu.odu.cs.cwm.macroproc.MacroProcessor;
  */
 public class MarkdownDocument implements Document {
 	
-    /**
-     * PegDown inserts various common HTML entities into its output.
-     * These are an inconvenience during XSLT processing, however, as they
-     * are not defined in general XML processing. This table is used to
-     * replace these common symbolic entuities by their Unicode numeric
-     * codes. 
-     */
-	private static final String[] COMMON_ENTITIES = {
-			"cent", 	"#162",	 
-			"pound", "#163",
-			"sect", "#167",
-			"copy", "#169",
-			"laquo", "#171",
-			"raquo", "#187",
-			"reg", "#174",
-			"deg", "#176",
-			"plusmn", "#177",
-			"para", "#182",
-			"middot", "#183",
-			"frac12", "#188",
-			"ndash", "#8211",
-			"mdash", "#8212",
-			"lsquo", "#8216",
-			"rsquo", "#8217",
-			"sbquo", "#8218",
-			"ldquo", "#8220", 
-			"rdquo", "#8221",
-			"bdquo", "#8222",
-			"dagger", "#8224",
-			"Dagger", "#8225",
-			"bull", "#8226",
-			"hellip", "#8230",
-			"prime", "#8242",
-			"Prime", "#8243",
-			"euro", "#8364",
-			"trade", "#8482",
-			"asymp", "#8776",
-			"ne", "#8800",
-			"le", "#8804",
-			"ge", "#8805"
-	};
-
-	/**
-	 * Special substitutions defined for this website processing. These deal
-	 * mainly with highlighting and inserting callouts into code listings.
-	 */
-	private static final String[] SPECIAL_SUBSTITUTION_VALUES = {
-			"/*...*/", "&#x22ee;",
-			"/*1*/", "&#x2780;",
-			"/*2*/", "&#x2781;",
-			"/*3*/", "&#x2782;",
-			"/*4*/", "&#x2783;",
-			"/*5*/", "&#x2784;",
-			"/*6*/", "&#x2785;",
-			"/*7*/", "&#x2786;",
-			"/*8*/", "&#x2787;",
-			"/*9*/", "&#x2788;",
-			"/*+*/", "<span class='hli'>",
-			"/*-*/", "</span>",
-			"/*+1*/", "<span class='hli'>",
-			"/*-1*/", "</span>",
-			"/*+2*/", "<span class='hlii'>",
-			"/*-2*/", "</span>",
-			"/*+3*/", "<span class='hliii'>",
-			"/*-3*/", "</span>",
-			"/*+4*/", "<span class='hliv'>",
-			"/*-4*/", "</span>",
-			"/*+i*/", "<i>",
-			"/*-i*/", "</i>",
-			"/*+=*/", "<span class='strike'>",
-			"/*-=*/", "</span>",
-			"\\%", "%",
-			"[_", "<span class='userinput'>",
-			"_]", "</span>"
-	};
-	
-	/**
-	 * A lookup table constructed from SPECILA_SUBSITUTION_VALUES.
-	 */
-	private static final TreeMap<String, String> SPECIAL_SUBSTITUTIONS;
-	static {
-	    SPECIAL_SUBSTITUTIONS = new TreeMap<>();
-		for (int i = 0; i < SPECIAL_SUBSTITUTION_VALUES.length; i += 2) {
-		    SPECIAL_SUBSTITUTIONS.put(SPECIAL_SUBSTITUTION_VALUES[i],
-				                      SPECIAL_SUBSTITUTION_VALUES[i + 1]);
-		}
-	}
-	
-	
+ 	
 	
 	/**
 	 * For logging error messages.
@@ -163,6 +74,20 @@ public class MarkdownDocument implements Document {
 	 * Last line of text read from documentIn.
 	 */
 	private String line = "";
+
+	
+	/**
+     * Code to pre-pend to PegDown output. 
+     */
+    private static final String HTML_HEADER = "<html>\n<head>\n"
+            + "<title>@meta_Title@</title>\n</head>\n<body>\n";
+    
+    /**
+     * Code to append to PegDown output.
+     */
+    private static final String HTML_TRAILER = "</body>\n</html>\n";
+
+	
 	
 	/**
 	 * Create a document from the given string.
@@ -203,8 +128,7 @@ public class MarkdownDocument implements Document {
 	        final Properties properties) {
 		String preprocessed = preprocess (format, properties);
 		org.w3c.dom.Document htmlDoc = process (preprocessed);
-		String result = postprocess (htmlDoc, format, properties);
-		return result;
+		return postprocess (htmlDoc, format, properties);
 	}
 
 	/**
@@ -257,18 +181,18 @@ public class MarkdownDocument implements Document {
 			}
 		}
 		
-		StringBuffer documentBody = new StringBuffer(line + "\n");
+		StringBuffer documentBody = new StringBuffer(line);
+		documentBody.append('\n');
 		try {
 			while ((line = documentIn.readLine()) != null) {
 				documentBody.append(line);
-				documentBody.append("\n");
+				documentBody.append('\n');
 			}
 		} catch (IOException e) {
 			logger.error("Unexpected problem reading document: " + e);
 		}
 		
-		String result = macroProc.process(documentBody.toString());
-		return result;
+		return macroProc.process(documentBody.toString());
 	}
 
 	/**
@@ -322,19 +246,9 @@ public class MarkdownDocument implements Document {
 	 * @return true iff the field can be specified multiple times.
 	 */
 	private boolean fieldIsCumulative(final String fieldName) {
-		return fieldName.equals("Macros") || fieldName.equals("CSS");
+		return "Macros".equals(fieldName) || "CSS".equals(fieldName);
 	}
 
-	/**
-	 * Code to pre-pend to PegDown output. 
-	 */
-	private static final String HTML_HEADER = "<html>\n<head>\n"
-			+ "<title>@meta_Title@</title>\n</head>\n<body>\n";
-	
-	/**
-	 * Code to append to PegDown output.
-	 */
-	private static final String HTML_TRAILER = "</body>\n</html>\n";
 	
 	/**
 	 * Convert Markdown text to an HTML structure.
@@ -348,7 +262,7 @@ public class MarkdownDocument implements Document {
 		PegDownProcessor pdProc = new PegDownProcessor(pdOptions);
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;
-		htmlText = performEntitySubstitutions(htmlText);
+		htmlText = new CommonEntitySubstitutions().apply(htmlText);
 		
 		org.w3c.dom.Document basicHtml = null;
 		try {
@@ -496,7 +410,7 @@ public class MarkdownDocument implements Document {
 	 *  @param htmlDoc XML document to be rewritten
 	 */
 	private void transformURLs (final org.w3c.dom.Document htmlDoc) {
-		
+	    // ToDo
 	}
 
 	/**
@@ -509,61 +423,12 @@ public class MarkdownDocument implements Document {
 	 */
 	private String performTextSubstitutions(final Properties properties, 
 	        final String htmlText) {
-		StringBuilder buffer = new StringBuilder();
-		int start = 0;
-		while (start < htmlText.length()) {
-			int newStart = htmlText.indexOf('@', start);
-			if (newStart < 0) {
-				buffer.append(htmlText.substring(start));
-				break;
-			}
-			int stop = htmlText.indexOf('@', newStart + 1);
-			if (stop < 0) {
-				buffer.append(htmlText.substring(start));
-				break;
-			}
-			String possibleProperty = htmlText.substring(newStart + 1, stop);
-			Object value = properties.getProperty(possibleProperty);
-			if (value == null) {
-				value = metadata.getProperty(possibleProperty);
-			}
-			if (value != null) {
-				buffer.append(htmlText.substring(start, newStart));
-				buffer.append(value.toString());
-				start = stop + 1;
-			} else {
-				buffer.append(htmlText.substring(start, newStart + 1));
-				start = newStart + 1;
-			}
-		}
-		
-		String result = buffer.toString();
-		for (String target: SPECIAL_SUBSTITUTIONS.keySet()) {
-			String value = SPECIAL_SUBSTITUTIONS.get(target);
-			result = result.replace(target, value);
-		}
-		return result;
+	    String result = new PropertySubstitutions(properties).apply(htmlText);
+	    result = new PropertySubstitutions(metadata).apply(htmlText);
+	    result = new SourceCodeSubstitutions().apply(result);
+	    return result;
 	}
 
-	
-	/**
-	 * Substitutes common symbolic entities by numeric codes 
-	 * to allow PegDown output to be loaded as XML.
-	 * 
-	 * @param htmlText  text in which to perform the substitutions
-	 * @return  htmlText with all substitutions performed.
-	 */
-	private String performEntitySubstitutions(final String htmlText) {
-		String result = htmlText;
-		for (int i = 0; i < COMMON_ENTITIES.length; i += 2) {
-			String target = "&" + COMMON_ENTITIES[i] + ";";
-			String value = "&" + COMMON_ENTITIES[i + 1] + ";";
-			result = result.replace(target, value);
-		}
-		return result;
-	}
-
-	
 	
 	
 	

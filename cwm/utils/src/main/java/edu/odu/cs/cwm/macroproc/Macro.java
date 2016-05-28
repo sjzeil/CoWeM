@@ -33,7 +33,7 @@ public class Macro {
 	/**
 	 * List of parameter names for this macro.
 	 */
-	private ArrayList<String> formalParams;
+	private List<String> formalParams;
 	
 	/**
 	 * The body (substitution part) of this macro.
@@ -208,15 +208,15 @@ public class Macro {
     /**
      * @return the formalParams
      */
-    public final ArrayList<String> getFormalParams() {
+    public final List<String> getFormalParams() {
         return formalParams;
     }
 
     /**
      * @param formalParams0 the formalParams to set
      */
-    public final void setFormalParams(final ArrayList<String> formalParams0) {
-        this.formalParams = formalParams0;
+    public final void setFormalParams(final List<String> formalParams0) {
+        this.formalParams = new ArrayList<String>(formalParams0);
     }
 
     /**
