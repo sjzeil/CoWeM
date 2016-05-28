@@ -460,12 +460,16 @@ public class MarkdownDocument implements Document {
 	 *  @param htmlDoc XML document to be rewritten
 	 */
 	private void transformURLs (final org.w3c.dom.Document htmlDoc) {
-	    // ToDo
+	    String baseURL = 
+	            properties.getProperty(PropertyNames.BASE_URL_PROPERTY, "");
+        String bbURL = 
+                properties.getProperty(PropertyNames.BB_URL_PROPERTY, "");
+	    new URLRewriting(baseURL, bbURL).rewrite (htmlDoc);
 	}
 
 	/**
-	 * Substitutes metadata, property, and special values (see 
-	 * SPECIAL_SUBSTITUTIONS, above) occurring in the HTML text. 
+	 * Substitutes metadata, property, and special values 
+	 * occurring in the HTML text. 
 	 * 
 	 * @param htmlText  text in which to perform the substitutions
 	 * @return  htmlText with all substitutions performed.

@@ -18,6 +18,12 @@ public final class PropertyNames {
     public static final String BASE_URL_PROPERTY = "baseURL";
 
     /**
+     * Name of the property holding the URL of a Blackboard course site.
+     */
+    public static final String BB_URL_PROPERTY = "bbURL";
+
+    
+    /**
      * Name of the property holding the number of directory levels below
      * the website base at which this document will reside.
      */
