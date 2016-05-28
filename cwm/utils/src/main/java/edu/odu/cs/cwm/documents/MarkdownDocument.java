@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -51,14 +50,20 @@ import edu.odu.cs.cwm.macroproc.MacroProcessor;
  */
 public class MarkdownDocument implements Document {
 	
- 	
-	
-	/**
+ 
+ 	/**
 	 * For logging error messages.
 	 */
 	private static Logger logger = 
 	        LoggerFactory.getLogger(MarkdownDocument.class);
 	
+	   /**
+     * The number of directory levels separating this document from the website
+     * base.  This is used to enable the generation of relative URLs to styles,
+     * graphics, and other document directories.
+     */
+    private int directoryDepth;
+    
 	/**
 	 * Source for text of the document. 
 	 */
@@ -70,7 +75,13 @@ public class MarkdownDocument implements Document {
 	 */
 	private Properties metadata;
 	
-	/**
+    /**
+     * Properties to be used when processing this document.
+     */
+    private Properties properties;
+
+    
+    /**
 	 * Last line of text read from documentIn.
 	 */
 	private String line = "";
@@ -90,55 +101,96 @@ public class MarkdownDocument implements Document {
 	
 	
 	/**
-	 * Create a document from the given string.
+	 * Create a document from the given string. 
 	 * @param input Markdown document text
+	 * @param properties0 Properties to be used in processing this document.
+	 * @param directoryDepth0 Number of directory levels separating this page
+	 *                        from the website base.
 	 */
-	public MarkdownDocument(final String input) {
+	public MarkdownDocument(final String input, final Properties properties0,
+	         final int directoryDepth0) {
 		documentIn = new BufferedReader (new StringReader (input));
 		metadata = null;
+		directoryDepth = directoryDepth0;
+		initProperties (properties0, "");
 	}
 	
+
     /**
      * Create a document from the given file.
      * @param input Markdown document text
+     * @param properties0 Properties to be used in processing this document.
      */
-	public MarkdownDocument(final File input) {
+	public MarkdownDocument(final File input, final Properties properties0) {
 		try {
 			documentIn = new BufferedReader (new FileReader (input));
 		} catch (FileNotFoundException e) {
 			logger.warn("Unable to read from " + input + ": " + e);
 		}
 		metadata = null;
+		directoryDepth = 0;
+		File dir = input.getParentFile();
+		while ((dir != null) && !(new File(dir, "gradle.settings").exists())) {
+		    ++directoryDepth;
+		    dir = dir.getParentFile();
+		}
+		String baseName = input.getName();
+		if (baseName.contains(".")) {
+		    baseName = baseName.substring(0, baseName.lastIndexOf('.'));
+		}
+		initProperties (properties0, baseName);
 	}
 
-	/**
-     * Create a document from the given reader.
-     * @param input Markdown document text
-     */
-	public MarkdownDocument(final Reader input) {
-		documentIn = new BufferedReader(input);
-		metadata = null;
-	}
 	
-	/* (non-Javadoc)
-	 * @see edu.odu.cs.cwm.documents.Document#transform(java.lang.String, java.util.Properties)
-	 */
+    /**
+     * Copy a set of properties into the data member, augmenting
+     * with internally computed properties: baseURL, directoryDepth,
+     * and primaryDocument.
+     * 
+     * @param properties0 Properties to be used in processing this document.
+     * @param primaryDocumentName base name of the primary document file,
+     *                            empty if this is not a primary document.
+     */
+    private void initProperties(final Properties properties0, 
+                                final String primaryDocumentName) {
+        properties = new Properties();
+        for (Object okey: properties0.keySet()) {
+            String key = okey.toString();
+            String value = properties0.getProperty(key);
+            properties.put(key, value);
+        }
+        properties.put(PropertyNames.PRIMARY_DOCUMENT_PROPERTY,
+                primaryDocumentName);
+        properties.put(PropertyNames.DIRECTORY_DEPTH_PROPERTY, 
+                Integer.toString(directoryDepth));
+        StringBuffer base = new StringBuffer();
+        for (int i = 0; i < directoryDepth; ++i) {
+            base.append("../");
+        }
+        properties.put(PropertyNames.BASE_URL_PROPERTY,
+                base.toString());
+    }
+
+    /**
+     * Transform this document into a string suitable for writing into
+     * an HTML file.
+     *  
+     * @param format   Specifies a style/format for the generated HTML. 
+     * @return String containing HTML of page for web site.
+     */
 	@Override
-	public final String transform(final String format, 
-	        final Properties properties) {
-		String preprocessed = preprocess (format, properties);
+	public final String transform(final String format) {
+		String preprocessed = preprocess (format);
 		org.w3c.dom.Document htmlDoc = process (preprocessed);
-		return postprocess (htmlDoc, format, properties);
+		return postprocess (htmlDoc, format);
 	}
 
 	/**
 	 * Prepare for processing: Apply macros and extract metadata.
 	 * @param format  HTML format to be applied
-	 * @param properties Properties to be defined to the macro processor.
 	 * @return  A Markdown document string ready for conversion to HTML.
 	 */
-	public final String preprocess(final String format, 
-	                               final Properties properties) {
+	public final String preprocess(final String format) {
 		final String defaultMacrosFile = "macros.md";
 		
 		MacroProcessor macroProc = new MacroProcessor("%");
@@ -288,12 +340,10 @@ public class MarkdownDocument implements Document {
 	 * @param htmlDoc  the basic XML/HTML structure for the document.
 	 * @param format   the desired format - used to select a stylesheet for
 	 *                    the basic transformations.
-	 * @param properties a collection of key,value pairs for late substitution.
 	 * @return transformed HTML string
 	 */
 	public final String postprocess(final org.w3c.dom.Document htmlDoc, 
-	        final String format, 
-			final Properties properties) {
+	        final String format) {
 		
 		final String xsltLocation  = "/edu/odu/cs/cwm/templates/";
 		final InputStream formatConversionSheet = 
@@ -389,7 +439,7 @@ public class MarkdownDocument implements Document {
 		}
 		
 		// Apply property and other final substitutions.
-		String result = performTextSubstitutions(properties, htmlText);
+		String result = performTextSubstitutions(htmlText);
 		
 		return result;
 	}
@@ -417,14 +467,12 @@ public class MarkdownDocument implements Document {
 	 * Substitutes metadata, property, and special values (see 
 	 * SPECIAL_SUBSTITUTIONS, above) occurring in the HTML text. 
 	 * 
-	 * @param properties  property values for the course/document
 	 * @param htmlText  text in which to perform the substitutions
 	 * @return  htmlText with all substitutions performed.
 	 */
-	private String performTextSubstitutions(final Properties properties, 
-	        final String htmlText) {
-	    String result = new PropertySubstitutions(properties).apply(htmlText);
-	    result = new PropertySubstitutions(metadata).apply(htmlText);
+	private String performTextSubstitutions(final String htmlText) {
+	    String result = new PropertySubstitutions(metadata).apply(htmlText);
+	    result = new PropertySubstitutions(properties).apply(htmlText);
 	    result = new SourceCodeSubstitutions().apply(result);
 	    return result;
 	}

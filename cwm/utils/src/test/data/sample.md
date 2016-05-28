@@ -16,5 +16,5 @@ section 1.2
 
 Something in _italics_ and
 something else in **bold**
-and \em{even
+and \emph{even
 emphasized}.

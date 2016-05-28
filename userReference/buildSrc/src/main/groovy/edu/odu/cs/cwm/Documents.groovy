@@ -71,7 +71,8 @@ class Documents implements Plugin<Project> {
 		'doc_mainDoc') {
 		    inputs.file project.documents.primaryDocument
 			outputs.file new File(websiteArea, 'index.html')
-			println ("From " + project.documents.primaryDocument + " to " + new File(websiteArea, 'index.html'))
+			println ("From " + project.documents.primaryDocument + " to " 
+                             + new File(websiteArea, 'index.html'))
 		}
 
 		project.doc_mainDoc << {
@@ -132,7 +133,7 @@ class Documents implements Plugin<Project> {
 		project.task (dependsOn: [project.doc_mainDoc,
 			project.doc_secondaryDocs,
 			project.doc_Listings],
-		'build') {
+		  'build') {
 			description 'Prepare document set output'
 			dependsOn ':setup'
 		}

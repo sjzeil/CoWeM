@@ -292,7 +292,7 @@
   
 <xsl:template name="linkToFormat">
   <xsl:param name="otherFormat"/>
-  <xsl:if test="$altformats = 'yes'">
+  <xsl:if test="$primaryDocument != ''">
     <xsl:if test="$otherFormat != $format">
       <xsl:text>&#10;</xsl:text>
       <xsl:choose>

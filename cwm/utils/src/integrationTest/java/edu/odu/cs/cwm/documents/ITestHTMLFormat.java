@@ -110,9 +110,9 @@ public class ITestHTMLFormat {
 				"A short",
 				"paragraph."
 				);
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
 		
-		String htmlContent = doc.transform(FORMAT, properties);
+		String htmlContent = doc.transform(FORMAT);
 		
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("2012"));

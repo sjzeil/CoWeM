@@ -146,7 +146,6 @@ public class TestModulesFormatting {
 				"<ul>",
 				"<li id='li5'>item5</li>",
 				"</ul>",
-				"<h1 id='h13'>Organization</h1>",
 				"</body>",
 				"</html>"	
 		};
@@ -157,8 +156,7 @@ public class TestModulesFormatting {
 		String htmlContent = root.getTextContent();
 
 		assertTrue (htmlContent.contains("Section 1"));
-		assertFalse (htmlContent.contains("Organization"));
-
+		
 		XPath xPath = XPathFactory.newInstance().newXPath();
 
 		assertEquals ("html", root.getLocalName());

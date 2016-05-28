@@ -147,9 +147,9 @@ public class ITestModuleFormat {
 	public void testSimpleDoc() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
 		String mdInput = String.join(System.getProperty("line.separator"),
 		        schedule_md);
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
 		
-		String htmlContent = doc.transform(FORMAT, properties);
+		String htmlContent = doc.transform(FORMAT);
 		
 		assertTrue (htmlContent.contains("Software for Courses"));
 		assertTrue (htmlContent.contains("websubmit.pdf"));

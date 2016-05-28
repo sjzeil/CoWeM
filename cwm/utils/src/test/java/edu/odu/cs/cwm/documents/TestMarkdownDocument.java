@@ -10,7 +10,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,7 +38,7 @@ import org.xml.sax.SAXException;
 public class TestMarkdownDocument {
 	
 	
-	private String mdInput = "Title: Title of Document\n"
+	private String mdInput1 = "Title: Title of Document\n"
 			+ "Author: John Doe\n"
 			+ "Date: Jan 1, 2012\n\n"
 			+ "# Section 1\n\n"
@@ -51,9 +50,23 @@ public class TestMarkdownDocument {
 			+ "A paragraph in\nsection 1.2\n\n"
 			+ "Something in _italics_ and\n"
 			+ "something else in **bold**\n"
-			+ "and \\em{even\nemphasized}.\n";
+			+ "and \\emph{even\nemphasized}.\n";
 	
-	private String preProcessed1 =
+    private String mdInput2 = "Title: Title of Document\n"
+            + "Author: John Doe\n"
+            + "Date: Jan 1, 2012\n\n"
+            + "# Section 1\n\n"
+            + "%if _includeThis\n"
+            + "## Section 1.1\n\n"
+            + "A paragraph in\nsection 1.1\n\n"
+            + "%endif\n\n"
+            + "## Section 1.2\n\n"
+            + "A paragraph in\nsection 1.2\n\n"
+            + "Something in _italics_ and\n"
+            + "something else in **bold**\n";
+
+    
+    private String preProcessed1 =
 			"\n# Section 1\n\n\n"
 			+ "## Section 1.1\n\n"
 			+ "A paragraph in\nsection 1.1\n\n"
@@ -61,8 +74,7 @@ public class TestMarkdownDocument {
 			+ "## Section 1.2\n\n"
 			+ "A paragraph in\nsection 1.2\n\n"
 			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and <em>even\nemphasized</em>.\n";
+			+ "something else in **bold**\n";
 	
 	private String preProcessed2 = 
 			"\n# Section 1\n\n"
@@ -70,8 +82,7 @@ public class TestMarkdownDocument {
 			+ "## Section 1.2\n\n"
 			+ "A paragraph in\nsection 1.2\n\n"
 			+ "Something in _italics_ and\n"
-			+ "something else in **bold**\n"
-			+ "and <em>even\nemphasized</em>.\n";
+			+ "something else in **bold**\n";
 	
 	
 	private Properties properties;
@@ -83,10 +94,7 @@ public class TestMarkdownDocument {
 	@Before
 	public void setUp() throws Exception {
 		properties = new Properties();
-		Path cwmSupportFiles = Paths.get("src", "test", "data");
-		properties.put("_CWM", cwmSupportFiles);
-		Path defaultmacros = cwmSupportFiles.resolve("macros.md");
-		properties.put("_defaultMacros",  defaultmacros);
+		properties.put("meta_Title", "Title of Document");
 	}
 
 	
@@ -108,50 +116,38 @@ public class TestMarkdownDocument {
 	 */
 	@Test
 	public void testTransform() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
-		properties.put("_includeThis", 1);
+        properties.put("_includeThis", "1");
+		MarkdownDocument doc = new MarkdownDocument(mdInput1, properties, 2);
 		
-		String htmlContent = doc.transform("html", properties);
+		String htmlContent = doc.transform("html");
 		
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
-		assertTrue (htmlContent.contains("<em>even"));
+		assertTrue (htmlContent.contains(">even"));
 	}
 	
-
-	@Test
-	public void testConstructor_Reader() {
-		Reader mdIn = new StringReader(mdInput);
-		MarkdownDocument doc = new MarkdownDocument(mdIn);
-		properties.put("_includeThis", 1);
-		
-		String htmlContent = doc.transform("html", properties);
-		
-		assertTrue (htmlContent.contains("John Doe"));
-		assertTrue (htmlContent.contains("something else in"));
-		assertTrue (htmlContent.contains("<em>even"));
-	}
 
 	
 	@Test
 	public void testConstructor_File() {
 		Path mdInPath = Paths.get("src", "test", "data", "sample.md");
-		MarkdownDocument doc = new MarkdownDocument(mdInPath.toFile());
+		MarkdownDocument doc = new MarkdownDocument(mdInPath.toFile(), 
+		                                properties);
 
-		String htmlContent = doc.transform("html", properties);
+		String htmlContent = doc.transform("html");
 		
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
-		assertTrue (htmlContent.contains("<em>even"));
+		assertTrue (htmlContent.contains(">even"));
 	}
 
 	
 	@Test
 	public void testPreprocess1() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
-		properties.put("_includeThis", "1");
+        properties.put("_includeThis", "1");
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
-		String preprocessed = doc.preprocess("html", properties);
+		String preprocessed = doc.preprocess("html");
 		
 		assertEquals (preProcessed1, preprocessed);
 		
@@ -163,9 +159,9 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPreprocess2() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
-		String preprocessed = doc.preprocess("html", properties);
+		String preprocessed = doc.preprocess("html");
 		
 		assertEquals (preProcessed2, preprocessed);
 		
@@ -177,7 +173,7 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testPreprocess3() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		// Check to be sure that metadata queries do not depend upon
 		// nor interfere with pre-processing.
@@ -185,14 +181,14 @@ public class TestMarkdownDocument {
 		assertEquals ("John Doe", doc.getMetadata("Author"));
 		assertEquals ("Jan 1, 2012", doc.getMetadata("Date"));
 		
-		String preprocessed = doc.preprocess("html", properties);
+		String preprocessed = doc.preprocess("html");
 		
 		assertEquals (preProcessed2, preprocessed);		
 	}
 
 	@Test
 	public void testMetadata() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		assertEquals ("Title of Document", doc.getMetadata("Title"));
 		assertEquals ("John Doe", doc.getMetadata("Author"));
@@ -202,14 +198,14 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testProcess() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		org.w3c.dom.Document basicHtml = doc.process(preProcessed1);
 		Element root = basicHtml.getDocumentElement();
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
-		assertEquals ("@Title@", actualTitle);
+		assertEquals ("@meta_Title@", actualTitle);
 
 		String actualSection = (String)xPath.evaluate("/html/body/h1", root);
 		assertEquals ("Section 1", actualSection);
@@ -227,7 +223,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough1() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -245,7 +241,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough2() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		String passThrough2 =
 				"# Section 1\n\n"
@@ -262,7 +258,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough3() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		String passThrough3 =
 				"# Section 1\n\n"
@@ -280,7 +276,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough4() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);		
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);		
 
 		String passThrough4 =
 				"# Section 1\n\n"
@@ -303,7 +299,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough5() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);		
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);		
 
 		String passThrough =
 				"# Section 1\n\n"
@@ -344,7 +340,7 @@ public class TestMarkdownDocument {
 	// @Test
 	// Not supported by PegDown processor 
 	public void testSubSuperscripts() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -364,7 +360,7 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testInlineMath() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -402,7 +398,7 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testDisplayMath() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -439,7 +435,7 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPostprocess() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
-		String html0 = "<html><head><title>@Title@</title></head><body>\n"
+		String html0 = "<html><head><title>@meta_Title@</title></head><body>\n"
 				+ "<p id='p1'>paragraph 1</p>\n"
 				+ "<h1>Section 1</h1>\n"
 				+ "<p>paragraph 1</p>\n"
@@ -453,8 +449,8 @@ public class TestMarkdownDocument {
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
 		
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
-		String htmlResult = doc.postprocess(basicHtml, "html", properties);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+		String htmlResult = doc.postprocess(basicHtml, "html");
 		
 		assertTrue (htmlResult.contains("paragraph 1"));
 		assertTrue (htmlResult.contains("paragraph 4"));
@@ -484,7 +480,7 @@ public class TestMarkdownDocument {
 	@Test
 	public void testPostprocessWithPaging() 
 			throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
-		String html0 = "<html><head><title>@Title@</title></head><body>\n"
+		String html0 = "<html><head><title>@meta_Title@</title></head><body>\n"
 				+ "<p id='p0'>paragraph 0</p>\n"
 				+ "<h1>Section 1</h1>"
 				+ "<p id='p1'>paragraph 1</p>\n"
@@ -497,8 +493,8 @@ public class TestMarkdownDocument {
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
 		
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
-		String htmlResult = doc.postprocess(basicHtml, "pages", properties);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+		String htmlResult = doc.postprocess(basicHtml, "pages");
 		
 		assertTrue (htmlResult.contains("paragraph 1"));
 		assertTrue (htmlResult.contains("paragraph 4"));
@@ -552,8 +548,8 @@ public class TestMarkdownDocument {
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
 		
-		MarkdownDocument doc = new MarkdownDocument(mdInput);
-		String htmlResult = doc.postprocess(basicHtml, "html", properties);
+		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+		String htmlResult = doc.postprocess(basicHtml, "html");
 		
 		assertTrue (htmlResult.contains("./foo"));
 		assertTrue (htmlResult.contains("../../Public/bar/index.html"));

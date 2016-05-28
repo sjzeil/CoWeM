@@ -1,0 +1,39 @@
+/**
+ * 
+ */
+package edu.odu.cs.cwm.documents;
+
+/**
+ * Names of important course and document properties.
+ * 
+ * @author zeil
+ *
+ */
+public final class PropertyNames {
+	
+ 	/**
+ 	 * Name of the property holding the relative URL from a document to
+ 	 * the website base directory.
+ 	 */
+    public static final String BASE_URL_PROPERTY = "baseURL";
+
+    /**
+     * Name of the property holding the number of directory levels below
+     * the website base at which this document will reside.
+     */
+    public static final String DIRECTORY_DEPTH_PROPERTY = "directoryDepth";
+
+    /**
+     * Name of the property holding the base name of a primary document.
+     * Property value is "" if the document being processed is not a primary.
+     */
+    public static final String PRIMARY_DOCUMENT_PROPERTY = "primaryDocument";
+
+    /**
+     * This class provides only static members. Instances cannot be created.
+     */
+    private PropertyNames () {
+        
+    }
+
+}

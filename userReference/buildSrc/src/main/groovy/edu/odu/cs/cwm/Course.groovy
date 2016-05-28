@@ -70,12 +70,6 @@ class Course {
 
     // Website Attributes
     
-    /**
-     * Relative URL back to the root directory of the course. (Deprecated,
-     * will probably be a computed string once variable depth documents are
-     * supported).
-     */
-    String baseURL = "../../";
     
     /**
      * URL used in "home" links from documents (generally in document footers).

@@ -72,8 +72,8 @@ public class CommonEntitySubstitutions implements TextSubstitutions {
     public final String apply(final String toString) {
         String result = toString;
         for (int i = 0; i < COMMON_ENTITIES.length; i += 2) {
-            String target = COMMON_ENTITIES[i];
-            String value = COMMON_ENTITIES[i + 1];
+            String target = "&" + COMMON_ENTITIES[i] + ";";
+            String value = "&" + COMMON_ENTITIES[i + 1] + ";";
             result = result.replace(target, value);
         }
         return result;
