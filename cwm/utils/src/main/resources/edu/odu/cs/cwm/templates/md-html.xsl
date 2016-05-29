@@ -35,8 +35,8 @@
 
   <xsl:output method="xml" encoding="UTF-8"/>
 
-  <xsl:variable name="stylesURL" select="concat($baseURL, 'styles/')"/>
-  <xsl:variable name="graphicsURL" select="concat($baseURL, 'graphics/')"/>
+  <xsl:variable name="stylesURL" select="concat($baseURL, 'styles')"/>
+  <xsl:variable name="graphicsURL" select="concat($baseURL, 'graphics')"/>
 
   <xsl:template match="/">
     <xsl:apply-templates select="*|text()"/>

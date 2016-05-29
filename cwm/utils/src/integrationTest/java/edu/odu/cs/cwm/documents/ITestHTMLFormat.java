@@ -118,6 +118,8 @@ public class ITestHTMLFormat {
 		assertTrue (htmlContent.contains("2012"));
 		assertTrue (htmlContent.contains("A short"));
 		assertTrue (htmlContent.contains("paragraph."));
+		assertTrue (htmlContent.contains("\"../../styles/md-html.css\""));
+        assertTrue (htmlContent.contains("\"../../styles/md-html-ext.css\""));
 		
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));

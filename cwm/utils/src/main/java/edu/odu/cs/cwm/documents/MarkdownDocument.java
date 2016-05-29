@@ -130,7 +130,7 @@ public class MarkdownDocument implements Document {
 		metadata = null;
 		directoryDepth = 0;
 		File dir = input.getParentFile();
-		while ((dir != null) && !(new File(dir, "gradle.settings").exists())) {
+		while ((dir != null) && !(new File(dir, "settings.gradle").exists())) {
 		    ++directoryDepth;
 		    dir = dir.getParentFile();
 		}
@@ -315,7 +315,8 @@ public class MarkdownDocument implements Document {
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;
 		htmlText = new CommonEntitySubstitutions().apply(htmlText);
-		
+		htmlText = new CWMcleaner().apply(htmlText); 
+		        
 		org.w3c.dom.Document basicHtml = null;
 		try {
 			DocumentBuilder b 
@@ -333,7 +334,10 @@ public class MarkdownDocument implements Document {
 		return basicHtml;
 	}
 
-	/**
+
+
+
+    /**
 	 * Transform HTML to desired output format and apply late substitutions
 	 * of properties and other special strings.
 	 *   

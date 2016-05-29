@@ -10,7 +10,6 @@ def includeFrom = {
 		if ( f.name == "website.gradle" ) {
 			String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
 			String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
-			println "found " + projectName
 			include projectName
 			project(projectName).buildFileName = "website.gradle"
 		}

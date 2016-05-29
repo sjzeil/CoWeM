@@ -431,6 +431,7 @@ in place.
 ```
 \\{}loadlisting{unittest.h}
 
+```
 Files processed in this way can end with `.h`, `.cpp`, `.java`, or
 `.listing` file names.
 ```

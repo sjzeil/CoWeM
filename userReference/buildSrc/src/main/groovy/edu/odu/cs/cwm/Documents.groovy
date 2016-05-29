@@ -84,8 +84,6 @@ class Documents implements Plugin<Project> {
 			project.documents.properties.each { prop, value ->
 				docProperties.put(prop, value.toString())
 			}
-			MarkdownDocument doc =
-					new MarkdownDocument(project.documents.primaryDocument);
 			String primaryName = project.documents.primaryDocument.name;
 			int k = primaryName.lastIndexOf('.');
 			if (k >= 0) {
@@ -94,16 +92,17 @@ class Documents implements Plugin<Project> {
 			if (!websiteArea.exists()) {
 				websiteArea.mkdirs();
 			}
+            MarkdownDocument doc =
+                    new MarkdownDocument(project.documents.primaryDocument,
+                        docProperties);
 			for (String format: project.documents.formats) {
-				docProperties.put('_' + format, '1')
-				String result = doc.transform(format, docProperties)
+				String result = doc.transform(format)
 
 				File resultFile = project.file(websiteArea.toString() + '/'
 						+ primaryName + "__" + format + ".html")
 				resultFile.withWriter('UTF-8') {
 					it.writeLine(result)
 				}
-				docProperties.remove('_' + format)
 			}
 			if (project.documents.indexFormat.length() == 0) {
 				project.documents.indexFormat = project.documents.formats[0]

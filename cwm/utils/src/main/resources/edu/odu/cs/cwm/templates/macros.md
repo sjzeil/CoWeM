@@ -17,17 +17,17 @@
 
 Assorted text decorations (from docbook, originally)
 
-%define <\firstterm> {newterm} {<span class="firstterm" markdown="1">newterm</span>}
-%define <\emph> {newterm} {<span class="emph" markdown="1">newterm</span>}
-%define <\type> {newterm} {<span class="type" markdown="1">newterm</span>}
-%define <\varname> {newterm} {<span class="varname" markdown="1">newterm</span>}
-%define <\code> {newterm} {<span class="code" markdown="1">newterm</span>}
-%define <\function> {newterm} {<span class="function" markdown="1">newterm</span>}
-%define <\file> {newterm} {<span class="file" markdown="1">newterm</span>}
-%define <\filename> {newterm} {<span class="file" markdown="1">newterm</span>}
-%define <\command> {newterm} {<span class="command" markdown="1">newterm</span>}
-%define <\replaceable> {newterm} {<span class="replaceable" markdown="1">newterm</span>}
-%define <\sout> <strikePhrase> {<span class='strike' markdown='1'>strikePhrase</span>}
+%define <\firstterm> {newterm} {<span class="firstterm">newterm</span>}
+%define <\emph> {newterm} {<span class="emph">newterm</span>}
+%define <\type> {newterm} {<span class="type">newterm</span>}
+%define <\varname> {newterm} {<span class="varname">newterm</span>}
+%define <\code> {newterm} {<span class="code">newterm</span>}
+%define <\function> {newterm} {<span class="function">newterm</span>}
+%define <\file> {newterm} {<span class="file">newterm</span>}
+%define <\filename> {newterm} {<span class="file">newterm</span>}
+%define <\command> {newterm} {<span class="command">newterm</span>}
+%define <\replaceable> {newterm} {<span class="replaceable">newterm</span>}
+%define <\sout> <strikePhrase> {~~strikePhrase~~}
 %define <\anchor> <anchorID> {<span id='anchorID'></span>}
 
 
@@ -84,11 +84,7 @@ Image processing:
 
 Listings:
 %ifdef _html
-%define <\loadlisting> (sourceFile) (
-
-<longlisting file='sourceFile.html'/>
-
-)
+%define <\loadlisting> (sourceFile) (<longlisting file='sourceFile.html'/>)
 %else
 %ifdef _epub
 %define <\loadlisting> (sourceFile) (
@@ -104,47 +100,58 @@ Listings:
 %endif
 %endif
 
-%define {\bExample} {theTitle} {<example markdown="1"><title markdown="1">theTitle</title>}
-%define {\eExample} {} {</example>}
+%define {\bExample} {theTitle} {<cwm tag="example" title="theTitle"/>}
+%define {\eExample} {} {<cwm tag="/example"/>
+
+}
 
 
 Click to reveal
-%define {^^^} {summaryText} {</p><details markdown="1">
-<summary markdown="1">summaryText</summary><div markdown="1"><p>}
-%define {^^^} {} {</p></div></details><p>}
+%define {^^^} {summaryText} {<cwm tag="details" summary="summaryText"/>}
+%define {^^^} {} {<cwm tag="/details"/>
+
+}
 
 Slideshow
 
-%define <\bSlideshow> () {<div class="noFloat"> </div><div class="slideshow" markdown="1">
+%define <\bSlideshow> () {<cwm tag="slideshow"/>}
+%define <\eSlideshow> () {<cwm tag="/slideshow"/>
+
 }
-%define <\eSlideshow> () {
-</p></div><p>
+%define <\bSlide> () {<cwm tag="slideshowslide"/>
+
 }
-%define <\bSlide> () {<div class="slideshowslide" markdown="1">
+%define <\eSlide> () {<cwm tag="/slideshowslide"/>
+
 }
-%define <\eSlide> () {
-</p></div><p>
-} 
 
 
 Sidebars
 
-%define <\bSidebar> (sidebarWidth) {<sidebar width="sidebarWidth">}
-%define <\eSidebar> () {</sidebar>}
+%define <\bSidebar> () {<cwm tag="sidebar" width="50"/>
+
+}
+
+%define <\bSidebar> (sidebarWidth) {<cwm tag="sidebar" width="sidebarWidth"/>}
+
+%define <\eSidebar> () {<cwm tag="/sidebar"/>
+
+}
 
 
 Columns
 
-%define <\bSplitColumns> () {<div markdown="1"><div class="leftColumn" markdown="1">
+%define <\bSplitColumns> () {<cwm tag="splitColumns"/><cwm tag="leftColumn"/>
+
 }
-%define <\eSplitColumns> () {
-</p></div></div><p>
+%define <\eSplitColumns> () {<cwm tag="/rightColumn"/><cwm tag="/splitColumns"/>
+
 } 
-%define <\splitColumns> () {
-</p></div><div class="rightColumn" markdown="1"><p>
+%define <\splitColumns> () {<cwm tag="/leftColumn"/><cwm tag="rightColumns"/>
+
 } 
-%define <\splitColumn> () {
-</p></div><div class="rightColumn" markdown="1"><p>
+%define <\splitColumn> () {<cwm tag="/leftColumn"/><cwm tag="rightColumns"/>
+
 } 
 
 
@@ -153,8 +160,8 @@ Columns
 
 Generating the submission button for assignments:
 
-%define <\submitButton> <submissionControlFile> {<form><p><input type="button" value="Submit this assignment" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>}
+%define <\submitButton> <submissionControlFile> {<form><div><input type="button" value="Submit this assignment" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></div></form>}
 
-%define <\gradeButton> <submissionControlFile> {<form><p><input type="button" value="View Grade Report" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></p></form>}
+%define <\gradeButton> <submissionControlFile> {<form><div><input type="button" value="View Grade Report" onclick="window.open('https://www.cs.odu.edu/~zeil/submit/submit.html?asstinfo=submissionControlFile')"/></div></form>}
 
-}
+
