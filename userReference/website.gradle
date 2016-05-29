@@ -4,6 +4,7 @@
  */
 
 apply plugin: edu.odu.cs.cwm.CourseWebsite
+apply plugin: edu.odu.cs.zeil.LogToFile
 
 
 /*
@@ -70,7 +71,6 @@ apply plugin: edu.odu.cs.cwm.CourseWebsite
  * |--|- cartridges/  generated cartridges
  */
  
-  
 
 course {
 	courseName        = 'CS 000'
