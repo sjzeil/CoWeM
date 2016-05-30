@@ -70,6 +70,11 @@ public class MarkdownDocument implements Document {
 	private BufferedReader documentIn;
 	
 	/**
+	 * Directory from which source code was being obtained.
+	 */
+	private File sourceDirectory;
+	
+	/**
 	 * Metadata extracted from lines at the beginning of the document in
 	 * the form: FieldName: value.
 	 */
@@ -112,6 +117,7 @@ public class MarkdownDocument implements Document {
 		documentIn = new BufferedReader (new StringReader (input));
 		metadata = null;
 		directoryDepth = directoryDepth0;
+		sourceDirectory = new File(".");
 		initProperties (properties0, "");
 	}
 	
@@ -138,6 +144,7 @@ public class MarkdownDocument implements Document {
 		if (baseName.contains(".")) {
 		    baseName = baseName.substring(0, baseName.lastIndexOf('.'));
 		}
+	    sourceDirectory = input.getParentFile();
 		initProperties (properties0, baseName);
 	}
 
@@ -169,6 +176,8 @@ public class MarkdownDocument implements Document {
         }
         properties.put(PropertyNames.BASE_URL_PROPERTY,
                 base.toString());
+        properties.put(PropertyNames.DOCUMENT_SET_PATH_PROPERTY,
+                sourceDirectory.getAbsolutePath());
     }
 
     /**
@@ -315,7 +324,8 @@ public class MarkdownDocument implements Document {
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;
 		htmlText = new CommonEntitySubstitutions().apply(htmlText);
-		htmlText = new CWMcleaner().apply(htmlText); 
+		htmlText = new CWMcleaner().apply(htmlText);
+		htmlText = new ListingInjector().apply(htmlText);
 		        
 		org.w3c.dom.Document basicHtml = null;
 		try {
@@ -390,6 +400,7 @@ public class MarkdownDocument implements Document {
 		org.w3c.dom.Document formattedDoc = null;		
 		try {
 			Source xslSource = new StreamSource(formatConversionSheet);
+			xslSource.setSystemId("http://www.cs.odu.edu/~zeil");
 			formattedDoc = dBuilder.newDocument();
 			Templates template = transFact.newTemplates(xslSource);
 			Transformer xform = template.newTransformer();
@@ -427,7 +438,7 @@ public class MarkdownDocument implements Document {
 		try {
 			Transformer transformer = 
 			        TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+			transformer.setOutputProperty(OutputKeys.INDENT, "no"); 
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			Source source = new DOMSource(formattedDoc.getDocumentElement());
 			StringWriter htmlString = new StringWriter();

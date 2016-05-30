@@ -36,6 +36,11 @@ public final class PropertyNames {
     public static final String PRIMARY_DOCUMENT_PROPERTY = "primaryDocument";
 
     /**
+     * Absolute path to directory containing the primary document.
+     */
+    public static final Object DOCUMENT_SET_PATH_PROPERTY = "documentSetPath";
+
+    /**
      * This class provides only static members. Instances cannot be created.
      */
     private PropertyNames () {

@@ -84,21 +84,13 @@ Image processing:
 
 Listings:
 %ifdef _html
-%define <\loadlisting> (sourceFile) (<longlisting file='sourceFile.html'/>)
-%else
+%define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)
+%endif
+
 %ifdef _epub
-%define <\loadlisting> (sourceFile) (
-
-</p><longlisting file='sourceFile.html'/><p>
-
-)
-%define <\loadlisting> (sourceFile) {
-
-[sourceFile](sourceFile.html)
-
-}
+%define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)
 %endif
-%endif
+
 
 %define {\bExample} {theTitle} {<cwm tag="example" title="theTitle"/>}
 %define {\eExample} {} {<cwm tag="/example"/>
@@ -147,10 +139,10 @@ Columns
 %define <\eSplitColumns> () {<cwm tag="/rightColumn"/><cwm tag="/splitColumns"/>
 
 } 
-%define <\splitColumns> () {<cwm tag="/leftColumn"/><cwm tag="rightColumns"/>
+%define <\splitColumns> () {<cwm tag="/leftColumn"/><cwm tag="rightColumn"/>
 
 } 
-%define <\splitColumn> () {<cwm tag="/leftColumn"/><cwm tag="rightColumns"/>
+%define <\splitColumn> () {<cwm tag="/leftColumn"/><cwm tag="rightColumn"/>
 
 } 
 

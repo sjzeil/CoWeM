@@ -71,8 +71,6 @@ class Documents implements Plugin<Project> {
 		'doc_mainDoc') {
 		    inputs.file project.documents.primaryDocument
 			outputs.file new File(websiteArea, 'index.html')
-			println ("From " + project.documents.primaryDocument + " to " 
-                             + new File(websiteArea, 'index.html'))
 		}
 
 		project.doc_mainDoc << {

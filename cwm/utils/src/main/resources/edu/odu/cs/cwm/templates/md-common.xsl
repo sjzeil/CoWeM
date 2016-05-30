@@ -160,7 +160,7 @@
       <xsl:variable name="idValue"
             select="concat('_details_', generate-id())"/>
       <span class="summary">
-        <xsl:apply-templates select="summary/* | summary/text()"/>
+        <xsl:value-of select="@summary"/>
       </span>
       <xsl:text> </xsl:text>
       <input id="but{$idValue}" type="button" value="+"
@@ -170,7 +170,7 @@
     <xsl:attribute name="id">
       <xsl:value-of select="$idValue"/>
     </xsl:attribute>
-    <xsl:apply-templates select="*[local-name() != 'summary'] | text()"/>
+    <xsl:apply-templates select="node()"/>
       </div>
     </div>
   </xsl:template>
@@ -189,11 +189,31 @@
     </blockquote>
   </xsl:template>
   
+  <xsl:template match="splitColumns">
+    <div class="splitColumns">
+       <xsl:copy-of select="@*"/>
+       <xsl:apply-templates select="node()"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="leftColumn">
+    <div class="leftColumn">
+       <xsl:copy-of select="@*"/>
+       <xsl:apply-templates select="node()"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="rightColumn">
+    <div class="rightColumn">
+       <xsl:copy-of select="@*"/>
+       <xsl:apply-templates select="node()"/>
+    </div>
+  </xsl:template>
   
-   <xsl:template match="div[@class = 'slideshow']">
-    <xsl:variable name="slideshowNum" select="1 + count(preceding::div[@class = 'slideshow'])"/>
-    <xsl:variable name="slideCount" select="count(./div[@class = 'slideshowslide'])"/>
-    <xsl:copy>
+   <xsl:template match="slideshow">
+    <xsl:variable name="slideshowNum" select="1 + count(preceding::slideshow)"/>
+    <xsl:variable name="slideCount" select="count(./slideshowslide)"/>
+    <div class="slideshow">
        <xsl:copy-of select="@*"/>
        <xsl:apply-templates select="*|text()"/>
        <div id="slideshowControl{$slideshowNum}">
@@ -228,14 +248,14 @@
              </tr>
           </table>
        </div>
-    </xsl:copy>
+    </div>
   </xsl:template>
   
   
-  <xsl:template match="div[@class = 'slideshowslide']">
-    <xsl:variable name="slideshowNum" select="1 + count(preceding::div[@class = 'slideshow'])"/>
-    <xsl:variable name="slideNum" select="count(preceding-sibling::div[@class = 'slideshowslide'])"/>
-    <xsl:copy>
+  <xsl:template match="slideshowslide">
+    <xsl:variable name="slideshowNum" select="1 + count(preceding::slideshow)"/>
+    <xsl:variable name="slideNum" select="count(preceding-sibling::slideshowslide)"/>
+    <div class='slideshowslide'>
       <xsl:attribute name="id">
          <xsl:text>slide-</xsl:text>
          <xsl:value-of select="$slideshowNum"/>
@@ -248,15 +268,13 @@
          </xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="*|text()"/>
-    </xsl:copy>
+    </div>
   </xsl:template>
   
   <xsl:template match="sidebar">
       <div class="noFloat"> </div>
-      <div class="sidebar">
-          <div style="width: {@width};">
-              <xsl:apply-templates select="node()"/>
-          </div>
+      <div class="sidebar pct{@width}">
+          <xsl:apply-templates select="node()"/>
       </div>
   </xsl:template>
 
@@ -265,20 +283,21 @@
       <xsl:variable name="idValue"
             select="concat('_details_', generate-id())"/>
       <span class="summary">
-    <a href="{@file}" target="listing">
-        <xsl:value-of select="substring-before(@file,'.html')"/>
-    </a>
+        <a href="{@file}" target="listing">
+          <xsl:value-of select="@file"/>
+        </a>
       </span>
       <xsl:text> </xsl:text>
       <input id="but{$idValue}" type="button" value="+"
         onclick="toggleDisplay('{$idValue}')"
         />
       <div class="detailPart">
-    <xsl:attribute name="id">
-      <xsl:value-of select="$idValue"/>
-    </xsl:attribute>
-        <xsl:variable name="encoded" select="document(@file)"/>
-        <xsl:copy-of select="$encoded/html/body/pre"/>
+      <xsl:attribute name="id">
+        <xsl:value-of select="$idValue"/>
+      </xsl:attribute>
+      <pre><code id="{$idValue}_code">
+      <xsl:copy-of select="text()"/>
+      </code></pre>
       </div>
     </div>    
   </xsl:template>

@@ -80,7 +80,7 @@ between them.
     Four spaces of indentation creates a
 	paragraph within a list item.
 
-* And then we con continue with the list.
+* And then we can continue with the list.
 
 
 Numbered lists are similarly natural.
@@ -97,49 +97,50 @@ Numbered lists are similarly natural.
 
 Text can be marked with asterisks to indicate *emphasis* or **strong
 emphasis**. You can also use underscores to indicate _emphasis_ or
-__strong emphasis__.
-
-Use backwards apostrophes to mark text as `pre-formatted code`.  Note,
-however, that markdown is smart enough to recognize `this pattern' as
-indicating quoting rather than code.
-
-You can set entire paragraphs as code by placing them between two
-lines containing three
-back-apostrophes.
-
-```
-
-<pre>```</pre>
-```
-for (int i = 0; i < 100; ++i)
-   cout << i << ": " << a[i] << endl; 
-```
-<pre>```</pre>
-
-```
-You can achieve the same result by simply indenting the lines by 4 or
-more spaces.
-
-    for (int i = 0; i < 100; ++i)
-       cout << i << ": " << a[i] << endl; 
-
-(Notice the general pattern of treating 4 spaces of
-indentation as significant. Anything less is considered accidental and
-  ignored.)
-
-> Create block quotes by indenting text with a > character
-> at the start of the line.
-
+__strong emphasis__.  Use a pair of tildes to ~~strike out~~ text.
 
 ```
 
 \eSidebar
-
-
 
 Text can be marked with asterisks to indicate *emphasis* or **strong
 emphasis**. You can also use underscores to indicate _emphasis_ or
-__strong emphasis__.
+__strong emphasis__. Use a pair of tildes to ~~strike out~~ text.
+
+
+
+
+
+\bSidebar{60}
+
+```
+Use backwards apostrophes to mark text as `pre-formatted code`.  Note,
+however, that markdown is smart enough to recognize `this pattern' as
+indicating quoting rather than code.
+
+You can set entire paragraphs as code by placing them between two
+lines containing three
+back-apostrophes.
+
+```
+
+<pre>```</pre>
+```
+for (int i = 0; i < 100; ++i)
+   cout << i << ": " << a[i] << endl; 
+```
+<pre>```</pre>
+
+```
+You can achieve the same result by simply indenting the lines by 4 or
+more spaces.
+
+    for (int i = 0; i < 100; ++i)
+       cout << i << ": " << a[i] << endl; 
+
+```
+
+\eSidebar
 
 Use backwards apostrophes to mark text as `pre-formatted code`.  Note,
 however, that markdown is smart enough to recognize `this pattern' as
@@ -160,9 +161,27 @@ more spaces.
     for (int i = 0; i < 100; ++i)
        cout << i << ": " << a[i] << endl; 
 
+
+
+
 (Notice the general pattern of treating 4 spaces of
 indentation as significant. Anything less is considered accidental and
   ignored.)
+
+
+\bSidebar{60}
+
+```
+
+> Create block quotes by indenting text with a > character
+> at the start of the line.
+
+
+```
+
+\eSidebar
+
+
 
 > Create block quotes by indenting text with a > character
 > at the start of the line.
@@ -170,7 +189,7 @@ indentation as significant. Anything less is considered accidental and
 
 
 
-\bSidebar
+\bSidebar{60}
 
 ```
 You can have [links](http://www.cs.odu.edu/~zeil).
@@ -178,6 +197,12 @@ You can have [links](http://www.cs.odu.edu/~zeil).
 You can add graphics:
 ![lab icon](lab.png "lab")
 
+The Markdown processor allows inline HTML to be
+entered directly when you want something that is
+awkward or impossible to do in Markdown. So you can
+also insert graphics by simply typing an `img`
+element <img src="lab.png"/>, which may allow you
+easier access to styling options.  
 ```
 
 \eSidebar
@@ -186,6 +211,12 @@ You can have [links](http://www.cs.odu.edu/~zeil).
 
 You can add graphics:
 ![lab icon](lab.png "lab")
+
+The Markdown processor allows inline HTML to be entered directly when you
+want something that is awkward or impossible to do in Markdown. So you can
+also insert graphics by simply typing an `img` element <img src="lab.png"/>,
+which may allow you easier access to styling options.  
+
 
 
 \bSidebar{60}
@@ -217,30 +248,31 @@ for dealing with mathematics and with programming code.
 \bSidebar{60}
 
 ```
-With the aid of [MathJax](http://www.mathjax.org/), you cna enter
+With the aid of [MathJax](http://www.mathjax.org/), you can enter
 mathmatics in LaTeX notation, both for displayed
 
 \\[ \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\]
 
-and for inline ( \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\) )
+and for inline \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\)
 mathematics. $a^b_c$ also works.
 
 ```
 
 \eSidebar
 
-With the aid of [MathJax](http://www.mathjax.org/), you cna enter
+With the aid of [MathJax](http://www.mathjax.org/), you can enter
 mathmatics in LaTeX notation, both for displayed
 
 \\[ \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\]
 
-and for inline ( \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\) )
+and for inline  \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\) 
 mathematics. $a^b_c$ also works.
 
 \bSidebar{60}
 
 ```
-Using [HighlightJS](http://highlightjs.org/), syntax highlighting can
+Using [HighlightJS](http://highlightjs.org/),
+syntax highlighting is automatically
 be added to code:
 ```
 
@@ -261,7 +293,8 @@ class Book {
 
 \eSidebar
 
-Using [HighlightJS](http://highlightjs.org/), syntax highlighting can
+Using [HighlightJS](http://highlightjs.org/), syntax highlighting
+is automatically
 be added to code:
 
 ```c++
@@ -290,12 +323,13 @@ anything there that you like.
 Of course, I can't leave well enough alone.  I have a number of
 extensions that I use in my regular processing.
 
-## Pre-processing
+## Inline markup 
 
 I have added a macro facility to pre-process files before they are
 handed to the Markdown program. This allows me to add new markups to
 the Markdown dialect that I use in my own documents.
 
+### Incremental Lists
 
 %define {\incr} {} {>>>}
 
@@ -316,56 +350,25 @@ the Markdown dialect that I use in my own documents.
 
 %define {\\} {x} {\}
 
-
-\bSidebar{60}
-
-```
-I have a number of specialized markups that I use for inline
-text. These are styled like LaTeX commands. Many of these are intended
-to be "true" markup, indicating what a thing _is_, rather than how it
-should look. In many cases, my current CSS does not visually
-distinguish these items from generic "code": \\{}type{data types},
-\\{}varname{variable names}, \\{}code{code}, \\{}function{function names},
-\\{}file{file names} or \\{}filename{file name, again}[^fileNameFoot], and
-\\{}command{commands}.
-
-[^fileNameFoot]: So, I'm not always consistent.
-```
-
-\eSidebar
-
-I have a number of specialized markups that I use for inline
-text. These are styled like LaTeX commands. Many of these are intended
-to be "true" markup, indicating what a thing _is_, rather than how it
-should look. In many cases, my current CSS does not visually
-distinguish these items from generic "code": \type{data types},
-\varname{variable names}, \code{code}, \function{function names},
-\file{file names} or \filename{file name, again}[^fileNameFoot], and
-\command{commands}.
-
-[^fileNameFoot]: So, I'm not always consistent.
-
+### firstterm and emph
 
 
 \bSidebar{60}
 
 ```
-More significant, I have a markup for \\{}firstterm{new terms} being
+I have a markup for \\{}firstterm{new terms} being
 introduced for the first time in a document, and for
-\\{}emph{very strong emphasis}.  I also occasionally need to
-\\{}sout{strike something out}.
+\\{}emph{very strong emphasis}.  
 ```
 
 \eSidebar
 
 More significant, I have a markup for \firstterm{new terms} being
 introduced for the first time in a document, and for
-\emph{very strong emphasis}.  I also occasionally need to
-\sout{strike something out}.
+\emph{very strong emphasis}.  
 
-A limitation of all of these LaTeX-command-style markups is that the
-processor currently does not allow line breaks between the { }.
 
+### Highlighting and Callouts
 
 \bSidebar
 
@@ -389,79 +392,65 @@ numbers and color highlighting are generally used in conjunction with
 the code markups discussed [later](#post-processing).
 
 
+
+
+## Block markups
+
+I have introduced block markups that flag a block of
+paragraphs for special formatting. Most of these are
+begin by a  `\b`... command and terminated by a matching
+`\e`command.  
+
+### Examples
+
+\bSidebar{60}
+
+```
+\\{}bExample{An Example of Examples}
+
+For example, you can introduce numbered
+examples.
+
+\\{}eExample
+```
+
+\eSidebar
+
+
+\bExample{An Example of Examples}
+
+For example, you can introduce numbered
+examples.
+
+\eExample
+
+As a general rule, these `\b`... and `\e`... commands should be entered on a
+separate line, as if they constitute a separate paragraph. (This was required
+in older versions of this software.  It's more relaxed in the current version,
+but it is probably still a good idea if only because it improves the visibility
+of the commands and helps you make sure that, for every `\b`... you have a
+corresponding `\e`...    
+
+
 %define {\rev} {x} {^^^}
 
 
-\bSidebar{60}
-
-```
-\rev{}[click to reveal]
-
-The three carets introduce an HTML5-style details element, which
-allows click-to-reveal behavior.
-
-As it happens, few browsers support this element yet, so this is
-converted to a Javascript function during my
-[post-processing](#post-processing).
-\rev{}
-```
-
-\eSidebar
-
-^^^[click to reveal]
-
-The three carets introduce an HTML5-style details element, which
-allows click-to-reveal behavior.
-
-As it happens, few browsers support this element yet, so this is
-converted to a Javascript function during my
-[post-processing](#post-processing).
-
-^^^
-
-
-\bSidebar{60}
-
-```
-A variation on this is the ability to load long code listings,
-contained in a separate file providing both a link to the code as a
-separate HTML page and a click-to-reveal button to expand the listing
-in place.
-
-```
-\\{}loadlisting{unittest.h}
-
-```
-Files processed in this way can end with `.h`, `.cpp`, `.java`, or
-`.listing` file names.
-```
-
-\eSidebar
-
-A variation on this is the ability to load long code listings,
-contained in a separate file providing both a link to the code as a
-separate HTML page and a click-to-reveal button to expand the listing
-in place.
-
-\loadlisting{unittest.h}
-
-Files processed in this way can end with `.h`, `.cpp`, `.java`, or
-`.listing` file names.
-
+### Sidebars
 
 \bSidebar
 
 ```
+
 \\{}bSidebar
 
-Finally, I do like an occasional sidebar.
+I do like an occasional sidebar.
 
-\\{}eSidebar`
+\\{}eSidebar
 ```
 
 \eSidebar
 
-Finally, I do like an occasional sidebar.
+I do like an occasional sidebar.
 
 
 \bSidebar{33}
@@ -474,7 +463,10 @@ so that they will not extend
 horizontally past a certain
 percentage of the page width.
 Any multiple of 5 can be given as
-a maximum with. If no value is
+a maximum with. 33 and 67 are also
+suppported.
+
+If no value is
 given, the default is 50.
 
 If the sidebar contents have a
@@ -489,68 +481,274 @@ width.
 \eSidebar
 
 
-Sidebars can be width-constrained so that they will not extend
-horizontally past a certain percentage of the page width. Any multiple
-of 5 can be given as a maximum with. If not value is given, the
-default is 50.
+Sidebars can be width-constrained
+so that they will not extend
+horizontally past a certain
+percentage of the page width.
+Any multiple of 5 can be given as
+a maximum with. 33 and 67 are also
+suppported.
+
+If no value is
+given, the default is 50.
 
 If the sidebar contents have a "natural" width less than the value
 given, it will stay that wide. the value is only used to set a maximum
 width.
 
+### Slideshows
 
-
-
-### Graphics
-
-\bSidebar{60}
+\bSidebar{40}
 
 ```
-Markdown already has support for inserting graphics into a page. You
-can place graphics inline like this: ![lab icon](lab.png "lab"). A
-somewhat more flexible approach is to place simply a marker inline
-like this one ![array][] and then to place the details of file name,
-title, and attributes, in a separate paragraph.
+\\{}bSlideshow
 
-[array]: bookarray.png "An array" align=right
+\\{}bSlide
 
-![list][] A problem with this can occur when long vertical graphics are
-accompanied by relatively short text (particularly when viewed on a
-wide screen).  The floating graphics can stack up on one another,
-leading to a confusing layout.
+You can insert an internal "slideshow".
 
-[list]: bookLL.png "A linked list" align=right
+Clicking on the controls below...
+
+\\{}eSlide
+
+\\{}bSlide
+
+...will move you from "slide" to "slide"...
+
+\\{}eSlide
+
+\\{}bSlide
+
+...to "slide".
+
+\\{}eSlide
+
+
+\\{}eSlideshow
 ```
 
 \eSidebar
 
-Markdown already has support for inserting graphics into a page. You
-can place graphics inline like this: ![lab icon](lab.png "lab"). A
-somewhat more flexible approach is to place simply a marker inline
-like this one ![array][] and then to place the details of file name,
-title, and attributes, in a separate paragraph.
+\bSlideshow
 
-[array]: bookarray.png "An array" align=right
+\bSlide
+
+You can insert an internal "slideshow".
+
+Clicking on the controls below...
+
+\eSlide
+
+\bSlide
+
+...will move you from "slide" to "slide"...
+
+\eSlide
+
+\bSlide
+
+...to "slide".
+
+\eSlide
 
 
-![list][] A problem with this can occur when long vertical graphics are
-accompanied by relatively short text (particularly when viewed on a
-wide screen).  The floating graphics can stack up on one another,
+\eSlideshow
+
+
+### Splitting into Columns
+
+
+\bSplitColumns
+
+Every now and then, I like to
+present two columns of
+material, side-by-side.
+
+\splitColumn
+
+    // Do something
+    void foo();
+
+\eSplitColumns
+
+
+\bSidebar{40}
+
+\\{}bSplitColumns
+
+Every now and then, I like to
+present two columns of
+material, side-by-side.
+
+\\{}splitColumn
+
+    // Do something
+    void foo();
+
+\\{}eSplitColumns
+
+
+\eSidebar
+
+
+\bSplitColumns
+
+Like this, for example. The right column will wind up getting bumped
+down below the left.
+
+\splitColumn
+
+    // Do something
+    void foo();
+
+\eSplitColumns
+
+
+This is not a particularly robust formatting, however, and
+things get ugly if the content is a bit too wide for the screen.
+
+
+
+
+
+## Hiding and Revealing
+
+\bSidebar{60}
+
+```
+\rev{}[click to reveal]
+
+The three carets introduce an HTML5-style details 
+element, which allows click-to-reveal behavior.
+
+As it happens, neither of the Microsoft browsers (IE or Edge) 
+support this element yet, so this is currently
+simulated via Javascript. 
+\rev{}
+```
+
+\eSidebar
+
+
+
+^^^[click to reveal]
+
+The three carets introduce an HTML5-style details element, which
+allows click-to-reveal behavior.
+
+The three carets introduce an HTML5-style details 
+element, which allows click-to-reveal behavior.
+
+As it happens, neither of the Microsoft browsers (IE or Edge) 
+support this element yet, so this is currently
+simulated via Javascript. 
+
+^^^
+
+
+\bSidebar{60}
+
+```
+A variation on this is the ability to load long code listings,
+contained in a separate file providing both a link to the code as a
+separate HTML page and a click-to-reveal button to expand the listing
+in place.
+
+\\{}loadlisting{unittest.h}
+
+Files processed in this way can end with `.h`, `.cpp`, `.java`, or
+`.listing` file names.
+```
+
+\eSidebar
+
+A variation on this is the ability to load long code listings,
+contained in a separate file providing both a link to the code as a
+separate HTML page and a click-to-reveal button to expand the listing
+in place.
+
+
+\loadlisting{unittest.h}
+
+A link is included to the unmodified source code file (to facilitate
+downloading), so that file should be one of the support files for the
+document set.  
+
+
+
+
+
+
+## Graphics
+
+\bSidebar{60}
+
+```
+As noted earlier,
+Markdown already has support for
+inserting graphics into a page. You
+can place graphics inline
+like this: ![lab icon](lab.png "lab"). 
+
+You can also type HTML `img` tags directly, 
+<img src="bookarray.png" align='right'/> which makes
+it possible to use the "`align`" attribute
+to position your graphics. 
+
+<img src="bookLL.png" align='right'/>
+A problem with this can occur when long
+vertical graphics are
+accompanied by relatively short text 
+(particularly when viewed on a
+wide screen).  
+
+<img src="bookarray.png" align='right'/>The
+floating graphics
+can stack up on one another,
 leading to a confusing layout.
 
-[list]: bookLL.png "A linked list" align=right
+```
+
+\eSidebar
+
+As noted earlier,
+Markdown already has support for
+inserting graphics into a page. You
+can place graphics inline
+like this: ![lab icon](lab.png "lab"). 
+
+You can also type HTML `img` tags directly, 
+<img src="bookarray.png" align='right'/> which makes
+it possible to use the "`align`" attribute
+to position your graphics. 
+
+
+
+<img src="bookLL.png" align='right'/>
+A problem with this can occur when long
+vertical graphics are
+accompanied by relatively short text 
+(particularly when viewed on a
+wide screen).  
+
+<img src="bookarray.png" align='right'/>The
+floating graphics
+can stack up on one another,
+leading to a confusing layout.
 
 
 \bSidebar
 
 ```
-![array][] As a fix for this, I provide a CSS style
+<img src="bookarray.png" align='right'/> As
+a fix for this, I provide a CSS style
 class  `noFloat` with the attribute clear:both.  This
 can be inserted as an empty paragraph:
 
 <div class="noFloat"> </div>
 
-![list][] This has the effect of forcing any following
+<img src="bookLL.png" align='right'/> This
+has the effect of forcing any following
  text and graphics to be positioned after the end of
  floating graphics, sidebars, or other floating content.
 
@@ -558,12 +756,12 @@ can be inserted as an empty paragraph:
 
 \eSidebar
 
-![array][] As a fix for this, I provide a CSS style class  `noFloat`
+<img src="bookarray.png" align='right'/> As a fix for this, I provide a CSS style class  `noFloat`
 with the attribute clear:both.  This can be inserted as an empty paragraph:
 
 <div class="noFloat"> </div>
 
-![list][] This has the effect of forcing any following text and
+<img src="bookLL.png" align='right'/> This has the effect of forcing any following text and
  graphics to be positioned after the end of floating graphics,
  sidebars, or other floating content.
  
@@ -626,7 +824,7 @@ additional processing.  Major steps done are
    an email link or an interface to one of my course Forums.
 
 2. HTML5 `<details>` elements are converted to a form that current
-   brosers can handle.
+   browsers can handle.
 
 3. Links are added to the MathJax and HighlightJS Javascript packages
    for supporting mathematics and code highlighting.
@@ -635,8 +833,7 @@ additional processing.  Major steps done are
    added in the document headers. Refer to the markdown documentaiton
    for details.)
 
-5. Special code markups are processed, as described
-   [below](#codemarkup).
+5. Special code markups are processed, as described [below](#code-markup).
 
 6. If slides or paged output has been requested, the page is divided
    into slides/pages as described next.

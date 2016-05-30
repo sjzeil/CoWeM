@@ -42,13 +42,14 @@ public class CWMcleaner implements TextSubstitutions {
      */
     @Override
     public final String apply(final String target) {
+        final String tagAttrStart = "tag=";
         StringBuilder buffer = new StringBuilder();
         Matcher matcher = cwmPattern.matcher(target);
         int start = 0;
         int counter = 0;
-        System.err.println("*********");
-        System.err.println(target);
-        System.err.println("*********");
+        //System.err.println("*********");
+        //System.err.println(target);
+        //System.err.println("*********");
         
         while (matcher.find()) {
             ++counter;
@@ -62,8 +63,10 @@ public class CWMcleaner implements TextSubstitutions {
             
             String tag = "";
             for (String pair: attributePairs) {
-                if (pair.startsWith("tag=")) {
-                    tag = pair.substring(5,  pair.length() - 1);
+                                
+                if (pair.startsWith(tagAttrStart)) {
+                    tag = pair.substring(tagAttrStart.length() + 1,  
+                            pair.length() - 1);
                     break;
                 }
             }
@@ -73,7 +76,7 @@ public class CWMcleaner implements TextSubstitutions {
             
             if (!tag.startsWith("/")) {
                 for (String pair: attributePairs) {
-                    if (!pair.startsWith("tag=")) {
+                    if (!pair.startsWith(tagAttrStart)) {
                         buffer.append(' ');
                         buffer.append(pair);
                     }
@@ -84,9 +87,9 @@ public class CWMcleaner implements TextSubstitutions {
             start = cwmStop;
         }
         buffer.append(target.substring(start));
-        System.err.println(buffer.toString());
-        System.err.println("*********");
-        System.err.println("Applied " + counter + " substitutions.");
+        //System.err.println(buffer.toString());
+        //System.err.println("*********");
+        //System.err.println("Applied " + counter + " substitutions.");
         
         return buffer.toString();
     }

@@ -32,6 +32,7 @@
 
   <xsl:param name="altformats" select="'yes'"/>
   <xsl:param name="numberingDepth" select="'3'"/>
+  <xsl:param name="documentSetPath" select="'.'"/>
 
   <xsl:output method="xml" encoding="UTF-8"/>
 
@@ -62,7 +63,7 @@
         href="{$stylesURL}/md-{$format}-ext.css" />
 	  <xsl:call-template name="generateCSSLinks"/>
 	  <meta name="viewport" content="width=device-width, initial-scale=1"/>	
-      <script type="text/javascript"
+	  <script type="text/javascript"
 	      src="{$stylesURL}/md-{$format}.js">
 	      <xsl:text> </xsl:text>
       </script>
