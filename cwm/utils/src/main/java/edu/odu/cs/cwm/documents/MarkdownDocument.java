@@ -191,7 +191,13 @@ public class MarkdownDocument implements Document {
 	public final String transform(final String format) {
 		String preprocessed = preprocess (format);
 		org.w3c.dom.Document htmlDoc = process (preprocessed);
-		return postprocess (htmlDoc, format);
+		String result = postprocess (htmlDoc, format);
+		try {
+			documentIn.close();
+		} catch (IOException e) {
+			logger.warn("Error closing input", e);
+		}
+		return result;
 	}
 
 	/**
@@ -320,6 +326,7 @@ public class MarkdownDocument implements Document {
 	public final org.w3c.dom.Document process(final String markDownText) {
 		int pdOptions = org.pegdown.Extensions.ALL;
 		pdOptions -=  org.pegdown.Extensions.HARDWRAPS;
+		pdOptions -=  org.pegdown.Extensions.TASKLISTITEMS;
 		PegDownProcessor pdProc = new PegDownProcessor(pdOptions);
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;

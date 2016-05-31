@@ -386,6 +386,9 @@ public class TestPaginationTransforms {
 			Node n = getElementById(basicHtml, ids[i]);
 			assertNotNull(n);
 			Element parent = (Element)n.getParentNode();
+			if ("sectionContent".equals(parent.getLocalName())) {
+				parent = (Element)parent.getParentNode();	
+			}
 			assertEquals ("section", parent.getLocalName());
 			assertSame (parent, sections.item(shouldBeInSection[i]));
 			assertEquals (shouldBeAtDepth[i], Integer.parseInt(parent.getAttribute("depth"))); 

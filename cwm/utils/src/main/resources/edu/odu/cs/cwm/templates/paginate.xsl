@@ -284,9 +284,13 @@
 
   <xsl:template match="h1" mode="sectioning1">
     <section depth="1">
-      <xsl:copy-of select="."/>
-      <xsl:apply-templates select="./following-sibling::node()[1]"
+      <sectionHeader tag="h1">
+         <xsl:copy-of select="@* | node()"/>
+      </sectionHeader>
+      <sectionContent>
+          <xsl:apply-templates select="./following-sibling::node()[1]"
 			   mode="sectioning2"/>
+      </sectionContent>
     </section>
     <xsl:apply-templates select="./following-sibling::h1[1]"
 			 mode="sectioning1"/>
@@ -300,9 +304,13 @@
 
   <xsl:template match="h2" mode="sectioning2">
     <section depth="2">
-      <xsl:copy-of select="."/>
+      <sectionHeader tag="h2">
+         <xsl:copy-of select="@* | node()"/>
+      </sectionHeader>
+      <sectionContent>
       <xsl:apply-templates select="./following-sibling::node()[1]"
 			   mode="sectioning3"/>
+	  </sectionContent>
     </section>
     <xsl:apply-templates select="./following-sibling::h2[1]"
 			 mode="sectioning2"/>
@@ -320,9 +328,13 @@
 
   <xsl:template match="h3" mode="sectioning3">
     <section depth="3">
-      <xsl:copy-of select="."/>
+      <sectionHeader tag="h3">
+         <xsl:copy-of select="@* | node()"/>
+      </sectionHeader>
+      <sectionContent>
       <xsl:apply-templates select="./following-sibling::node()[1]"
 			   mode="sectioning4"/>
+	  </sectionContent>	   
     </section>
     <xsl:apply-templates select="./following-sibling::h3[1]"
 			 mode="sectioning3"/>
@@ -340,9 +352,13 @@
 
   <xsl:template match="h4" mode="sectioning4">
     <section depth="4">
-      <xsl:copy-of select="."/>
+      <sectionHeader tag="h4">
+         <xsl:copy-of select="@* | node()"/>
+      </sectionHeader>
+      <sectionContent>
       <xsl:apply-templates select="./following-sibling::node()[1]"
 			   mode="sectioning5"/>
+	  </sectionContent>
     </section>
     <xsl:apply-templates select="./following-sibling::h4[1]"
 			 mode="sectioning4"/>

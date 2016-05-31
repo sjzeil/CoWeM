@@ -18,65 +18,104 @@ Author: @semester@
 
 -->
 
-# Software for Courses
+# Organization of the Course Website
+
+The outline document can be divided into sections, subsections,
+subsubsections, etc., as necessary to represent the 
+organization of the course.  At the lowest level, sections provide a
+numbered list of _activities_. 
+
+Text content within a section, up to the first numbered list, appears
+in the left of the expandable modules page.  This content cannot include
+section/subsection titles or numbered lists. A typical use of this material
+is to provide **Overview** and **Objectives** sections for each module in
+a course.
+
+<!-- The first numbered list in a section begins the activities list
+     of a module.  
+     
+     You can have more than one list, if you want to break the activities 
+     apart into topics
+     
+     -->
+
+1. [](lecture) [Directory Structure of a Course](doc:directories)
+
+<!-- Each activity begins with a "fake" Markdown link [text](url).
+     For this fake link, the URL part designates the "kind" of activity.
+     In the item above, the kind is "lecture". This will be rendered using 
+     a small icon graphics:lecture.png. If the text part is empty, then
+     the presentation table (described below) is check to see if there
+     is a standard prefix for that "kind". If so, that prefix text is
+     inserted. If the text part is non-empty, it overrides the
+     standard prefix.  
+
+     After that, the rest of the item is treated as normal Markdown. In
+     this case, the rest of the item is a link to a set of lecture notes
+     in the document set "directories".   
+-->
+
+2. [Read ](lab) [TBD](doc:usingGradle)
+
+<!-- A number of shorthands are available for linking to document sets,
+     including the doc: style URL for easily referencing document sets
+     and the automatic extraction of titles in the place of "TBD" link text.
+     
+     These shorthands probably see more use in the outline than anywhere
+     in the course.  
+-->
+
+88. [](lab) [TBD](doc:courseConfiguration) date:2016-08-28
+
+<!-- Like all numbered lists in Markdown, the actual numbers don''t matter. -->
 
 
-## Course Websites & Documents
+
+
+# Writing Documents
 
 **Overview**
 
-The **Course Website Manager** is a software package
-that allows creation of a course website containing slides and web pages, with all content originally written
-in Markdown.
-
-* [lecture]() [Course Websites](public:courseWebsite)
-* [](lecture) [TBD](public:markdown)
+This section covers document sets and their constituent documents.
 
 
-## Assignment Submission and Grading
+88. [](lecture) [TBD](doc:markdown) date:2016-08-28 enddate:2017-02-28
 
-Support for submitting assignments via the web and
-triggering automatic grading.
+88. [](lecture) [TBD](doc:urlShortcuts) due:2016-08-28 time:11:59PM
 
-* [](lecture) [Web-based Assignment Submission](../../Public/websubmit/websubmit.pdf)
-* [](lecture) [Programming Assignments](public:assignments) 
-* [](lecture) [Automatic Grading](../../Public/websubmit/autograde.pdf)
+88. [](lecture) [TBD](doc:configuringDocumentSets)
 
-# Resources
-
-Miscellaneous documents.
-
-* [](lecture) [TBD](public:registrationFAQ)
-* [](lecture) [TBD](public:appointmentSignupSheets)
-* [](slides) [Provost's Conversation](public:provostConversationOct2013) 2013-10-10
+88. [](lecture) [TBD](doc:outlineAndNavigation)
 
 
 # Preamble
 
-<!-- Material written here will appear above the outline. -->
+This outline, like all other documents in the course, is prepared as a
+[Markdown](https://en.wikipedia.org/wiki/Markdown) document.
 
-A collection of notes on software and techniques in
-support of putting course material online, whether
-for web-based or face-to-face course styles.
+Most of the sections of the document become part of the course outline
+that you see below. There are three exceptions to that rule:
 
+1. A section titled "Preamble" provides content to be written above the 
+   outline. You are reading the Preamble right now.
+   
+2. A section titled "Postscript" provides content to be written below the 
+   outline. A typical use for the Postscript is to provide a symbol key like
+   the one at the bottom of this page.
+   
+3. A section titled "Presentation" does not provide visible content, but is
+   used to control formatting of the outline (in both the expandable modules
+   form and the more compressed tabular format).   
 
 # Postscript
 
-<!-- Material written here will appear below the outline. -->
 
 | Symbol Key ||
-|:-----------------:|:-----------| 
-| <img alt="conference" src="lecture.png"/> | Conference |
-| <img alt="slides" src="slides.png"/> | Slides |
-| <img alt="text" src="text.png"/> | Textbook readings |
-| <img alt="lecture" src="lecture.png"/> | Lecture Notes |
-| <img alt="exam" src="exam.png"/> | Exam |
-| <img alt="lab" src="lab.png"/> | Lab Assignment |
-| <img alt="asst" src="asst.png"/> | Assignment |
-| <img alt="event" src="event.png"/> | Event |
-| <img alt="forum" src="forum.png"/> | Forum |
-| <img alt="project" src="project.png"/> | Project |
-| <img alt="quiz" src="quiz.png"/> | Quiz |
+|:-----------------------------------------------:|:------------------| 
+| <img alt="lecture" src="graphics:lecture.png"/> | Lecture Notes     |
+| <img alt="slides" src="graphics:slides.png"/>   | Slides            |
+| <img alt="text" src="text.png"/>                | Textbook readings |
+| <img alt="lab" src="lab.png"/>                  | Lab               |
 
 All times in this schedule are given in Eastern Time.
 
@@ -88,14 +127,14 @@ All times in this schedule are given in Eastern Time.
 
 | Topics | Lecture Notes | Readings | Assignments & Other Events |
 |--------|---------------|----------|----------------------------|
-| topics | slides video lecturenotes construct | text | quiz asst selfassess lecture exam event |
+| topics | slides video lecture construct | text | quiz asst selfassess exam event |
 
 
 <!-- The second table controls prefix wording inserted before items in the moules view. -->
 
-| Document Kind | Prefix |
-|---------------|--------|
-| text          | Read chapters |
+| Document Kind | Prefix        |
+|---------------|---------------|
+| lecture       | Read:         |
 | lab           | In the lab:   |
 | event         | Attend        |
  

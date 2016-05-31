@@ -90,10 +90,18 @@ class Documents implements Plugin<Project> {
 			if (!websiteArea.exists()) {
 				websiteArea.mkdirs();
 			}
+			/*
             MarkdownDocument doc =
                     new MarkdownDocument(project.documents.primaryDocument,
                         docProperties);
+                        */
 			for (String format: project.documents.formats) {
+				println "starting format ${format}"
+
+                MarkdownDocument doc =
+                    new MarkdownDocument(project.documents.primaryDocument,
+                        docProperties);
+
 				String result = doc.transform(format)
 
 				File resultFile = project.file(websiteArea.toString() + '/'
@@ -101,6 +109,7 @@ class Documents implements Plugin<Project> {
 				resultFile.withWriter('UTF-8') {
 					it.writeLine(result)
 				}
+				println "finished format ${format}"
 			}
 			if (project.documents.indexFormat.length() == 0) {
 				project.documents.indexFormat = project.documents.formats[0]

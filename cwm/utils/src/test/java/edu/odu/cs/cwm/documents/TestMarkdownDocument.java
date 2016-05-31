@@ -126,6 +126,27 @@ public class TestMarkdownDocument {
 		assertTrue (htmlContent.contains(">even"));
 	}
 	
+	/**
+	 * Test method for {@link edu.odu.cs.cwm.documents.MarkdownDocument#transform(java.lang.String, java.util.Properties)}.
+	 */
+	@Test
+	public void testRepeatTransform() {
+        properties.put("_includeThis", "1");
+		MarkdownDocument doc = new MarkdownDocument(mdInput1, properties, 2);
+		
+		String htmlContent = doc.transform("html");
+		
+		assertTrue (htmlContent.contains("John Doe"));
+		assertTrue (htmlContent.contains("something else in"));
+		assertTrue (htmlContent.contains(">even"));
+		
+		
+        htmlContent = doc.transform("directory");
+		
+		assertTrue (htmlContent.contains("John Doe"));
+		assertTrue (htmlContent.contains("something else in"));
+		assertTrue (htmlContent.contains(">even"));
+	}
 
 	
 	@Test

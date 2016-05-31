@@ -4,39 +4,12 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
+  <xsl:param name="format" select="'directory'"/>
+
   <xsl:include href="md-common.xsl"/>
   <xsl:include href="paginate.xsl"/>
   
   
-  <xsl:param name="Author" select="''"/>
-  <xsl:param name="CSS" select="''"/>
-  <xsl:param name="Date" select="''"/>
-  <xsl:param name="Title" select="'@Title@'"/>
-  <xsl:param name="TOC" select="''"/>
-
-  <xsl:param name="courseName" select="'@courseName@'"/>
-  <xsl:param name="courseTitle" select="'@courseTitle@'"/>
-  <xsl:param name="semester" select="'@semester@'"/>
-  <xsl:param name="sem" select="'@sem@'"/>
-  <xsl:param name="instructor" select="'@instructor@'"/>
-  <xsl:param name="email" select="''"/>
-  <xsl:param name="copyright" select="''"/>
-  <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
-  <xsl:param name="format" select="'directory'"/>
-  <xsl:param name="formats" select="'directory'"/>
-  <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
-  <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
-
-  <xsl:param name="baseURL" select="'../../'"/>
-  <xsl:param name="homeURL" select="'../../index.html'"/>
-
-  <xsl:param name="altformats" select="'yes'"/>
-  <xsl:param name="numberingDepth" select="'3'"/>
-
-  <xsl:output method="xml" encoding="UTF-8"/>
-
-  <xsl:variable name="stylesURL" select="concat($baseURL, 'styles/')"/>
-  <xsl:variable name="graphicsURL" select="concat($baseURL, 'graphics/')"/>
 
   <xsl:template match="/">
     <xsl:apply-templates select="*|text()"/>
@@ -50,33 +23,6 @@
     </html>
   </xsl:template>
 
-  <xsl:template match="head">
-    <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <link rel="stylesheet" type="text/css" media="screen, projection, print"
-        href="{$stylesURL}/md-{$format}.css" />
-      <link rel="stylesheet" type="text/css" media="screen, projection, print"
-        href="{$stylesURL}/md-{$format}-ext.css" />
-      <xsl:call-template name="generateCSSLinks"/>
-      <meta name="viewport" content="width=device-width, initial-scale=1"/> 
-      <script type="text/javascript"
-          src="{$stylesURL}/md-{$format}.js">
-          <xsl:text> </xsl:text>
-      </script>
-      <script type="text/javascript"
-          src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-          <xsl:text> </xsl:text>
-      </script>
-      <link rel="stylesheet" 
-        href="@highlightjsURL@/styles/googlecode.css"/>
-      <script src="@highlightjsURL@/highlight.pack.js">
-    <xsl:text> </xsl:text>
-      </script>
-      <script>hljs.initHighlightingOnLoad();</script>
-      <xsl:copy-of select="*"/>
-    </xsl:copy>
-      <xsl:call-template name="generateJSLinks"/>
-  </xsl:template>
 
   <xsl:template match="body">
     <xsl:copy>
