@@ -103,6 +103,10 @@ public class MarkdownDocument implements Document {
      */
     private static final String HTML_TRAILER = "</body>\n</html>\n";
 
+    /**
+     * If "yes", adds indentation to XML outputs for easier debugging. 
+     */
+    private String debugMode = "no";
 	
 	
 	/**
@@ -445,7 +449,7 @@ public class MarkdownDocument implements Document {
 		try {
 			Transformer transformer = 
 			        TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "no"); 
+			transformer.setOutputProperty(OutputKeys.INDENT, debugMode); 
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			Source source = new DOMSource(formattedDoc.getDocumentElement());
 			StringWriter htmlString = new StringWriter();
@@ -528,7 +532,19 @@ public class MarkdownDocument implements Document {
 		return metadata.getProperty(fieldName);
 	}
 
-	
+	/**
+	 * Turn indentation in generated XML on and off.
+	 * Must be off in production to avoid distorting code listings.
+	 *  
+	 * @param mode true iff debugging
+	 */
+	public final void setDebugMode (final boolean mode) {
+	    if (mode) {
+	        debugMode = "yes";
+	    } else {
+	        debugMode = "no";
+	    }
+	}
 	
 
 }

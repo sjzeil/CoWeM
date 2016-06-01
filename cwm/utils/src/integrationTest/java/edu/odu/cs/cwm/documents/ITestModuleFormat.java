@@ -1,8 +1,6 @@
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -70,16 +68,16 @@ public class ITestModuleFormat {
             "web pages, with all content originally written",
             "in Markdown.",
             "",
-            "* [lecture]() [Course Websites](public:courseWebsite)",
-            "* [](lecture) [TBD](public:markdown)",
+            "1. Look at the [Course Websites](item1)",
+            "2. [Old:](lecture) [TBD](item2)",
             "",
             "## Assignment Submission and Grading",
             "",
             "Support for submitting assignments via the web and",
             "triggering automatic grading.",
             "",
-            "* [](lecture) [Web-based Assignment Submission](../../Public/websubmit/websubmit.pdf)",
-            "* [Old:](lecture) [Programming Assignments](public:assignments)", 
+            "3. [ ](lecture) [Web-based Assignment Submission](item3)",
+            "4. [ ](lab) [Programming Assignments](item4)", 
             "",
             "# Preamble",
             "",
@@ -152,7 +150,6 @@ public class ITestModuleFormat {
 		String htmlContent = doc.transform(FORMAT);
 		
 		assertTrue (htmlContent.contains("Software for Courses"));
-		assertTrue (htmlContent.contains("websubmit.pdf"));
 		assertFalse(htmlContent.contains("Preamble"));
         assertTrue (htmlContent.contains("preamble text"));
         assertFalse(htmlContent.contains("Postscript"));
@@ -176,6 +173,108 @@ public class ITestModuleFormat {
 	}
 	
 
+    @Test
+    public void testIconInsertion() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+        String mdInput = String.join(System.getProperty("line.separator"),
+                schedule_md);
+        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        
+        String htmlContent = doc.transform(FORMAT);
+        
+        
+        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
+        Element root = finalHtml.getDocumentElement();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        
+        
+        
+        Node item1 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item1']", root,
+                XPathConstants.NODE);
+        assertNotNull(item1);
+        Node item2 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item2']", root,
+                XPathConstants.NODE);
+        assertNotNull(item2);
+        Node item3 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item3']", root,
+                XPathConstants.NODE);
+        assertNotNull(item3);
+        Node item4 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item4']", root,
+                XPathConstants.NODE);
+        assertNotNull(item4);
+        
+        Element icon1 = (Element) xPath.evaluate(
+                "./ancestor::li//img[1]", item1,
+                XPathConstants.NODE);
+        assertNull(icon1);
+        
+        Element icon2 = (Element) xPath.evaluate(
+                "./ancestor::li//img[1]", item2,
+                XPathConstants.NODE);
+        assertNotNull(icon2);
+        assertTrue(icon2.getAttribute("src").endsWith("lecture.png"));
+
+        Element icon3 = (Element) xPath.evaluate(
+                "./ancestor::li//img[1]", item3,
+                XPathConstants.NODE);
+        assertNotNull(icon3);
+        assertTrue(icon3.getAttribute("src").endsWith("lecture.png"));
+
+        Element icon4 = (Element) xPath.evaluate(
+                "./ancestor::li//img[1]", item4,
+                XPathConstants.NODE);
+        assertNotNull(icon4);
+        assertTrue(icon4.getAttribute("src").endsWith("lab.png"));
+    
+    }
 	
-	
+
+    
+    
+    @Test
+    public void testPrefixInsertion() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+        String mdInput = String.join(System.getProperty("line.separator"),
+                schedule_md);
+        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        doc.setDebugMode(true);
+        
+        String htmlContent = doc.transform(FORMAT);
+        
+        
+        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
+        Element root = finalHtml.getDocumentElement();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        
+        
+        
+        Node item1 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item1']/..", root,
+                XPathConstants.NODE);
+        assertNotNull(item1);
+        Node item2 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item2']/..", root,
+                XPathConstants.NODE);
+        assertNotNull(item2);
+        Node item3 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item3']/..", root,
+                XPathConstants.NODE);
+        assertNotNull(item3);
+        Node item4 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item4']/..", root,
+                XPathConstants.NODE);
+        assertNotNull(item4);
+        
+        assertTrue (item2.getTextContent().contains("Old: "));
+        assertTrue (item3.getTextContent().contains("Read chapters "));
+        assertTrue (item4.getTextContent().contains("In the lab: "));
+    
+    }
+
+    
+    
+    
 }

@@ -39,13 +39,14 @@ a course.
      
      -->
 
-1. [](lecture) [Directory Structure of a Course](doc:courseWebsite)
+1. [ ](lecture) [Directory Structure of a Course](doc:courseWebsite)
 
 %if _comment
      Each activity begins with a "fake" Markdown link [text](url).
      For this fake link, the URL part designates the "kind" of activity.
      In the item above, the kind is "lecture". This will be rendered using 
-     a small icon graphics:lecture.png. If the text part is empty, then
+     a small icon graphics:lecture.png. If the text part is blank (must
+     have at least 1 blank character), then
      the presentation table (described below) is check to see if there
      is a standard prefix for that "kind". If so, that prefix text is
      inserted. If the text part is non-empty, it overrides the
@@ -71,7 +72,7 @@ a course.
 %endif
 
 
-88. [](lab) [TBD](doc:courseConfiguration) date:2016-08-28
+88. [ ](lab) [TBD](doc:courseConfiguration) date:2016-08-28
 
 <!-- Like all numbered lists in Markdown, the actual numbers don't matter. -->
 
@@ -85,13 +86,13 @@ a course.
 This section covers document sets and their constituent documents.
 
 
-88. [](lecture) [TBD](doc:markdown) date:2016-08-28 enddate:2017-02-28
+88. [ ](lecture) [TBD](doc:markdown) date:2016-08-28 enddate:2017-02-28
 
-88. [](lecture) [TBD](doc:urlShortcuts) due:2016-08-28 time:11:59PM
+88. [ ](lecture) [TBD](doc:urlShortcuts) due:2016-08-28 time:11:59PM
 
-88. [](lecture) [TBD](doc:configuringDocumentSets)
+88. [ ](lecture) [TBD](doc:configuringDocumentSets)
 
-88. [](lecture) [TBD](doc:outlineAndNavigation)
+88. [ ](lecture) [TBD](doc:outlineAndNavigation)
 
 
 # Preamble

@@ -115,15 +115,7 @@
       	</xsl:choose>
       </div>
       <!--  Process the contents of this section -->
-      <xsl:message>
-        <xsl:text>number of children </xsl:text>
-        <xsl:value-of select="count(sectionContent/node())"/>
-      </xsl:message>
       <xsl:variable name="activityLists" select="sectionContent/ol"/>
-      <xsl:message>
-        <xsl:text>activityLists size is </xsl:text>
-        <xsl:value-of select="count($activityLists)"/>
-      </xsl:message>
       <xsl:variable name="firstListPos">
           <xsl:choose>
               <xsl:when test="count($activityLists) = 0">
@@ -137,14 +129,6 @@
       </xsl:variable>      
       <xsl:variable name="descriptiveContent" select="sectionContent/*[position() &lt; $firstListPos]"/>
       <xsl:variable name="activityContent" select="sectionContent/*[position() &gt;= $firstListPos]"/>
-      <xsl:message>
-        <xsl:text>descriptiveContent size is </xsl:text>
-        <xsl:value-of select="count($descriptiveContent)"/>
-      </xsl:message>
-      <xsl:message>
-        <xsl:text>activityContent size is </xsl:text>
-        <xsl:value-of select="count($activityContent)"/>
-      </xsl:message>
      
       <div class="module">
          <xsl:attribute name="id">
@@ -193,36 +177,51 @@
      </ol>
   </xsl:template>
 
-  <xsl:variable name="prefixTable"
-     select="/html/body/section[ends-with(normalize-space(sectionHeader), 'Presentation')]//table[2]"/>
+   
   <xsl:template match="li" mode="activities">
-       <xsl:variable name="kind" select="normalize-space(a[1]/@href)"/>
-       <li>
-          <xsl:copy-of select="@*"/>
-          <xsl:choose>
-              <xsl:when test="local-name(*[1]) = 'a'">
-                 <img src="{$baseURL}graphics/{$kind}.png" alt="{$kind}"/>
-                 <xsl:text> </xsl:text>
-                 <xsl:choose>
-                     <xsl:when test="normalize-space(a[1]) = ''">
-                         <xsl:variable name="kindTD" select="$prefixTable//td[normalize-space() = $kind]"/>
-                         <xsl:if test="$kindTD">
-                           <xsl:apply-templates select="$kindTD/../td[2]/node()"/>
-                         </xsl:if>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:apply-templates select="a[1]/node()"/>
-                        <xsl:text> </xsl:text>
-                     </xsl:otherwise>
-                 </xsl:choose>
-                 <xsl:apply-templates select="a[1]/following-sibling::node()"/>
-              </xsl:when>
-              <xsl:otherwise>
-                 <xsl:apply-templates select="node()"/>
-              </xsl:otherwise>
-          </xsl:choose>
-       	  <xsl:apply-templates select="node()"/>
-       </li>
+    <xsl:choose>
+        <xsl:when test="local-name(*[1]) = 'p'">
+            <li>
+                <p>
+                    <xsl:apply-templates select="*[1]" mode="activities2"/>
+                </p>
+                <xsl:apply-templates select="*[position &gt; 1]"/>
+            </li>
+          </xsl:when>
+          <xsl:otherwise>
+            <li>
+              <xsl:apply-templates select="." mode="activities2"/>
+            </li>
+          </xsl:otherwise>
+       </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="p|li" mode="activities2">
+      <xsl:variable name="prefixTable"
+        select="ancestor::body/section[sectionHeader//a[@name = 'presentation']]//table[2]"/>
+      <xsl:choose>
+          <xsl:when test="(local-name(*[1]) = 'a') and (normalize-space(*[1]/preceding-sibling::node()) = '')">
+              <xsl:variable name="kind" select="normalize-space(a[1]/@href)"/>
+              <img src="{$baseURL}graphics/{$kind}.png" alt="{$kind}"/>
+              <xsl:text> </xsl:text>
+              <xsl:choose>
+                 <xsl:when test="normalize-space(a[1]) = ''">
+                     <xsl:variable name="kindTD" select="$prefixTable//td[normalize-space() = $kind]"/>
+                     <xsl:if test="$kindTD">
+                       <xsl:apply-templates select="$kindTD/../td[2]/node()"/>
+                     </xsl:if>
+                 </xsl:when>
+                 <xsl:otherwise>
+                    <xsl:apply-templates select="a[1]/node()"/>
+                    <xsl:text> </xsl:text>
+                 </xsl:otherwise>
+              </xsl:choose>
+              <xsl:apply-templates select="a[1]/following-sibling::node()"/>
+          </xsl:when>
+          <xsl:otherwise>
+             <xsl:apply-templates select="node()"/>
+          </xsl:otherwise>
+      </xsl:choose>
   </xsl:template>
 
   <xsl:template match="*|text()" mode="activities">
