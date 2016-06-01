@@ -4,10 +4,10 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
-  <xsl:param name="format" select="'pages'"/>
-  
   <xsl:include href="md-common.xsl"/>
   <xsl:include href="paginate.xsl"/>
+  
+  <xsl:param name="format" select="'pages'"/>
   
   
   

@@ -4,21 +4,37 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
-  <xsl:param name="format" select="'navigation'"/>
-
   <xsl:import href="md-common.xsl"/>
   <xsl:import href="paginate.xsl"/>
   
+  <xsl:param name="format" select="'navigation'"/>
+
   
 
   <xsl:template match="/">
-    <xsl:apply-templates select="*|text()"/>
+    <xsl:apply-templates select="/html"/>
   </xsl:template>
 
   <xsl:template match="html">
     <html>
       <xsl:copy-of select="@*"/>
-	  <xsl:apply-templates select="head"/>  
+	  <head>
+      <link rel="stylesheet" type="text/css" media="screen, projection, print"
+        href="{$stylesURL}/md-{$format}.css" />
+      <link rel="stylesheet" type="text/css" media="screen, projection, print"
+        href="{$stylesURL}/md-{$format}-ext.css" />
+      <xsl:call-template name="generateCSSLinks"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/> 
+      <script type="text/javascript"
+          src="{$stylesURL}/md-{$format}.js">
+          <xsl:text> </xsl:text>
+      </script>
+      <script type="text/javascript"
+          src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+          <xsl:text> </xsl:text>
+      </script>
+      </head>
+      <xsl:call-template name="generateJSLinks"/> 
 	  <xsl:apply-templates select="body"/>    
     </html>
   </xsl:template>

@@ -39,9 +39,10 @@ a course.
      
      -->
 
-1. [](lecture) [Directory Structure of a Course](doc:directories)
+1. [](lecture) [Directory Structure of a Course](doc:courseWebsite)
 
-<!-- Each activity begins with a "fake" Markdown link [text](url).
+%if _comment
+     Each activity begins with a "fake" Markdown link [text](url).
      For this fake link, the URL part designates the "kind" of activity.
      In the item above, the kind is "lecture". This will be rendered using 
      a small icon graphics:lecture.png. If the text part is empty, then
@@ -53,21 +54,26 @@ a course.
      After that, the rest of the item is treated as normal Markdown. In
      this case, the rest of the item is a link to a set of lecture notes
      in the document set "directories".   
--->
+
+%endif
 
 2. [Read ](lab) [TBD](doc:usingGradle)
 
-<!-- A number of shorthands are available for linking to document sets,
+%if _comment
+
+     A number of shorthands are available for linking to document sets,
      including the doc: style URL for easily referencing document sets
      and the automatic extraction of titles in the place of "TBD" link text.
      
      These shorthands probably see more use in the outline than anywhere
      in the course.  
--->
+
+%endif
+
 
 88. [](lab) [TBD](doc:courseConfiguration) date:2016-08-28
 
-<!-- Like all numbered lists in Markdown, the actual numbers don''t matter. -->
+<!-- Like all numbered lists in Markdown, the actual numbers don't matter. -->
 
 
 
@@ -114,8 +120,8 @@ that you see below. There are three exceptions to that rule:
 |:-----------------------------------------------:|:------------------| 
 | <img alt="lecture" src="graphics:lecture.png"/> | Lecture Notes     |
 | <img alt="slides" src="graphics:slides.png"/>   | Slides            |
-| <img alt="text" src="text.png"/>                | Textbook readings |
-| <img alt="lab" src="lab.png"/>                  | Lab               |
+| <img alt="text" src="graphics:text.png"/>       | Textbook readings |
+| <img alt="lab" src="graphics:lab.png"/>         | Lab               |
 
 All times in this schedule are given in Eastern Time.
 
