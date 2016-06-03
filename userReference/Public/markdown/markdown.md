@@ -254,7 +254,9 @@ mathmatics in LaTeX notation, both for displayed
 \\[ \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\]
 
 and for inline \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\)
-mathematics. $a^b_c$ also works.
+mathematics. $a^b_c$ also works. To put a "real" dollar
+sign into your text,
+put a backslash in front: my \$.02 worth. 
 
 ```
 
@@ -266,7 +268,13 @@ mathmatics in LaTeX notation, both for displayed
 \\[ \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\]
 
 and for inline  \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\) 
-mathematics. $a^b_c$ also works.
+mathematics. $a^b_c$ also works. To put a "real" dollar sign into your text,
+put a backslash in front: my \$.02 worth.
+
+The rendering of LaTeX mathematics can be turned off as a document set option.
+It is also possible to switch to [AsciiMath](http://asciimath.org/)
+instead of LaTeX. 
+
 
 \bSidebar{60}
 

@@ -31,6 +31,7 @@
   <xsl:param name="copyright" select="''"/>
   <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
   <xsl:param name="formats" select="'html'"/>
+  <xsl:param name="mathSupport" select="'latex'"/>
   <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
 
@@ -60,10 +61,36 @@
           src="{$stylesURL}/md-{$format}.js">
           <xsl:text> </xsl:text>
       </script>
-      <script type="text/javascript"
-          src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-          <xsl:text> </xsl:text>
-      </script>
+      <xsl:choose>
+        <xsl:when test="lower-case($mathSupport) = 'latex'">
+           <script type="text/javascript"><xsl:text>
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </xsl:text></script>
+           <script type="text/javascript"
+             src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+             <xsl:text> </xsl:text>
+           </script>
+        </xsl:when>
+        <xsl:when test="lower-case($mathSupport) = 'ascii'">
+           <script type="text/javascript"><xsl:text>
+             window.MathJax = {
+               asciimath2jax: {
+                 delimiters: [ ['$','$'], ['`', '`']],
+               processEscapes: true
+             }
+           };
+           </xsl:text></script>
+           <script type="text/javascript"
+             src="{$mathJaxURL}/MathJax.js?config=AM_HTMLorMML">
+             <xsl:text> </xsl:text>
+           </script>
+        </xsl:when>
+      </xsl:choose>
       <link rel="stylesheet" 
         href="@highlightjsURL@/styles/googlecode.css"/>
       <script src="@highlightjsURL@/highlight.pack.js">
@@ -144,12 +171,13 @@
     <xsl:copy>
       <xsl:copy-of select="@*[local-name() != 'sectionNumber']"/>
       <xsl:choose>
-        <xsl:when test="a[@name != '']">
+        <xsl:when test="(local-name(*[1]) = 'a') and a[1][@name != '']">
             <xsl:attribute name="id">
                 <xsl:value-of select="a/@name"/> 
             </xsl:attribute>
             <xsl:value-of select="@sectionNumber"/>
-            <xsl:apply-templates select="a/node()"/>
+            <xsl:apply-templates select="a[1]/node()"/>
+          <xsl:apply-templates select="*[position() > 1]|text()"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="@sectionNumber"/>

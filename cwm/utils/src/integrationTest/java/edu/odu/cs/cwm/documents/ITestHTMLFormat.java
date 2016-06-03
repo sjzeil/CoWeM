@@ -163,5 +163,78 @@ public class ITestHTMLFormat {
 	
 
 	
+	   @Test
+	    public void testSectionTitles() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+	        String mdInput = String.join(System.getProperty("line.separator"),
+	                "Title: Title of Document", 
+	                "Author: John Doe",
+	                "Date: Jan 1, 2012",
+	                "",
+	                "# A section title",
+	                "",
+	                "A short",
+	                "paragraph.",
+	                "",
+	                "## A subsection title",
+	                "",
+	                "A shorter one."
+	                );
+	        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+	        doc.setDebugMode(true);
+	        String htmlContent = doc.transform(FORMAT);
+	        
+	        assertTrue (htmlContent.contains("John Doe"));
+	        assertTrue (htmlContent.contains("2012"));
+	        assertTrue (htmlContent.contains("A short"));
+	        assertTrue (htmlContent.contains("paragraph."));
+	        assertTrue (htmlContent.contains("A section title"));
+            assertTrue (htmlContent.contains("A subsection title"));
+            
+	        assertTrue (htmlContent.contains("\"../../styles/md-html.css\""));
+	        assertTrue (htmlContent.contains("\"../../styles/md-html-ext.css\""));
+	        
+	        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	        org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
+	        Element root = finalHtml.getDocumentElement();
+	        XPath xPath = XPathFactory.newInstance().newXPath();
+	        
+	        
+	        String actualTitle = (String)xPath.evaluate("/html/head/title", root);
+	        assertEquals ("Title of Document", actualTitle);
+
+	        NodeList pages = root.getElementsByTagName("page");
+	        assertEquals (0, pages.getLength());
+	        
+	        Node titleBlock = (Node)xPath.evaluate(
+	                "/html/body/div[@class='titleblock']", root,
+	                XPathConstants.NODE);
+	        assertNotNull(titleBlock);
+
+	        Node titleDiv = (Node)xPath.evaluate(
+	                "h1[@class='title']", titleBlock,
+	                XPathConstants.NODE);
+	        assertNotNull(titleDiv);
+	        assertEquals ("Title of Document", titleDiv.getTextContent());
+
+	        NodeList pars = (NodeList)xPath.evaluate(
+	                "/html/body/p", root,
+	                XPathConstants.NODESET);
+	        assertTrue(pars.getLength() > 0);
+	        boolean found = false;
+	        for (int i = 0; i < pars.getLength(); ++i) {
+	            Node p = pars.item(i);
+	            String pt = p.getTextContent(); 
+	            if (pt.contains("A short")) {
+	                found = true;
+	                assertTrue (pt.contains("paragraph"));
+	                break;
+	            }
+	        }
+	        assertTrue (found);
+	    }
+
+	
+	
+	
 	
 }

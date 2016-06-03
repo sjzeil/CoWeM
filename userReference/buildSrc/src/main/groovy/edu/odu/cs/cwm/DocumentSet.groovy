@@ -110,6 +110,21 @@ class DocumentSet {
 	void clearSupport () {
 		supportDocuments = []
 	}
+    
+    /**
+     * What support is provided for typesetting Mathematics?
+     * Math support is provided via MathJax.
+     * 
+     * Valid values are:
+     *    latex: Detect and render LaTeX mathematics
+     *    ascii: Detect and render AsciiMath mathematics
+     *    none : Do not use MathJax
+     */
+    String mathSupport = "latex";
+    
+    void math(String mode) {
+        mathSupport = mode
+    }  
 
 
 	Project _inProject

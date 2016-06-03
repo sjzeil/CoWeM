@@ -9,6 +9,12 @@ Date: @docModDate@
 
 `docformat` calls `md2html` and then `indexgen0` or `indexgen1`
 
+## Math Handling Options
+
+Try some ASCII Math: `sum_(i=1)^(n) i = (n(n+1))/2)`
+
+and again: $sum_(i=1)^(n) i = (n(n+1))/2$, $[ [a,...,b],[vdots,ddots,vdots],[c,cdots,d] ]$
+
 ### md2html
 
 1. Pre-process
