@@ -115,20 +115,6 @@
       	</xsl:choose>
       </div>
       <!--  Process the contents of this section -->
-      <xsl:variable name="activityLists" select="sectionContent/ol"/>
-      <xsl:variable name="firstListPos">
-          <xsl:choose>
-              <xsl:when test="count($activityLists) = 0">
-                 <xsl:value-of select="1 + count(sectionContent/*)"/>
-              </xsl:when>
-              <xsl:otherwise>
-                 <xsl:variable name="firstList" select="$activityLists[1]"/>
-                 <xsl:value-of select="index-of(sectionContent/*, $firstList)"/>
-              </xsl:otherwise>
-          </xsl:choose>
-      </xsl:variable>      
-      <xsl:variable name="descriptiveContent" select="sectionContent/*[position() &lt; $firstListPos]"/>
-      <xsl:variable name="activityContent" select="sectionContent/*[position() &gt;= $firstListPos]"/>
      
       <div class="module">
          <xsl:attribute name="id">
@@ -136,34 +122,39 @@
          </xsl:attribute>
          
          <xsl:choose>
-             <xsl:when test="(count($activityLists) != 0) and (count($descriptiveContent) != 0)">
+             <xsl:when test="(count(sectionContent/*) != 0) and (count(sectionDescription/*) != 0)">
                  <table width="100%">
                     <tr>
                        <td class="moduleDescription">
                           <div class="moduleDescription">
-                              <xsl:apply-templates select="$descriptiveContent[local-name() != 'section']"/>
+                              <xsl:apply-templates select="sectionDescription/node()"/>
                           </div>
                        </td>
                        <td class="moduleActivitiesRt">
                           <div class="moduleActivitiesRt">
                               <b>Activities</b>
-                              <xsl:apply-templates select="$activityContent[local-name() != 'section']"
+                              <xsl:apply-templates select="sectionContent/*"
                                  mode="activities"/>
                           </div>
                        </td>
                     </tr>
                  </table>
       	     </xsl:when>
-             <xsl:when test="count($activityLists) != 0">
+             <xsl:when test="count(sectionContent/ol) != 0">
                   <div class="moduleActivities">
                       <b>Activities</b>
-                      <xsl:apply-templates select="$activityContent"
+                      <xsl:apply-templates select="sectionContent/*"
                          mode="activities"/>
                   </div>
              </xsl:when>
-             <xsl:when test="count($descriptiveContent) != 0">
+             <xsl:when test="count(sectionDescription/*) != 0">
                   <div class="moduleDescription">
-                      <xsl:apply-templates select="$descriptiveContent"/>
+                      <xsl:apply-templates select="sectionDescription/node()"/>
+                  </div>
+             </xsl:when>
+             <xsl:when test="count(sectionContent/*) != 0">
+                  <div class="moduleDescription">
+                      <xsl:apply-templates select="sectionContent/*"/>
                   </div>
              </xsl:when>
       	 </xsl:choose>

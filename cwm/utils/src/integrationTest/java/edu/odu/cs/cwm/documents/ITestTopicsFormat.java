@@ -97,7 +97,7 @@ public class ITestTopicsFormat {
             "",
             "| Topics | Lecture Notes | Readings | Assignments & Other Events |",
             "|--------|---------------|----------|----------------------------|",
-            "| topics unknown | slides video lecturenotes construct | text | quiz lab selfassess lecture exam event |",
+            "| topics unknown | slides video lecture construct | text | quiz lab selfassess exam event |",
             "",
             "| Document Kind | Prefix |",
             "|---------------|--------|",

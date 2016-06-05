@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -349,7 +350,182 @@ public class TestURLRewriting {
         assertEquals (THE_BASE_URL + "styles/something.js", src);
     }
 
+
     
+    @Test
+    public void testDatesAndTimes() 
+            throws XPathExpressionException, TransformerException, 
+            ParserConfigurationException, SAXException, IOException {
+
+        String[] htmlInput = {
+                "<html>",
+                "<head>",
+                "<title>A Title</title>",
+                "</head>",
+                "<body>",
+                "<ul>",
+                "<li id='li1'> A <a href='date:'>2016-01-02T07:30</a> date</li>",
+                "<li id='li2'> A <a href='date:'>2016-01-03</a> date</li>",
+                "<li id='li3'> A <a href='date:'>13:45</a> date</li>",
+                "</ul>",
+                "</body>",
+                "</html>"   
+        };
+
+
+        org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
+        
+        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        rewriter.rewrite(basicHtml);
+        
+        
+        Element root = basicHtml.getDocumentElement();
+        
+        String htmlContent = root.getTextContent();
+        
+        
+        Element li1 = getElementById(basicHtml, "l1");
+        assertNotNull (li1);
+        NodeList links = li1.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date1 = li1.getElementsByTagName("span").item(0);
+        assertNotNull(date1);
+        assertEquals("(01/02/2016, 7:30AM)", date1.getTextContent());
+        
+        Element li2 = getElementById(basicHtml, "l2");
+        assertNotNull (li2);
+        links = li2.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date2 = li2.getElementsByTagName("span").item(0);
+        assertNotNull(date2);
+        assertEquals("(01/02/2016)", date2.getTextContent());
+        
+        Element li3 = getElementById(basicHtml, "l3");
+        assertNotNull (li3);
+        links = li3.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date3 = li3.getElementsByTagName("span").item(0);
+        assertNotNull(date3);
+        assertEquals("(01:45PM)", date3.getTextContent());
+    }
+
+    
+    @Test
+    public void testEndDatesAndTimes() 
+            throws XPathExpressionException, TransformerException, 
+            ParserConfigurationException, SAXException, IOException {
+
+        String[] htmlInput = {
+                "<html>",
+                "<head>",
+                "<title>A Title</title>",
+                "</head>",
+                "<body>",
+                "<ul>",
+                "<li id='li1'> A <a href='date:'>2016-01-02T07:30</a> <a href='enddate:'>2016-01-05T08:50</a>date </li>",
+                "<li id='li2'> A <a href='date:'>2016-01-03</a> <a href='enddate:'>2016-01-04</a>date</li>",
+                "<li id='li3'> A <a href='date:'>13:45</a> <a href='endddate'>14:20</a> date</li>",
+                "</ul>",
+                "</body>",
+                "</html>"   
+        };
+
+
+        org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
+        
+        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        rewriter.rewrite(basicHtml);
+        
+        
+        Element root = basicHtml.getDocumentElement();
+        
+        String htmlContent = root.getTextContent();
+        
+        
+        Element li1 = getElementById(basicHtml, "l1");
+        assertNotNull (li1);
+        NodeList links = li1.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date1 = li1.getElementsByTagName("span").item(0);
+        assertNotNull(date1);
+        assertEquals("(01/02/2016, 7:30AM - 01/05/2016, 08:50AM)", date1.getTextContent());
+        
+        Element li2 = getElementById(basicHtml, "l2");
+        assertNotNull (li2);
+        links = li2.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date2 = li2.getElementsByTagName("span").item(0);
+        assertNotNull(date2);
+        assertEquals("(01/02/2016 - 01/04/2016)", date2.getTextContent());
+        
+        Element li3 = getElementById(basicHtml, "l3");
+        assertNotNull (li3);
+        links = li3.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date3 = li3.getElementsByTagName("span").item(0);
+        assertNotNull(date3);
+        assertEquals("(01:45PM-02:20PM)", date3.getTextContent());
+    }
+    
+    
+
+    @Test
+    public void testDueDatesAndTimes() 
+            throws XPathExpressionException, TransformerException, 
+            ParserConfigurationException, SAXException, IOException {
+
+        String[] htmlInput = {
+                "<html>",
+                "<head>",
+                "<title>A Title</title>",
+                "</head>",
+                "<body>",
+                "<ul>",
+                "<li id='li1'> A <a href='due:'>2016-01-02T07:30</a> date</li>",
+                "<li id='li2'> A <a href='due:'>2016-01-03</a> date</li>",
+                "<li id='li3'> A <a href='due:'>13:45</a> date</li>",
+                "</ul>",
+                "</body>",
+                "</html>"   
+        };
+
+
+        org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
+        
+        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        rewriter.rewrite(basicHtml);
+        
+        
+        Element root = basicHtml.getDocumentElement();
+        
+        String htmlContent = root.getTextContent();
+        
+        
+        Element li1 = getElementById(basicHtml, "l1");
+        assertNotNull (li1);
+        NodeList links = li1.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date1 = li1.getElementsByTagName("span").item(0);
+        assertNotNull(date1);
+        assertEquals("(Due: 01/02/2016, 7:30AM)", date1.getTextContent());
+        
+        Element li2 = getElementById(basicHtml, "l2");
+        assertNotNull (li2);
+        links = li2.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date2 = li2.getElementsByTagName("span").item(0);
+        assertNotNull(date2);
+        assertEquals("(Due: 01/02/2016)", date2.getTextContent());
+        
+        Element li3 = getElementById(basicHtml, "l3");
+        assertNotNull (li3);
+        links = li3.getElementsByTagName("a");
+        assertEquals (0, links.getLength());
+        Node date3 = li3.getElementsByTagName("span").item(0);
+        assertNotNull(date3);
+        assertEquals("(Due: 01:45PM)", date3.getTextContent());
+    }
+
     
     @Test
     public void testTitleExtraction() 

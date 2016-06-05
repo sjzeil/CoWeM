@@ -71,6 +71,7 @@ public class ITestModuleFormat {
             "---",
             "",
             "**Subject [Note](note1)**",
+            "",
             "1. Look at the [Course Websites](item1)",
             "2. [Old:](lecture) [TBD](item2)",
             "",
@@ -181,6 +182,7 @@ public class ITestModuleFormat {
         String mdInput = String.join(System.getProperty("line.separator"),
                 schedule_md);
         MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        doc.setDebugMode(true);
         
         String htmlContent = doc.transform(FORMAT);
         
