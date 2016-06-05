@@ -1,9 +1,11 @@
+html    {
+	}
+
 body	{
          background: #67859e;
-	     background: -moz-linear-gradient(top, #d6e3ee 0%, #67859e 100%); /* FF3.6+ */
-         background: linear-gradient(to bottom, #d6e3ee 0%, #67859e 100%);
+	     background: -moz-linear-gradient(left, #67859e 0%, #d6e3ee 150px); /* FF3.6+ */
+         background: linear-gradient(to right, #67859e 0%, #d6e3ee 150px);
          padding-left: 175px;
-         background-repeat: no-repeat;
          background-attachment: fixed;
 	}
 
@@ -14,7 +16,6 @@ div.courseName {
   font-size: 20pt;
 }
 
-
 div.leftPart {
   position: relative;
   top: 0px;
@@ -22,10 +23,21 @@ div.leftPart {
   height: 500px;
   width: 0px;
   float: left;
-  background: transparent; 
+  background: transparent;
   border-style: none;
   border-width: 0;
 }
+
+div.leftPart iframe {
+  height: 500px;
+  with: 100%;
+  background: transparent;
+  border-style: none;
+  border-width: 0;
+}
+
+
+
 
 div.leftPart table {
   background: #002441;
@@ -33,6 +45,7 @@ div.leftPart table {
   width: 15ex;
   padding: 0.5ex;
 }
+
 
 div.rightPart {
   position: relative;
@@ -48,12 +61,14 @@ span.topic1 {
 }
 
 span.topic2 {
+   margin-left: 3ex;
    font-size: 14pt;
    font-weight: bold;
    padding-left: 1.5ex;
 }
 
 span.topic3 {
+   margin-left: 6ex;
    font-weight: bold;
    padding-left: 2.5ex;
 }
@@ -64,6 +79,9 @@ span.topicSpacing {
 }
 
 
+td.subject {
+   padding-left: 12ex;
+}
 
 input.but {
   font-weight: bold;

@@ -26,9 +26,9 @@ import org.xml.sax.SAXException;
  * @author zeil
  *
  */
-public class ITestModuleFormat {
+public class ITestTopicsFormat {
 	
-	private static final String FORMAT = "modules";
+	private static final String FORMAT = "topics";
 
 
 		
@@ -70,7 +70,6 @@ public class ITestModuleFormat {
             "",
             "---",
             "",
-            "**Subject [Note](note1)**",
             "1. Look at the [Course Websites](item1)",
             "2. [Old:](lecture) [TBD](item2)",
             "",
@@ -78,6 +77,10 @@ public class ITestModuleFormat {
             "",
             "Support for submitting assignments via the web and",
             "triggering automatic grading.",
+            "",
+            "---",
+            "",
+            "**Subject Heading**",
             "",
             "3. [ ](lecture) [Web-based Assignment Submission](item3)",
             "4. [ ](lab) [Programming Assignments](item4)", 
@@ -94,7 +97,7 @@ public class ITestModuleFormat {
             "",
             "| Topics | Lecture Notes | Readings | Assignments & Other Events |",
             "|--------|---------------|----------|----------------------------|",
-            "| topics | slides video lecturenotes construct | text | quiz asst selfassess lecture exam event |",
+            "| topics unknown | slides video lecturenotes construct | text | quiz lab selfassess lecture exam event |",
             "",
             "| Document Kind | Prefix |",
             "|---------------|--------|",
@@ -167,20 +170,88 @@ public class ITestModuleFormat {
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		
-		
-		NodeList modules = (NodeList)xPath.evaluate(
-				"/html/body//div[@class='module']", root,
-				XPathConstants.NODESET);
-		assertEquals (3, modules.getLength());
-
 	}
 	
 
+    @Test
+    public void testColumnPositions() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+        String mdInput = String.join(System.getProperty("line.separator"),
+                schedule_md);
+        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        doc.setDebugMode(true);
+        
+        String htmlContent = doc.transform(FORMAT);
+        
+        
+        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
+        Element root = finalHtml.getDocumentElement();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        
+        
+        
+        Node item1 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item1']", root,
+                XPathConstants.NODE);
+        assertNotNull(item1);
+        Node item2 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item2']", root,
+                XPathConstants.NODE);
+        assertNotNull(item2);
+        Node item3 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item3']", root,
+                XPathConstants.NODE);
+        assertNotNull(item3);
+        Node item4 = (Node) xPath.evaluate(
+                "/html/body//a[@href='item4']", root,
+                XPathConstants.NODE);
+        assertNotNull(item4);
+        
+        Element td1 = (Element) xPath.evaluate(
+                "./ancestor::td[1]", item1,
+                XPathConstants.NODE);
+        assertNotNull(td1);
+        Element td1b = (Element) xPath.evaluate(
+                "./ancestor::tr/td[1]", td1,
+                XPathConstants.NODE);
+        assertEquals (td1, td1b);
+        
+        Element td2 = (Element) xPath.evaluate(
+                "./ancestor::td[1]", item2,
+                XPathConstants.NODE);
+        assertNotNull(td2);
+        Element td2b = (Element) xPath.evaluate(
+                "./ancestor::tr/td[2]", td2,
+                XPathConstants.NODE);
+        assertEquals (td2, td2b);
+
+        Element td3 = (Element) xPath.evaluate(
+                "./ancestor::td[1]", item3,
+                XPathConstants.NODE);
+        assertNotNull(td3);
+        Element td3b = (Element) xPath.evaluate(
+                "./ancestor::tr/td[2]", td3,
+                XPathConstants.NODE);
+        assertEquals (td3, td3b);
+
+        Element td4 = (Element) xPath.evaluate(
+                "./ancestor::td[1]", item4,
+                XPathConstants.NODE);
+        assertNotNull(td4);
+        Element td4b = (Element) xPath.evaluate(
+                "./ancestor::tr/td[4]", td4,
+                XPathConstants.NODE);
+        assertEquals (td4, td4b);
+    }
+
+    
+    
     @Test
     public void testIconInsertion() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         String mdInput = String.join(System.getProperty("line.separator"),
                 schedule_md);
         MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        doc.setDebugMode(true);
         
         String htmlContent = doc.transform(FORMAT);
         
@@ -210,24 +281,24 @@ public class ITestModuleFormat {
         assertNotNull(item4);
         
         Element icon1 = (Element) xPath.evaluate(
-                "./ancestor::li//img[1]", item1,
+                "./ancestor::p//img[1]", item1,
                 XPathConstants.NODE);
         assertNull(icon1);
         
         Element icon2 = (Element) xPath.evaluate(
-                "./ancestor::li//img[1]", item2,
+                "./ancestor::p//img[1]", item2,
                 XPathConstants.NODE);
         assertNotNull(icon2);
         assertTrue(icon2.getAttribute("src").endsWith("lecture.png"));
 
         Element icon3 = (Element) xPath.evaluate(
-                "./ancestor::li//img[1]", item3,
+                "./ancestor::p//img[1]", item3,
                 XPathConstants.NODE);
         assertNotNull(icon3);
         assertTrue(icon3.getAttribute("src").endsWith("lecture.png"));
 
         Element icon4 = (Element) xPath.evaluate(
-                "./ancestor::li//img[1]", item4,
+                "./ancestor::p//img[1]", item4,
                 XPathConstants.NODE);
         assertNotNull(icon4);
         assertTrue(icon4.getAttribute("src").endsWith("lab.png"));
@@ -238,7 +309,7 @@ public class ITestModuleFormat {
     
     
     @Test
-    public void testPrefixInsertion() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+    public void testPrefixIgnored() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         String mdInput = String.join(System.getProperty("line.separator"),
                 schedule_md);
         MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
@@ -272,8 +343,8 @@ public class ITestModuleFormat {
         assertNotNull(item4);
         
         assertTrue (item2.getTextContent().contains("Old: "));
-        assertTrue (item3.getTextContent().contains("Read chapters "));
-        assertTrue (item4.getTextContent().contains("In the lab: "));
+        assertFalse (item3.getTextContent().contains("Read chapters "));
+        assertFalse (item4.getTextContent().contains("In the lab: "));
     
     }
 

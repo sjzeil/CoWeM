@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -17,6 +18,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -24,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -32,6 +35,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -45,6 +49,9 @@ import org.xml.sax.SAXException;
 public class TestPaginationTransforms {
 
 	private static final String FORMAT = "html";
+	
+	
+	private String lastTransformed;
 
 	private String[] courseProperties = {
 			"courseName",         "Course_Websites",
@@ -328,7 +335,6 @@ public class TestPaginationTransforms {
 				"   <h2 id='h21'>Subitle 1</h2>",        // section 2, depth 2
 				"      <p id='par2'>Some text</p>",
 				"      <p id='par3'>Some text</p>",
-				"      <hr/>",
 				"      <p id='par4'>Some text</p>",      
 				"   <h2 id='h22'>Subitle 2</h2>",        // section 3, depth 2    
 				"      <h3 id='h31'>Subsubtitle 1</h3>", // section 4, depth 3
@@ -399,40 +405,156 @@ public class TestPaginationTransforms {
 
 
 	
-	private org.w3c.dom.Document formatHTML(String[] htmlInput) 
-			throws TransformerException, ParserConfigurationException, SAXException, IOException {
-		org.w3c.dom.Document formattedDoc = null;
-		Path formatConversionSheetFile = Paths.get("src", "main", "resources",
-				"edu", "odu", "cs", "cwm", "templates", "md-html.xsl");
-		// Note md-html.xsl include's pagination, and supplies a template for select="/" 
+    @Test
+    public void testSectioning2() 
+            throws XPathExpressionException, TransformerException,
+            ParserConfigurationException, SAXException, IOException {
+        
+        String[] htmlInput = {
+                "<html test='sectioning'>",
+                "<head>",
+                "<title>Document Title</title>",
+                "</head>",
+                "<body>",
+                "<p id='par1'>A preamble</p>",           // section 0, depth 1
+                "<h1 id='h11'>Title 1</h1>",             // section 1, depth 1
+                "   <h2 id='h21'>Subitle 1</h2>",        // section 2, depth 2
+                "      <p id='par2'>Some text</p>",
+                "      <p id='par3'>Some text</p>",
+                "      <hr/>",
+                "      <p id='par4'>Some text</p>",      
+                "   <h2 id='h22'>Subitle 2</h2>",        // section 3, depth 2    
+                "      <h3 id='h31'>Subsubtitle 1</h3>", // section 4, depth 3
+                "         <p id='par5'>Some text</p>",
+                "      <h3 id='h32'>Subsubtitle 2</h3>", // section 5, depth 3
+                "         <p id='par6'>Some text</p>",
+                "<h1 id='h12'>Title 2</h1>",             // section 6, depth 1
+                "   <p id='par7'>Closing text</p>",
+                "</body>",
+                "</html>"   
+        };
 
-		System.setProperty("javax.xml.transform.TransformerFactory", 
-				"net.sf.saxon.TransformerFactoryImpl"); 
-		TransformerFactory transFact = TransformerFactory.newInstance();
+        String[] ids = {
+                "h11", "h12", 
+                "h21", "h22",
+                "h31", "h32",
+                "par2", "par3", "par4", "par5", "par6", "par7"
+        };
 
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		org.w3c.dom.Document inputDoc = dBuilder.parse(
-				new InputSource(
-						new StringReader(
-								String.join(System.getProperty("line.separator"),
-										htmlInput))));
+        int[] shouldBeInSection = {
+                0, 5, 
+                1, 2,
+                3, 4,
+                1, 1, 1, 3, 4, 5
+        };
 
-		Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
-		formattedDoc = dBuilder.newDocument();
-		Templates template = transFact.newTemplates(xslSource);
-		Transformer xform = template.newTransformer();
-		xform.setParameter("format", FORMAT);
-		for (Object okey: properties.keySet()) {
-			String key = okey.toString();
-			xform.setParameter(key, properties.getProperty(key));
-		}
+        int[] shouldBeAtDepth = {
+                1, 1, 
+                2, 2,
+                3, 3,
+                2, 2, 2, 3, 3, 1
+        };
 
-		Source xmlIn = new DOMSource(inputDoc);
-		DOMResult htmlOut = new DOMResult(formattedDoc);
-		xform.transform(xmlIn, htmlOut);
-		return formattedDoc;			
-	}
+        org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
+        Element root = basicHtml.getDocumentElement();
+        String htmlContent = root.getTextContent();
+
+        assertTrue (htmlContent.contains("A preamble"));
+        assertTrue (htmlContent.contains("Subsubtitle 2"));
+        assertTrue (htmlContent.contains("Closing text"));
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        assertEquals ("html", root.getLocalName());
+        
+        String actualTitle = (String)xPath.evaluate("/html/head/title", root);
+        assertEquals ("Document Title", actualTitle);
+
+        Node par1 = getElementById(basicHtml, "par1");
+        assertEquals ("body", par1.getParentNode().getLocalName());
+        
+        Node par5 = getElementById(basicHtml, "par5");
+        assertEquals ("sectionContent", par5.getParentNode().getLocalName());
+
+        Node par3 = getElementById(basicHtml, "par3");
+        assertEquals ("sectionDescription", par3.getParentNode().getLocalName());
+
+        Node par4 = getElementById(basicHtml, "par4");
+        assertEquals ("sectionContent", par4.getParentNode().getLocalName());
+
+        NodeList sections = root.getElementsByTagName("section");
+
+        for (int i = 0; i < ids.length; ++i) {
+            //System.err.println("i=" + i + " id =" + ids[i]);
+            Node n = getElementById(basicHtml, ids[i]);
+            assertNotNull(n);
+            Element parent = (Element)n.getParentNode();
+            if ("sectionContent".equals(parent.getLocalName())) {
+                parent = (Element)parent.getParentNode();   
+            } else if ("sectionDescription".equals(parent.getLocalName())) {
+                parent = (Element)parent.getParentNode();   
+            } 
+            assertSame (parent, sections.item(shouldBeInSection[i]));
+            assertEquals (shouldBeAtDepth[i], Integer.parseInt(parent.getAttribute("depth"))); 
+        }
+        
+        assertEquals (6, sections.getLength());
+    }
+	
+	
+	
+    private org.w3c.dom.Document formatHTML(String[] htmlInput) 
+            throws TransformerException, ParserConfigurationException, SAXException, IOException {
+        org.w3c.dom.Document formattedDoc = null;
+        Path formatConversionSheetFile = Paths.get("src", "main", "resources",
+                "edu", "odu", "cs", "cwm", "templates", "md-" + FORMAT + ".xsl");
+
+        System.setProperty("javax.xml.transform.TransformerFactory", 
+                "net.sf.saxon.TransformerFactoryImpl"); 
+        TransformerFactory transFact = TransformerFactory.newInstance();
+
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        org.w3c.dom.Document inputDoc = dBuilder.parse(
+                new InputSource(
+                        new StringReader(
+                                String.join(System.getProperty("line.separator"),
+                                        htmlInput))));
+
+        Source xslSource = new StreamSource(formatConversionSheetFile.toFile());
+        formattedDoc = dBuilder.newDocument();
+        Templates template = transFact.newTemplates(xslSource);
+        Transformer xform = template.newTransformer();
+        xform.setParameter("format", FORMAT);
+        for (Object okey: properties.keySet()) {
+            String key = okey.toString();
+            xform.setParameter(key, properties.getProperty(key));
+        }
+
+        Source xmlIn = new DOMSource(inputDoc);
+        DOMResult htmlOut = new DOMResult(formattedDoc);
+        xform.transform(xmlIn, htmlOut);
+        
+        lastTransformed = xmlToString(formattedDoc);
+        
+        return formattedDoc;            
+    }
+
+    private String xmlToString(Document inputDoc) {
+        System.setProperty("javax.xml.transform.TransformerFactory", 
+                "net.sf.saxon.TransformerFactoryImpl"); 
+        TransformerFactory transFact = TransformerFactory.newInstance();
+        try {
+        Transformer xform = transFact.newTransformer();
+
+        Source xmlIn = new DOMSource(inputDoc);
+        StringWriter output = new StringWriter(); 
+        Result htmlOut = new StreamResult(output);
+        xform.transform(xmlIn, htmlOut);
+        return output.toString();
+        } catch (Exception e) {
+            return "<error>Could not render result due to: " + e.toString() + "</error>\n";
+        }
+    }
 
 
 

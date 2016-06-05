@@ -3,18 +3,29 @@ Author: @semester@
 
 
 
-<!-- Items can be dated in several fashions by including a date and/or time in the
-     the text of the item description, outside of any link. Dates are written
-     in the format YYYY-MM-DD. If exporting the website as a Blackboard package, these
-     dates and times can be copied directly into the Bb calendar.
-     
-     date:2016-05-21    A simple date, formatted as (05/21/2016)
-     due:2016-05-21     Formatted as (Due: 05/21/2016)
-     time:7:30PM        Combines with date: as (05/21/2016 07:30PM) or with 
-                        due: as (Due: 05/21/2016 07:30PM) 
-     time:7:30-8:30PM   Combines with date: as (05/21/2016 07:30-8:30PM)
-     enddate:2016-05-24 Combines with date: as  (05/21/2016-05/24/2016) Cannot combine
-                        with a time:
+<!-- Items can be dated in several fashions by including a date and/or
+     time in the the text of the item description, in a special link
+	 format. Dates and times are written in the format
+     YYYY-MM-DDTHH:MM.  The hours are given in the local time zone
+     military (0..23) style. The date part or the time part may be
+     omitted, yielding YYYY-MM-DD or HH:MM.
+	 
+     These are written as special links to enable dates and times to
+     be easily recognized and processed when packaging the course for
+	 Blackboard or other LMS system. If you have no intention of
+     importing calendar items into an LMS, you can ignore these
+     entirely and simpyl type your dates as ordinary Markdown text.
+	 
+	 Link styles:
+
+     [2016-05-21T19:30](date:) A simple date & time, formatted
+	                           as (05/21/2016, 07:30PM)
+     [2016-05-22T01:00](enddate:) An ending date & time, will be combined
+	                           with a preceding "date:"
+							   as (05/21/2016, 7:30PM - 05/22/2016, 1:00AM)
+     [2016-05-21T19:30](due:) A variation on the basic date & time, formatted
+	                           as (Due: 05/21/2016, 07:30PM). Does not
+	                           combine with enddate
 
 -->
 
@@ -31,9 +42,14 @@ section/subsection titles or numbered lists. A typical use of this material
 is to provide **Overview** and **Objectives** sections for each module in
 a course.
 
-<!-- The first numbered list in a section begins the activities list
-     of a module.  
-     
+---
+
+<!-- A horizontal rule separates the descriptive matter from
+     the activities.
+
+     If there is no rule, then everything is considered to be part of the
+	 activities list.
+
      You can have more than one list, if you want to break the activities 
      apart into topics
      
@@ -72,7 +88,7 @@ a course.
 %endif
 
 
-88. [ ](lab) [TBD](doc:courseConfiguration) date:2016-08-28
+88. [ ](lab) [TBD](doc:courseConfiguration) [2016-08-28](date:)
 
 <!-- Like all numbered lists in Markdown, the actual numbers don't matter. -->
 
@@ -86,9 +102,9 @@ a course.
 This section covers document sets and their constituent documents.
 
 
-88. [ ](lecture) [TBD](doc:markdown) date:2016-08-28 enddate:2017-02-28
+88. [ ](lecture) [TBD](doc:markdown) [2016-08-28](date:) [2017-02-28](enddate:)
 
-88. [ ](lecture) [TBD](doc:urlShortcuts) due:2016-08-28 time:11:59PM
+88. [ ](lecture) [TBD](doc:urlShortcuts) [2016-08-28T23:59](due:)
 
 88. [ ](lecture) [TBD](doc:configuringDocumentSets)
 
