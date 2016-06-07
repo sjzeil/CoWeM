@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import edu.odu.cs.cwm.documents.urls.URLRewriting;
 import edu.odu.cs.cwm.macroproc.Macro;
 import edu.odu.cs.cwm.macroproc.MacroProcessor;
 

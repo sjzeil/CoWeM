@@ -1,4 +1,4 @@
-package edu.odu.cs.cwm.documents;
+package edu.odu.cs.cwm.documents.urls;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.odu.cs.cwm.documents.MarkdownDocument;
 import edu.odu.cs.cwm.macroproc.MacroProcessor;
 
 /**
@@ -23,7 +24,7 @@ import edu.odu.cs.cwm.macroproc.MacroProcessor;
  *           matches a file (presumably a secondary document or listing)
  *           in a group DIR,
  *           baseURL/DIR/foo.html
- *  docx:foo  same as doc:foo, except during epub package generation when such
+ *  docex:foo  same as doc:foo, except during epub package generation when such
  *           links are ignored when choosing files to include in the e-book
  *           (useful for excluding "private" documents such as assignments)
  *           
@@ -167,7 +168,7 @@ public class URLRewriting {
             return;
         }
         int dividerPos = link.indexOf(':');
-        if (link.startsWith("doc:") || link.startsWith("docx:")) {
+        if (link.startsWith("doc:") || link.startsWith("docex:")) {
             String documentSpec = link.substring(dividerPos + 1);
             if (documentSpec.contains(".") || documentSpec.contains("/")) {
                 documentSpec = documentSpec.replace('/', File.separatorChar);

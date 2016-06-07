@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.odu.cs.cwm.documents;
+package edu.odu.cs.cwm.documents.urls;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

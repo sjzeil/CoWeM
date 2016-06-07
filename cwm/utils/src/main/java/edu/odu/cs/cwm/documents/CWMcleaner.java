@@ -46,13 +46,13 @@ public class CWMcleaner implements TextSubstitutions {
         StringBuilder buffer = new StringBuilder();
         Matcher matcher = cwmPattern.matcher(target);
         int start = 0;
-        int counter = 0;
+        //int counter = 0;
         //System.err.println("*********");
         //System.err.println(target);
         //System.err.println("*********");
         
         while (matcher.find()) {
-            ++counter;
+            //++counter;
             int cwmStart = matcher.start();
             int cwmStop = matcher.end();
             String content = matcher.group(2);
