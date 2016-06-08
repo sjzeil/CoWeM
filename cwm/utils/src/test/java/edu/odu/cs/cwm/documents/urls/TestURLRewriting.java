@@ -177,11 +177,11 @@ public class TestURLRewriting {
                 "</head>",
                 "<body>",
                 "<p>Some text leading to ",
-                "<a id='a1' href='docx:DocSet1'/>",
+                "<a id='a1' href='docex:DocSet1'/>",
                 " but this does not work: ",
-                "<a id='a2' href='docx:NotADocSet'>not a link</a>",
+                "<a id='a2' href='docex:NotADocSet'>not a link</a>",
                 "and this doesn't make much sense, but",
-                "<img id='img1' src='docx:DocSet3'/>",
+                "<img id='img1' src='docex:DocSet3'/>",
                 "</p>",
                 "</body>",
                 "</html>"   
@@ -204,7 +204,7 @@ public class TestURLRewriting {
         Element link2 = getElementById(basicHtml, "a2");
         assertNotNull (link2);
         href = link2.getAttribute("href");
-        assertEquals ("docx:NotADocSet", href);
+        assertEquals ("docex:NotADocSet", href);
         
         Element img1 = getElementById(basicHtml, "img1");
         assertNotNull (img1);
@@ -225,11 +225,11 @@ public class TestURLRewriting {
                 "</head>",
                 "<body>",
                 "<p>Some text leading to ",
-                "<a id='a1' href='docx:secondaryDoc1.mmd'/>",
+                "<a id='a1' href='docex:secondaryDoc1.mmd'/>",
                 " but this does not work: ",
-                "<a id='a2' href='docx:secondaryDoc2.mmd'>not a link</a>",
+                "<a id='a2' href='docex:secondaryDoc2.mmd'>not a link</a>",
                 "and this doesn't make much sense, but",
-                "<img id='img1' src='docx:secondaryDoc1.mmd'/>",
+                "<img id='img1' src='docex:secondaryDoc1.mmd'/>",
                 "</p>",
                 "</body>",
                 "</html>"   
@@ -252,7 +252,7 @@ public class TestURLRewriting {
         Element link2 = getElementById(basicHtml, "a2");
         assertNotNull (link2);
         href = link2.getAttribute("href");
-        assertEquals ("docx:secondaryDoc2.mmd", href);
+        assertEquals ("docex:secondaryDoc2.mmd", href);
         
         Element img1 = getElementById(basicHtml, "img1");
         assertNotNull (img1);

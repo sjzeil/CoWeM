@@ -19,7 +19,8 @@ public interface SpecialURL {
 	 * protocol label and, if so, attempts to rewrite the element.
 	 * 
 	 * @param link an a or img element
+	 * @param linkAttribute name of the attribute containing a link URL
 	 * @return true if the element has been rewritten.
 	 */
-    boolean applyTo (Element link);
+    boolean applyTo (Element link, String linkAttribute);
 }

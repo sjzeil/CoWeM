@@ -7,12 +7,12 @@ import org.w3c.dom.Element;
 /**
  * Implements URL rewriting in course documents.
  * 
- *  graphics:foo, rewritten as baseURL/graphics/foo
+ *  styles:foo, rewritten as baseURL/styles/foo
  *  
  * @author zeil
  *
  */
-public class GraphicsURLs implements SpecialURL {
+public class StylesURLs implements SpecialURL {
     
  
     /**
@@ -28,7 +28,7 @@ public class GraphicsURLs implements SpecialURL {
      * 
      * @param baseURL0 relative URL/directory to base of website.
      */
-    public GraphicsURLs(final String baseURL0) {
+    public StylesURLs(final String baseURL0) {
         baseURL = baseURL0;
     }
 
@@ -45,12 +45,12 @@ public class GraphicsURLs implements SpecialURL {
 	@Override
 	public final boolean applyTo(final Element link, final String linkAttr) {
 	    String url = link.getAttribute(linkAttr);
-	    if (url.startsWith("graphics:")) {
+	    if (url.startsWith("styles:")) {
 	        int dividerPos = url.indexOf(':');
 	        String documentSpec = url.substring(dividerPos + 1);
 	        File baseDir = new File(
 	                baseURL.replace('/', File.separatorChar));
-	        File graphicsDir = new File(baseDir, "graphics");
+	        File graphicsDir = new File(baseDir, "styles");
 	        File selected = new File(graphicsDir, documentSpec); 
 	        String newLink = selected.toString()
 	                .replace(File.separatorChar, '/');

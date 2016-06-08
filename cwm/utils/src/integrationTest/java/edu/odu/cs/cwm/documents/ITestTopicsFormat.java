@@ -1,6 +1,10 @@
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -18,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -163,11 +166,6 @@ public class ITestTopicsFormat {
         assertFalse(htmlContent.contains("Presentation"));
         assertFalse (htmlContent.contains("@courseName@"));
         assertFalse (htmlContent.contains("@Title@"));
-		
-		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
-		Element root = finalHtml.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
 		
 		
 	}
