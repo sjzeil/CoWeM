@@ -39,6 +39,8 @@ public class URLRewriting {
         rewriters.add(new StylesURLs(baseURL));
         rewriters.add(new DocURLs(baseURL));
         rewriters.add(new BlackboardURLs(bbURL));
+        rewriters.add(new DateURLs());
+        rewriters.add(new DueDateURLs());
     }
 
     /**
@@ -67,8 +69,12 @@ public class URLRewriting {
      * @param linkAttribute name of the attribute containing a link URL
      */
     private void rewrite(final NodeList elements, final String linkAttribute) {
+        ArrayList<Element> elem = new ArrayList<>();
         for (int i = 0; i < elements.getLength(); ++i) {
-            rewrite ((Element) elements.item(i), linkAttribute);
+            elem.add((Element) elements.item(i));
+        }
+        for (Element e: elem) {
+            rewrite (e, linkAttribute);
         }
     }
 

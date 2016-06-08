@@ -207,10 +207,10 @@ public class MacroProcessor {
 				processIfDef (trimmedString, "if");
 				return result;
 			} else if (trimmedString.startsWith(commandPrefix + "else")) {
-				processElse (trimmedString);
+				processElse ();
 				return result;
 			} else if (trimmedString.startsWith(commandPrefix + "endif")) {
-				processEndif (trimmedString);
+				processEndif ();
 				return result;
 			} else if (trimmedString.startsWith(commandPrefix + "define")) {
 				processDefine (trimmedString);
@@ -323,9 +323,8 @@ public class MacroProcessor {
 
 	/**
 	 * Parse and process an #endif command.
-	 * @param endifCommand  Lexeme of the command.
 	 */
-	private void processEndif( final String endifCommand) {
+	private void processEndif() {
 		if (stack.size() > 1) {
 			stack.remove(stack.size() - 1);
 		}
@@ -333,9 +332,8 @@ public class MacroProcessor {
 
 	/**
 	 * Parse and process an #else command.
-	 * @param elseCommand  Lexeme of the command.
 	 */
-	private void processElse(final String elseCommand) {
+	private void processElse() {
 		if (stack.size() > 1) {
 			InputState topState = stack.get(stack.size() - 1);
 			InputState priorState = stack.get(stack.size() - 2);

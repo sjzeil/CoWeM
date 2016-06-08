@@ -535,6 +535,9 @@ public class TestPaginationTransforms {
         xform.transform(xmlIn, htmlOut);
         
         lastTransformed = xmlToString(formattedDoc);
+        if (lastTransformed.length() == 0) {
+            throw new IOException ("Empty transformation output.");
+        }
         
         return formattedDoc;            
     }

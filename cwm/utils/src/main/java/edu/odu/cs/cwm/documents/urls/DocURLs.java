@@ -47,16 +47,27 @@ public class DocURLs implements SpecialURL {
     /**
      * List of paths to document sets that can be reached from the baseURL. 
      */
-    private static List<File> documentSets;
+    private static List<File> documentSets = null;
 
+    /**
+     * relative URL/directory to base of website.
+     */
+    private String baseURL;
 
     /**
      * Create a URL rewriter.
      * 
-     * @param baseURL relative URL/directory to base of website.
+     * @param baseURL0 relative URL/directory to base of website.
      */
-    public DocURLs(final String baseURL) {
+    public DocURLs(final String baseURL0) {
+        baseURL = baseURL0;
+    }
 
+    /**
+     * If it has not been done already, construct a list of all document sets
+     * in this website.
+     */
+    private void fillDocumentSets() {
         if (documentSets == null) {
             // Look for all possible document sets - directories 2 levels below
             // the base that contain an appropriately named gradle file.
@@ -92,10 +103,8 @@ public class DocURLs implements SpecialURL {
             } else {
                 logger.warn("Could not find directory " + baseURL);
             }
-        }
+        }        
     }
-
-
 
 	/**
 	 * Checks to see if a linking element (a or img) uses a special
@@ -107,6 +116,7 @@ public class DocURLs implements SpecialURL {
 	 */
 	@Override
 	public final boolean applyTo(final Element link, final String linkAttr) {
+	    fillDocumentSets();
 	    String url = link.getAttribute(linkAttr);
 	    if (url.startsWith("doc:") || url.startsWith("docex:")) {
 	        int dividerPos = url.indexOf(':');

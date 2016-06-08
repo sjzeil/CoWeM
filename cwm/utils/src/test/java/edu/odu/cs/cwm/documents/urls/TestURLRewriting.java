@@ -8,18 +8,11 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -27,7 +20,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -97,8 +89,6 @@ public class TestURLRewriting {
 		URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
 		rewriter.rewrite(basicHtml);
 		
-		Element root = basicHtml.getDocumentElement();
-		String htmlContent = root.getTextContent();
 		
 		Element link1 = getElementById(basicHtml, "a1");
 		assertNotNull (link1);
@@ -145,8 +135,6 @@ public class TestURLRewriting {
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
         
-        Element root = basicHtml.getDocumentElement();
-        String htmlContent = root.getTextContent();
         
         Element link1 = getElementById(basicHtml, "a1");
         assertNotNull (link1);
@@ -193,8 +181,6 @@ public class TestURLRewriting {
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
         
-        Element root = basicHtml.getDocumentElement();
-        String htmlContent = root.getTextContent();
         
         Element link1 = getElementById(basicHtml, "a1");
         assertNotNull (link1);
@@ -241,8 +227,6 @@ public class TestURLRewriting {
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
         
-        Element root = basicHtml.getDocumentElement();
-        String htmlContent = root.getTextContent();
         
         Element link1 = getElementById(basicHtml, "a1");
         assertNotNull (link1);
@@ -302,9 +286,6 @@ public class TestURLRewriting {
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
         
-        Element root = basicHtml.getDocumentElement();
-        String htmlContent = root.getTextContent();
-        
         
         Element img1 = getElementById(basicHtml, "img1");
         assertNotNull (img1);
@@ -339,10 +320,7 @@ public class TestURLRewriting {
         
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
-        
-        Element root = basicHtml.getDocumentElement();
-        String htmlContent = root.getTextContent();
-        
+                
         
         Element img1 = getElementById(basicHtml, "img1");
         assertNotNull (img1);
@@ -377,36 +355,31 @@ public class TestURLRewriting {
         
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
+                
         
-        
-        Element root = basicHtml.getDocumentElement();
-        
-        String htmlContent = root.getTextContent();
-        
-        
-        Element li1 = getElementById(basicHtml, "l1");
+        Element li1 = getElementById(basicHtml, "li1");
         assertNotNull (li1);
         NodeList links = li1.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date1 = li1.getElementsByTagName("span").item(0);
         assertNotNull(date1);
-        assertEquals("(01/02/2016, 7:30AM)", date1.getTextContent());
+        assertEquals("01/02/2016, 7:30AM", date1.getTextContent());
         
-        Element li2 = getElementById(basicHtml, "l2");
+        Element li2 = getElementById(basicHtml, "li2");
         assertNotNull (li2);
         links = li2.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date2 = li2.getElementsByTagName("span").item(0);
         assertNotNull(date2);
-        assertEquals("(01/02/2016)", date2.getTextContent());
+        assertEquals("01/03/2016", date2.getTextContent());
         
-        Element li3 = getElementById(basicHtml, "l3");
+        Element li3 = getElementById(basicHtml, "li3");
         assertNotNull (li3);
         links = li3.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date3 = li3.getElementsByTagName("span").item(0);
         assertNotNull(date3);
-        assertEquals("(01:45PM)", date3.getTextContent());
+        assertEquals("1:45PM", date3.getTextContent());
     }
 
     
@@ -424,7 +397,7 @@ public class TestURLRewriting {
                 "<ul>",
                 "<li id='li1'> A <a href='date:'>2016-01-02T07:30</a> <a href='enddate:'>2016-01-05T08:50</a>date </li>",
                 "<li id='li2'> A <a href='date:'>2016-01-03</a> <a href='enddate:'>2016-01-04</a>date</li>",
-                "<li id='li3'> A <a href='date:'>13:45</a> <a href='endddate'>14:20</a> date</li>",
+                "<li id='li3'> A <a href='date:'>13:45</a> <a href='enddate:'>14:20</a> date</li>",
                 "</ul>",
                 "</body>",
                 "</html>"   
@@ -437,34 +410,30 @@ public class TestURLRewriting {
         rewriter.rewrite(basicHtml);
         
         
-        Element root = basicHtml.getDocumentElement();
         
-        String htmlContent = root.getTextContent();
-        
-        
-        Element li1 = getElementById(basicHtml, "l1");
+        Element li1 = getElementById(basicHtml, "li1");
         assertNotNull (li1);
         NodeList links = li1.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date1 = li1.getElementsByTagName("span").item(0);
         assertNotNull(date1);
-        assertEquals("(01/02/2016, 7:30AM - 01/05/2016, 08:50AM)", date1.getTextContent());
+        assertEquals("01/02/2016, 7:30AM - 01/05/2016, 8:50AM", date1.getTextContent());
         
-        Element li2 = getElementById(basicHtml, "l2");
+        Element li2 = getElementById(basicHtml, "li2");
         assertNotNull (li2);
         links = li2.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date2 = li2.getElementsByTagName("span").item(0);
         assertNotNull(date2);
-        assertEquals("(01/02/2016 - 01/04/2016)", date2.getTextContent());
+        assertEquals("01/03/2016 - 01/04/2016", date2.getTextContent());
         
-        Element li3 = getElementById(basicHtml, "l3");
+        Element li3 = getElementById(basicHtml, "li3");
         assertNotNull (li3);
         links = li3.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date3 = li3.getElementsByTagName("span").item(0);
         assertNotNull(date3);
-        assertEquals("(01:45PM-02:20PM)", date3.getTextContent());
+        assertEquals("1:45PM-2:20PM", date3.getTextContent());
     }
     
     
@@ -496,34 +465,30 @@ public class TestURLRewriting {
         rewriter.rewrite(basicHtml);
         
         
-        Element root = basicHtml.getDocumentElement();
         
-        String htmlContent = root.getTextContent();
-        
-        
-        Element li1 = getElementById(basicHtml, "l1");
+        Element li1 = getElementById(basicHtml, "li1");
         assertNotNull (li1);
         NodeList links = li1.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date1 = li1.getElementsByTagName("span").item(0);
         assertNotNull(date1);
-        assertEquals("(Due: 01/02/2016, 7:30AM)", date1.getTextContent());
+        assertEquals("Due: 01/02/2016, 7:30AM", date1.getTextContent());
         
-        Element li2 = getElementById(basicHtml, "l2");
+        Element li2 = getElementById(basicHtml, "li2");
         assertNotNull (li2);
         links = li2.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date2 = li2.getElementsByTagName("span").item(0);
         assertNotNull(date2);
-        assertEquals("(Due: 01/02/2016)", date2.getTextContent());
+        assertEquals("Due: 01/03/2016", date2.getTextContent());
         
-        Element li3 = getElementById(basicHtml, "l3");
+        Element li3 = getElementById(basicHtml, "li3");
         assertNotNull (li3);
         links = li3.getElementsByTagName("a");
         assertEquals (0, links.getLength());
         Node date3 = li3.getElementsByTagName("span").item(0);
         assertNotNull(date3);
-        assertEquals("(Due: 01:45PM)", date3.getTextContent());
+        assertEquals("Due: 1:45PM", date3.getTextContent());
     }
 
     
@@ -556,8 +521,6 @@ public class TestURLRewriting {
         URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
         rewriter.rewrite(basicHtml);
         
-        Element root = basicHtml.getDocumentElement();
-        String htmlContent = root.getTextContent();
         
         Element link1 = getElementById(basicHtml, "a1");
         assertNotNull (link1);
@@ -580,23 +543,6 @@ public class TestURLRewriting {
         assertEquals ("TBD", linkText);
     }
 
-
-	private String xmlToString(Document inputDoc) {
-		System.setProperty("javax.xml.transform.TransformerFactory", 
-				"net.sf.saxon.TransformerFactoryImpl"); 
-		TransformerFactory transFact = TransformerFactory.newInstance();
-		try {
-		Transformer xform = transFact.newTransformer();
-
-		Source xmlIn = new DOMSource(inputDoc);
-		StringWriter output = new StringWriter(); 
-		Result htmlOut = new StreamResult(output);
-		xform.transform(xmlIn, htmlOut);
-		return output.toString();
-		} catch (Exception e) {
-			return "<error>Could not render result due to: " + e.toString() + "</error>\n";
-		}
-	}
 
 
 
