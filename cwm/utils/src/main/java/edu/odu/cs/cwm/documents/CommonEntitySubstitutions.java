@@ -51,7 +51,8 @@ public class CommonEntitySubstitutions implements TextSubstitutions {
             "asymp", "#8776",
             "ne", "#8800",
             "le", "#8804",
-            "ge", "#8805"
+            "ge", "#8805",
+            "nbsp", "#160"
     };
 
 

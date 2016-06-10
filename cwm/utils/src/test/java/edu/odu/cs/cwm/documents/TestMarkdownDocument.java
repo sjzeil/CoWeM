@@ -508,6 +508,7 @@ public class TestMarkdownDocument {
 		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
 		
 		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+		doc.setDebugMode(true);
 		String htmlResult = doc.postprocess(basicHtml, "pages");
 		
 		assertTrue (htmlResult.contains("paragraph 1"));
@@ -531,7 +532,7 @@ public class TestMarkdownDocument {
 		
 		NodeList pages = (NodeList)xPath.evaluate("/html/body/div[@class='page']",
 				root, XPathConstants.NODESET);
-		assertEquals(4, pages.getLength());
+		assertEquals(5, pages.getLength());
 		
 		Element[] p = new Element[5];
 		Element[] par = new Element[5];

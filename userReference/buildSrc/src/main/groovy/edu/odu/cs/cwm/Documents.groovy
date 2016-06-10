@@ -101,7 +101,7 @@ class Documents implements Plugin<Project> {
                 MarkdownDocument doc =
                     new MarkdownDocument(project.documents.primaryDocument,
                         docProperties);
-
+                doc.setDebugMode(true);
 				String result = doc.transform(format)
 
 				File resultFile = project.file(websiteArea.toString() + '/'

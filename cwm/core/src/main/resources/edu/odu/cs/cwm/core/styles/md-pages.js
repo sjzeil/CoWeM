@@ -14,6 +14,9 @@ function toggleDisplay (sectionName)
 };
 
 
+
+
+
 function sshowforward (control) {
     var oldDisplayed = control.counter;
     var newDisplayed = control.counter + 1;
@@ -59,7 +62,7 @@ function sshowback (control) {
     oldSlide.style.display = "none";
     newSlide.style.display = "block";
 
-	var positionIndicatorID = "islideshowposition"  + control.showNumber;
+	var positionIndicatorID = "slideshowposition"  + control.showNumber;
 	var posTR = document.getElementById(positionIndicatorID);
     posTR.textContent = displayText;
 };

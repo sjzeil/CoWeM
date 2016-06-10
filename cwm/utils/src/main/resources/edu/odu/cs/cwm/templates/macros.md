@@ -69,13 +69,13 @@ Callout numbers
 
 Image processing:
 
-%define <\bPicOnRight> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: right; max-width: pctwidth%;"/>}
-%define <\picOnRight> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: right; max-width: pctwidth%;"/>}
-%define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
-%define <\picOnLeft> (file,pctwidth) {<div class="noFloat"> </div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
-%define <\centerPic> (file,pctwidth) {<div class="noFloat"> </div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
+%define <\bPicOnRight> (file,pctwidth) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: right; max-width: pctwidth%;"/>}
+%define <\picOnRight> (file,pctwidth) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: right; max-width: pctwidth%;"/>}
+%define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
+%define <\picOnLeft> (file,pctwidth) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
+%define <\centerPic> (file,pctwidth) {<div class="noFloat">&nbsp;</div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
 %define <\icon> (file,linkURL) {<span class="linkedIcon"><a href="linkURL" target="_blank"><img src="file"/></a></span>}
-%define <\noFloat> <> {<div class="noFloat"> </div>}
+%define <\noFloat> <> {<div class="noFloat">&nbsp;</div>}
 
 %define <\ePicOnRight> () <>
 %define <\ePicOnLeft> () <>

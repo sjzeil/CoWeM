@@ -152,10 +152,61 @@
 
 
 <xsl:template name="insertFooter">
+    <xsl:variable name='slideshowNum' select="'0'"/>
+    <xsl:variable name='slideCount' select="1 + count(./ancestor-or-self::body/page)"/>
+    <xsl:if test="$slideCount != 0">
+          <script>
+             <xsl:text>sshowControl</xsl:text>
+             <xsl:value-of select="$slideshowNum"/>
+             <xsl:text> = { counter: 1,
+             showNumber: </xsl:text>
+             <xsl:value-of select="$slideshowNum"/>
+             <xsl:text>, max: </xsl:text>
+             <xsl:value-of select="$slideCount"/>
+             <xsl:text>};
+             </xsl:text>          
+          </script>
+    </xsl:if>
+  
   <div class="footer">
-    <div style="text-align: center; border-top: solid #000040; margin-top: 40px;">
-      <xsl:call-template name="insertNavIcons"/>
-    </div>
+    <xsl:variable name='slideshowNum' select="'0'"/>
+    <xsl:variable name='slideCount' select="count(./ancestor-or-self::body/page)"/>
+    <div id="slideshowControl0"
+         style="text-align: center; border-top: solid #000040; margin-top: 40px;">
+          <table class="slideshowcontrol">
+             <tr class="slideshowcontrol">
+               <td class="slideshowcontrolLeft">
+                   <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol"
+                          onclick="sshowback(sshowControl{$slideshowNum})"
+                          title="previous">
+                      <xsl:text>&#x25C0;</xsl:text>
+                   </a>
+                   </xsl:if>
+               </td>
+               <td class="slideshowcontrolMiddle">
+                  <xsl:if test="$slideCount != 0">
+                     <span id="slideshowposition{$slideshowNum}"> 
+                         <xsl:text>1 of </xsl:text>
+                         <xsl:value-of select="$slideCount"/>
+                     </span>
+                  </xsl:if>
+                  <xsl:call-template name="insertNavIcons"/>
+               </td>
+            
+               <td class="slideshowcontrolRight">
+                  <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol" 
+                          onclick="sshowforward(sshowControl{$slideshowNum})" 
+                          title="next">
+                          <xsl:text>&#x25B6;</xsl:text>
+                       </a>
+                   </xsl:if>
+               </td>
+             </tr>
+          </table>
+          </div>
+
     <xsl:if test="$copyright != ''">
       <div class="copyright">
         <xsl:text>&#169; </xsl:text>
@@ -163,6 +214,7 @@
      </div>
    </xsl:if> 
   </div>
+  <p>last line</p>
 </xsl:template>
 
 
@@ -332,7 +384,7 @@
   </xsl:template>
   
   <xsl:template match="sidebar">
-      <div class="noFloat"> </div>
+      <div class="noFloat">&#160;</div>
       <div class="sidebar pct{@width}">
           <xsl:apply-templates select="node()"/>
       </div>

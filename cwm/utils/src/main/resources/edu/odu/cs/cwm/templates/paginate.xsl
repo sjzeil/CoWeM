@@ -167,6 +167,12 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="body" mode="paginate">
+    <xsl:variable name="recursivePages">
+      <xsl:apply-templates select="." mode="recurseOnPages"/>
+    </xsl:variable>
+    <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
+  </xsl:template>
   
   <xsl:template match="body" mode="recurseOnPages">
     <xsl:copy>
