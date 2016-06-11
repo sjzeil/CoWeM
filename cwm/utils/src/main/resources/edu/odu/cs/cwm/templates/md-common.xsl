@@ -51,6 +51,7 @@
   <xsl:template match="head">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
+      <meta charset="UTF-8"/>
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
         href="{$stylesURL}/md-{$format}.css" />
       <link rel="stylesheet" type="text/css" media="screen, projection, print"
@@ -135,7 +136,8 @@
     </a>
   </xsl:if>
   <span style="margin: 0 32px;"></span>
-  <xsl:for-each select="tokenize($formats,',')">
+  <xsl:variable name="formatsList" select="substring-before(substring-after($formats, '['), ']')"/>
+  <xsl:for-each select="tokenize($formatsList,',')">
       <xsl:call-template name="linkToFormat">
           <xsl:with-param name="otherFormat" select="normalize-space(.)"/>
       </xsl:call-template> 
@@ -143,11 +145,71 @@
 </xsl:template>
 
 <xsl:template name="insertHeader">
-  <div class="navHeader">
-    <div style="text-align: center; border-bottom: solid #000040; margin-bottom: 40px;">
-      <xsl:call-template name="insertNavIcons"/>
-    </div>
-  </div>
+      <xsl:variable name='slideshowNum' select="'0'"/>
+    <xsl:variable name='slideCount' select="1 + count(./ancestor-or-self::body/page)"/>
+    <xsl:if test="$slideCount != 0">
+          <script>
+             <xsl:text>sshowControl</xsl:text>
+             <xsl:value-of select="$slideshowNum"/>
+             <xsl:text> = { counter: 1,
+             showNumber: </xsl:text>
+             <xsl:value-of select="$slideshowNum"/>
+             <xsl:text>, max: </xsl:text>
+             <xsl:value-of select="$slideCount"/>
+             <xsl:text>};
+             </xsl:text>  
+             <xsl:text>window.onhashchange = hashHasChanged;</xsl:text>        
+          </script>
+    </xsl:if>
+  
+    <xsl:variable name='slideshowNum' select="'0'"/>
+    <xsl:variable name='slideCount' select="count(./ancestor-or-self::body/page)"/>
+    <div id="slideshowControlA0" class="navHeader">
+          <table class="navHeader">
+             <tr class="slideshowcontrol">
+               <td class="slideshowcontrolLeft">
+                   <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol" 
+                          onclick="sshow2start(sshowControl{$slideshowNum})" 
+                          title="start">
+                          <img src="graphics:first.png" alt="first"/>
+                       </a>
+                       <span>&#160;</span>
+                       <a class="slideshowcontrol"
+                          onclick="sshowback(sshowControl{$slideshowNum})"
+                          title="previous">
+                          <img src="graphics:prev.png" alt="prev"/>
+                       </a>
+                   </xsl:if>
+               </td>
+               <td class="slideshowcontrolMiddle">
+                  <xsl:if test="$slideCount != 0">
+                     <span id="slideshowpositionA{$slideshowNum}"> 
+                         <xsl:text>1 of </xsl:text>
+                         <xsl:value-of select="$slideCount"/>
+                     </span>
+                  </xsl:if>
+                  <xsl:call-template name="insertNavIcons"/>
+               </td>
+            
+               <td class="slideshowcontrolRight">
+                  <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol" 
+                          onclick="sshowforward(sshowControl{$slideshowNum})" 
+                          title="next">
+                          <img src="graphics:next.png" alt="next"/>
+                       </a>
+                       <span>&#160;</span>
+                       <a class="slideshowcontrol" 
+                          onclick="sshow2end(sshowControl{$slideshowNum})" 
+                          title="last">
+                          <img src="graphics:last.png" alt="last"/>
+                       </a>
+                   </xsl:if>
+               </td>
+             </tr>
+          </table>
+          </div>
 </xsl:template>
 
 
@@ -164,24 +226,29 @@
              <xsl:text>, max: </xsl:text>
              <xsl:value-of select="$slideCount"/>
              <xsl:text>};
-             </xsl:text>          
+             </xsl:text>  
+             <xsl:text>window.onhashchange = hashHasChanged;</xsl:text>        
           </script>
     </xsl:if>
   
-  <div class="footer">
     <xsl:variable name='slideshowNum' select="'0'"/>
     <xsl:variable name='slideCount' select="count(./ancestor-or-self::body/page)"/>
-    <div id="slideshowControl0"
-         style="text-align: center; border-top: solid #000040; margin-top: 40px;">
-          <table class="slideshowcontrol">
+    <div id="slideshowControl0" class="navFooter">
+          <table class="navFooter">
              <tr class="slideshowcontrol">
                <td class="slideshowcontrolLeft">
                    <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol" 
+                          onclick="sshow2start(sshowControl{$slideshowNum})" 
+                          title="start">
+                          <img src="graphics:first.png" alt="first"/>
+                       </a>
+                       <span>&#160;</span>
                        <a class="slideshowcontrol"
                           onclick="sshowback(sshowControl{$slideshowNum})"
                           title="previous">
-                      <xsl:text>&#x25C0;</xsl:text>
-                   </a>
+                          <img src="graphics:prev.png" alt="prev"/>
+                       </a>
                    </xsl:if>
                </td>
                <td class="slideshowcontrolMiddle">
@@ -199,7 +266,13 @@
                        <a class="slideshowcontrol" 
                           onclick="sshowforward(sshowControl{$slideshowNum})" 
                           title="next">
-                          <xsl:text>&#x25B6;</xsl:text>
+                          <img src="graphics:next.png" alt="next"/>
+                       </a>
+                       <span>&#160;</span>
+                       <a class="slideshowcontrol" 
+                          onclick="sshow2end(sshowControl{$slideshowNum})" 
+                          title="last">
+                          <img src="graphics:last.png" alt="last"/>
                        </a>
                    </xsl:if>
                </td>
@@ -213,8 +286,6 @@
         <xsl:value-of select="$copyright"/>
      </div>
    </xsl:if> 
-  </div>
-  <p>last line</p>
 </xsl:template>
 
 
@@ -343,7 +414,15 @@
           <table class="slideshowcontrol">
              <tr class="slideshowcontrol">
                <td class="slideshowcontrol">
-                   <a class="slideshowcontrol" onclick="sshowback(sshowControl{$slideshowNum})" title="previous">
+                    <a class="slideshowcontrol" 
+                          onclick="sshow2start(sshowControl{$slideshowNum})" 
+                          title="start">
+                        <xsl:text>&#x25C0;&#x25C0;</xsl:text>
+                    </a>
+                    <span>&#160;</span>
+                    <a class="slideshowcontrol" 
+                        onclick="sshowback(sshowControl{$slideshowNum})" 
+                        title="previous">
                       <xsl:text>&#x25C0;</xsl:text>
                    </a>
                </td>
@@ -353,8 +432,16 @@
                </td>
             
                <td class="slideshowcontrol">
-                   <a class="slideshowcontrol" onclick="sshowforward(sshowControl{$slideshowNum})" title="next">
+                   <a class="slideshowcontrol" 
+                      onclick="sshowforward(sshowControl{$slideshowNum})" 
+                      title="next">
                       <xsl:text>&#x25B6;</xsl:text>
+                   </a>
+                   <span>&#160;</span>
+                   <a class="slideshowcontrol" 
+                          onclick="sshow2end(sshowControl{$slideshowNum})" 
+                          title="last">
+                      <xsl:text>&#x25B6;&#x25B6;</xsl:text>
                    </a>
                </td>
              </tr>

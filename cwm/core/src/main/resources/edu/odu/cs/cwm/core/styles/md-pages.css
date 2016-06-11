@@ -29,6 +29,15 @@ code.java {
   background-color: #F0F0F0;
 }
 
+div.navHeader {text-align: center; 
+               border-bottom: solid #000040;
+               margin-top: 40px;}
+table.navHeader {border-style: none; width: 100%;}
+
+div.navFooter {text-align: center; 
+               border-top: solid #000040;
+               margin-top: 40px;}
+table.navFooter {border-style: none; width: 100%;}
 
 h1,h2,h3,h4,h5,h6 {
   font-family: sans-serif;
@@ -71,7 +80,10 @@ div.slideshow {clear: both; border-style: groove;}
 table.slideshowcontrol {clear: both; border-style: none; background-color: #e0e0e0; width: 100%;}
 tr.slideshowcontrol { border-style: none; }
 td.slideshowcontrol { border-style: none; text-align: center; }
-a.slideshowcontrol { color: blue; }
+td.slideshowcontrolLeft { border-style: none; text-align: left; }
+td.slideshowcontrolMiddle { border-style: none; text-align: center; }
+td.slideshowcontrolRight { border-style: none; text-align: right; }
+a.slideshowcontrol { color: blue; cursor:pointer; cursor: hand;}
 
 
 table { border: 2px solid black; border-collapse: collapse; }
@@ -197,3 +209,4 @@ div.rightColumn {display: inline-block; vertical-align: top; max-width: 47.5%; m
      display: block;
   }
 }
+

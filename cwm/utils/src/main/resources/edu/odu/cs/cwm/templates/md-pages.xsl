@@ -34,7 +34,7 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
 
-      <xsl:call-template name="insertHeader"/>'
+      <xsl:call-template name="insertHeader"/>
       
       <div class="page" id="slide-0-0">
           <div class="titleblock">
@@ -103,9 +103,9 @@
     <xsl:variable name="pageNum" select="1+count(./preceding-sibling::page)"/>
     <xsl:text>collectID('slide-0-</xsl:text>
     <xsl:value-of select="$pageNum"/>
-    <xsl:text>', 'slide-0-</xsl:text>
+    <xsl:text>', </xsl:text>
     <xsl:value-of select="$pageNum"/>
-    <xsl:text>');&#10;</xsl:text>
+    <xsl:text>);&#10;</xsl:text>
     <xsl:apply-templates select="*"  mode="collectIDs"/>
   </xsl:template>
 
@@ -124,9 +124,9 @@
     <xsl:if test="$hid != ''">
        <xsl:text>collectID('</xsl:text>
        <xsl:value-of select="$hid"/>
-       <xsl:text>', 'slide-0-</xsl:text>
+       <xsl:text>', </xsl:text>
        <xsl:value-of select="$pageNum"/>
-       <xsl:text>');&#10;</xsl:text>
+       <xsl:text>);&#10;</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="*"  mode="collectIDs"/>
   </xsl:template>

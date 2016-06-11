@@ -13,53 +13,73 @@ function toggleDisplay (sectionName)
   }
 };
 
+function gotoSlide (control, slideNumber) {
+   var oldDisplayed = control.counter;
+   var newDisplayed = slideNumber;
 
-function sshowforward (control) {
-    var oldDisplayed = control.counter;
-    var newDisplayed = control.counter + 1;
-	if (newDisplayed >= control.max) {
+    if (newDisplayed >= control.max) {
         newDisplayed = control.max;
     } else if (newDisplayed < 1) {
         newDisplayed = 1;
     }
-	control.counter = newDisplayed;
+    control.counter = newDisplayed;
     var displayText = "" + newDisplayed + " of " + control.max;
 
-	--oldDisplayed;
-	--newDisplayed;
+    --oldDisplayed;
+    --newDisplayed;
     var oldSlideID = "slide-" + control.showNumber + "-" + oldDisplayed;
     var newSlideID = "slide-" + control.showNumber + "-" + newDisplayed;
-	var oldSlide = document.getElementById(oldSlideID);
-	var newSlide = document.getElementById(newSlideID);
+    var oldSlide = document.getElementById(oldSlideID);
+    var newSlide = document.getElementById(newSlideID);
     oldSlide.style.display = "none";
     newSlide.style.display = "block";
 
-	var positionIndicatorID = "slideshowposition"  + control.showNumber;
-	var posTR = document.getElementById(positionIndicatorID);
-    posTR.textContent = displayText;
+    var positionIndicatorID = "slideshowposition"  + control.showNumber;
+    var posTR = document.getElementById(positionIndicatorID);
+    if (posTR != null) {
+        posTR.textContent = displayText;
+    }
+    positionIndicatorID = "slideshowpositionA"  + control.showNumber;
+    posTR = document.getElementById(positionIndicatorID);
+    if (posTR != null) {
+        posTR.textContent = displayText;
+    }
+
+ }
+
+function sshow2start (control) {
+    gotoSlide(control, 1);
+};
+
+function sshow2end (control) {
+    gotoSlide(control, control.max);
+};
+
+function sshowforward (control) {
+    var oldDisplayed = control.counter;
+    var newDisplayed = control.counter + 1;
+    gotoSlide (control, newDisplayed);
 };
 
 function sshowback (control) {
     var oldDisplayed = control.counter;
     var newDisplayed = control.counter - 1;
-	if (newDisplayed >= control.max) {
-        newDisplayed = control.max;
-    } else if (newDisplayed < 1) {
-        newDisplayed = 1;
-    }
-	control.counter = newDisplayed;
-    var displayText = "" + newDisplayed + " of " + control.max;
-
-	--oldDisplayed;
-	--newDisplayed;
-    var oldSlideID = "slide-" + control.showNumber + "-" + oldDisplayed;
-    var newSlideID = "slide-" + control.showNumber + "-" + newDisplayed;
-	var oldSlide = document.getElementById(oldSlideID);
-	var newSlide = document.getElementById(newSlideID);
-    oldSlide.style.display = "none";
-    newSlide.style.display = "block";
-
-	var positionIndicatorID = "slideshowposition"  + control.showNumber;
-	var posTR = document.getElementById(positionIndicatorID);
-    posTR.textContent = displayText;
+    gotoSlide (control, newDisplayed);
 };
+
+var hashTargets = [];
+
+function collectID (hashTarget, page) {
+   hashTargets["#" + hashTarget] = page;
+}
+
+function gotoHash (control, hashTarget) {
+    page = hashTargets[hashTarget];
+    gotoSlide (control, page+1);
+}
+
+
+function hashHasChanged() {
+    var hashPart = location.hash;
+    gotoHash (sshowControl0, hashPart);
+}
