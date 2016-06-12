@@ -24,6 +24,7 @@ import org.gradle.api.tasks.Sync
 import java.nio.file.Path;;
 import edu.odu.cs.cwm.Course
 import edu.odu.cs.cwm.DocumentSet
+import edu.odu.cs.cwm.documents.ListingDocument
 import edu.odu.cs.cwm.documents.MarkdownDocument
 
 /**
@@ -69,8 +70,25 @@ class Documents implements Plugin<Project> {
 
 		project.task (dependsOn: ['doc_setup', project.configurations.build],
 		'doc_mainDoc') {
+            /*
+            println "Index format starts as " + project.documents.indexFormat
+            if (project.documents.indexFormat.length() == 0) {
+                if (project.documents.formats.size() > 0) {
+                    println "Here we are " + project.documents.formats.size()
+                    def iformat = project.documents.formats[0]
+                    println ("Using " + iformat)
+                    project.documents.indexFormat = iformat
+                    println "Found index format"
+                } else {
+                    println ("Could not determine index format - using 'html'")
+                    project.documents.indexFormat = 'html'
+                }
+            }
+            */
+            println ("configuring mainDoc")
 		    inputs.file project.documents.primaryDocument
-			outputs.file new File(websiteArea, 'index.html')
+			outputs.files project.documents.primaryTargets
+            println ("done configuring mainDoc")
 		}
 
 		project.doc_mainDoc << {
@@ -90,18 +108,13 @@ class Documents implements Plugin<Project> {
 			if (!websiteArea.exists()) {
 				websiteArea.mkdirs();
 			}
-			/*
-            MarkdownDocument doc =
-                    new MarkdownDocument(project.documents.primaryDocument,
-                        docProperties);
-                        */
 			for (String format: project.documents.formats) {
 				println "starting format ${format}"
 
                 MarkdownDocument doc =
                     new MarkdownDocument(project.documents.primaryDocument,
                         docProperties);
-                doc.setDebugMode(true);
+                //doc.setDebugMode(true);
 				String result = doc.transform(format)
 
 				File resultFile = project.file(websiteArea.toString() + '/'
@@ -110,9 +123,6 @@ class Documents implements Plugin<Project> {
 					it.writeLine(result)
 				}
 				println "finished format ${format}"
-			}
-			if (project.documents.indexFormat.length() == 0) {
-				project.documents.indexFormat = project.documents.formats[0]
 			}
 			File indexSource = new File(websiteArea,
 				    primaryName + "__" 
@@ -129,12 +139,80 @@ class Documents implements Plugin<Project> {
 
 
 		project.task (dependsOn: project.doc_setup, 'doc_secondaryDocs') {
+            inputs.files project.documents.secondaryDocuments
+            outputs.dir project.documents.secondaryTargets
+		} << {
+            Properties docProperties = new Properties()
+            docProperties.put('_' + project.rootProject.course.delivery, '1')
+            project.rootProject.course.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            project.documents.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            String primaryName = project.documents.primaryDocument.name;
+            int k = primaryName.lastIndexOf('.');
+            if (k >= 0) {
+                primaryName = primaryName.substring(0, k);
+            }
+            if (!websiteArea.exists()) {
+                websiteArea.mkdirs();
+            }
+            for (File secondarySource: project.documents.secondaryDocuments) {
+                println "secondary: {secondarySource}"
 
+                MarkdownDocument doc =
+                    new MarkdownDocument(secondarySource,
+                        docProperties);
+                //doc.setDebugMode(true);
+                String result = doc.transform("html")
+
+                File resultFile = project.file(websiteArea.toString() + '/'
+                    + secondarySource.getName() + ".html")
+                resultFile.withWriter('UTF-8') {
+                    it.writeLine(result)
+                }
+                println "finished secondary doc ${secondarySource}"
+            }
 		}
 
 		project.task (dependsOn: project.doc_setup, 'doc_Listings') {
+            inputs.files project.documents.listingDocuments
+            outputs.dir project.documents.listingTargets
+		} << {
+            Properties docProperties = new Properties()
+            docProperties.put('_' + project.rootProject.course.delivery, '1')
+            project.rootProject.course.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            project.documents.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            String primaryName = project.documents.primaryDocument.name;
+            int k = primaryName.lastIndexOf('.');
+            if (k >= 0) {
+                primaryName = primaryName.substring(0, k);
+            }
+            if (!websiteArea.exists()) {
+                websiteArea.mkdirs();
+            }
+            for (File listingSource: project.documents.listingDocuments) {
+                println "listing: ${listingSource}"
 
-		}
+                ListingDocument doc =
+                    new ListingDocument(listingSource,
+                        docProperties);
+                String result = doc.transform("html")
+
+                File resultFile = project.file(websiteArea.toString() + '/'
+                    + listingSource.getName() + ".html")
+                resultFile.withWriter('UTF-8') {
+                    it.writeLine(result)
+                }
+                println "finished listing doc ${listingSource}"
+            }
+        }
+
 
 		project.task (dependsOn: [project.doc_mainDoc,
 			project.doc_secondaryDocs,

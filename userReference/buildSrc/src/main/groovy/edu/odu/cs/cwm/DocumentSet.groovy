@@ -3,6 +3,8 @@ package edu.odu.cs.cwm
 import org.gradle.api.file.FileCollection
 import org.gradle.api.Project
 
+import java.nio.file.*
+
 
 /**
  * Describes a collection of documents that will appear in a single directory of the website.
@@ -12,105 +14,192 @@ import org.gradle.api.Project
  * rendered in a single format (the basic "html" format). 
  */
 class DocumentSet {
-	
-	/**
-	 * Name of the primary document. 
-	 * Defaults to the directory name + ".md". 
-	 */
-	File primaryDocument;
-	
-	/**
-	 * Sets the name of the primary document.
-	 */
-	void primary (String name) {
-		primaryDocument = _inProject.file(name)
-	}
-	
-	
-	/**
-	 * Name of the format that will be selected for the
-	 * 'index.html' of the website directory.
-	 */
-	String indexFormat = "";
-	
-	/**
-	 * Sets the name of the index format.
-	 */
-	void index (String name) {
-		indexFormat = name
-	}
 
-	/**
-	 * List of formats in which the the primary document will
-	 * be generated. Possibilities are:  html, pages, slides,
-	 *   slidy (deprecated), epub, directory, navigation, modules,
-	 *   topics. 
-	 */
-	def formats = ['html']
-	
-	/**
-	 * The secondary documents in this set. These will be converted to
-	 * 'html' format.  Defaults to *.mmd, *.md (excluding the primary)
-	 */
-	FileCollection secondaryDocuments
-	
-	/**
-	 * Add a set of files to the current list of secondary documents.
-	 */
-	void docs (FileCollection files) {
-		secondaryDocuments = secondaryDocuments + files
-	}
+    /**
+     * Name of the primary document. 
+     * Defaults to the directory name + ".md". 
+     */
+    File primaryDocument;
 
-	/**
-	 * Clear the current list of secondary documents.
-	 */
-	void clearDocs () {
-		secondaryDocuments = []
-	}
+    /**
+     * Sets the name of the primary document.
+     */
+    void primary (String name) {
+        primaryDocument = _inProject.file(name)
+    }
 
-	/**
-	 * The listing documents in this set. These will be converted to
-	 * 'html' format.  Defaults to *.h, *.cpp, *.java, and *.listing
-	 * files in the project directory, but not subdirectories. 
-	 */
-	FileCollection listingDocuments
-	
-	/**
-	 * Add a set of files to the current list of listing documents.
-	 */
-	void listings (FileCollection files) {
-		listingDocuments = listingDocuments + files
-	}
 
-	/**
-	 * Clear the current list of listing documents.
-	 */
-	void clearListings () {
-		listingDocuments = []
-	}
+    /**
+     * List of outputs from the primary target
+     */
+    File[] getPrimaryTargets() {
+        File projectBaseDir = _inProject.file("../../");
+        File projectWebsiteDir = _inProject.file("../../build/website/");
+        
+        Path toDestinationDirFromBase =
+                projectBaseDir.toPath().relativize(primaryDocument.toPath());
+        Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);
+        
+        File[] result = new File[2];
+        result[0] = new File(toOutputDir.toFile(), "index.html");
+        
+        String nameBase = primaryDocument.getName();
+        int k = nameBase.lastIndexOf('.');
+        if (k >= 0) {
+            nameBase = nameBase.substring (0, k);
+        }
+        nameBase = nameBase + "__" + getIndex() + ".html";
+        
+        result[1] = new File(toOutputDir.toFile(), nameBase);
+        return result;
+    }
 
-	/**
-	 * The support documents in this set. These will be copied to
-	 * the corresponding directory of the website without modification.
-	 * Defaults to *.html, *.css, *.js, *.png, *.gif, *.jpg, *.h, *.cpp,
-	 *   *.java, and *.listing (ignoring subdirectories)
-	 */
-	FileCollection supportDocuments
-	
-	/**
-	 * Add a set of files to the current list of listing documents.
-	 */
-	void support (FileCollection files) {
-		supportDocuments = supportDocuments + files
-	}
+    /**
+     * Name of the format that will be selected for the
+     * 'index.html' of the website directory.
+     */
+    String indexFormat = "";
 
-	/**
-	 * Clear the current list of listing documents.
-	 */
-	void clearSupport () {
-		supportDocuments = []
-	}
+    /**
+     * Sets the name of the index format.
+     */
+    void setIndex (String name) {
+        indexFormat = name
+    }
+
+    String getIndex() {
+        if (indexFormat.length() > 0) {
+            return indexFormat
+        } else if (formats.size() > 0) {
+            return formats[0]
+        } else {
+            return 'html';
+        }
+    }
+
+
+
+    /**
+     * List of formats in which the the primary document will
+     * be generated. Possibilities are:  html, pages, slides,
+     *   slidy (deprecated), epub, directory, navigation, modules,
+     *   topics. 
+     */
+    ArrayList<String> formats = ['html']
+
+    /**
+     * The secondary documents in this set. These will be converted to
+     * 'html' format.  Defaults to *.mmd, *.md (excluding the primary)
+     */
+    FileCollection secondaryDocuments
+
+    /**
+     * Add a set of files to the current list of secondary documents.
+     */
+    void docs (Object... files) {
+        FileCollection additions = _inProject.files(files)
+        secondaryDocuments = secondaryDocuments.plus (additions)
+    }
+
+    /**
+     * Clear the current list of secondary documents.
+     */
+    void clearDocs () {
+        secondaryDocuments = []
+    }
+
+    /**
+     * The set of files tht will be produced by processing the
+     * secondary documents.
+     */
+    File[] getSecondaryTargets() {
+        File projectBaseDir = _inProject.file("../../");
+        File projectWebsiteDir = _inProject.file("../../build/website/");
+        File[] result = new File[secondaryDocuments.size()];
+        int k = 0;
+        for (File secondaryFile: secondaryDocuments) {
+            Path toDestinationDirFromBase =
+                projectBaseDir.toPath().relativize(secondaryFile.getParentFile().toPath());
+            Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);
+            
+            String outputFileName = secondaryFile.name + ".html";
+        
+            File outputFile = new File (toOutputDir.toFile(), outputFileName);
+            result[k] = outputFile;
+            ++k;
+        }
+        return result;
+    }
+
+    /**
+     * The listing documents in this set. These will be converted to
+     * 'html' format.  Defaults to *.h, *.cpp, *.java, and *.listing
+     * files in the project directory, but not subdirectories. 
+     */
+    FileCollection listingDocuments
+
+    /**
+     * Add a set of files to the current list of listing documents.
+     */
+    void listings (Object... files) {
+        FileCollection additions = _inProject.files(files)
+        listingDocuments = listingDocuments.plus (additions)
+    }
+
+    /**
+     * Clear the current list of listing documents.
+     */
+    void clearListings () {
+        listingDocuments = []
+    }
+
+    /**
+     * The set of files tht will be produced by processing the
+     * listing documents.
+     */
+    File[] getListingTargets() {
+        File projectBaseDir = _inProject.file("../../");
+        File projectWebsiteDir = _inProject.file("../../build/website/");
+        File[] result = new File[listingDocuments.size()];
+        int k = 0;
+        for (File listingFile: listingDocuments) {
+            Path toDestinationDirFromBase =
+                projectBaseDir.toPath().relativize(listingFile.getParentFile().toPath());
+            Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);
+            
+            String outputFileName = listingFile.name + ".html";
+        
+            File outputFile = new File (toOutputDir.toFile(), outputFileName);
+            result[k] = outputFile;
+            ++k;
+        }
+        return result;
+    }
+
     
+    /**
+     * The support documents in this set. These will be copied to
+     * the corresponding directory of the website without modification.
+     * Defaults to *.html, *.css, *.js, *.png, *.gif, *.jpg, *.h, *.cpp,
+     *   *.java, and *.listing (ignoring subdirectories)
+     */
+    FileCollection supportDocuments
+
+    /**
+     * Add a set of files to the current list of listing documents.
+     */
+    void support (Object... files) {
+        FileCollection additions = _inProject.files(files)
+        supportDocuments = supportDocuments.plus (additions)
+    }
+
+    /**
+     * Clear the current list of listing documents.
+     */
+    void clearSupport () {
+        supportDocuments = []
+    }
+
     /**
      * What support is provided for typesetting Mathematics?
      * Math support is provided via MathJax.
@@ -121,29 +210,32 @@ class DocumentSet {
      *    none : Do not use MathJax
      */
     String mathSupport = "latex";
-    
+
     void math(String mode) {
         mathSupport = mode
-    }  
+    }
 
 
-	Project _inProject
-	
-	DocumentSet (Project project) {
-		_inProject = project
-		primaryDocument = _inProject.file(project.name + '.md')
-		secondaryDocuments = project.fileTree('.').include('*.mmd').
-		   include('*.md').exclude(project.name + '.md');
-		listingDocuments = project.fileTree('.').include('*.h').
-		   include('*.cpp').include('*.java').include('*.listing');
-		supportDocuments = project.fileTree('.').include('*.h').
-		   include('*.cpp').include('*.java').include('*.listing').
-		   include('*.html').include('*.css').include('*.js').
-		   include('*.png').include('*.jpg').include('*.gif');
-	}
-	
-	 
-    
+    Project _inProject
+
+    DocumentSet (Project project) {
+        _inProject = project
+        primaryDocument = _inProject.file(project.name + '.md')
+        secondaryDocuments = project.fileTree('.').include('*.mmd').
+                include('*.md').exclude(project.name + '.md');
+        listingDocuments = project.fileTree('.').include('*.h').
+                include('*.cpp').include('*.java').include('*.listing');
+        supportDocuments = project.fileTree('.').include('*.h').
+                include('*.cpp').include('*.java').include('*.listing').
+                include('*.html').include('*.css').include('*.js').
+                include('*.png').include('*.jpg').include('*.gif');
+
+        println (_inProject.name + ": created DocumentSet");
+
+    }
+
+
+
     /**
      * Allow application of a closure to a DocumentSet.
      */ 

@@ -3,7 +3,10 @@ apply plugin: edu.odu.cs.cwm.Documents
 
  
 documents {
-	println "Customizing document set"
+    listings file('courseWebsite2.mmd'), 
+             fileTree('subproject').include('*.cpp')
+    //support 'subproject/hello.cpp'
+    
 }
 
 
