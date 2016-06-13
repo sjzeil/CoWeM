@@ -95,7 +95,6 @@ public class ListingDocument implements Document {
             logger.warn("Unable to read from " + sourceFile + ": " + e);
         }
         String newSource = sout.toString();
-        logger.warn("Generated source is\n" + newSource);
         MarkdownDocument doc = new MarkdownDocument (newSource,
                 properties, directoryDepth);
         return doc.transform("html");

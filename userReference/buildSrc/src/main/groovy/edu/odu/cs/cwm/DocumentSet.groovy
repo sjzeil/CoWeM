@@ -37,7 +37,7 @@ class DocumentSet {
         File projectWebsiteDir = _inProject.file("../../build/website/");
         
         Path toDestinationDirFromBase =
-                projectBaseDir.toPath().relativize(primaryDocument.toPath());
+                projectBaseDir.toPath().relativize(primaryDocument.parentFile.toPath());
         Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);
         
         File[] result = new File[2];

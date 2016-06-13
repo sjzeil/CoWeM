@@ -161,6 +161,7 @@ class CourseWebsite implements Plugin<Project> {
 
         project.task (dependsOn: 'setup', 'build') {
             description 'Process documents and course outline to prepare the basic course website.'
+			group 'Build'
         } << {
         }
 
@@ -172,10 +173,13 @@ class CourseWebsite implements Plugin<Project> {
 
 
         project.task (type: Sync, dependsOn: 'build', 'deploy') {
+			description 'Copy course website to a the deployDestination directory.'
+			println ("Will sync to " + project.course.deployDestination)
             from 'build/website'
-            into project.course.deployDestination
+            into { return project.course.deployDestination; }
             dirMode 0775
-            includeEmptyDirs true   
+            includeEmptyDirs true
+			group 'Deployment'   
         }
 
         project.task (dependsOn: 'build', 'publish') {

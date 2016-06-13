@@ -71,10 +71,10 @@ class Documents implements Plugin<Project> {
 
 		project.task (dependsOn: ['doc_setup', project.configurations.build],
 		'doc_mainDoc') {
-            println ("configuring mainDoc")
+            println ("mainDoc: " + project.documents.primaryDocument
+				+ " => " + project.documents.primaryTargets.join(','))
 		    inputs.file project.documents.primaryDocument
 			outputs.files project.documents.primaryTargets
-            println ("done configuring mainDoc")
 		}
 
 		project.doc_mainDoc << {
@@ -216,6 +216,7 @@ class Documents implements Plugin<Project> {
 			project.doc_Listings],
 		  'build') {
 			description 'Prepare document set output'
+			group 'Build'
 			dependsOn ':setup'
 		}
 
