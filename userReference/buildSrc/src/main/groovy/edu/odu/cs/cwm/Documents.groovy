@@ -21,7 +21,8 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Sync
 
-import java.nio.file.Path;;
+import java.nio.file.Path
+import java.nio.file.Paths
 import edu.odu.cs.cwm.Course
 import edu.odu.cs.cwm.DocumentSet
 import edu.odu.cs.cwm.documents.ListingDocument
@@ -70,21 +71,6 @@ class Documents implements Plugin<Project> {
 
 		project.task (dependsOn: ['doc_setup', project.configurations.build],
 		'doc_mainDoc') {
-            /*
-            println "Index format starts as " + project.documents.indexFormat
-            if (project.documents.indexFormat.length() == 0) {
-                if (project.documents.formats.size() > 0) {
-                    println "Here we are " + project.documents.formats.size()
-                    def iformat = project.documents.formats[0]
-                    println ("Using " + iformat)
-                    project.documents.indexFormat = iformat
-                    println "Found index format"
-                } else {
-                    println ("Could not determine index format - using 'html'")
-                    project.documents.indexFormat = 'html'
-                }
-            }
-            */
             println ("configuring mainDoc")
 		    inputs.file project.documents.primaryDocument
 			outputs.files project.documents.primaryTargets
@@ -167,11 +153,17 @@ class Documents implements Plugin<Project> {
                 //doc.setDebugMode(true);
                 String result = doc.transform("html")
 
-                File resultFile = project.file(websiteArea.toString() + '/'
-                    + secondarySource.getName() + ".html")
+                Path rootProjDir = project.file('../../').toPath()
+                Path p1 = rootProjDir.relativize(secondarySource.toPath())
+                Path websiteDirP = project.file('../../build/website').toPath()
+                Path resultFileP = websiteDirP.resolve(p1)
+                File websiteParent = resultFileP.toFile().getParentFile()
+                websiteParent.mkdirs()
+				File resultFile = new File(websiteParent, secondarySource.getName() + ".html")
                 resultFile.withWriter('UTF-8') {
                     it.writeLine(result)
                 }
+
                 println "finished secondary doc ${secondarySource}"
             }
 		}
@@ -203,9 +195,14 @@ class Documents implements Plugin<Project> {
                     new ListingDocument(listingSource,
                         docProperties);
                 String result = doc.transform("html")
-
-                File resultFile = project.file(websiteArea.toString() + '/'
-                    + listingSource.getName() + ".html")
+                
+                Path rootProjDir = project.file('../../').toPath()
+                Path p1 = rootProjDir.relativize(listingSource.toPath())
+                Path websiteDirP = project.file('../../build/website').toPath()
+                Path resultFileP = websiteDirP.resolve(p1)
+                File websiteParent = resultFileP.toFile().getParentFile()
+                websiteParent.mkdirs()
+				File resultFile = new File(websiteParent, listingSource.getName() + ".html")
                 resultFile.withWriter('UTF-8') {
                     it.writeLine(result)
                 }
