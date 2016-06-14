@@ -74,7 +74,7 @@ class Documents implements Plugin<Project> {
             println ("mainDoc: " + project.documents.primaryDocument
 				+ " => " + project.documents.primaryTargets.join(','))
 		    inputs.file project.documents.primaryDocument
-			outputs.files project.documents.primaryTargets
+			outputs.dir project.documents.indexTarget.parentFile
 		}
 
 		project.doc_mainDoc << {
@@ -105,14 +105,13 @@ class Documents implements Plugin<Project> {
 
 				File resultFile = project.file(websiteArea.toString() + '/'
 						+ primaryName + "__" + format + ".html")
+                resultFile.getParentFile().mkdirs()
 				resultFile.withWriter('UTF-8') {
 					it.writeLine(result)
 				}
 				println "finished format ${format}"
 			}
-			File indexSource = new File(websiteArea,
-				    primaryName + "__" 
-					+ project.documents.indexFormat + ".html")
+			File indexSource = project.documents.indexTarget;
 			File indexDest = new File(websiteArea, 'index.html')
 			if (indexSource.exists()) {
 			    project.copy {
@@ -120,13 +119,15 @@ class Documents implements Plugin<Project> {
 				    into websiteArea
 					rename {'index.html'}
 			    }
+			} else {
+                logger.warn (indexSource.toString() + " was not built.")
 			}
 		}
 
 
 		project.task (dependsOn: project.doc_setup, 'doc_secondaryDocs') {
             inputs.files project.documents.secondaryDocuments
-            outputs.dir project.documents.secondaryTargets
+            outputs.dir project.documents.indexTarget.parentFile
 		} << {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
@@ -151,7 +152,7 @@ class Documents implements Plugin<Project> {
                     new MarkdownDocument(secondarySource,
                         docProperties);
                 //doc.setDebugMode(true);
-                String result = doc.transform("html")
+                String result = doc.transform("scroll")
 
                 Path rootProjDir = project.file('../../').toPath()
                 Path p1 = rootProjDir.relativize(secondarySource.toPath())
@@ -160,6 +161,7 @@ class Documents implements Plugin<Project> {
                 File websiteParent = resultFileP.toFile().getParentFile()
                 websiteParent.mkdirs()
 				File resultFile = new File(websiteParent, secondarySource.getName() + ".html")
+                resultFile.getParentFile().mkdirs()
                 resultFile.withWriter('UTF-8') {
                     it.writeLine(result)
                 }
@@ -170,7 +172,7 @@ class Documents implements Plugin<Project> {
 
 		project.task (dependsOn: project.doc_setup, 'doc_Listings') {
             inputs.files project.documents.listingDocuments
-            outputs.dir project.documents.listingTargets
+            outputs.dir project.documents.indexTarget.parentFile
 		} << {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
@@ -194,7 +196,7 @@ class Documents implements Plugin<Project> {
                 ListingDocument doc =
                     new ListingDocument(listingSource,
                         docProperties);
-                String result = doc.transform("html")
+                String result = doc.transform("scroll")
                 
                 Path rootProjDir = project.file('../../').toPath()
                 Path p1 = rootProjDir.relativize(listingSource.toPath())

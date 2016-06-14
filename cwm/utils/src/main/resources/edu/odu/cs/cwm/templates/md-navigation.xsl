@@ -65,7 +65,12 @@
     <tr class="separator"></tr>
   </xsl:template>
 
-
+<xsl:template match="a">
+    <a target="_parent">
+        <xsl:copy-of select="@*"/>
+        <xsl:apply-templates select="node()"/>
+    </a>
+  </xsl:template>
 
 
   <xsl:template match="text()">

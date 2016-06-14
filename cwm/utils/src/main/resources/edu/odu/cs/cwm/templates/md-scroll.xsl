@@ -7,7 +7,7 @@
   <xsl:include href="md-common.xsl"/>
   <xsl:include href="paginate.xsl"/>
   
-  <xsl:param name="format" select="'html'"/>
+  <xsl:param name="format" select="'scroll'"/>
 
   
 

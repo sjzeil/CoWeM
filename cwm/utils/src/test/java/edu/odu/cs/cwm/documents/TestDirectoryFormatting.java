@@ -59,11 +59,11 @@ public class TestDirectoryFormatting {
 	};
 
 	private String[] documentSetProperties = {
-			"_html", "1",
+			"_scroll", "1",
 			"format", FORMAT,
 			"indexFormat", FORMAT, 
 			"primaryDocument", "primary.md",
-			"formats", "html,pages,slides,epub,directory,topics,modules,navigation"
+			"formats", "scroll,pages,slides,epub,directory,topics,modules,navigation"
 	};
 
 	private String[] metadataProperties = {

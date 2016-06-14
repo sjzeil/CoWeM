@@ -41,9 +41,9 @@ import org.xml.sax.SAXException;
  * @author zeil
  *
  */
-public class TestHTMLFormatting {
+public class TestScrollFormatting {
 
-	private static final String FORMAT = "html";
+	private static final String FORMAT = "scroll";
 
 	private String[] courseProperties = {
 			"courseName",         "Course_Websites",
@@ -58,11 +58,11 @@ public class TestHTMLFormatting {
 	};
 
 	private String[] documentSetProperties = {
-			"_html", "1",
-			"format", "html",
-			"indexFormat", "html", 
+			"_scroll", "1",
+			"format", "scroll",
+			"indexFormat", "scroll", 
 			"primaryDocument", "primary.md",
-			"formats", "html,pages,slides,epub,directory,topics,modules,navigation"
+			"formats", "scroll,pages,slides,epub,directory,topics,modules,navigation"
 	};
 
 	private String[] metadataProperties = {

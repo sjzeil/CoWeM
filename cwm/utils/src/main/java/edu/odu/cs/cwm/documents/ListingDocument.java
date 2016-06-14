@@ -97,7 +97,7 @@ public class ListingDocument implements Document {
         String newSource = sout.toString();
         MarkdownDocument doc = new MarkdownDocument (newSource,
                 properties, directoryDepth);
-        return doc.transform("html");
+        return doc.transform("scroll");
     }
 
 

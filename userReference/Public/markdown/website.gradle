@@ -3,6 +3,6 @@ apply plugin: edu.odu.cs.cwm.Documents
 
  
 documents {
-    formats = ['slides', 'html', 'pages']
+    formats = ['slides', 'scroll', 'pages']
 }
 

@@ -11,7 +11,7 @@ import java.nio.file.*
  * Each document set has a primary document and zero or more secondary documents.
  * The primary document may be rendered in multiple formats, one of which becomes the
  * index.html format for the directory. All secondary documents are
- * rendered in a single format (the basic "html" format). 
+ * rendered in a single format (the basic "scroll" format). 
  */
 class DocumentSet {
 
@@ -40,18 +40,21 @@ class DocumentSet {
                 projectBaseDir.toPath().relativize(primaryDocument.parentFile.toPath());
         Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);
         
-        File[] result = new File[2];
+        File[] result = new File[1 + formats.size()];
         result[0] = new File(toOutputDir.toFile(), "index.html");
         
-        String nameBase = primaryDocument.getName();
-        int k = nameBase.lastIndexOf('.');
-        if (k >= 0) {
-            nameBase = nameBase.substring (0, k);
+            String nameBase = primaryDocument.getName();
+            int k = nameBase.lastIndexOf('.');
+            if (k >= 0) {
+                nameBase = nameBase.substring (0, k);
+            }
+        int i = 1;
+        for (String format: formats) {
+           String targetFile = nameBase + "__" + format + ".html"
+           result[i] = new File(toOutputDir.toFile(), targetFile)
+           ++i
         }
-        nameBase = nameBase + "__" + getIndex() + ".html";
-        
-        result[1] = new File(toOutputDir.toFile(), nameBase);
-        return result;
+        return result
     }
 
     /**
@@ -73,23 +76,43 @@ class DocumentSet {
         } else if (formats.size() > 0) {
             return formats[0]
         } else {
-            return 'html';
+            return 'scroll';
         }
     }
 
+    /**
+     * File to be used as source of index.html
+     */
+    File getIndexTarget() {
+        File projectBaseDir = _inProject.file("../../");
+        File projectWebsiteDir = _inProject.file("../../build/website/");
+        
+        Path toDestinationDirFromBase =
+                projectBaseDir.toPath().relativize(primaryDocument.parentFile.toPath());
+        Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);
+        
+        String nameBase = primaryDocument.getName();
+        int k = nameBase.lastIndexOf('.');
+        if (k >= 0) {
+            nameBase = nameBase.substring (0, k);
+        }
+        String targetFile = nameBase + "__" + getIndex() + ".html"
+        File result = new File(toOutputDir.toFile(), targetFile)
+        return result
+    }
 
 
     /**
      * List of formats in which the the primary document will
-     * be generated. Possibilities are:  html, pages, slides,
+     * be generated. Possibilities are:  scroll, pages, slides,
      *   slidy (deprecated), epub, directory, navigation, modules,
      *   topics. 
      */
-    ArrayList<String> formats = ['html']
+    ArrayList<String> formats = ['scroll']
 
     /**
      * The secondary documents in this set. These will be converted to
-     * 'html' format.  Defaults to *.mmd, *.md (excluding the primary)
+     * 'scroll' format.  Defaults to *.mmd, *.md (excluding the primary)
      */
     FileCollection secondaryDocuments
 
@@ -133,7 +156,7 @@ class DocumentSet {
 
     /**
      * The listing documents in this set. These will be converted to
-     * 'html' format.  Defaults to *.h, *.cpp, *.java, and *.listing
+     * 'scroll' format.  Defaults to *.h, *.cpp, *.java, and *.listing
      * files in the project directory, but not subdirectories. 
      */
     FileCollection listingDocuments

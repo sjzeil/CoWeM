@@ -31,9 +31,9 @@ import org.xml.sax.SAXException;
  * @author zeil
  *
  */
-public class ITestHTMLFormat {
+public class ITestScrollFormat {
 	
-	private static final String FORMAT = "html";
+	private static final String FORMAT = "scroll";
 
 
 		
@@ -50,11 +50,11 @@ public class ITestHTMLFormat {
 	};
 	
 	private String[] documentSetProperties = {
-			"_html", "1",
+			"_scroll", "1",
 			"format", FORMAT,
 			"indexFormat", FORMAT, 
 			"primaryDocument", "primary.md",
-		    "formats", "html,pages,slides,epub,directory,topics,modules,navigation"
+		    "formats", "scroll,pages,slides,epub,directory,topics,modules,navigation"
 	};
 	
 	
@@ -118,8 +118,8 @@ public class ITestHTMLFormat {
 		assertTrue (htmlContent.contains("2012"));
 		assertTrue (htmlContent.contains("A short"));
 		assertTrue (htmlContent.contains("paragraph."));
-		assertTrue (htmlContent.contains("\"../../styles/md-html.css\""));
-        assertTrue (htmlContent.contains("\"../../styles/md-html-ext.css\""));
+		assertTrue (htmlContent.contains("\"../../styles/md-scroll.css\""));
+        assertTrue (htmlContent.contains("\"../../styles/md-scroll-ext.css\""));
 		
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
@@ -190,8 +190,8 @@ public class ITestHTMLFormat {
 	        assertTrue (htmlContent.contains("A section title"));
             assertTrue (htmlContent.contains("A subsection title"));
             
-	        assertTrue (htmlContent.contains("\"../../styles/md-html.css\""));
-	        assertTrue (htmlContent.contains("\"../../styles/md-html-ext.css\""));
+	        assertTrue (htmlContent.contains("\"../../styles/md-scroll.css\""));
+	        assertTrue (htmlContent.contains("\"../../styles/md-scroll-ext.css\""));
 	        
 	        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	        org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
