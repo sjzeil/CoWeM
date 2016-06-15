@@ -3,6 +3,24 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
+buildscript { 
+     repositories {
+         jcenter()
+         mavenCentral()
+ 
+         // Use my own CS dept repo
+         ivy {
+             url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+         }
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
+     }
+}
+     
+apply plugin: 'org.hidetake.ssh'
+
+ 
 apply plugin: edu.odu.cs.cwm.CourseWebsite
 
 

@@ -71,8 +71,8 @@ class Documents implements Plugin<Project> {
 
 		project.task (dependsOn: ['doc_setup', project.configurations.build],
 		'doc_mainDoc') {
-            println ("mainDoc: " + project.documents.primaryDocument
-				+ " => " + project.documents.primaryTargets.join(','))
+            //println ("mainDoc: " + project.documents.primaryDocument
+			//	+ " => " + project.documents.primaryTargets.join(','))
 		    inputs.file project.documents.primaryDocument
 			outputs.dir project.documents.indexTarget.parentFile
 		}
@@ -95,7 +95,7 @@ class Documents implements Plugin<Project> {
 				websiteArea.mkdirs();
 			}
 			for (String format: project.documents.formats) {
-				println "starting format ${format}"
+				//println "starting format ${format}"
 
                 MarkdownDocument doc =
                     new MarkdownDocument(project.documents.primaryDocument,
@@ -109,7 +109,7 @@ class Documents implements Plugin<Project> {
 				resultFile.withWriter('UTF-8') {
 					it.writeLine(result)
 				}
-				println "finished format ${format}"
+				//println "finished format ${format}"
 			}
 			File indexSource = project.documents.indexTarget;
 			File indexDest = new File(websiteArea, 'index.html')
@@ -146,8 +146,6 @@ class Documents implements Plugin<Project> {
                 websiteArea.mkdirs();
             }
             for (File secondarySource: project.documents.secondaryDocuments) {
-                println "secondary: {secondarySource}"
-
                 MarkdownDocument doc =
                     new MarkdownDocument(secondarySource,
                         docProperties);
@@ -165,8 +163,6 @@ class Documents implements Plugin<Project> {
                 resultFile.withWriter('UTF-8') {
                     it.writeLine(result)
                 }
-
-                println "finished secondary doc ${secondarySource}"
             }
 		}
 
@@ -191,8 +187,6 @@ class Documents implements Plugin<Project> {
                 websiteArea.mkdirs();
             }
             for (File listingSource: project.documents.listingDocuments) {
-                println "listing: ${listingSource}"
-
                 ListingDocument doc =
                     new ListingDocument(listingSource,
                         docProperties);
@@ -208,7 +202,6 @@ class Documents implements Plugin<Project> {
                 resultFile.withWriter('UTF-8') {
                     it.writeLine(result)
                 }
-                println "finished listing doc ${listingSource}"
             }
         }
 
