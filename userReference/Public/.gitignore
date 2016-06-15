@@ -13,7 +13,7 @@
 **/*.cpp.html
 **/*.java.html
 **/*.listing.html
-
+**/gradle.log
 /hangout
 /library
 /outline

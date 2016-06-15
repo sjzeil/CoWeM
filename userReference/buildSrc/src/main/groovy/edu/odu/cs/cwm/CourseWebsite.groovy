@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.bundling.Zip
 
 /**
  * A plugin for describing a course website.
@@ -154,7 +155,7 @@ class CourseWebsite implements Plugin<Project> {
 
 
         project.task ("setup") {
-            description 'Prepare output and support directories'
+            // description 'Prepare output and support directories'
             dependsOn project.setup_cwm, project.setup_website
         }
 
@@ -163,13 +164,32 @@ class CourseWebsite implements Plugin<Project> {
             description 'Process documents and course outline to prepare the basic course website.'
 			group 'Build'
         } << {
+            project.copy {
+                from 'build/website/styles/'
+                include 'homeRedirect.html'
+                into 'build/website/'
+                rename '.+', 'index.html'
+            }
         }
 
 
         project.task (dependsOn: 'build', 'packages')  {
             description 'prepare optional course cartridges'
+            group 'Packaging'
         }
 
+        project.task (type: Zip, dependsOn: 'build', 'zip') {
+            description 'Prepare a zip file of the website.'
+            println ("Will sync to " + project.course.deployDestination)
+            from 'build/website'
+            into '.'
+            destinationDir = project.file('build/packages')
+            archiveName 'website.zip'
+            dirMode 0775
+            fileMode 0664
+            includeEmptyDirs true
+            group 'Packaging'
+        }
 
 
         project.task (type: Sync, dependsOn: 'build', 'deploy') {
