@@ -6,8 +6,10 @@ package edu.odu.cs.cwm.documents.urls;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,6 +28,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import edu.odu.cs.cwm.documents.WebsiteProject;
+
 /**
  * @author zeil
  *
@@ -34,10 +38,12 @@ public class TestURLRewriting {
 
 
 	private static final String BB_URL = "https://blackboard.site/webapps/blackboard/execute/modulepage/view?course_id=_284623_1";
-    private static final String THE_BASE_URL = "src/test/data/urlShortcuts/";
+    private static final String THE_BASE_URL = "../../";
+    private static final File documentBase = Paths.get("src/test/data/urlShortcuts").toFile();
+    private static final File documentDir = documentBase.toPath().resolve("Group0/DocSet0").toFile();
     public String lastTransformed;
 	
-
+    WebsiteProject proj;
 
 
 	/**
@@ -45,6 +51,7 @@ public class TestURLRewriting {
 	 */
 	@Before
 	public void setUp() throws Exception {
+	    proj = new WebsiteProject(documentBase);
 	}
 
 
@@ -86,7 +93,7 @@ public class TestURLRewriting {
 
 		org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
 		
-		URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+		URLRewriting rewriter = new URLRewriting(documentDir, proj, BB_URL);
 		rewriter.rewrite(basicHtml);
 		
 		
@@ -132,7 +139,7 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
@@ -178,7 +185,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
@@ -224,7 +232,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
@@ -283,7 +292,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
@@ -318,7 +328,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
                 
         
@@ -353,7 +364,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir,
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
                 
         
@@ -406,7 +418,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
@@ -461,7 +474,8 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
@@ -518,14 +532,15 @@ public class TestURLRewriting {
 
         org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
         
-        URLRewriting rewriter = new URLRewriting(THE_BASE_URL, BB_URL);
+        URLRewriting rewriter = new URLRewriting(documentDir, 
+                proj, BB_URL);
         rewriter.rewrite(basicHtml);
         
         
         Element link1 = getElementById(basicHtml, "a1");
         assertNotNull (link1);
         String linkText = link1.getTextContent();
-        assertEquals ("Doc Set 1", linkText);
+        assertEquals ("Title of Document", linkText);
         
         Element link2 = getElementById(basicHtml, "a2");
         assertNotNull (link2);

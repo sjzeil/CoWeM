@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
@@ -86,7 +87,8 @@ public class TestMarkdownDocument {
 	
 	
 	private Properties properties;
-	
+	private WebsiteProject proj;
+	private File source;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -95,6 +97,11 @@ public class TestMarkdownDocument {
 	public void setUp() throws Exception {
 		properties = new Properties();
 		properties.put("Title", "Title of Document");
+		proj = new WebsiteProject(Paths.get("src/test/data/urlShortcuts")
+		        .toFile().getAbsoluteFile());
+		source = 
+		   Paths.get("src/test/data/urlShortcuts/Group1/DocSet1/DocSet1.md")
+		   .toFile();
 	}
 
 	
@@ -117,9 +124,10 @@ public class TestMarkdownDocument {
 	@Test
 	public void testTransform() {
         properties.put("_includeThis", "1");
-		MarkdownDocument doc = new MarkdownDocument(mdInput1, properties, 2);
+		MarkdownDocument doc = new MarkdownDocument(source, proj,
+		        properties, mdInput1);
 		
-		String htmlContent = doc.transform("html");
+		String htmlContent = doc.transform("scroll");
 		
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
@@ -132,7 +140,8 @@ public class TestMarkdownDocument {
 	//@Test
 	public void testRepeatTransform() {
         properties.put("_includeThis", "1");
-		MarkdownDocument doc = new MarkdownDocument(mdInput1, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput1);
 		
 		String htmlContent = doc.transform("html");
 		
@@ -152,10 +161,10 @@ public class TestMarkdownDocument {
 	@Test
 	public void testConstructor_File() {
 		Path mdInPath = Paths.get("src", "test", "data", "sample.md");
-		MarkdownDocument doc = new MarkdownDocument(mdInPath.toFile(), 
-		                                properties);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties);
 
-		String htmlContent = doc.transform("html");
+		String htmlContent = doc.transform("scroll");
 		
 		assertTrue (htmlContent.contains("John Doe"));
 		assertTrue (htmlContent.contains("something else in"));
@@ -166,7 +175,8 @@ public class TestMarkdownDocument {
 	@Test
 	public void testPreprocess1() {
         properties.put("_includeThis", "1");
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String preprocessed = doc.preprocess("html");
 		
@@ -180,7 +190,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPreprocess2() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String preprocessed = doc.preprocess("html");
 		
@@ -194,7 +205,8 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testPreprocess3() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		// Check to be sure that metadata queries do not depend upon
 		// nor interfere with pre-processing.
@@ -209,7 +221,8 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testMetadata() {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		assertEquals ("Title of Document", doc.getMetadata("Title"));
 		assertEquals ("John Doe", doc.getMetadata("Author"));
@@ -219,7 +232,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testProcess() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		org.w3c.dom.Document basicHtml = doc.process(preProcessed1);
 		Element root = basicHtml.getDocumentElement();
@@ -244,7 +258,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough1() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -262,7 +277,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough2() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String passThrough2 =
 				"# Section 1\n\n"
@@ -279,7 +295,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough3() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String passThrough3 =
 				"# Section 1\n\n"
@@ -297,7 +314,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough4() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);		
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 
 		String passThrough4 =
 				"# Section 1\n\n"
@@ -320,7 +338,8 @@ public class TestMarkdownDocument {
 	
 	@Test
 	public void testPassthrough5() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);		
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 
 		String passThrough =
 				"# Section 1\n\n"
@@ -361,7 +380,8 @@ public class TestMarkdownDocument {
 	// @Test
 	// Not supported by PegDown processor 
 	public void testSubSuperscripts() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -381,7 +401,8 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testInlineMath() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -420,7 +441,8 @@ public class TestMarkdownDocument {
 
 	@Test
 	public void testDisplayMath() throws XPathExpressionException {
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		
 		String passThrough1 =
 				"# Section 1\n\n"
@@ -463,8 +485,9 @@ public class TestMarkdownDocument {
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
 		
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
-		String htmlResult = doc.postprocess(basicHtml, "html");
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
+		String htmlResult = doc.postprocess(basicHtml, "scroll");
 		
 		assertTrue (htmlResult.contains("paragraph 1"));
 		assertTrue (htmlResult.contains("paragraph 4"));
@@ -507,7 +530,8 @@ public class TestMarkdownDocument {
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
 		
-		MarkdownDocument doc = new MarkdownDocument(mdInput2, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
 		doc.setDebugMode(true);
 		String htmlResult = doc.postprocess(basicHtml, "pages");
 		

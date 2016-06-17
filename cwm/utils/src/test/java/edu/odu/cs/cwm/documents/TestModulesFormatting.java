@@ -197,6 +197,7 @@ public class TestModulesFormatting {
 		assertNotNull(priorSubsectionof3);
 		assertTrue(priorSubsectionof3.getTextContent().contains("Subsection 1"));
 		Element priorSectionof3 = (Element)xPath.evaluate("./preceding::div[1]", priorSubsectionof3, XPathConstants.NODE);
+		System.err.println("text:" + priorSectionof3.getTextContent());
 		assertTrue(priorSectionof3.getTextContent().contains("Section 2"));
 		
 	}

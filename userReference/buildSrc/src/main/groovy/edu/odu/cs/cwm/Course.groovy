@@ -1,6 +1,7 @@
 package edu.odu.cs.cwm
 
 
+
 class Course {
     // Global document attributes - these should rarely change
 

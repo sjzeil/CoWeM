@@ -28,13 +28,6 @@ public class ListingDocument implements Document {
 	private static Logger logger = 
 	        LoggerFactory.getLogger(ListingDocument.class);
 	
-	   /**
-     * The number of directory levels separating this document from the website
-     * base.  This is used to enable the generation of relative URLs to styles,
-     * graphics, and other document directories.
-     */
-    private int directoryDepth;
-    
 	
 	/**
 	 * File from which source code was being obtained.
@@ -46,23 +39,24 @@ public class ListingDocument implements Document {
      */
     private Properties properties;
 
-	
+    /**
+     * Context info describing this project and its document sets.
+     */
+	private WebsiteProject project;
 	
 
     /**
      * Create a document from the given file.
      * @param input listing document source file
+     * @param project0 website project contest.
      * @param properties0 Properties to be used in processing this document.
      */
-	public ListingDocument(final File input, final Properties properties0) {
+	public ListingDocument(final File input,
+	        final WebsiteProject project0,
+	        final Properties properties0) {
 		sourceFile = input;
 		properties = properties0;
-        directoryDepth = 0;
-        File dir = input.getParentFile();
-        while ((dir != null) && !(new File(dir, "settings.gradle").exists())) {
-            ++directoryDepth;
-            dir = dir.getParentFile();
-        }
+		project = project0;
 	}
 	
     /**
@@ -95,8 +89,10 @@ public class ListingDocument implements Document {
             logger.warn("Unable to read from " + sourceFile + ": " + e);
         }
         String newSource = sout.toString();
-        MarkdownDocument doc = new MarkdownDocument (newSource,
-                properties, directoryDepth);
+        MarkdownDocument doc = new MarkdownDocument (sourceFile, 
+                project,
+                properties,
+                newSource);
         return doc.transform("scroll");
     }
 

@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -58,12 +59,18 @@ public class MarkdownDocument implements Document {
 	private static Logger logger = 
 	        LoggerFactory.getLogger(MarkdownDocument.class);
 	
-	   /**
+	/**
      * The number of directory levels separating this document from the website
      * base.  This is used to enable the generation of relative URLs to styles,
      * graphics, and other document directories.
      */
     private int directoryDepth;
+    
+    /**
+     * Context info for this document. Indicates the project's root and all
+     * available document sets.
+     */
+    private WebsiteProject project;
     
 	/**
 	 * Source for text of the document. 
@@ -74,6 +81,11 @@ public class MarkdownDocument implements Document {
 	 * Directory from which source code was being obtained.
 	 */
 	private File sourceDirectory;
+	
+	/**
+	 * Text to be used instead of actually reading from asource file.
+	 */
+	private String forcedText;
 	
 	/**
 	 * Metadata extracted from lines at the beginning of the document in
@@ -110,29 +122,17 @@ public class MarkdownDocument implements Document {
     private String debugMode = "no";
 	
 	
-	/**
-	 * Create a document from the given string. 
-	 * @param input Markdown document text
-	 * @param properties0 Properties to be used in processing this document.
-	 * @param directoryDepth0 Number of directory levels separating this page
-	 *                        from the website base.
-	 */
-	public MarkdownDocument(final String input, final Properties properties0,
-	         final int directoryDepth0) {
-		documentIn = new BufferedReader (new StringReader (input));
-		metadata = null;
-		directoryDepth = directoryDepth0;
-		sourceDirectory = new File(".");
-		initProperties (properties0, "");
-	}
-	
-
     /**
      * Create a document from the given file.
      * @param input Markdown document text
+     * @param project0 website project context,
      * @param properties0 Properties to be used in processing this document.
      */
-	public MarkdownDocument(final File input, final Properties properties0) {
+	public MarkdownDocument(final File input, 
+	        final WebsiteProject project0,
+	        final Properties properties0) {
+	    project = project0;
+	    forcedText = null;
 		try {
 			documentIn = new BufferedReader (new FileReader (input));
 		} catch (FileNotFoundException e) {
@@ -153,6 +153,50 @@ public class MarkdownDocument implements Document {
 		initProperties (properties0, baseName);
 	}
 
+	
+	/**
+     * Create a document from the given string.  "Pretend" that the input
+     * string was actually read from a file.
+     *  
+     * @param fakeInputFile A path to a file that we will "pretend" is where
+     *           the input string was obtained
+     * @param project0 project website context
+     * @param properties0 Properties to be used in processing this document.
+     * @param input Markdown document text
+     */
+    public MarkdownDocument(
+            final File fakeInputFile,
+            final WebsiteProject project0,
+            final Properties properties0, final String input
+             ) {
+        project = project0;
+        forcedText = input;
+        documentIn = new BufferedReader (new StringReader(forcedText));
+        metadata = null;
+        directoryDepth = 0;
+        try {
+            File dir = fakeInputFile.getParentFile();
+            while ((dir != null) && (directoryDepth < 8) 
+                    && !(Files.isSameFile(dir.toPath(), 
+                            project.getRootDir().toPath()))) {
+                ++directoryDepth;
+                dir = dir.getParentFile();
+            }
+        } catch (IOException e) {
+            directoryDepth = 2;
+        }
+        String baseName = fakeInputFile.getName();
+        if (baseName.contains(".")) {
+            baseName = baseName.substring(0, baseName.lastIndexOf('.'));
+        }
+        sourceDirectory = fakeInputFile.getParentFile();
+        initProperties (properties0, baseName);
+    }
+    
+
+
+	
+	
 	
     /**
      * Copy a set of properties into the data member, augmenting
@@ -179,6 +223,7 @@ public class MarkdownDocument implements Document {
         for (int i = 0; i < directoryDepth; ++i) {
             base.append("../");
         }
+        logger.warn("From " + sourceDirectory + ", base is " + base);
         properties.put(PropertyNames.BASE_URL_PROPERTY,
                 base.toString());
         properties.put(PropertyNames.DOCUMENT_SET_PATH_PROPERTY,
@@ -491,7 +536,7 @@ public class MarkdownDocument implements Document {
 	            properties.getProperty(PropertyNames.BASE_URL_PROPERTY, "");
         String bbURL = 
                 properties.getProperty(PropertyNames.BB_URL_PROPERTY, "");
-	    new URLRewriting(baseURL, bbURL).rewrite (htmlDoc);
+	    new URLRewriting(sourceDirectory, project, bbURL).rewrite (htmlDoc);
 	}
 
 	/**

@@ -253,7 +253,7 @@ class DocumentSet {
                 include('*.html').include('*.css').include('*.js').
                 include('*.png').include('*.jpg').include('*.gif');
 
-        println (_inProject.name + ": created DocumentSet");
+        _inProject.logger.debug(_inProject.name + ": created DocumentSet");
 
     }
 

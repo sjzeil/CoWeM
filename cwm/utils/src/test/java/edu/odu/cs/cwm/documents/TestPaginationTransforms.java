@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
  */
 public class TestPaginationTransforms {
 
-	private static final String FORMAT = "html";
+	private static final String FORMAT = "scroll";
 	
 	
 	private String lastTransformed;

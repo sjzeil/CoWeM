@@ -27,6 +27,7 @@ import edu.odu.cs.cwm.Course
 import edu.odu.cs.cwm.DocumentSet
 import edu.odu.cs.cwm.documents.ListingDocument
 import edu.odu.cs.cwm.documents.MarkdownDocument
+import edu.odu.cs.cwm.documents.WebsiteProject
 
 /**
  * A plugin for describing a documentset within a course website.
@@ -99,6 +100,7 @@ class Documents implements Plugin<Project> {
 
                 MarkdownDocument doc =
                     new MarkdownDocument(project.documents.primaryDocument,
+                        project.rootProject.website,
                         docProperties);
                 //doc.setDebugMode(true);
 				String result = doc.transform(format)
@@ -148,11 +150,12 @@ class Documents implements Plugin<Project> {
             for (File secondarySource: project.documents.secondaryDocuments) {
                 MarkdownDocument doc =
                     new MarkdownDocument(secondarySource,
+                        project.rootProject.website,
                         docProperties);
                 //doc.setDebugMode(true);
                 String result = doc.transform("scroll")
 
-                Path rootProjDir = project.file('../../').toPath()
+                Path rootProjDir = project.rootDir.toPath()
                 Path p1 = rootProjDir.relativize(secondarySource.toPath())
                 Path websiteDirP = project.file('../../build/website').toPath()
                 Path resultFileP = websiteDirP.resolve(p1)
@@ -189,10 +192,11 @@ class Documents implements Plugin<Project> {
             for (File listingSource: project.documents.listingDocuments) {
                 ListingDocument doc =
                     new ListingDocument(listingSource,
+                        project.rootProject.website,
                         docProperties);
                 String result = doc.transform("scroll")
                 
-                Path rootProjDir = project.file('../../').toPath()
+                Path rootProjDir = project.rootDir.toPath()
                 Path p1 = rootProjDir.relativize(listingSource.toPath())
                 Path websiteDirP = project.file('../../build/website').toPath()
                 Path resultFileP = websiteDirP.resolve(p1)

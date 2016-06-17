@@ -1,8 +1,7 @@
 package edu.odu.cs.cwm.documents.urls;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import edu.odu.cs.cwm.documents.MarkdownDocument;
+import edu.odu.cs.cwm.documents.WebsiteProject;
 
 /**
  * Implements URL rewriting in course documents.
@@ -31,12 +31,6 @@ import edu.odu.cs.cwm.documents.MarkdownDocument;
  */
 public class DocURLs implements SpecialURL {
     
- 
-    /**
-     * Name used for Gradle files in document set directories.
-     */
-    private static final String GRADLE_FILE_NAME = "website.gradle";
-
     
     /**
      * For logging error messages.
@@ -44,67 +38,28 @@ public class DocURLs implements SpecialURL {
     private static Logger logger 
        = LoggerFactory.getLogger(DocURLs.class);
     
-    /**
-     * List of paths to document sets that can be reached from the baseURL. 
-     */
-    private static List<File> documentSets = null;
 
     /**
-     * relative URL/directory to base of website.
+     * Context in which to determine relative URLs/paths.
      */
-    private String baseURL;
+    private WebsiteProject project;
+    
+    /**
+     * directory containing the document source.
+     */
+    private File sourceDirectory;
 
     /**
      * Create a URL rewriter.
      * 
-     * @param baseURL0 relative URL/directory to base of website.
+     * @param sourceDirectory0 directory containing the document source
+     * @param project0 context info on document set locations 
      */
-    public DocURLs(final String baseURL0) {
-        baseURL = baseURL0;
+    public DocURLs(final File sourceDirectory0, final WebsiteProject project0) {
+        sourceDirectory = sourceDirectory0;
+        project = project0;
     }
 
-    /**
-     * If it has not been done already, construct a list of all document sets
-     * in this website.
-     */
-    private void fillDocumentSets() {
-        if (documentSets == null) {
-            // Look for all possible document sets - directories 2 levels below
-            // the base that contain an appropriately named gradle file.
-            documentSets = new ArrayList<>();
-            File baseDir = new File(baseURL.replace('/', File.separatorChar));
-            if (baseDir.canRead()) {
-                try {
-                    for (String groupName: baseDir.list()) {
-                        File group = new File(baseDir, groupName);
-                        if (!group.canRead() || !group.isDirectory()) {
-                            continue;
-                        }
-                        try {
-                            for (String docSetName: group.list()) {
-                                File docSet = new File(group, docSetName);
-                                if (!docSet.canRead() 
-                                        || !docSet.isDirectory()) {
-                                    continue;
-                                }
-                                File groupGradle = 
-                                        new File(docSet, GRADLE_FILE_NAME);
-                                if (groupGradle.exists()) {
-                                    documentSets.add(docSet);
-                                }
-                            }
-                        } catch (SecurityException ex) {
-                            logger.warn("Could not list contents of " + group);
-                        } 
-                    }
-                } catch (SecurityException ex) {
-                    logger.warn("Could not list contents of " + baseDir);
-                }
-            } else {
-                logger.warn("Could not find directory " + baseURL);
-            }
-        }        
-    }
 
 	/**
 	 * Checks to see if a linking element (a or img) uses a special
@@ -116,71 +71,82 @@ public class DocURLs implements SpecialURL {
 	 */
 	@Override
 	public final boolean applyTo(final Element link, final String linkAttr) {
-	    fillDocumentSets();
 	    String url = link.getAttribute(linkAttr);
 	    if (url.startsWith("doc:") || url.startsWith("docex:")) {
 	        int dividerPos = url.indexOf(':');
 	        String documentSpec = url.substring(dividerPos + 1);
-	        if (documentSpec.contains(".") || documentSpec.contains("/")) {
-	            documentSpec = 
-	                    documentSpec.replace('/', File.separatorChar);
-	            List<File> candidates = new ArrayList<>();
-	            for (File documentSet: documentSets) {
-	                File document = new File(documentSet, documentSpec);
-	                if (document.exists()) {
-	                    candidates.add(document);
-	                }
-	            }
-	            if (!candidates.isEmpty()) {
-	                if (candidates.size() > 1) {
-	                    logger.warn("Ambiguous URL shorthand: " + link
-	                            + "\n  matched " + candidates.size() 
-	                            + " documents. Using " + candidates.get(0));
-	                }
-	                File selected = candidates.get(0);
-	                String newLink = selected.toString()
-	                        .replace(File.separatorChar, '/')
-	                        + ".html";
+	        logger.warn("documentSpec=" + documentSpec);
+            if (documentSpec.contains("/")) {
+                int k = documentSpec.indexOf('/');
+	            String documentSetName = documentSpec.substring(0, k);
+	            String continuation = documentSpec.substring(0, k + 1);
+	            File targetFile = project.documentSetLocation(documentSetName);
+	            if (targetFile != null) {
+	                Path relative = project.relativePathToDocumentSet(
+	                        sourceDirectory, 
+	                        documentSetName);
+	                relative = relative.resolve(continuation);
+	                String newLink = relative.toString() + ".html";
 	                link.setAttribute(linkAttr, newLink);
 	                if (url.startsWith("doc:")) {
 	                    link.setAttribute("class", "doc");
 	                }
-	                attemptTBDReplacement(link, selected);
+	                attemptTBDReplacement(link, new File(targetFile, continuation));
 	            } else {
 	                logger.warn(
-	                        "Could not find a replacement for URL shorthand: "
-	                                + link);
+	                        "Could not find a replacement for URL shorthand: @"
+	                                + linkAttr + "=" + url);
 	            }
-	        } else {
-	            List<File> candidates = new ArrayList<>();
-	            for (File documentSet: documentSets) {
-	                String documentSetName = documentSet.getName();
-	                if (documentSpec.equals(documentSetName)) {
-	                    candidates.add(documentSet);
-	                }
-	            }
-	            if (!candidates.isEmpty()) {
-	                if (candidates.size() > 1) {
-	                    logger.warn("Ambiguous URL shorthand: " + link
-	                            + "\n  matched " + candidates.size() 
-	                            + " documents. Using " + candidates.get(0));
-	                }
-	                File selected = candidates.get(0);
-	                String newLink = selected.toString()
-	                        .replace(File.separatorChar, '/')
-	                        + "/index.html";
-	                link.setAttribute(linkAttr, newLink);
-	                if (url.startsWith("doc:")) {
-	                    link.setAttribute("class", "doc");
-	                }
-	                File sourceFile = new File(selected, 
-	                        selected.getName() + ".md");
-	                attemptTBDReplacement(link, sourceFile);
-	            } else {
-	                logger.warn(
-	                        "Could not find a replacement for URL shorthand: "
-	                                + link);
-	            }                 	    
+            } else if (documentSpec.contains(".")) {
+                File targetFile = null;
+                String targetDocSet = null;
+                for (String documentSetName: project) {
+                    File candidateDir = project.documentSetLocation(documentSetName);
+                    File candidateFile = new File(candidateDir, documentSpec);
+                    if (candidateFile.exists()) {
+                        if (targetFile == null) {
+                            logger.warn("Ambiguous URL shortcut: " + documentSpec);
+                        }
+                        targetFile = candidateFile;
+                        targetDocSet = documentSetName;
+                    }
+                }
+                if (targetFile != null) {
+                    Path relative = project.relativePathToDocumentSet(
+                            sourceDirectory, 
+                            targetDocSet);
+                    relative = relative.resolve(documentSpec);
+                    String newLink = relative.toString() + ".html";
+                    link.setAttribute(linkAttr, newLink);
+                    if (url.startsWith("doc:")) {
+                        link.setAttribute("class", "doc");
+                    }
+                    attemptTBDReplacement(link, targetFile);
+                } else {
+                    logger.warn(
+                            "Could not find a replacement for URL shorthand: @"
+                                    + linkAttr + "=" + url);
+                }
+            } else {
+	            String documentSetName = documentSpec;
+	            File targetFile = project.documentSetLocation(documentSetName);
+                if (targetFile != null) {
+                    Path relative = project.relativePathToDocumentSet(
+                            sourceDirectory, 
+                            documentSetName);
+                    String newLink = relative.resolve("index.html").toString();
+                    link.setAttribute(linkAttr, newLink);
+                    if (url.startsWith("doc:")) {
+                        link.setAttribute("class", "doc");
+                    }
+                    File sourceFile = new File(targetFile, 
+                            targetFile.getName() + ".md");
+                    attemptTBDReplacement(link, sourceFile);
+                } else {
+                    logger.warn(
+                            "Could not find a replacement for URL shorthand: @"
+                                    + linkAttr + "=" + url);
+                }
 	        }
 	    }
 	    return false;
@@ -200,7 +166,7 @@ public class DocURLs implements SpecialURL {
         String textContent = element.getTextContent().trim();
         if ("TBD".equals(textContent) && sourceFile.canRead()) {
             MarkdownDocument sourceDoc = new MarkdownDocument(sourceFile,
-                    new Properties());
+                    project, new Properties());
             String title = (String) sourceDoc.getMetadata("Title");
             if (title != null && title.length() > 0) {
                 while (element.hasChildNodes()) {

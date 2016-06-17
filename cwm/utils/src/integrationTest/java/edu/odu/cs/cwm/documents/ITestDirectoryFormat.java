@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -59,7 +61,9 @@ public class ITestDirectoryFormat {
 	
 	
 	private Properties properties;
-	
+	private WebsiteProject proj;
+	private File source;
+
 	
 	/**
 	 * @throws java.lang.Exception
@@ -74,6 +78,12 @@ public class ITestDirectoryFormat {
 		for (int i = 0; i < documentSetProperties.length; i += 2) {
 			properties.put (documentSetProperties[i], documentSetProperties[i+1]);
 		}
+		proj = new WebsiteProject(Paths.get("src/test/data/urlShortcuts")
+		        .toFile().getAbsoluteFile());
+		source = 
+		        Paths.get("src/test/data/urlShortcuts/Group1/DocSet1/DocSet1.md")
+		        .toFile();
+
 	}
 
 	
@@ -107,7 +117,7 @@ public class ITestDirectoryFormat {
 				"A short",
 				"paragraph."
 				);
-		MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+		MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
 		
 		String htmlContent = doc.transform(FORMAT);
 		

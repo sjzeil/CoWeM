@@ -30,7 +30,7 @@
   <xsl:param name="email" select="''"/>
   <xsl:param name="copyright" select="''"/>
   <xsl:param name="primaryDocument" select="'@primaryDocument@'"/>
-  <xsl:param name="formats" select="'html'"/>
+  <xsl:param name="formats" select="'scroll'"/>
   <xsl:param name="mathSupport" select="'latex'"/>
   <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
@@ -524,7 +524,7 @@
 	      </a>      
         </xsl:when>
         <xsl:when test="$otherFormat = 'mobi'"></xsl:when>
-	    <xsl:when test="$otherFormat = 'html'">
+	    <xsl:when test="$otherFormat = 'scroll'">
 	        <a class="imgLink" href="{$primaryDocument}__{$otherFormat}.html">
 	          <img src="{$baseURL}graphics/{$otherFormat}.png" title="single-page HTML version"/>
 	        </a>

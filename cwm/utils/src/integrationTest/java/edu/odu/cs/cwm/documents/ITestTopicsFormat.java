@@ -6,8 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -112,7 +114,9 @@ public class ITestTopicsFormat {
 	
 	
 	private Properties properties;
-	
+    private WebsiteProject proj;
+    private File source;
+
 	
 	/**
 	 * @throws java.lang.Exception
@@ -127,6 +131,11 @@ public class ITestTopicsFormat {
 		for (int i = 0; i < documentSetProperties.length; i += 2) {
 			properties.put (documentSetProperties[i], documentSetProperties[i+1]);
 		}
+		proj = new WebsiteProject(Paths.get("src/test/data/urlShortcuts")
+                .toFile().getAbsoluteFile());
+        source = 
+                Paths.get("src/test/data/urlShortcuts/Group1/DocSet1/DocSet1.md")
+                .toFile();
 	}
 
 	
@@ -154,7 +163,7 @@ public class ITestTopicsFormat {
 	public void testSimpleDoc() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
 		String mdInput = String.join(System.getProperty("line.separator"),
 		        schedule_md);
-		MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+		MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
 		
 		String htmlContent = doc.transform(FORMAT);
 		
@@ -175,7 +184,7 @@ public class ITestTopicsFormat {
     public void testColumnPositions() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         String mdInput = String.join(System.getProperty("line.separator"),
                 schedule_md);
-        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
         doc.setDebugMode(true);
         
         String htmlContent = doc.transform(FORMAT);
@@ -248,7 +257,7 @@ public class ITestTopicsFormat {
     public void testIconInsertion() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         String mdInput = String.join(System.getProperty("line.separator"),
                 schedule_md);
-        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
         doc.setDebugMode(true);
         
         String htmlContent = doc.transform(FORMAT);
@@ -310,7 +319,7 @@ public class ITestTopicsFormat {
     public void testPrefixIgnored() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         String mdInput = String.join(System.getProperty("line.separator"),
                 schedule_md);
-        MarkdownDocument doc = new MarkdownDocument(mdInput, properties, 2);
+        MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
         doc.setDebugMode(true);
         
         String htmlContent = doc.transform(FORMAT);

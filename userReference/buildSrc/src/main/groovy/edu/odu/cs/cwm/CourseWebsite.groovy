@@ -6,6 +6,8 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Zip
 
+import edu.odu.cs.cwm.documents.WebsiteProject
+
 /**
  * A plugin for describing a course website.
  */
@@ -15,7 +17,8 @@ class CourseWebsite implements Plugin<Project> {
         
         // Add a Course object as a property of the project
         project.extensions.create ("course", Course);
-
+        project.extensions.create ("website", WebsiteProject, project.rootDir);
+        
         project.remotes {
             remotehost {
                 // Values will be filled in from course settings                
