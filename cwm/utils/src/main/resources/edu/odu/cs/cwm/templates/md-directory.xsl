@@ -16,10 +16,14 @@
   </xsl:template>
 
   <xsl:template match="html">
+    <xsl:variable name="normalized">
+        <xsl:apply-templates select="body" mode="normalizeHeaders"/>
+    </xsl:variable>
+    
     <html>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates select="head"/>  
-      <xsl:apply-templates select="body"/>    
+      <xsl:apply-templates select="$normalized/body"/>    
     </html>
   </xsl:template>
 

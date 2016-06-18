@@ -223,7 +223,6 @@ public class MarkdownDocument implements Document {
         for (int i = 0; i < directoryDepth; ++i) {
             base.append("../");
         }
-        logger.warn("From " + sourceDirectory + ", base is " + base);
         properties.put(PropertyNames.BASE_URL_PROPERTY,
                 base.toString());
         properties.put(PropertyNames.DOCUMENT_SET_PATH_PROPERTY,
@@ -477,7 +476,7 @@ public class MarkdownDocument implements Document {
 			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());
 			DOMResult htmlOut = new DOMResult(formattedDoc);
 			xform.transform(xmlIn, htmlOut);
-			logger.info("format transformation completed");
+			logger.trace("format transformation completed");
 		} catch (TransformerConfigurationException e) {
 			logger.error ("Problem parsing XSLT2 stylesheet " 
 					+ formatConversionSheet, e);

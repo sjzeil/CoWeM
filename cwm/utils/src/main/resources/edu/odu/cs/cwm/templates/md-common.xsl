@@ -293,20 +293,8 @@
   <xsl:template match="h1|h2|h3|h4|h5">
     <xsl:copy>
       <xsl:copy-of select="@*[local-name() != 'sectionNumber']"/>
-      <xsl:choose>
-        <xsl:when test="(local-name(*[1]) = 'a') and a[1][@name != '']">
-            <xsl:attribute name="id">
-                <xsl:value-of select="a/@name"/> 
-            </xsl:attribute>
-            <xsl:value-of select="@sectionNumber"/>
-            <xsl:apply-templates select="a[1]/node()"/>
-          <xsl:apply-templates select="*[position() > 1]|text()"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="@sectionNumber"/>
-          <xsl:apply-templates select="*|text()"/>
-        </xsl:otherwise>
-      </xsl:choose>
+      <xsl:value-of select="@sectionNumber"/>
+      <xsl:apply-templates select="*|text()"/>
     </xsl:copy>
   </xsl:template>
 

@@ -173,6 +173,7 @@
     <xsl:choose>
         <xsl:when test="local-name(*[1]) = 'p'">
             <li>
+                <xsl:copy-of select="@*"/>
                 <p>
                     <xsl:apply-templates select="*[1]" mode="activities2"/>
                 </p>
@@ -181,6 +182,7 @@
           </xsl:when>
           <xsl:otherwise>
             <li>
+              <xsl:copy-of select="@*"/>
               <xsl:apply-templates select="." mode="activities2"/>
             </li>
           </xsl:otherwise>

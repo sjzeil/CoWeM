@@ -44,6 +44,10 @@
       <xsl:apply-templates select="." mode="sectionNumbering"/>
   </xsl:template>
 
+  <xsl:template match="html[@test = 'normalizeHeaders']">
+      <xsl:apply-templates select="." mode="normalizeHeaders"/>
+  </xsl:template>
+
 
 <!-- sectionNumbering -->
 
@@ -57,9 +61,12 @@
   </xsl:template>
 
   <xsl:template match="body" mode="sectionNumbering">
+    <xsl:variable name="normalized">
+        <xsl:apply-templates select="." mode="normalizeHeaders"/>
+    </xsl:variable>
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates select="node()" mode="sectionNumbering"/>
+      <xsl:apply-templates select="$normalized/body/*" mode="sectionNumbering"/>
     </xsl:copy>
   </xsl:template>
   
@@ -416,5 +423,57 @@
       <xsl:copy-of select="."/>
   </xsl:template>
   
-</xsl:stylesheet>
 
+<!--  Normalize Headers -->
+
+<!--  PegDown generates headers h1, h2, ... with all text inside an <a> element
+      containing both an href and name attribute. This complicates a lot of
+      of later processing, so we spend a pass to rewrite this as simply an
+      id on the header itself.  -->
+
+  <xsl:template match="html" mode="normalizeHeaders">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:copy-of select="head"/>
+      <xsl:apply-templates select="body" mode="normalizeHeaders"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="body" mode="normalizeHeaders">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="node()" mode="normalizeHeaders"/>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:template match="h1|h2|h3|h4|h5" mode="normalizeHeaders">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:choose>
+         <xsl:when test="a[@href != '' and @name != ''] 
+              and (normalize-space(.) = normalize-space(a[1]))">
+             <xsl:attribute name="id">
+                <xsl:value-of select="a/@name"/>
+             </xsl:attribute>
+             <xsl:copy-of select="a/node()"/>
+         </xsl:when>
+         <xsl:otherwise>
+             <xsl:copy-of select="node()"/>
+         </xsl:otherwise>
+      </xsl:choose>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="*" mode="normalizeHeaders">
+    <xsl:copy>
+        <xsl:copy-of select="@*"/>
+        <xsl:apply-templates select="node()" mode="normalizeHeaders"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="text()" mode="normalizeHeaders">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+
+</xsl:stylesheet>

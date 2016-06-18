@@ -101,10 +101,13 @@ a course.
 
 This section covers document sets and their constituent documents.
 
+## Basic Markdown
 
 88. [ ](lecture) [TBD](doc:markdown) [2016-08-28](date:) [2017-02-28](enddate:)
 
 88. [ ](lecture) [TBD](doc:urlShortcuts) [2016-08-28T23:59](due:)
+
+## Advanced Markup
 
 88. [ ](lecture) [TBD](doc:configuringDocumentSets)
 

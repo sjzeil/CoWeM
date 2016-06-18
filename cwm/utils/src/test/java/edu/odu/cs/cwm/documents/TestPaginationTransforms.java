@@ -3,10 +3,7 @@
  */
 package edu.odu.cs.cwm.documents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -120,6 +117,22 @@ public class TestPaginationTransforms {
 		return (Element)n;
 	}
 
+
+
+	public Element getElementByName (org.w3c.dom.Document doc, String name) {
+	    Element root = doc.getDocumentElement();
+	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    Node n;
+	    try {
+	        n = (Node)xPath.evaluate("//*[@name='" + name + "']",
+	                root, XPathConstants.NODE);
+	    } catch (XPathExpressionException e) {
+	        return null;
+	    }
+	    return (Element)n;
+	}
+
+	
 	@Test
 	public void testSectionNumbering() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {
 		
@@ -179,10 +192,82 @@ public class TestPaginationTransforms {
 			Element n = (Element)getElementById(basicHtml, ids[i]);
 			assertNotNull(n);
 			String sectionNumberAttribute = n.getAttribute("sectionNumber");
-			assertEquals (shouldBeNumbered[i], sectionNumberAttribute);
+			assertEquals ("looking at " + ids[i], shouldBeNumbered[i], sectionNumberAttribute);
 		}
 	}
 
+
+
+	@Test
+	public void testHeaderNormalization() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {
+
+	    String[] htmlInput = {
+	            "<html test='normalizeHeaders'>",
+	            "<head>",
+	            "<title>Document Title</title>",
+	            "</head>",
+	            "<body>",
+	            "<p id='par1'>A preamble</p>",
+	            "<h1><a name='h11' href='h11'>Title 1</a></h1>",
+	            "   <h2><a href='h21' name='h21'>Subtitle 1</a></h2>",
+	            "      <p id='par2'>Some text</p>",
+	            "   <h2><a name='h22'>Subtitle 2</a></h2>",
+	            "<h1><a name='h12' href='h12'>Title 2</a>other stuff</h1>",
+	            "      <p id='par3'>Some text</p>",
+	            "</body>",
+	            "</html>"   
+	    };
+
+
+	    org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
+	    Element root = basicHtml.getDocumentElement();
+	    String htmlContent = root.getTextContent();
+
+	    assertTrue (htmlContent.contains("A preamble"));
+	    assertTrue (htmlContent.contains("Title 1"));
+	    assertTrue (htmlContent.contains("Title 2"));
+	    assertTrue (htmlContent.contains("Subtitle 1"));
+	    assertTrue (htmlContent.contains("Subtitle 2"));
+	    assertTrue (htmlContent.contains("Some text"));
+
+	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    assertEquals ("html", root.getLocalName());
+
+	    String actualTitle = (String)xPath.evaluate("/html/head/title", root);
+	    assertEquals ("Document Title", actualTitle);
+
+	    Element n = (Element)getElementById(basicHtml, "h11");
+	    assertNotNull(n);
+	    assertEquals ("h1", n.getNodeName());
+
+	    n = (Element)getElementById(basicHtml, "h21");
+	    assertNotNull(n);
+	    assertEquals ("h2", n.getNodeName());
+
+	    n = (Element)getElementById(basicHtml, "par1");
+	    assertNotNull(n);
+	    assertEquals ("p", n.getNodeName());
+
+	    n = (Element)getElementById(basicHtml, "par3");
+	    assertNotNull(n);
+	    assertEquals ("p", n.getNodeName());
+
+	    n = (Element)getElementById(basicHtml, "h22");
+	    assertNull(n);
+
+	    n = (Element)getElementById(basicHtml, "h12");
+	    assertNull(n);
+
+	    n = (Element)getElementByName(basicHtml, "h22");
+	    assertNotNull(n);
+	    assertEquals ("a", n.getNodeName());
+
+	    n = (Element)getElementByName(basicHtml, "h12");
+	    assertNotNull(n);
+	    assertEquals ("a", n.getNodeName());
+	}
+
+	
 	
 	
 	@Test

@@ -120,16 +120,12 @@ class CourseWebsite implements Plugin<Project> {
        project.task(type: Copy,  'setup_cwm') {
             dependsOn project.configurations.setup
             into project.file('build/cwm')     
-            from ({ project.zipTree(project.configurations.setup.singleFile) }) {  
-                include 'edu/odu/cs/cwm/core/templates/**'
+            from ({ project.zipTree(project.configurations.setup.find {
+                it.name.startsWith("cwm-core") }
+                ) }) {  
                 include 'edu/odu/cs/cwm/core/graphics/**'
                 include 'edu/odu/cs/cwm/core/styles/**'
             }
-        }
-
-        project.setup_cwm << {
-           ant.move (file: "build/cwm/edu/odu/cs/cwm/core/templates", 
-                     tofile: "build/cwm/templates") 
         }
 
 
@@ -156,9 +152,11 @@ class CourseWebsite implements Plugin<Project> {
                     into 'build/website/'
                 }
             } else {
-                project.copy  {
-                    from 'cwm/templates/default-index.html'
+                project.copy {
+                    from 'build/website/styles/'
+                    include 'homeRedirect.html'
                     into 'build/website/'
+                    rename '.+', 'index.html'
                 }
             }
         }  
@@ -175,15 +173,7 @@ class CourseWebsite implements Plugin<Project> {
         project.task (dependsOn: 'setup', 'build') {
             description 'Process documents and course outline to prepare the basic course website.'
 			group 'Build'
-        } << {
-            project.copy {
-                from 'build/website/styles/'
-                include 'homeRedirect.html'
-                into 'build/website/'
-                rename '.+', 'index.html'
-            }
         }
-
 
         project.task (dependsOn: 'build', 'packages')  {
             description 'prepare optional course cartridges'

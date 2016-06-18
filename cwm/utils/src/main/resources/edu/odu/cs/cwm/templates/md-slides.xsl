@@ -112,16 +112,7 @@
 
   <xsl:template match="h1|h2|h3|h4|h5"  mode="collectIDs">
     <xsl:variable name="pageNum" select="1+count(./ancestor::page/preceding-sibling::page)"/>
-    <xsl:variable name="hid">
-       <xsl:choose>
-           <xsl:when test="@id != ''">
-               <xsl:value-of select="@id"/>
-           </xsl:when>
-           <xsl:when test="local-name(*[1]) = 'a' and a[1]/@name != ''">
-               <xsl:value-of select="a[1]/@name"/>
-           </xsl:when>
-       </xsl:choose>
-    </xsl:variable>
+    <xsl:variable name="hid" select="@id"/>
     <xsl:if test="$hid != ''">
        <xsl:text>collectID('</xsl:text>
        <xsl:value-of select="$hid"/>

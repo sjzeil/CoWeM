@@ -120,17 +120,7 @@
              <span class="topic{@depth}">
                  <xsl:value-of select="sectionHeader/@sectionNumber"/>
                  <xsl:text> </xsl:text>
-                 <xsl:choose>
-                     <xsl:when test="local-name($headerStart) = 'a'
-                            and normalize-space($headerStart/preceding-sibling::node()) = ''">
-                           <xsl:apply-templates select="$headerStart/node()"/>
-                           <xsl:apply-templates select="$headerStart/following-sibling::node()"/>
-                     </xsl:when>
-                     <xsl:otherwise>
-                            <xsl:apply-templates select="sectionHeader/node()"/>
-                     </xsl:otherwise>
-                 </xsl:choose>
-                 
+                 <xsl:apply-templates select="sectionHeader/node()"/>
              </span>
           </td>
       </tr>

@@ -75,8 +75,7 @@ public class DocURLs implements SpecialURL {
 	    if (url.startsWith("doc:") || url.startsWith("docex:")) {
 	        int dividerPos = url.indexOf(':');
 	        String documentSpec = url.substring(dividerPos + 1);
-	        logger.warn("documentSpec=" + documentSpec);
-            if (documentSpec.contains("/")) {
+	        if (documentSpec.contains("/")) {
                 int k = documentSpec.indexOf('/');
 	            String documentSetName = documentSpec.substring(0, k);
 	            String continuation = documentSpec.substring(0, k + 1);
