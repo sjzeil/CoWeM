@@ -105,6 +105,23 @@ class Course {
     File sshDeployKey = null;
     
     /**
+     * An ssh URL, usually on a remote machine, to which course materials
+     * should be copied to deploy the website via rsync.  
+     *
+     * If null, uses sshDeployURL (and sshDeployKey).
+     * If both URLs are null, deployByRsync will fail.
+     */
+    String rsyncDeployURL = null;
+
+    /**
+     * An ssh key used for deploying to a remote machine via rsync.
+     *
+     * If null, deployByRsync will use sshDeployKey
+     */
+    File rsyncDeployKey = null;
+
+    
+    /**
      * Allow application of a closure to a Course.
      */ 
     Course call (Closure closure) {

@@ -1,25 +1,13 @@
 package edu.odu.cs.cwm
 
-/*
- buildscript {
- repositories {
- // jcenter()
- mavenCentral()
- // Use my own CS dept repo
- ivy {
- url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
- }
- }
- dependencies {
- classpath 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
- }
- }
- */
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.bundling.Zip
+
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -70,8 +58,8 @@ class Documents implements Plugin<Project> {
 			into websiteArea
 		}
 
-		project.task (dependsOn: ['doc_setup', project.configurations.build],
-		'doc_mainDoc') {
+		project.task ('doc_mainDoc',
+            dependsOn: ['doc_setup', project.configurations.build]) {
             //println ("mainDoc: " + project.documents.primaryDocument
 			//	+ " => " + project.documents.primaryTargets.join(','))
 		    inputs.file project.documents.primaryDocument
@@ -127,7 +115,7 @@ class Documents implements Plugin<Project> {
 		}
 
 
-		project.task (dependsOn: project.doc_setup, 'doc_secondaryDocs') {
+		project.task ('doc_secondaryDocs', dependsOn: project.doc_setup) {
             inputs.files project.documents.secondaryDocuments
             outputs.dir project.documents.indexTarget.parentFile
 		} << {
@@ -169,7 +157,7 @@ class Documents implements Plugin<Project> {
             }
 		}
 
-		project.task (dependsOn: project.doc_setup, 'doc_Listings') {
+		project.task ('doc_Listings', dependsOn: project.doc_setup) {
             inputs.files project.documents.listingDocuments
             outputs.dir project.documents.indexTarget.parentFile
 		} << {
@@ -210,10 +198,11 @@ class Documents implements Plugin<Project> {
         }
 
 
-		project.task (dependsOn: [project.doc_mainDoc,
-			project.doc_secondaryDocs,
-			project.doc_Listings],
-		  'build') {
+		project.task ('build',
+            dependsOn: [project.doc_mainDoc,
+			            project.doc_secondaryDocs,
+			            project.doc_Listings]
+		  ) {
 			description 'Prepare document set output'
 			group 'Build'
 			dependsOn ':setup'
@@ -222,6 +211,98 @@ class Documents implements Plugin<Project> {
 
 		project.rootProject.tasks['build'].dependsOn(project.build)
 
+        project.task ('deploy', type: Sync, dependsOn: 'build') {
+            description 'Copy this document set to a local deployDestination directory.'
+            group 'Deployment'
+            from websiteArea
+            into { return project.course.deployDestination +
+                ((project.course.deployDestination.endsWith('/'))? '' : '/')  +
+                     project.parent.name + '/' + project.name; }
+            dirMode 0775
+            includeEmptyDirs true
+        }
+
+        
+        project.task ('doczip', type: Zip, dependsOn: 'build') {
+            // description 'Prepare a zip file of the website.'
+            group 'Packaging'
+            //onlyIf {true}
+            
+            from "../../build/website"
+            include project.fileTree(websiteArea)
+                .include("${project.parent.name}/${project.name}/*")
+            destinationDir = project.file('../../build/packages')
+            archiveName "website-${project.name}.zip"
+            dirMode 0775
+            fileMode 0664
+            includeEmptyDirs true
+        }
+    
+
+        project.task ('deployBySsh', dependsOn: 'doczip') {
+            description 'Copy course website to a remote machine.'
+            group 'Deployment'
+            inputs.file 'build/packages/website.zip'
+        } << {
+            int k0 = project.course.sshDeployURL.indexOf('@')
+            int k1 = project.course.sshDeployURL.indexOf(':')
+            def hostName = project.course.sshDeployURL.substring(k0+1,k1)
+            project.remotes.remotehost.host = hostName
+            def userName = project.course.sshDeployURL.substring(0, k0)
+            project.remotes.remotehost.user = userName
+            def remotePath = project.course.sshDeployURL.substring(k1+1)
+            if (project.course.sshDeployKey != null) {
+                project.remotes.remotehost.identity =
+                        project.file(project.course.sshDeployKey)
+            }
+
+            project.ssh.run {
+                settings {
+                    dryRun = false
+                }
+                session (project.remotes.remotehost) {
+                    put from: project.file("../../build/packages/website-${project.name}.zip"),
+                    into: remotePath
+                    execute "unzip -u -q -o ${remotePath}/website-${project.name}.zip -d ${remotePath}"
+                    execute "/bin/rm -f ${remotePath}/website-${project.name}.zip"
+                }
+                println "Sent to " + project.course.sshDeployURL
+            }
+        }
+
+
+
+        project.task ('deployByRsync', dependsOn: 'build') {
+            // Deloy by rsync requires an external installation of rsync and ssh.
+            description 'Copy course website to a remote machine by rsync'
+            group 'Deployment'
+            inputs.dir 'build/website'
+        } << {
+            if (project.course.rsyncDeployURL == null) {
+                project.course.rsyncDeployURL = project.course.sshDeployURL
+                if (project.course.rsyncDeployKey == null) {
+                    project.course.rsyncDeployKey = project.course.sshDeployKey
+                }
+            }
+
+            String sshCmd = "ssh";
+            if (project.course.rsyncDeployKey != null) {
+                sshCmd = "-i ${project.course.rsyncDeployKey}"
+            }
+
+            project.exec {
+                commandLine = [
+                    'rsync',
+                    '-auzv',
+                    '-e',
+                    sshCmd,
+                    "build/website/${project.parent.name}/${project.name}/",
+                    project.course.rsyncDeployURL
+                        +  ((project.course.rsyncDeployURL.endsWith('/'))? '' : '/')
+                        + "${project.parent.name}/${project.name}/"
+                    ]
+            }
+        }
 
 
 

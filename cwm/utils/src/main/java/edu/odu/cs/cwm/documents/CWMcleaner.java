@@ -8,13 +8,13 @@ import java.util.regex.Pattern;
 
 /**
  * The pegDown processor gets confused by passthrough HTML display elements
- * (though inline elements are OK)., often adding bogus <p> elements
+ * (though inline elements are OK)., often adding bogus &lt;p&gt; elements
  * around the opening and/or closing tag, resulting in bad XML.
  * 
  * As a workaround, the macro processor can be
- * used to insert <cwm tag='tagname' ... /> empty elements. Here we change
- * these to <tagname ... >, after stripping away any immediately adjacent
- * <p> and </p> tags.
+ * used to insert &lt;cwm tag='tagname' ... /&gt; empty elements. Here we change
+ * these to &lt;tagname ... &gt;, after stripping away any immediately adjacent
+ * &lt;p&gt; and &lt;/p&gt; tags.
  *  
  * @author Zeil
  */
