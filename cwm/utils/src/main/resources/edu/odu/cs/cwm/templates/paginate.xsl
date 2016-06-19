@@ -450,12 +450,15 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:choose>
-         <xsl:when test="a[@href != '' and @name != ''] 
-              and (normalize-space(.) = normalize-space(a[1]))">
+         <xsl:when test="a[1][@href != '' and @name != '']">
+             <xsl:variable name="a1" select="a[1]"/>
              <xsl:attribute name="id">
-                <xsl:value-of select="a/@name"/>
+                <xsl:value-of select="$a1/@name"/>
              </xsl:attribute>
-             <xsl:copy-of select="a/node()"/>
+             
+             <xsl:copy-of select="$a1/node()"/>
+             <xsl:copy-of select="$a1/following-sibling::node()"/>
+             
          </xsl:when>
          <xsl:otherwise>
              <xsl:copy-of select="node()"/>

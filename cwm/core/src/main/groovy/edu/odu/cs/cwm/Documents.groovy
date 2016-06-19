@@ -43,8 +43,9 @@ class Documents implements Plugin<Project> {
 
 
 		// Add a DocumentSet object as a property of the project
-		project.extensions.create ('documents', DocumentSet, project)
-
+        if (!project.hasProperty('documents')) {
+		    project.extensions.create ('documents', DocumentSet, project)
+        }
 
 		def templatesArea = project.file('../../build/cwm/templates/')
 		def websiteArea = project.file('../../build/website/'

@@ -174,7 +174,7 @@
                           title="start">
                           <img src="graphics:first.png" alt="first"/>
                        </a>
-                       <span>&#160;</span>
+                       <span style="minWidth: 2ex;">&#160;&#160;</span>
                        <a class="slideshowcontrol"
                           onclick="sshowback(sshowControl{$slideshowNum})"
                           title="previous">
@@ -199,7 +199,7 @@
                           title="next">
                           <img src="graphics:next.png" alt="next"/>
                        </a>
-                       <span>&#160;</span>
+                       <span style="minWidth: 2ex;">&#160;&#160;</span>
                        <a class="slideshowcontrol" 
                           onclick="sshow2end(sshowControl{$slideshowNum})" 
                           title="last">
@@ -407,7 +407,7 @@
                           title="start">
                         <xsl:text>&#x25C0;&#x25C0;</xsl:text>
                     </a>
-                    <span>&#160;</span>
+                    <span style='minWidth: 2ex;'>&#160;</span>
                     <a class="slideshowcontrol" 
                         onclick="sshowback(sshowControl{$slideshowNum})" 
                         title="previous">
@@ -425,7 +425,7 @@
                       title="next">
                       <xsl:text>&#x25B6;</xsl:text>
                    </a>
-                   <span>&#160;</span>
+                   <span style='minWidth: 2ex;'>&#160;</span>
                    <a class="slideshowcontrol" 
                           onclick="sshow2end(sshowControl{$slideshowNum})" 
                           title="last">
