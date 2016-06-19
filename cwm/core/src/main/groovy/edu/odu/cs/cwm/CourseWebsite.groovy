@@ -7,6 +7,8 @@ import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Zip
 
+import org.hidetake.gradle.ssh.plugin.SshPlugin
+
 import edu.odu.cs.cwm.documents.WebsiteProject
 
 /**
@@ -15,6 +17,8 @@ import edu.odu.cs.cwm.documents.WebsiteProject
 class CourseWebsite implements Plugin<Project> {
 
     void apply (Project project) {
+        
+        new org.hidetake.gradle.ssh.plugin.SshPlugin().apply(project);
 
         // Add a Course object as a property of the project
         project.extensions.create ("course", Course);

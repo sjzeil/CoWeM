@@ -9,11 +9,20 @@ publishing {
     }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.hidetake:gradle-ssh-plugin:2.2.0+'
+    }
+}
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
     compile 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
+    compile 'org.hidetake:gradle-ssh-plugin:2.2.0+'
 }
 
 
