@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import edu.odu.cs.cwm.documents.urls.URLRewriting;
 import edu.odu.cs.cwm.macroproc.Macro;
@@ -390,6 +392,26 @@ public class MarkdownDocument implements Document {
 			basicHtml = b.parse(new InputSource(new StringReader(htmlText)));
 		} catch (ParserConfigurationException e) {
 			logger.error ("Could not set up XML parser: " + e);
+		} catch (SAXParseException e) {
+			logger.error("Parsing error from Markdown processor: "
+					+ e);
+			if (e.toString().contains("lineNumber:")) {
+				Pattern p = Pattern.compile(
+						"lineNumber: (\\d+); columnNumber: (\\d+);");
+				Matcher m  = p.matcher(e.toString());
+				if (m.find()) {
+					String lNum = m.group(1);
+					int ln = Integer.parseInt(lNum);
+					String cNum = m.group(2);
+					int cn = Integer.parseInt(cNum);
+					String context = Utils.extractContext(htmlText, ln-1, cn-1);
+					logger.error("Generated output was:\n" + context);
+				} else {
+					logger.error("Text was:\n" + htmlText);					
+				}
+			} else {
+				logger.error("Text was:\n" + htmlText);
+			}
 		} catch (SAXException e) {
 			logger.error("Unable to parse output from Markdown processor: ", e);
 			logger.error("Text was:\n" + htmlText);
