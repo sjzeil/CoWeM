@@ -349,7 +349,7 @@
   <xsl:template match="example">
     <xsl:variable name="exampleCounter" 
           select="1 + count(preceding::example)"/>
-    <blockquote class="details" id="example{$exampleCounter}">
+    <blockquote class="example" id="example{$exampleCounter}">
       <div class="exampleTitle">
     <xsl:text>Example </xsl:text>
     <xsl:value-of select="$exampleCounter"/>

@@ -195,7 +195,7 @@
       <xsl:choose>
           <xsl:when test="(local-name(*[1]) = 'a') and (normalize-space(*[1]/preceding-sibling::node()) = '')">
               <xsl:variable name="kind" select="normalize-space(a[1]/@href)"/>
-              <img src="{$baseURL}graphics/{$kind}.png" alt="{$kind}"/>
+              <img src="{$baseURL}graphics/{$kind}-kind.png" alt="{$kind}"/>
               <xsl:text> </xsl:text>
               <xsl:choose>
                  <xsl:when test="normalize-space(a[1]) = ''">

@@ -207,7 +207,7 @@
  
               <xsl:if test="contains($selectors, concat(' ', $kind, ' '))">
                   <p>
-                      <img src="{$baseURL}graphics/{$kind}.png" alt="{$kind}"/>
+                      <img src="{$baseURL}graphics/{$kind}-kind.png" alt="{$kind}"/>
                       <xsl:text> :1:</xsl:text>
                       <xsl:apply-templates select="$item/a[1]/node()"/>
                       <xsl:text> :2:</xsl:text>
