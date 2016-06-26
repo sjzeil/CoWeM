@@ -265,6 +265,10 @@ public class MarkdownDocument implements Document {
 		final String xsltLocation  = "/edu/odu/cs/cwm/templates/";
 		final InputStream macrosInStream = getClass().getResourceAsStream(
 				xsltLocation + defaultMacrosFile);
+		if (macrosInStream == null) {
+		    logger.error("Unable to load " 
+		       + xsltLocation + defaultMacrosFile + " from utils library.");
+		}
 		try {
 			BufferedReader macrosIn = new BufferedReader(
 					new InputStreamReader(macrosInStream, "UTF-8"));

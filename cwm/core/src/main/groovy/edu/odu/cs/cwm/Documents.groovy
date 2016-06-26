@@ -85,22 +85,24 @@ class Documents implements Plugin<Project> {
 				websiteArea.mkdirs();
 			}
 			for (String format: project.documents.formats) {
-				//println "starting format ${format}"
+				println "starting format ${format}"
 
                 MarkdownDocument doc =
                     new MarkdownDocument(project.documents.primaryDocument,
                         project.rootProject.website,
                         docProperties);
                 //doc.setDebugMode(true);
-				String result = doc.transform(format)
-
+				println "transforming doc"
+                String result = doc.transform(format)
+                println "transformed doc"
+                
 				File resultFile = project.file(websiteArea.toString() + '/'
 						+ primaryName + "__" + format + ".html")
                 resultFile.getParentFile().mkdirs()
 				resultFile.withWriter('UTF-8') {
 					it.writeLine(result)
 				}
-				//println "finished format ${format}"
+				println "finished format ${format}"
 			}
 			File indexSource = project.documents.indexTarget;
 			File indexDest = new File(websiteArea, 'index.html')

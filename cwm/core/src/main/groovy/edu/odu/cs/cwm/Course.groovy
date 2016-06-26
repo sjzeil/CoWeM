@@ -15,11 +15,6 @@ class Course {
      */
     URL highlightjsURL = new URL("https://www.cs.odu.edu/~zeil/styles/highlight.js");
     
-    /**
-     *  URL used for slide/paging support (deprecated)
-     */
-    URL slidyURL = new URL("https://www.cs.odu.edu/~zeil/styles/Slidy2");
-
 
     // Course Attributes
 
@@ -78,7 +73,18 @@ class Course {
      */
     String homeURL = "../../Directory/outline/";
 
-    // Build attributes
+
+    
+    /**
+     * The URL at which the root directory of the website will be located.
+     * This is only used when preparing "thin" packages that allow Blackboard
+     * or other Learning Management Systems to link to a course website. 
+     */
+    String baseURL = "";
+
+    
+    
+        // Build attributes
 
     /**
      * A directory on the local machine to which course materials

@@ -2,8 +2,12 @@
  * CWM course website v1 build file
  * Steven J Zeil, Old Dominion Univ.
  */
-
-buildscript { 
+/*
+ * This is the "normal dependency set. But to avoid the need to republish every
+ * every tewak made to the cwm project, I'm not using it for this reference
+ * manual.
+*/ 
+ buildscript { 
      repositories {
          jcenter()
          mavenCentral()
@@ -19,10 +23,29 @@ buildscript {
          classpath 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
      }
 }
-     
-apply plugin: 'org.hidetake.ssh'
+/* */
 
- 
+ /* 
+ buildscript {  // special dependencies uses local cwm project
+     repositories {
+         jcenter()
+         mavenCentral()
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
+         classpath fileTree (dir:'../cwm/core/build/libs/', include: '*.jar')
+         classpath fileTree (dir:'../cwm/utils/build/libs/', include: '*.jar')
+         
+         // But then I have to explicitly copy their dependencies
+         classpath 'org.hidetake:gradle-ssh-plugin:2.2.0+'
+         classpath 'org.pegdown:pegdown:1.6.0+'
+         classpath 'org.slf4j:slf4j-api:1.7.0+'
+         classpath 'net.sf.saxon:saxon-dom:8.7+'
+     
+     }
+}
+*/
+  
 apply plugin: edu.odu.cs.cwm.CourseWebsite
 
 

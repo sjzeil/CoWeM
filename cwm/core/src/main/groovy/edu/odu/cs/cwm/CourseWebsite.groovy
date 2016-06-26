@@ -201,6 +201,31 @@ class CourseWebsite implements Plugin<Project> {
         }
 
 
+        
+        project.task ('bb', dependsOn: 'build') {
+            description 'Package the website for import into Blackboard.'
+            inputs.dir 'build/website'
+            //outputs.file 'build/packages/bb-${project.name}.zip'
+        } << {
+            new BBPackage(project,
+                project.course, 
+                project.file('build')
+                ).generate(project.file('build/packages/bb-${project.name}.zip'), false)
+        }
+
+        
+        project.task ('bbthin', dependsOn: 'build') {
+            description 'Create a Blackboard package that will link back to the website content.'
+            inputs.dir 'build/website'
+            //outputs.file 'build/packages/bbthin-${project.name}.zip'
+        } << {
+            new BBPackage(project,
+                project.course,
+                project.file('build')
+                ).generate(project.file('build/packages/bbthin-${project.name}.zip'), true)
+        }
+
+        
         project.task ('deploy', type: Sync, dependsOn: 'build') {
             description 'Copy course website to a local deployDestination directory.'
             group 'Deployment'
