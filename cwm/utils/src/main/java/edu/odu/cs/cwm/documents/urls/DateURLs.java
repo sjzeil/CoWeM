@@ -4,6 +4,8 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
@@ -46,7 +48,7 @@ public class DateURLs implements SpecialURL {
      * Format used for rendering combined date-time items.
      */
     private static final DateTimeFormatter DT_OUTPUT_FORMAT 
-        = DateTimeFormatter.ofPattern("MM/dd/yyyy, h:mma");
+        = DateTimeFormatter.ofPattern("MM/dd/yyyy, h:mma z");
 
     /**
      * Format used for rendering combined dates.
@@ -60,6 +62,11 @@ public class DateURLs implements SpecialURL {
     private static final DateTimeFormatter T_OUTPUT_FORMAT 
         = DateTimeFormatter.ofPattern("h:mma");
     
+    /**
+     * Format used for rendering combined date-time attributes.
+     */
+    private static final DateTimeFormatter DT_ATTR_FORMAT 
+        = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 
     /**
      * Create a URL rewriter.
@@ -84,11 +91,16 @@ public class DateURLs implements SpecialURL {
 	        String rawDateTime = link.getTextContent();
 	        
 	        String formattedDateTime = "";
+	        String startTimeAttr = "";
+	        String endTimeAttr = "";
+	        ZoneId timeZone = ZoneId.systemDefault();
 	        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 	        try {
 	            LocalDateTime dateTime = LocalDateTime.parse(rawDateTime, 
 	                    formatter);
-	            formattedDateTime = DT_OUTPUT_FORMAT.format(dateTime);
+	            ZonedDateTime zdt  = ZonedDateTime.of(dateTime, timeZone);
+                formattedDateTime = DT_OUTPUT_FORMAT.format(zdt);
+	            startTimeAttr = DT_ATTR_FORMAT.format(zdt);
 	             
 	            TemporalAccessor endDT = processEndDate(link, linkAttr);
 	            if (endDT != null) {
@@ -100,22 +112,37 @@ public class DateURLs implements SpecialURL {
                         if (dt0.equals(dt1)) {
                             formattedEndTime =  T_OUTPUT_FORMAT.format(ldt);
                         } else {
-                            formattedEndTime = DT_OUTPUT_FORMAT.format(ldt);
+                            formattedEndTime = DT_OUTPUT_FORMAT.format(
+                                    ZonedDateTime.of(ldt, timeZone));
                         }
                         formattedDateTime = formattedDateTime + " - " 
                             + formattedEndTime;
+                        endTimeAttr = DT_ATTR_FORMAT.format(
+                                ZonedDateTime.of(ldt, timeZone));
                     } else if (endDT instanceof LocalDate) {
                         String formattedEndTime = D_OUTPUT_FORMAT.format(endDT);
                         formattedDateTime = formattedDateTime + " - " 
                             + formattedEndTime;
+                        LocalDateTime eldt = ((LocalDate) endDT)
+                                .atTime(23, 59, 59);
+                        endTimeAttr = DT_ATTR_FORMAT.format(
+                                ZonedDateTime.of(eldt, timeZone));                        
                     } else if (endDT instanceof LocalTime) {
                         String formattedEndTime = T_OUTPUT_FORMAT.format(endDT);
                         formattedDateTime = formattedDateTime + "-" 
                             + formattedEndTime;
+                        LocalDateTime eldt = dateTime.toLocalDate()
+                                .atTime((LocalTime)endDT);
+                        endTimeAttr = DT_ATTR_FORMAT.format(
+                                ZonedDateTime.of(eldt, timeZone));                        
                     } else {
                         logger.error("Obtained endDate of unhandled type " 
                                        + endDT.getClass().getName());
                     }
+	            } else {
+	                LocalDateTime eldt = dateTime.plusMinutes(1);
+                    endTimeAttr = DT_ATTR_FORMAT.format(
+                            ZonedDateTime.of(eldt,  timeZone));                        
 	            }
 	        } catch (DateTimeParseException ex) {
 	            formattedDateTime = "";
@@ -125,7 +152,10 @@ public class DateURLs implements SpecialURL {
                 try {
                     LocalDate date = LocalDate.parse(rawDateTime, 
                             formatter);
-                    formattedDateTime = D_OUTPUT_FORMAT.format(date);
+                    LocalDateTime dateTime = date.atTime(0,0,0);
+                    ZonedDateTime zdt  = ZonedDateTime.of(dateTime, timeZone);
+                    formattedDateTime = D_OUTPUT_FORMAT.format(zdt);
+                    startTimeAttr = DT_ATTR_FORMAT.format(zdt);
                 
                     TemporalAccessor endDT = processEndDate(link, linkAttr);
                     if (endDT != null) {
@@ -135,20 +165,34 @@ public class DateURLs implements SpecialURL {
                                     D_OUTPUT_FORMAT.format(ldt);
                             formattedDateTime = formattedDateTime + " - " 
                                 + formattedEndTime;
+                            endTimeAttr = DT_ATTR_FORMAT.format(
+                                    ZonedDateTime.of(ldt, timeZone));
                         } else if (endDT instanceof LocalDate) {
                             String formattedEndTime = 
                                     D_OUTPUT_FORMAT.format(endDT);
                             formattedDateTime = formattedDateTime + " - " 
                                 + formattedEndTime;
+                            LocalDateTime eldt = ((LocalDate) endDT)
+                                    .atTime(23, 59, 59);
+                            endTimeAttr = DT_ATTR_FORMAT.format(
+                                    ZonedDateTime.of(eldt, timeZone));                        
                         } else if (endDT instanceof LocalTime) {
                             logger.warn
                                 ("Cannot combine a pure starting date ("
                                     + formattedDateTime
                                     + ") with an ending time.");
+                            LocalDateTime eldt = dateTime.toLocalDate()
+                                    .atTime((LocalTime)endDT);
+                            endTimeAttr = DT_ATTR_FORMAT.format(
+                                    ZonedDateTime.of(eldt, timeZone));                        
                         } else {
                             logger.error("Obtained endDate of unhandled type " 
                                            + endDT.getClass().getName());
                         }
+                    } else {
+                        LocalDateTime eldt = date.atTime(23, 59, 59);
+                        endTimeAttr = DT_ATTR_FORMAT.format(
+                                ZonedDateTime.of(eldt, timeZone));                                                
                     }
                 } catch (DateTimeParseException ex) {
                     formattedDateTime = "";
@@ -193,9 +237,17 @@ public class DateURLs implements SpecialURL {
 	            NamedNodeMap attrs = link.getAttributes();
 	            for (int i = 0; i < attrs.getLength(); i++) {
 	              Attr attr2 = (Attr) doc.importNode(attrs.item(i), true);
-	              span.getAttributes().setNamedItem(attr2);
+	              if (!attr2.getName().equals("href")) {
+	                  span.getAttributes().setNamedItem(attr2);
+	              }
 	            }
 	            span.setAttribute("class", "date");
+	            if (startTimeAttr.length() > 0) {
+	                span.setAttribute("startsAt", startTimeAttr);
+	            }
+                if (endTimeAttr.length() > 0) {
+                    span.setAttribute("endsAt", endTimeAttr);
+                }
 	            span.appendChild(doc.createTextNode(formattedDateTime));
 	            link.getParentNode().replaceChild(span, link);
 	            return true;

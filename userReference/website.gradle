@@ -125,6 +125,7 @@ course {
 	homeURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/Directory/outline/'
 	deployDestination = '/home/zeil/public_html/temp/cwm/'
 	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/public_html/cwm/'
+        baseURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/'
 }
 
  

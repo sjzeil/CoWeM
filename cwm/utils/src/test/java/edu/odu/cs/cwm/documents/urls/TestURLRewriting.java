@@ -5,6 +5,7 @@ package edu.odu.cs.cwm.documents.urls;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -373,17 +374,25 @@ public class TestURLRewriting {
         assertNotNull (li1);
         NodeList links = li1.getElementsByTagName("a");
         assertEquals (0, links.getLength());
-        Node date1 = li1.getElementsByTagName("span").item(0);
+        Element date1 = (Element) li1.getElementsByTagName("span").item(0);
         assertNotNull(date1);
-        assertEquals("01/02/2016, 7:30AM", date1.getTextContent());
+        assertEquals("01/02/2016, 7:30AM", getFormattedDate(date1));
+        String startAttr = getFormattedDate(date1, "startsAt");
+        assertEquals(startAttr, "2016-01-02 07:30:00");
+        String endAttr = getFormattedDate(date1, "endsAt");
+        assertEquals(endAttr, "2016-01-02 07:31:00");
         
         Element li2 = getElementById(basicHtml, "li2");
         assertNotNull (li2);
         links = li2.getElementsByTagName("a");
         assertEquals (0, links.getLength());
-        Node date2 = li2.getElementsByTagName("span").item(0);
+        Element date2 = (Element) li2.getElementsByTagName("span").item(0);
         assertNotNull(date2);
         assertEquals("01/03/2016", date2.getTextContent());
+        startAttr = getFormattedDate(date2, "startsAt");
+        assertEquals(startAttr, "2016-01-03 00:00:00");
+        endAttr = getFormattedDate(date2, "endsAt");
+        assertEquals(endAttr, "2016-01-03 23:59:59");
         
         Element li3 = getElementById(basicHtml, "li3");
         assertNotNull (li3);
@@ -428,17 +437,27 @@ public class TestURLRewriting {
         assertNotNull (li1);
         NodeList links = li1.getElementsByTagName("a");
         assertEquals (0, links.getLength());
-        Node date1 = li1.getElementsByTagName("span").item(0);
+        Element date1 = (Element) li1.getElementsByTagName("span").item(0);
         assertNotNull(date1);
-        assertEquals("01/02/2016, 7:30AM - 01/05/2016, 8:50AM", date1.getTextContent());
+        String formattedDT = date1.getTextContent();
+        assertTrue (formattedDT.startsWith("01/02/2016, 7:30AM"));
+        assertTrue (formattedDT.contains("- 01/05/2016, 8:50AM"));
+        String startAttr = getFormattedDate(date1, "startsAt");
+        assertEquals(startAttr, "2016-01-02 07:30:00");
+        String endAttr = getFormattedDate(date1, "endsAt");
+        assertEquals(endAttr, "2016-01-05 08:50:00");
         
         Element li2 = getElementById(basicHtml, "li2");
         assertNotNull (li2);
         links = li2.getElementsByTagName("a");
         assertEquals (0, links.getLength());
-        Node date2 = li2.getElementsByTagName("span").item(0);
+        Element date2 = (Element) li2.getElementsByTagName("span").item(0);
         assertNotNull(date2);
         assertEquals("01/03/2016 - 01/04/2016", date2.getTextContent());
+        startAttr = getFormattedDate(date2, "startsAt");
+        assertEquals(startAttr, "2016-01-03 00:00:00");
+        endAttr = getFormattedDate(date2, "endsAt");
+        assertEquals(endAttr, "2016-01-04 23:59:59");
         
         Element li3 = getElementById(basicHtml, "li3");
         assertNotNull (li3);
@@ -450,6 +469,21 @@ public class TestURLRewriting {
     }
     
     
+    String getFormattedDate(Element el) {
+        String dateContent = el.getTextContent();
+        // Strip off last word, assumed to be the time zone, because this
+        // depends upon where and when the test is being run
+        dateContent = dateContent.substring(0, dateContent.lastIndexOf(' '));
+        return dateContent;
+    }
+
+    String getFormattedDate(Element el, String attributeName) {
+        String dateContent = el.getAttribute(attributeName);
+        // Strip off last word, assumed to be the time zone, because this
+        // depends upon where and when the test is being run
+        dateContent = dateContent.substring(0, dateContent.lastIndexOf(' '));
+        return dateContent;
+    }
 
     @Test
     public void testDueDatesAndTimes() 
@@ -484,17 +518,26 @@ public class TestURLRewriting {
         assertNotNull (li1);
         NodeList links = li1.getElementsByTagName("a");
         assertEquals (0, links.getLength());
-        Node date1 = li1.getElementsByTagName("span").item(0);
+        Element date1 = (Element)li1.getElementsByTagName("span").item(0);
         assertNotNull(date1);
-        assertEquals("Due: 01/02/2016, 7:30AM", date1.getTextContent());
+        String dateContent = getFormattedDate(date1);
+        assertEquals("Due: 01/02/2016, 7:30AM", dateContent);
+        String startAttr = getFormattedDate(date1, "startsAt");
+        assertEquals(startAttr, "2016-01-02 07:30:00");
+        String endAttr = getFormattedDate(date1, "endsAt");
+        assertEquals(endAttr, "2016-01-02 07:31:00");
         
         Element li2 = getElementById(basicHtml, "li2");
         assertNotNull (li2);
         links = li2.getElementsByTagName("a");
         assertEquals (0, links.getLength());
-        Node date2 = li2.getElementsByTagName("span").item(0);
+        Element date2 = (Element) li2.getElementsByTagName("span").item(0);
         assertNotNull(date2);
         assertEquals("Due: 01/03/2016", date2.getTextContent());
+        startAttr = getFormattedDate(date2, "startsAt");
+        assertEquals(startAttr, "2016-01-03 23:58:59");
+        endAttr = getFormattedDate(date2, "endsAt");
+        assertEquals(endAttr, "2016-01-03 23:59:59");
         
         Element li3 = getElementById(basicHtml, "li3");
         assertNotNull (li3);

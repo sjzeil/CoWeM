@@ -1,15 +1,12 @@
 package edu.odu.cs.cwm.documents.urls;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +14,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
-import edu.odu.cs.cwm.documents.MarkdownDocument;
 
 /**
  * Implements URL rewriting in course documents.
@@ -42,6 +36,12 @@ public class DueDateURLs implements SpecialURL {
     private static Logger logger 
        = LoggerFactory.getLogger(DueDateURLs.class);
     
+    /**
+     * Format used for rendering combined date-time attributes.
+     */
+    private static final DateTimeFormatter DT_ATTR_FORMAT 
+        = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+
 
     /**
      * Create a URL rewriter.
@@ -66,14 +66,22 @@ public class DueDateURLs implements SpecialURL {
 	        String rawDateTime = link.getTextContent();
 	        
 	        String formattedDateTime = "";
+	        String startTimeAttr = "";
+	        String endTimeAttr = "";
+	        ZoneId timeZone = ZoneId.systemDefault();
+
 	        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 	        try {
 	            LocalDateTime dateTime = LocalDateTime.parse(rawDateTime, 
 	                    formatter);
 	            DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(
-	                    "MM/dd/yyyy, h:mma");
-	            formattedDateTime = "Due: " + outputFormat.format(dateTime);
-	                    
+	                    "MM/dd/yyyy, h:mma z");
+	            ZonedDateTime zdt  = ZonedDateTime.of(dateTime, timeZone);
+	            formattedDateTime = "Due: " + outputFormat.format(zdt);
+                startTimeAttr = DT_ATTR_FORMAT.format(zdt);
+	            ZonedDateTime zedt = zdt.plusMinutes(1);
+	            endTimeAttr = DT_ATTR_FORMAT.format(zedt);
+                
 	        } catch (DateTimeParseException ex) {
 	            formattedDateTime = "";
 	        }
@@ -86,6 +94,11 @@ public class DueDateURLs implements SpecialURL {
                             DateTimeFormatter.ofPattern(
                                "MM/dd/yyyy");
                     formattedDateTime = "Due: " + outputFormat.format(date);
+                    LocalDateTime dateTime = date.atTime(23,58,59);
+                    ZonedDateTime zdt  = ZonedDateTime.of(dateTime, timeZone);
+                    startTimeAttr = DT_ATTR_FORMAT.format(zdt);
+                    ZonedDateTime zedt = zdt.plusMinutes(1);
+                    endTimeAttr = DT_ATTR_FORMAT.format(zedt);
                             
                 } catch (DateTimeParseException ex) {
                     formattedDateTime = "";
@@ -108,15 +121,25 @@ public class DueDateURLs implements SpecialURL {
 	        if (formattedDateTime.length() > 0) {
 	            Document doc = link.getOwnerDocument();
 	            Element span = doc.createElement("span");
-	            NamedNodeMap attrs = link.getAttributes();
-	            for (int i = 0; i < attrs.getLength(); i++) {
-	              Attr attr2 = (Attr) doc.importNode(attrs.item(i), true);
-	              span.getAttributes().setNamedItem(attr2);
-	            }
-	            span.setAttribute("class", "date");
+                NamedNodeMap attrs = link.getAttributes();
+                for (int i = 0; i < attrs.getLength(); i++) {
+                  Attr attr2 = (Attr) doc.importNode(attrs.item(i), true);
+                  if (!attr2.getName().equals("href")) {
+                      span.getAttributes().setNamedItem(attr2);
+                  }
+                }
+                span.setAttribute("class", "date");
+                if (startTimeAttr.length() > 0) {
+                    span.setAttribute("startsAt", startTimeAttr);
+                }
+                if (endTimeAttr.length() > 0) {
+                    span.setAttribute("endsAt", endTimeAttr);
+                }
 	            span.appendChild(doc.createTextNode(formattedDateTime));
 	            link.getParentNode().replaceChild(span, link);
 	            return true;
+	        } else {
+	            logger.warn("Unable to parse due date: " + rawDateTime);
 	        }
 	    }
 	    return false;
