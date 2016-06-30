@@ -15,14 +15,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream;
 import java.io.StringReader
 import java.io.StringWriter;
+import java.nio.file.Files
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipOutputStream
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -350,29 +355,34 @@ class BBPackage {
     {
         File bbDir = project.file("build/cwm/bb")
         Path bbBase = bbDir.toPath();
-        Path zipfile = destination.toPath;
+        ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(destination));
+        zout.close();
+        Path zipfile = destination.toPath();
+        println ("Zipping to " + zipfile)
         Queue<File> q = new LinkedList<File>();
         q.push(bbDir);
-        FileSystem zipfs;
-        try {
-            zipfs = FileSystems.newFileSystem(zipfile, null);
-            while (!q.isEmpty()) {
-                File dir = q.remove()
-                for (File child : dir.listFiles()) {
-                    Path relChild = bbBase.relativize(child.toPath());
-                    println ("Mapping " + child + " to " + relChild)
-                    if (child.isDirectory()) {
-                        q.add(child);
-                        Path directory = zipfs.getPath("/", relChild.toString())
-                        Files.createDirectories(directory)
-                    } else {
-                        Path childLoc = zipfs.getPath("/", relChild.toString())
-                        Files.copy(child, childLoc)
-                    }
+        FileSystem zipfs = FileSystems.newFileSystem(zipfile, null);
+        if (zipfs == null) {
+            logger.error ("Could not create zip file system at " + zipfile)
+        }
+        while (!q.isEmpty()) {
+            File dir = q.remove()
+            println ("looking at dir " + dir)
+            for (File child : dir.listFiles()) {
+                Path relChild = bbBase.relativize(child.toPath());
+                println ("Mapping " + child + " to " + relChild)
+                if (child.isDirectory()) {
+                    q.add(child);
+                    Path directory = zipfs.getPath("/", relChild.toString())
+                    println ("create zip dir " + directory)
+                    Files.createDirectories(directory)
+                } else {
+                    Path childLoc = zipfs.getPath("/", relChild.toString())
+                    println ("Copying " + child + " to zip " + childLoc)
+                    Files.copy(child.toPath(), childLoc)
                 }
             }
-        } finally {
-            zipfs.close();
         }
+        zipfs.close()
     }
 }

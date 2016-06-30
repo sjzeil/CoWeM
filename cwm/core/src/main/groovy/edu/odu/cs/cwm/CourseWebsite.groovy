@@ -210,7 +210,7 @@ class CourseWebsite implements Plugin<Project> {
             new BBPackage(project,
                 project.course, 
                 project.file('build')
-                ).generate(project.file('build/packages/bb-${project.name}.zip'), false)
+                ).generate(project.file('build/packages/bb-' + project.name + '.zip'), false)
         }
 
         
@@ -222,7 +222,7 @@ class CourseWebsite implements Plugin<Project> {
             new BBPackage(project,
                 project.course,
                 project.file('build')
-                ).generate(project.file('build/packages/bbthin-${project.name}.zip'), true)
+                ).generate(project.file('build/packages/bbthin-' + project.name + '.zip'), true)
         }
 
         
