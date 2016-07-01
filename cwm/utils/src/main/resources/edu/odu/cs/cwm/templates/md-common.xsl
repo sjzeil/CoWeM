@@ -401,38 +401,47 @@
           </script>
           <table class="slideshowcontrol">
              <tr class="slideshowcontrol">
-               <td class="slideshowcontrol">
-                    <a class="slideshowcontrol" 
+               <td class="slideshowcontrolLeft">
+                   <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol" 
                           onclick="sshow2start(sshowControl{$slideshowNum})" 
                           title="start">
-                        <xsl:text>&#x25C0;&#x25C0;</xsl:text>
-                    </a>
-                    <span style='minWidth: 2ex;'>&#160;</span>
-                    <a class="slideshowcontrol" 
-                        onclick="sshowback(sshowControl{$slideshowNum})" 
-                        title="previous">
-                      <xsl:text>&#x25C0;</xsl:text>
-                   </a>
+                          <img src="graphics:small-first.png" alt="first"/>
+                       </a>
+                       <span>&#160;</span>
+                       <a class="slideshowcontrol"
+                          onclick="sshowback(sshowControl{$slideshowNum})"
+                          title="previous">
+                          <img src="graphics:small-prev.png" alt="prev"/>
+                       </a>
+                   </xsl:if>
                </td>
-               <td id="slideshowposition{$slideshowNum}" class="slideshowcontrol">
-                  <xsl:text>1 of </xsl:text>
-                  <xsl:value-of select="$slideCount"/>
+               <td class="slideshowcontrolMiddle">
+                  <xsl:if test="$slideCount != 0">
+                     <span id="slideshowposition{$slideshowNum}"> 
+                         <xsl:text>1 of </xsl:text>
+                         <xsl:value-of select="$slideCount"/>
+                     </span>
+                  </xsl:if>
                </td>
             
-               <td class="slideshowcontrol">
-                   <a class="slideshowcontrol" 
-                      onclick="sshowforward(sshowControl{$slideshowNum})" 
-                      title="next">
-                      <xsl:text>&#x25B6;</xsl:text>
-                   </a>
-                   <span style='minWidth: 2ex;'>&#160;</span>
-                   <a class="slideshowcontrol" 
+               <td class="slideshowcontrolRight">
+                  <xsl:if test="$slideCount != 0">
+                       <a class="slideshowcontrol" 
+                          onclick="sshowforward(sshowControl{$slideshowNum})" 
+                          title="next">
+                          <img src="graphics:small-next.png" alt="next"/>
+                       </a>
+                       <span>&#160;</span>
+                       <a class="slideshowcontrol" 
                           onclick="sshow2end(sshowControl{$slideshowNum})" 
                           title="last">
-                      <xsl:text>&#x25B6;&#x25B6;</xsl:text>
-                   </a>
+                          <img src="graphics:small-last.png" alt="last"/>
+                       </a>
+                   </xsl:if>
                </td>
              </tr>
+          
           </table>
        </div>
     </div>

@@ -5,10 +5,10 @@ function toggleDisplay (sectionName)
     if (theDiv) {
         if (theDiv.style.display == 'none') {
             theDiv.style.display = "block";
-	    theButton.value = "-";
+        theButton.value = "-";
         } else {
             theDiv.style.display = "none";
-	    theButton.value = "+";
+        theButton.value = "+";
      }
   }
 };
@@ -30,6 +30,7 @@ function gotoSlide (control, slideNumber) {
     --newDisplayed;
     var oldSlideID = "slide-" + control.showNumber + "-" + oldDisplayed;
     var newSlideID = "slide-" + control.showNumber + "-" + newDisplayed;
+    //alert (oldSlideID + " => " + newSlideID);
     var oldSlide = document.getElementById(oldSlideID);
     var newSlide = document.getElementById(newSlideID);
     oldSlide.style.display = "none";
@@ -76,7 +77,9 @@ function collectID (hashTarget, page) {
 
 function gotoHash (control, hashTarget) {
     page = hashTargets[hashTarget];
-    gotoSlide (control, page+1);
+    if (typeof page != 'undefined') {
+        gotoSlide (control, page+1);
+    }
 }
 
 
@@ -100,13 +103,6 @@ document.addEventListener("keydown", doKeyPressed, false);
 
 function slidesStart() {
     hashHasChanged();
-    var docBody = document.getElementsByTagName("body")[0];
-    //alert ("screen.availWidth = " + screen.availWidth);
-    //alert ("docBody = " + docBody);
-    docBody.style.width = screen.availWidth + "px";
-    docBody.style.maxWidth = screen.availWidth + "px";
-    //alert ("docBody.style.width = " + docBody.style.width);
-    //alert ("docBody.style.maxWidth = " + docBody.style.maxWidth);
 }
 
 window.addEventListener("load", slidesStart, false);
