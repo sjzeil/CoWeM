@@ -115,17 +115,18 @@ apply plugin: edu.odu.cs.cwm.CourseWebsite
  
 
 course {
-	courseName        = 'CS 000'
-	courseTitle       = 'Course Website Management Tools'
+	courseName        = 'CWM 101'
+	courseTitle       = 'Course Website Management Suite'
 	semester          = '2016'
 	sem               = 'latest'
 	instructor        = 'Steven J Zeil'
 	email             = 'zeil@cs.odu.edu'
-	copyright         = '2013-2016, Old Dominion Univ.'
+	copyright         = '2016, Old Dominion Univ.'
 	homeURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/Directory/outline/'
 	deployDestination = '/home/zeil/public_html/temp/cwm/'
 	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/public_html/cwm/'
-        baseURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/'
+    baseURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/'
+    bbContentURL      = 'https://www.blackboard.odu.edu/bbcswebdav/courses/201530_SUMMER_CS899_30305/websiteContent/'
 }
 
  

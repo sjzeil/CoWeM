@@ -192,7 +192,7 @@ class CourseWebsite implements Plugin<Project> {
             description 'Prepare a zip file of the website.'
             group 'Packaging'
             from 'build/website'
-            into '.'
+            //into '.'
             destinationDir = project.file('build/packages')
             archiveName 'website.zip'
             dirMode 0775

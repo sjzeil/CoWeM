@@ -20,6 +20,7 @@ import java.io.IOException
 import java.io.InputStream;
 import java.io.StringReader
 import java.io.StringWriter;
+import java.net.MalformedURLException
 import java.nio.file.Files
 import java.nio.file.FileSystem
 import java.nio.file.FileSystems
@@ -121,15 +122,44 @@ class BBPackage {
             }
             println "done with thin copy"
         } else {
+            def bbContentURL = project.course.bbContentURL
+            if (bbContentURL.equals('')) {
+                logger.error('Cannot prepare a Blackboard package because\n'
+                    + '  bbContentURL has not been specified in the course properties.')
+                throw new MalformedURLException('course properties are missing bbContentURL');
+            } else if (bbContentURL.matches('.*/[^/.][^/.]*[.][^/.][^./]*$')) {
+                // If the URL ends with a file name, trim it to get the
+                // directory URL
+                int k = bbContentURL.lastIndexOf('/')
+                bbContentURL = bbContentURL.substring(0, k+1);
+            } else if (!bbContentURL.endsWith('/')) {
+                bbContentURL = bbContentURL + '/'
+            }
+            String middleContent = "bbcswebdav/courses/" 
+            int relPathStart = bbContentURL.indexOf(middleContent)
+            if (relPathStart >= 0) {
+                relPathStart = bbContentURL.indexOf('/', 
+                    relPathStart + middleContent.length() + 1);
+            }
+            if (relPathStart < 0) {
+                logger.error('bbContentURL (' + bbContentURL 
+                    + ') does not appear to point to a Blackboard course content collection');
+                throw new MalformedURLException('Invalid bbContentURL');
+
+            }
+            String relPath = bbContentURL.substring(relPathStart)
+            println ("relPath=" + relPath)
             webcontentAbs = tempAreaAbs.toPath().resolve(
                     'csfiles/home_dir/webcontent').toFile()
-            webcontentAbs.mkdirs()
+            File courseContentAbs = tempAreaAbs.toPath().resolve(
+                    'csfiles/home_dir/webcontent/' + relPath).toFile()
+            courseContentAbs.mkdirs()
             def websiteFiles = project.fileTree(
                     dir: 'build/website/', include: '**/*')
 
             project.copy {
                 from websiteFiles
-                into webcontentAbs
+                into courseContentAbs
             }
             println "done with fat copy"
         }
@@ -367,18 +397,18 @@ class BBPackage {
         }
         while (!q.isEmpty()) {
             File dir = q.remove()
-            println ("looking at dir " + dir)
+            //println ("looking at dir " + dir)
             for (File child : dir.listFiles()) {
                 Path relChild = bbBase.relativize(child.toPath());
-                println ("Mapping " + child + " to " + relChild)
+                //println ("Mapping " + child + " to " + relChild)
                 if (child.isDirectory()) {
                     q.add(child);
                     Path directory = zipfs.getPath("/", relChild.toString())
-                    println ("create zip dir " + directory)
+                    //println ("create zip dir " + directory)
                     Files.createDirectories(directory)
                 } else {
                     Path childLoc = zipfs.getPath("/", relChild.toString())
-                    println ("Copying " + child + " to zip " + childLoc)
+                    //println ("Copying " + child + " to zip " + childLoc)
                     Files.copy(child.toPath(), childLoc)
                 }
             }
