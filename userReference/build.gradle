@@ -1,0 +1,132 @@
+/*
+ * CWM course website v1 build file
+ * Steven J Zeil, Old Dominion Univ.
+ */
+/*
+ * This is the "normal dependency set. But to avoid the need to republish every
+ * every tewak made to the cwm project, I'm not using it for this reference
+ * manual.
+*/ 
+ buildscript { 
+     repositories {
+         jcenter()
+         mavenCentral()
+ 
+         // Use my own CS dept repo
+         ivy {
+             url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+         }
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
+         classpath 'edu.odu.cs.zeil:cwm-plugin:1.0+'
+     }
+}
+/* */
+
+ /* 
+ buildscript {  // special dependencies uses local cwm project
+     repositories {
+         jcenter()
+         mavenCentral()
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
+         classpath fileTree (dir:'../cwm/core/build/libs/', include: '*.jar')
+         classpath fileTree (dir:'../cwm/utils/build/libs/', include: '*.jar')
+         
+         // But then I have to explicitly copy their dependencies
+         classpath 'org.hidetake:gradle-ssh-plugin:2.2.0+'
+         classpath 'org.pegdown:pegdown:1.6.0+'
+         classpath 'org.slf4j:slf4j-api:1.7.0+'
+         classpath 'net.sf.saxon:saxon-dom:8.7+'
+     
+     }
+}
+*/
+  
+apply plugin: edu.odu.cs.cwm.CourseWebsite
+
+
+/*
+ * Tasks for course website construction:
+ *
+ * setup: copies core files & prepares directories as necessary
+ *
+ * build: collects document metadata
+ *        processes each document set
+ *        processes course outline
+ *
+ * packages: (optional) prepare course cartridges
+ *              available formats are imscc, bb, bbthin, canvas, canvasthin, epub, mobi
+ *
+ * deploy: (optional) copy website to local destination
+ *
+ * publish: (optional) copy website to remote destination (via rsync or scp)
+ *
+ * -----------------------------------------------------------------------------
+ * Directory structure
+ * 
+ * course root/
+ * |
+ * |- course.properties
+ * |
+ * |- Directory/    website navigation pages
+ * |--|
+ * |--|- outline/   course topics/outline description (required)
+ * |--|- nav/       navigation bar shared by all Directory pages
+ * |--|- .../       Other navigational document sets, e.g., policies/, library/, grades/
+ * |
+ * |- Public/    public document sets
+ * |--|
+ * |--|- syllabus/ course syllabus
+ * |--|- .../      other public documetn sets (typically, slides & lecture notes)
+ * |
+ * |- Protected/  document sets restricted to certain readers
+ * |--|- Assts/     assignments
+ * |--|- .../       other protected document sets (e.g., semester projects)
+ * |
+ * |--|- graphics/  Course-specific files that override defaults graphics used for
+ * |                  navigation, callouts, backgrounds, etc.  
+ * |--|- styles/  Course-specific overrides for .css and .js defaults
+ * |
+ * |- build/ All automatically constructed content goes here. This entire directory
+ * |--|      may be deleted without loss of anything but time.   
+ * |--|- cwm/   Copies of CWM core files
+ * |--|--|
+ * |--|--|- graphics/  Default graphics for navigation, callouts, backgrounds, etc.
+ * |--|--|
+ * |--|--|- styles/    Default css & js files
+ * |--|--|
+ * |--|--|- templates/ XSL and other templates used to process web content
+ * |--|         
+ * |--|- website/  generated website
+ * |--|--|
+ * |--|--|- index.html
+ * |--|--|- Directory/  website navigation pages
+ * |--|--|- Public/     public document sets
+ * |--|--|- Protected/  document sets restricted to certain readers
+ * |--|--|- graphics/    
+ * |--|--|- styles/
+ * |--|         
+ * |--|- cartridges/  generated cartridges
+ */
+ 
+
+course {
+	courseName        = 'CWM 101'
+	courseTitle       = 'Course Website Management Suite'
+	semester          = '2016'
+	sem               = 'latest'
+	instructor        = 'Steven J Zeil'
+	email             = 'zeil@cs.odu.edu'
+	copyright         = '2016, Old Dominion Univ.'
+	homeURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/Directory/outline/'
+	deployDestination = '/home/zeil/public_html/temp/cwm/'
+	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/public_html/cwm/'
+    baseURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/'
+}
+
+ 
+
+ 

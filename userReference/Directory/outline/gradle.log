@@ -1,0 +1,42 @@
+Download https://secweb.cs.odu.edu/~zeil/ivyrepo/edu.odu.cs.zeil/cwm-utils/1.0-SNAPSHOT/ivy-1.0-SNAPSHOT.xml
+Download https://secweb.cs.odu.edu/~zeil/ivyrepo/edu.odu.cs.zeil/cwm-utils/1.0-SNAPSHOT/cwm-utils-1.0-SNAPSHOT.jar
+:buildSrc:compileJava UP-TO-DATE
+:buildSrc:compileGroovy
+:buildSrc:processResources UP-TO-DATE
+:buildSrc:classes
+:buildSrc:jar UP-TO-DATE
+:buildSrc:assemble UP-TO-DATE
+:buildSrc:compileTestJava UP-TO-DATE
+:buildSrc:compileTestGroovy UP-TO-DATE
+:buildSrc:processTestResources UP-TO-DATE
+:buildSrc:testClasses UP-TO-DATE
+:buildSrc:test UP-TO-DATE
+:buildSrc:check UP-TO-DATE
+:buildSrc:build UP-TO-DATE
+Customizing document set
+Download https://secweb.cs.odu.edu/~zeil/ivyrepo/edu.odu.cs.zeil/cwm-core/1.0-SNAPSHOT/ivy-1.0-SNAPSHOT.xml
+Download https://secweb.cs.odu.edu/~zeil/ivyrepo/edu.odu.cs.zeil/cwm-core/1.0-SNAPSHOT/cwm-core-1.0-SNAPSHOT.jar
+:setup_cwm UP-TO-DATE
+:setup_copy_website_defaults UP-TO-DATE
+:setup_copy_website_overrides
+:setup_website
+:setup
+:Directory:outline:doc_setup UP-TO-DATE
+:Directory:outline:doc_Listings UP-TO-DATE
+:Directory:outline:doc_mainDoc
+starting format modules
+finished format modules
+starting format html
+Could not find a replacement for URL shorthand: doc:directories
+Could not find a replacement for URL shorthand: doc:usingGradle
+Could not find a replacement for URL shorthand: doc:courseConfiguration
+Could not find a replacement for URL shorthand: doc:urlShortcuts
+Could not find a replacement for URL shorthand: doc:configuringDocumentSets
+Could not find a replacement for URL shorthand: doc:outlineAndNavigation
+finished format html
+:Directory:outline:doc_secondaryDocs UP-TO-DATE
+:Directory:outline:build
+
+BUILD SUCCESSFUL
+
+Total time: 3.254 secs

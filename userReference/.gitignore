@@ -1,0 +1,4 @@
+/build/
+/.settings/
+**/gradle.log
+/gradle-app.setting
