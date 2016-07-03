@@ -14,6 +14,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -153,10 +155,12 @@ public class MarkdownDocument implements Document {
 		}
 	    sourceDirectory = input.getParentFile();
 		initProperties (properties0, baseName);
+		properties.setProperty("docModDate", getModificationDate(input));
 	}
 
 	
-	/**
+
+    /**
      * Create a document from the given string.  "Pretend" that the input
      * string was actually read from a file.
      *  
@@ -616,6 +620,25 @@ public class MarkdownDocument implements Document {
 	        debugMode = "no";
 	    }
 	}
-	
+
+
+	/**
+	 * Estimate the date on which this document was last modified.
+	 * 
+	 * 1. If the file is within a Git repository and unchanged, use
+	 *    the date of the last commit.
+	 * 2. If the file is not within a Git repository or is changed,
+	 *    use the modification date of the file.
+	 * @param input file to be checked
+	 * @return  Data of last modification
+	 */
+	private String getModificationDate(File input) {
+	    // TODO Add code to check Git repository.
+	    Date lastModified = new Date(input.lastModified()); 
+	    SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");  
+	    return formatter.format(lastModified);
+	}
+
+
 
 }

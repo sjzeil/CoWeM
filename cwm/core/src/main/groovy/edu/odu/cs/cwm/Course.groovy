@@ -82,18 +82,15 @@ class Course {
      */
     String baseURL = "";
 
-
+    
+    
     /**
      * Used for (fat) Blackboard packaging only, this is
-     * the URL of a folder or file within a folder in a Blackboard course
-     * content collection that will serve as root of the
-     * website when imported to Blackboard.  These will always have the 
-     * form
-     * 
-     *     https://serverAddress/bbcswebdav/courses/name-of-course/...
-     * 
+     * the label added to the Bb navigation menu for the area
+     * containing all of the navigation links.
      */
-    String bbContentURL = "";
+    String bbContentLabel = "_";  // Has to be there, but we'd prefer it to
+                                  //  be easily ignored.
 
     
         // Build attributes

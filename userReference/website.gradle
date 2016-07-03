@@ -126,7 +126,6 @@ course {
 	deployDestination = '/home/zeil/public_html/temp/cwm/'
 	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/public_html/cwm/'
     baseURL           = 'http://www.cs.odu.edu/~zeil/temp/cwm/'
-    bbContentURL      = 'https://www.blackboard.odu.edu/bbcswebdav/courses/201530_SUMMER_CS899_30305/websiteContent/'
 }
 
  

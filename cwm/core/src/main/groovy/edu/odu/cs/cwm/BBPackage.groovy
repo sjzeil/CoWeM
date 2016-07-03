@@ -120,65 +120,28 @@ class BBPackage {
             placeHolder.withWriter('UTF-8') {
                 it.writeLine('foo')
             }
-            println "done with thin copy"
         } else {
-            def bbContentURL = project.course.bbContentURL
-            if (bbContentURL.equals('')) {
-                logger.error('Cannot prepare a Blackboard package because\n'
-                    + '  bbContentURL has not been specified in the course properties.')
-                throw new MalformedURLException('course properties are missing bbContentURL');
-            } else if (bbContentURL.matches('.*/[^/.][^/.]*[.][^/.][^./]*$')) {
-                // If the URL ends with a file name, trim it to get the
-                // directory URL
-                int k = bbContentURL.lastIndexOf('/')
-                bbContentURL = bbContentURL.substring(0, k+1);
-            } else if (!bbContentURL.endsWith('/')) {
-                bbContentURL = bbContentURL + '/'
-            }
-            String middleContent = "bbcswebdav/courses/" 
-            int relPathStart = bbContentURL.indexOf(middleContent)
-            if (relPathStart >= 0) {
-                relPathStart = bbContentURL.indexOf('/', 
-                    relPathStart + middleContent.length() + 1);
-            }
-            if (relPathStart < 0) {
-                logger.error('bbContentURL (' + bbContentURL 
-                    + ') does not appear to point to a Blackboard course content collection');
-                throw new MalformedURLException('Invalid bbContentURL');
-
-            }
-            String relPath = bbContentURL.substring(relPathStart)
-            println ("relPath=" + relPath)
             webcontentAbs = tempAreaAbs.toPath().resolve(
                     'csfiles/home_dir/webcontent').toFile()
-            File courseContentAbs = tempAreaAbs.toPath().resolve(
-                    'csfiles/home_dir/webcontent/' + relPath).toFile()
-            courseContentAbs.mkdirs()
+            webcontentAbs.mkdirs()
             def websiteFiles = project.fileTree(
                     dir: 'build/website/', include: '**/*')
 
             project.copy {
                 from websiteFiles
-                into courseContentAbs
+                into webcontentAbs
             }
-            println "done with fat copy"
         }
     }
 
     void buildManifest (boolean isThin)
     {
-        println ("building manifest")
         Properties docProperties = new Properties()
         docProperties.put('_' + project.rootProject.course.delivery, '1')
         project.rootProject.course.properties.each { prop, value ->
             docProperties.put(prop, value.toString())
         }
-        println ("project is " + project.name)
-        /*
-         project.documents.properties.each { prop, value ->
-         docProperties.put(prop, value.toString())
-         }
-         */
+
         String primaryName = 'outline';
         docProperties.put ("_bb", "1")
         MarkdownDocument doc =
@@ -186,8 +149,6 @@ class BBPackage {
                 project.rootProject.website, docProperties);
         doc.setDebugMode(true);
         String result = doc.transform("modules")
-        println("bb outline is\n" + result)
-        println("Next: combine with nav")
 
         int bodyPos = result.indexOf("<body")
         int lastTagPos = result.indexOf("</html")
@@ -227,9 +188,6 @@ class BBPackage {
         outlineDoc.append("\n</files>\n")
         outlineDoc.append("\n</imscc>\n")
 
-        println("extended bb outline is\n" + outlineDoc)
-
-        println("Next: apply manifest transform")
         transformManifest (outlineDoc.toString(), isThin)
 
 
@@ -241,11 +199,9 @@ class BBPackage {
     {
         org.w3c.dom.Document result = null;
         try {
-            println ("parsing, " + xml.substring(0,100))
             DocumentBuilder b =
                     DocumentBuilderFactory.newInstance().newDocumentBuilder();
             result = b.parse(new InputSource(new StringReader(xml)));
-            println ("parsed, " + result.documentElement.tagName)
         } catch (ParserConfigurationException e) {
             logger.error ("Could not set up XML parser: " + e);
         } catch (SAXParseException e) {
@@ -283,10 +239,8 @@ class BBPackage {
     {
         String transformName = (isThin) ? "bbthinManifest.xsl": "bbManifest.xsl"
 
-        println ("About to transform " + outlineXML.substring(0,100) + "\nwith " + transformName)
         org.w3c.dom.Document outlineDoc = parseXML(outlineXML);
-        println ("root is " + outlineDoc.getDocumentElement().tagName)
-
+        
         final String xsltLocation  = "/edu/odu/cs/cwm/templates/";
         final InputStream outlineConversionSheet =
                 MarkdownDocument.class.getResourceAsStream(xsltLocation + transformName);
@@ -298,13 +252,7 @@ class BBPackage {
 
         final InputStream oCSheet =
                 MarkdownDocument.class.getResourceAsStream(xsltLocation + transformName);
-        BufferedReader in0 = new BufferedReader(new InputStreamReader(oCSheet))
-        println "xsl source is\n" + in0.readLine();
-        println in0.readLine();
-        println in0.readLine();
-        println in0.readLine();
-
-
+        
 
         System.setProperty("javax.xml.transform.TransformerFactory",
                 "net.sf.saxon.TransformerFactoryImpl");
@@ -334,23 +282,17 @@ class BBPackage {
             Templates template = transFact.newTemplates(xslSource);
             Transformer xform = template.newTransformer();
             xform.setParameter("workDir", tempAreaAbs.toString());
-            System.err.println("workDir => "
-                    + tempAreaAbs.toString());
             for (Object okey: projProperties.keySet()) {
                 String key = okey.toString();
                 String value = projProperties.getProperty(key).toString();
                 xform.setParameter(key, value);
-                System.err.println("prop " + "" + key + " => "
-                        + value);
             }
             Source xmlIn = new DOMSource(outlineDoc.getDocumentElement());
 
             StringWriter xmlString = new StringWriter();
             StreamResult xmlOut = new StreamResult(xmlString);
 
-            println ("About to transform")
             xform.transform(xmlIn, xmlOut);
-            println("transformation completed: " );
             manifestContent = xmlString.toString()
         } catch (TransformerConfigurationException e) {
             logger.error ("Problem parsing XSLT2 stylesheet "
@@ -388,7 +330,6 @@ class BBPackage {
         ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(destination));
         zout.close();
         Path zipfile = destination.toPath();
-        println ("Zipping to " + zipfile)
         Queue<File> q = new LinkedList<File>();
         q.push(bbDir);
         FileSystem zipfs = FileSystems.newFileSystem(zipfile, null);
@@ -397,18 +338,14 @@ class BBPackage {
         }
         while (!q.isEmpty()) {
             File dir = q.remove()
-            //println ("looking at dir " + dir)
             for (File child : dir.listFiles()) {
                 Path relChild = bbBase.relativize(child.toPath());
-                //println ("Mapping " + child + " to " + relChild)
                 if (child.isDirectory()) {
                     q.add(child);
                     Path directory = zipfs.getPath("/", relChild.toString())
-                    //println ("create zip dir " + directory)
                     Files.createDirectories(directory)
                 } else {
                     Path childLoc = zipfs.getPath("/", relChild.toString())
-                    //println ("Copying " + child + " to zip " + childLoc)
                     Files.copy(child.toPath(), childLoc)
                 }
             }

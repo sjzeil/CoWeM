@@ -55,7 +55,6 @@
   </xsl:template>
     
   <xsl:template match="imscc">
-    <xsl:message><xsl:text>Matched root</xsl:text></xsl:message>
     <manifest identifier="man0001">
       <organizations default="toc00001">
 	      <organization identifier="toc00001">
