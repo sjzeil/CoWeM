@@ -27,7 +27,7 @@ public class TestWebsiteProject {
     public void setUp() throws Exception {
         projRoot = Paths.get("src/test/data/urlShortcuts");
         g1d1 = projRoot.resolve("Group1/DocSet1/DocSet1.md").toFile();
-        g1d1b = projRoot.resolve("Group1/DocSet1/website.gradle").toFile();
+        g1d1b = projRoot.resolve("Group1/DocSet1/build.gradle").toFile();
         g1d2 = projRoot.resolve("Group1/DocSet2/secondaryDoc1.mmd").toFile();
         g2d3 = projRoot.resolve("Group2/DocSet3/secondaryDoc3.mmd").toFile();
         g2dx = projRoot.resolve("Group1/NotADocSet/secondaryDoc2.mmd").toFile();

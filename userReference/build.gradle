@@ -19,8 +19,7 @@
      }
      dependencies {
          classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
-         classpath 'edu.odu.cs.zeil:cwm-core:1.0-SNAPSHOT'
-         classpath 'edu.odu.cs.zeil:cwm-utils:1.0-SNAPSHOT'
+         classpath 'edu.odu.cs.zeil:cwm-plugin:1.0+'
      }
 }
 /* */

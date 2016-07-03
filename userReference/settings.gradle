@@ -1,17 +1,14 @@
 // CWM (Course Website Managment)
 // Reference Manual & Sample Course
-rootProject.name = 'cwm-userRef'  
-
-rootProject.buildFileName = "website.gradle"
+rootProject.name = 'cwm-userReference'  
 
 
 def includeFrom = {
 	dir ->  new File(rootDir,dir).eachFileRecurse { f ->
-		if ( f.name == "website.gradle" ) {
+		if ( f.name == "build.gradle" ) {
 			String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
 			String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
 			include projectName
-			project(projectName).buildFileName = "website.gradle"
 		}
    }
 }

@@ -33,7 +33,7 @@ public class WebsiteProject implements Iterable<String> {
     /**
      * Name used for Gradle files in document set directories.
      */
-    private static final String GRADLE_FILE_NAME = "website.gradle";
+    private static final String GRADLE_FILE_NAME = "build.gradle";
 
 
     /**
