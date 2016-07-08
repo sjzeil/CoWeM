@@ -1,6 +1,6 @@
-// CWM (Course Website Managment)
+// CoWeM
 // Reference Manual & Sample Course
-rootProject.name = 'cwm-userReference'  
+rootProject.name = 'cowem-userReference'  
 
 
 def includeFrom = {

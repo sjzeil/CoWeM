@@ -2,7 +2,7 @@ Title: Directories and Files
 Author: Steven Zeil
 Date: @docModDate@
 
-This document presents an overview of the directory and file structure of a CWM website.
+This document presents an overview of the directory and file structure of a CoWeM website.
 
 The directory structure, both of the input documents and of the generated website, is kept purposely simple. This allows easy deve;opement of the content and easy interlinking between documents in the generated website.  On the other hand, the logical structure of the website, and revealed via the navigation links, can be as complicated as you need it to be.
 
@@ -122,7 +122,7 @@ topics
 : Another special format for presenting the course outline. It renders as a table with different columns for different types of activities.
 
 
-Early versions of CWM also supported and _epub_ format for preparing documents for publication in an e-book. That option is not currently supported, but may be restored in future versions.
+Early versions of CoWeM also supported and _epub_ format for preparing documents for publication in an e-book. That option is not currently supported, but may be restored in future versions.
 
 
 

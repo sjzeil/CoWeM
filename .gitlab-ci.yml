@@ -8,7 +8,7 @@ build-job:
     - atria
   stage: build
   script:
-    - cd cwm/utils
+    - cd cowem-plugin
     - ../gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
   only:
     - master
