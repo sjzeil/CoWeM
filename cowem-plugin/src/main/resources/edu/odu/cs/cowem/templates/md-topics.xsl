@@ -57,8 +57,8 @@
 	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
 	    </div>
 	    <div class="rightPart">
-	      <xsl:variable name="preamble" select="section[normalize-space(./*[1]) = 'Preamble']"/>
-	      <xsl:if test="$preamble">
+	      <xsl:variable name="preamble" select="section[sectionHeader/@id = 'preamble']"/>
+          <xsl:if test="$preamble">
              <xsl:apply-templates select="$preamble/sectionDescription/node()"/>
              <xsl:apply-templates select="$preamble/sectionContent/node()"/>
 	      </xsl:if>
@@ -70,8 +70,8 @@
             </div>
           </form>
 	      
-	     <xsl:variable name="prefixTable"
-            select="section[sectionHeader//a[@name = 'presentation']]//table[1]"/>
+	      <xsl:variable name="prefixTable"
+              select="section[sectionHeader/@id = 'presentation']/sectionContent//table[2]"/>
 	      
 	      <table border="1" rules="all" frame="box" role="outline">
              <tr class="columnheader">
@@ -80,18 +80,18 @@
              </tr>
 
 	         <xsl:for-each select="section">
-	             <xsl:variable name="sectionName" select="normalize-space(*[1])"/>
-	             <xsl:choose>
-	               <xsl:when test="$sectionName = 'Preamble'"/>
-                   <xsl:when test="$sectionName = 'Postscript'"/>
-	               <xsl:when test="$sectionName = 'Presentation'"/>
+	             <xsl:variable name="sectionName" select="sectionHeader/@id"/>
+                 <xsl:choose>
+	               <xsl:when test="$sectionName = 'preamble'"/>
+                   <xsl:when test="$sectionName = 'postscript'"/>
+	               <xsl:when test="$sectionName = 'presentation'"/>
 	               <xsl:otherwise>
                       <xsl:apply-templates select="."/>
 	               </xsl:otherwise>
 	             </xsl:choose>
 	          </xsl:for-each>
 	       </table>
-          <xsl:variable name="postscript" select="section[normalize-space(./*[1]) = 'Postscript']"/>
+          <xsl:variable name="postscript" select="section[sectionHeader/@id = 'postscript']"/>
           <xsl:if test="$postscript">
              <xsl:apply-templates select="$postscript/sectionDescription/node()"/>
              <xsl:apply-templates select="$postscript/sectionContent/node()"/>
@@ -111,9 +111,7 @@
   
   <xsl:template match="section">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader//a[@name = 'presentation']]//table[1]"/>
-        
-      <xsl:variable name="headerStart" select="sectionHeader/*[1]"/>
+        select="ancestor::body/section[sectionHeader/@id = 'presentation']/sectionContent//table[1]"/>
       
       <tr class="topic{@depth}">
           <td class="topic{@depth}" colspan="{count($prefixTable/thead/tr[1]/*)}">
@@ -130,7 +128,8 @@
 
   <xsl:template match="ol" mode="activities">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader//a[@name = 'presentation']]//table[1]"/>
+        select="ancestor::body/section[sectionHeader/@id = 'presentation']/sectionContent//table[1]"/>
+      
       <xsl:variable name="theList" select='.'/>
       <tr class="item">
           <xsl:for-each select="$prefixTable/tbody/tr/*">

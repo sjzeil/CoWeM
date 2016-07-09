@@ -296,19 +296,19 @@ public class ITestTopicsFormat {
                 "./ancestor::p//img[1]", item2,
                 XPathConstants.NODE);
         assertNotNull(icon2);
-        assertTrue(icon2.getAttribute("src").endsWith("lecture.png"));
+        assertTrue(icon2.getAttribute("src").endsWith("lecture-kind.png"));
 
         Element icon3 = (Element) xPath.evaluate(
                 "./ancestor::p//img[1]", item3,
                 XPathConstants.NODE);
         assertNotNull(icon3);
-        assertTrue(icon3.getAttribute("src").endsWith("lecture.png"));
+        assertTrue(icon3.getAttribute("src").endsWith("lecture-kind.png"));
 
         Element icon4 = (Element) xPath.evaluate(
                 "./ancestor::p//img[1]", item4,
                 XPathConstants.NODE);
         assertNotNull(icon4);
-        assertTrue(icon4.getAttribute("src").endsWith("lab.png"));
+        assertTrue(icon4.getAttribute("src").endsWith("lab-kind.png"));
     
     }
 	

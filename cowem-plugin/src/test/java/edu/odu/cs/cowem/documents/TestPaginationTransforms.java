@@ -263,8 +263,7 @@ public class TestPaginationTransforms {
 	    assertEquals ("a", n.getNodeName());
 
 	    n = (Element)getElementByName(basicHtml, "h12");
-	    assertNotNull(n);
-	    assertEquals ("a", n.getNodeName());
+	    assertNull(n);
 	}
 
 	

@@ -57,9 +57,10 @@
 	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
 	    </div>
 	    <div class="rightPart">
-	      <xsl:variable name="preamble" select="section[normalize-space(./*[1]) = 'Preamble']"/>
+	      <xsl:variable name="preamble" select="section[sectionHeader/@id = 'preamble']"/>
 	      <xsl:if test="$preamble">
-	         <xsl:apply-templates select="$preamble/*[position() &gt; 1]"/>
+             <xsl:apply-templates select="$preamble/sectionDescription/node()"/>
+	         <xsl:apply-templates select="$preamble/sectionContent/node()"/>
 	      </xsl:if>
 	      <form action="">
             <div class="showHideControls">
@@ -72,19 +73,20 @@
           </form>
 	      
 	      <xsl:for-each select="section">
-	           <xsl:variable name="sectionName" select="normalize-space(*[1])"/>
+	           <xsl:variable name="sectionName" select="sectionHeader/@id"/>
 	           <xsl:choose>
-	               <xsl:when test="$sectionName = 'Preamble'"/>
-                   <xsl:when test="$sectionName = 'Postscript'"/>
-	               <xsl:when test="$sectionName = 'Presentation'"/>
+	               <xsl:when test="$sectionName = 'preamble'"/>
+                   <xsl:when test="$sectionName = 'postscript'"/>
+	               <xsl:when test="$sectionName = 'presentation'"/>
 	               <xsl:otherwise>
                       <xsl:apply-templates select="."/>
 	               </xsl:otherwise>
 	           </xsl:choose>
 	      </xsl:for-each>
-          <xsl:variable name="postscript" select="section[normalize-space(./*[1]) = 'Postscript']"/>
+          <xsl:variable name="postscript" select="section[sectionHeader/@id = 'postscript']"/>
           <xsl:if test="$postscript">
-             <xsl:apply-templates select="$postscript/*[position() &gt; 1]"/>
+             <xsl:apply-templates select="$postscript/sectionDescription/node()"/>
+             <xsl:apply-templates select="$postscript/sectionContent/node()"/>
           </xsl:if>
 	      <xsl:call-template name="insertFooter"/>
 	    </div>
@@ -98,6 +100,7 @@
   	  <!--  Generate the topic descriptor, possibly with an
   	        expand/collapse control.  -->
       <div class="topic{@depth}">
+        <xsl:copy-of select="sectionHeader/@id"/>
       	<xsl:value-of select="sectionHeader/@sectionNumber"/>
       	<xsl:choose>
       	    <xsl:when test="./section">
@@ -191,7 +194,7 @@
 
   <xsl:template match="p|li" mode="activities2">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader//a[@name = 'presentation']]//table[2]"/>
+        select="ancestor::body/section[sectionHeader/@id = 'presentation']/sectionContent//table[2]"/>
       <xsl:choose>
           <xsl:when test="(local-name(*[1]) = 'a') and (normalize-space(*[1]/preceding-sibling::node()) = '')">
               <xsl:variable name="kind" select="normalize-space(a[1]/@href)"/>
