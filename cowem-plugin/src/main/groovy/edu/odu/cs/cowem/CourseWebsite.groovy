@@ -48,7 +48,6 @@ class CourseWebsite implements Plugin<Project> {
             }
         }
         project.configurations {
-            setup
             build
             deploy
         }
@@ -56,9 +55,9 @@ class CourseWebsite implements Plugin<Project> {
 
 
         project.task('setup_cowem', type: Copy) {
-            dependsOn project.configurations.setup
-            into project.file('build/cowem')
-            from ({ project.zipTree(project.configurations.setup.find {
+            //dependsOn project.configurations.setup
+            into project.file('build/temp/cowem')
+            from ({ project.zipTree(project.buildscript.configurations.classpath.find {
                     it.name.startsWith("cowem-plugin") }
                 ) }) {
                 include 'edu/odu/cs/cowem/core/graphics/**'
@@ -70,10 +69,12 @@ class CourseWebsite implements Plugin<Project> {
         project.task ('setup_copy_website_defaults',
             type: Copy, dependsOn: 'setup_cowem'
         ) {
-            from 'build/cowem/edu/odu/cs/cowem/core'
+            from 'build/temp/cowem/edu/odu/cs/cowem/core'
             into 'build/website'
             include 'graphics/**'
             include 'styles/**'
+        } << {
+            project.delete 'build/temp/cowem'
         }
 
         project.task ('setup_copy_website_overrides',
