@@ -42,7 +42,7 @@ The directory structure, both of the input documents and of the generated websit
 
 The overall directory structure is shown in the diagram on the right.  The "course root" is the top directory for the course website content.
 
-The first several files and directories, the ones that contain "gradle" in their name, provide the software and configuration that actually builds the website. These are discussed beloe in [The Gradle Build Manager](#the-gradle-build-manager).
+The first several files and directories, the ones that contain "gradle" in their name, provide the software and configuration that actually builds the website. These are discussed in [TBD](doc:buildingTheWebsite).
 
 The `Directory`, `Public`,and `Protected` directories are examples of _document set groups_, or _groups_ for short. Each group contains an arbitrary number of _document sets_. Document sets are described in the next section, and groups in [Document Set Groups](#document-set-groups).
 
@@ -155,7 +155,5 @@ A document set group, or group for short, is a directory containing one or more 
 A group gathers together document sets that are to share some common processing or policy. For example,
 a _Directory_ group might specify that all of its document sets will, be default, render their primary document using the _directory_ format, while the Public group might set a default that its primary documents will be rendered using both _scroll_ and _slides_ formats. I often separate my non-directory documents into Public and Private groups and, when deploying the website to an Apache web server, set the Private directory to be accessible only to students who supply a valid username and password.
 
-
-
-# The Gradle Build Manager
+# The Course
 
