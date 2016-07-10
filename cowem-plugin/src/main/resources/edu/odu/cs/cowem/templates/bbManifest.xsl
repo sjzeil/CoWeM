@@ -205,7 +205,7 @@
       </xsl:variable>
       <xsl:variable name="title"
           select="normalize-space(*|text())"/>
-      <item identifier="menu-{$itemID}" identifierref="menu-{$itemID}">
+      <item identifier="itm-{$itemID}" identifierref="menu-{$itemID}">
           <title>
             <xsl:value-of select="$title"/>
           </title>
@@ -282,7 +282,7 @@
       </xsl:variable>
       <xsl:variable name="title"
           select="normalize-space(*|text())"/>
-      <item identifier="itm-{$itemID}" identifierref="res-{$itemID}">
+      <item identifier="item-{$itemID}" identifierref="res-{$itemID}">
           <title>
             <xsl:value-of select="$title"/>
           </title>
@@ -383,7 +383,6 @@
 
 		<xsl:result-document href="{concat($workDir, '/res-', $itemID, '.dat')}"
 			format="resources">
-
 			<CONTENT id="{$contentID}">
 				<TITLE>
 					<xsl:attribute name="value">
@@ -392,13 +391,20 @@
 				</TITLE>
 				<TITLECOLOR value="#000000" />
 				<BODY>
-					<TEXT />
+                    <TEXT>
+                        <xsl:text>Item is </xsl:text>
+                        <xsl:value-of select="$itemID"/>
+                        <br/>
+                        <xsl:text>
+                        url is </xsl:text> 
+                        <xsl:value-of select="$url"/>
+                    </TEXT>
 					<xsl:choose>
 						<xsl:when test="contains($linkHref, '://')">
 							<TYPE value="H" />
 						</xsl:when>
 						<xsl:otherwise>
-							<TYPE value="S" />
+							<TYPE value="S" /> 
 						</xsl:otherwise>
 					</xsl:choose>
 				</BODY>
