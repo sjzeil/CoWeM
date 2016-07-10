@@ -60,28 +60,31 @@
           <organization identifier="toc00001">
               <xsl:apply-templates select="/imscc/navigation/*" 
                           mode="nav-menu"/>
+              <!-- 
               <item identifier="itm00001" identifierref="res00001">
                   <title><xsl:value-of select="$bbContentLabel"/></title>
                   <item identifier="itm00002" identifierref="res00002">
-                      <title>--TOP--</title>
+                      <title>- -TOP- -</title>
                       <xsl:apply-templates select="/imscc/navigation/*" 
                           mode="navigation"/>
                  </item>
               </item>
+               -->
           </organization>
       </organizations>
       <resources>
+          <!-- 
           <resource bb:file="res00001.dat" 
               bb:title="{$bbContentLabel}" 
               identifier="res00001" 
               type="course/x-bb-coursetoc" 
               xml:base="res00001"/>
           <resource bb:file="res00002.dat" 
-              bb:title="--TOP--" 
+              bb:title="- -TOP- -" 
               identifier="res00002" 
               type="resource/x-bb-document" 
               xml:base="res00002"/>
-      
+          -->
           <xsl:apply-templates select="/imscc/navigation/*" mode="nav-resources"/>
           <xsl:apply-templates select="/imscc/outline/*" mode="calendar"/>
       </resources>
@@ -203,12 +206,10 @@
       <xsl:variable name="itemID">
            <xsl:call-template name="navItemID"/>
       </xsl:variable>
-      <xsl:variable name="title"
-          select="normalize-space(*|text())"/>
       <item identifier="itm-{$itemID}" identifierref="menu-{$itemID}">
-          <title>
+         <title>
             <xsl:value-of select="$title"/>
-          </title>
+         </title>
       </item>
       <xsl:call-template name="generateMenuResource">
           <xsl:with-param name="url" select="@href"/>
@@ -226,7 +227,7 @@
 		<xsl:param name="itemID" />
 		<xsl:param name="label" />
 
-		<xsl:result-document href="{concat($workDir, '/menu-', $itemID, '.dat')}"
+		<xsl:result-document href="{concat($workDir, '/menuEntry-', $itemID, '.dat')}"
 			format="resources">
 			<COURSETOC id="_{$itemID}_2">
 				<LABEL value="{$label}" />
@@ -237,9 +238,9 @@
 						<INTERNALHANDLE value="" />
 					</xsl:when>
 					<xsl:otherwise>
-						<TARGETTYPE value="LINK" />
+                        <TARGETTYPE value="CONTENT_ITEM"/>
+                        <INTERNALHANDLE value="content"/>
 						<URL value="" />
-						<INTERNALHANDLE value="" />
 					</xsl:otherwise>
 				</xsl:choose>
 				<FLAGS>
@@ -259,8 +260,8 @@
 				</FLAGS>
 			</COURSETOC>
 		</xsl:result-document>
-
-	<xsl:if test="not(contains($url, '://'))">
+		
+        <!-- 
 		<xsl:result-document href="{concat($workDir, '/link-', $itemID, '.dat')}"
 			format="resources">
 			<LINK id="_{$itemID}_3">
@@ -272,7 +273,7 @@
 				</FLAGS>
 			</LINK>
 		</xsl:result-document>
-	</xsl:if>
+		-->
   </xsl:template>
 
 
@@ -305,24 +306,27 @@
       </xsl:variable>
       <xsl:variable name="title"
           select="normalize-space(*|text())"/>
-      <resource
-          bb:file="res-{$itemID}.dat"
+        <resource
+          bb:file="menuEntry-{$itemID}.dat"
           bb:title="{$title}"
-          identifier="res-{$itemID}"
-          type="resource/x-bb-document"
-          xml:base="res-{$itemID}"/>
+          identifier="menuEntry-{$itemID}"
+          type="course/x-bb-coursetoc"
+          xml:base="menuEntry-{$itemID}"/>
+	<xsl:if test="not(contains(@href, '://'))">
+        <!-- 
       <resource
           bb:file="menu-{$itemID}.dat"
-          bb:title="{$title}"
+          bb:title="- -TOP- -"
           identifier="menu-{$itemID}"
-          type="course/x-bb-coursetoc"
+          type="resource/x-bb-document"
           xml:base="menu-{$itemID}"/>
-	<xsl:if test="not(contains(@href, '://'))">
+
 		<resource bb:file="link-{$itemID}.dat"
 		          bb:title="{$title}"
 			      identifier="link-{$itemID}"
 			      type="course/x-bb-link"
 			      xml:base="link-{$itemID}" />
+	    -->
 	</xsl:if>
     
   </xsl:template>
