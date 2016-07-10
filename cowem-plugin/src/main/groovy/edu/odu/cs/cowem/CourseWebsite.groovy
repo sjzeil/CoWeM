@@ -73,8 +73,6 @@ class CourseWebsite implements Plugin<Project> {
             into 'build/website'
             include 'graphics/**'
             include 'styles/**'
-        } << {
-            project.delete 'build/temp/cowem'
         }
 
         project.task ('setup_copy_website_overrides',
@@ -139,7 +137,7 @@ class CourseWebsite implements Plugin<Project> {
         project.task ('bb', dependsOn: 'build') {
             description 'Package the website for import into Blackboard.'
             inputs.dir 'build/website'
-            //outputs.file 'build/packages/bb-${project.name}.zip'
+            // outputs.file 'build/packages/bb-${project.name}.zip'
         } << {
             new BBPackage(project,
                 project.course, 
@@ -151,7 +149,7 @@ class CourseWebsite implements Plugin<Project> {
         project.task ('bbthin', dependsOn: 'build') {
             description 'Create a Blackboard package that will link back to the website content.'
             inputs.dir 'build/website'
-            //outputs.file 'build/packages/bbthin-${project.name}.zip'
+            outputs.file 'build/packages/bbthin-${project.name}.zip'
         } << {
             new BBPackage(project,
                 project.course,

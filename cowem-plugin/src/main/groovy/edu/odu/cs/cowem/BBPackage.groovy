@@ -98,7 +98,7 @@ class BBPackage {
     void generate (File destination, boolean thin)
     {
         destination.getParentFile().mkdirs()
-        tempAreaAbs = new File(new File(buildDir, "cowem"), "bb")
+        tempAreaAbs = new File(new File(buildDir, "temp"), "bb")
         if (tempAreaAbs.exists()) {
             tempAreaAbs.deleteDir()  // Groovy extension to java.io.File
         }
@@ -325,7 +325,7 @@ class BBPackage {
 
     void zipItAllUp (File destination)
     {
-        File bbDir = project.file("build/cowem/bb")
+        File bbDir = project.file("build/temp/bb")
         Path bbBase = bbDir.toPath();
         ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(destination));
         zout.close();
