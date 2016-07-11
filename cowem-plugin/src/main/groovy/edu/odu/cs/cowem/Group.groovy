@@ -19,7 +19,7 @@ class Group implements Plugin<Project> {
 		project.subprojects {
             // Add a DocumentSet object as a property of the project
             if (!it.hasProperty('documents')) {
-                println ("Adding documents config to " + it.name)
+                //println ("Adding documents config to " + it.name)
                 it.extensions.create ('documents', DocumentSet, it)
             }
     

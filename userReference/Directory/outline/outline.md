@@ -28,7 +28,7 @@ for easy typing in an ordinary text editor.
 ---
 
 1. [ ](lecture)  [TBD](doc:markdown)
-2. [ ](construct)  CoWeM extensions to Markdown
+2. [ ](construct)  [TBD](doc:markdownExtensions)
 3. [ ](construct)  [TBD](doc:theOutline)
 
 
@@ -36,7 +36,8 @@ for easy typing in an ordinary text editor.
 
 ---
 
-1. [ ](construct)  Conditional Text
+1. [ ](construct)  Macros
+1. [ ](construct)  [Conditional Text](doc:conditionalText)
 2. [ ](construct)  URL Shortcuts
 
 # Customizing

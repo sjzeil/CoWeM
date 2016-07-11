@@ -1,7 +1,4 @@
 apply plugin: edu.odu.cs.cowem.Documents
 
- 
-documents {
-    support 'markdown.md'
-}
+
 

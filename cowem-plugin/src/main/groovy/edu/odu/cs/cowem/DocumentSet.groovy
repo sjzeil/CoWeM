@@ -209,7 +209,7 @@ class DocumentSet {
     FileCollection supportDocuments
 
     /**
-     * Add a set of files to the current list of listing documents.
+     * Add a set of files to the current list of support documents.
      */
     void support (Object... files) {
         FileCollection additions = _inProject.files(files)

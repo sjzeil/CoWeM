@@ -54,11 +54,11 @@ class Documents implements Plugin<Project> {
 		project.task (type: Copy,
 		dependsOn: project.rootProject.tasks['setup'],
 		'doc_setup') {
-			from (project.documents.supportDocuments
-					+ project.documents.listingDocuments)
+			from {return project.documents.supportDocuments
+					+ project.documents.listingDocuments}
 			into websiteArea
 		}
-
+		
 		project.task ('doc_mainDoc',
             dependsOn: ['doc_setup', project.configurations.build]) {
             //println ("mainDoc: " + project.documents.primaryDocument
