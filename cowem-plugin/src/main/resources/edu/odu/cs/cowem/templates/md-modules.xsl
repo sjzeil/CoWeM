@@ -123,7 +123,7 @@
          <xsl:attribute name="id">
             <xsl:value-of select="concat('_topic_', $toggleID)"/>
          </xsl:attribute>
-         
+         <xsl:text> </xsl:text>
          <xsl:choose>
              <xsl:when test="(count(sectionContent/*) != 0) and (count(sectionDescription/*) != 0)">
                  <table width="100%">

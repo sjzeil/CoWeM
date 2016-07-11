@@ -1,8 +1,6 @@
-
 apply plugin: edu.odu.cs.cowem.Documents
 
  
 documents {
-	formats = ['navigation']
+    formats = ['navigation']
 }
-

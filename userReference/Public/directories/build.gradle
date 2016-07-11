@@ -1,2 +1,7 @@
 apply plugin: edu.odu.cs.cowem.Documents
 
+documents {
+    
+    formats=['scroll', 'pages', 'slides']
+    
+}

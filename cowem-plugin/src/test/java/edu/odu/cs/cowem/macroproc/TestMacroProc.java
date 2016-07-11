@@ -90,6 +90,31 @@ public class TestMacroProc {
 		
 	}
 	
+
+    @Test
+    public void testIfNotFalse() {
+        Macro m1 = new Macro("A", "a");
+        String[] params = {"a", "b"};
+        Macro m2 = new Macro("B", Arrays.asList(params), "B:a.b");
+        
+        MacroProcessor proc = new MacroProcessor();
+        proc.defineMacro(m1);
+        proc.defineMacro(m2);
+        
+        assertEquals ("", proc.process("#ifnot A"));
+        assertEquals ("", proc.process("abc").trim());
+        assertEquals ("", proc.process("#endif"));
+        assertEquals ("abc", proc.process("abc").trim());
+        
+        assertEquals ("", proc.process("#ifnot B"));
+        assertEquals ("", proc.process("abc").trim());
+        assertEquals ("", proc.process("#endif"));
+        assertEquals ("abc", proc.process("abc").trim());
+        
+    }
+	
+	
+	
 	
 	@Test
 	public void testInclude() throws IOException {
@@ -123,13 +148,31 @@ public class TestMacroProc {
 		proc.defineMacro(m2);
 		
 		assertEquals ("", proc.process("#ifdef C"));
-		assertEquals ("", proc.process("abc"));
+		assertEquals ("", proc.process("abc").trim());
 		assertEquals ("", proc.process("#endif"));
 		assertEquals ("abc", proc.process("abc").trim());
 	}
 
 	
-	@Test
+    @Test
+    public void testIfnotTrue() {
+        Macro m1 = new Macro("A", "a");
+        String[] params = {"a", "b"};
+        Macro m2 = new Macro("B", Arrays.asList(params), "B:a.b");
+        
+        MacroProcessor proc = new MacroProcessor();
+        proc.defineMacro(m1);
+        proc.defineMacro(m2);
+        
+        assertEquals ("", proc.process("#ifnot C"));
+        assertEquals ("abc", proc.process("abc").trim());
+        assertEquals ("", proc.process("#endif"));
+        assertEquals ("abc", proc.process("abc").trim());
+    }
+
+    
+    
+    @Test
 	public void testElseTrue() {
 		Macro m1 = new Macro("A", "a");
 		String[] params = {"a", "b"};

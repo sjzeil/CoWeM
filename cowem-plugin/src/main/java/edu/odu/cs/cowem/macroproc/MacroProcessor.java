@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Transforms a text file via application of macros.  Supported commands are
  * 
- * #ifdef macroName    or  #if macroName
+ * #ifdef macroName    or  #if macroName    or %ifnot macroname
  * #else
  * #endif
  * 
@@ -203,6 +203,9 @@ public class MacroProcessor {
 			} else if (trimmedString.startsWith(commandPrefix + "ifdef")) {
 				processIfDef (trimmedString, "ifdef");
 				return result;
+            } else if (trimmedString.startsWith(commandPrefix + "ifnot")) {
+                processIfNot (trimmedString, "ifnot");
+                return result;
 			} else if (trimmedString.startsWith(commandPrefix + "if")) {
 				processIfDef (trimmedString, "if");
 				return result;
@@ -375,6 +378,39 @@ public class MacroProcessor {
 		}
 	}
 
+    /**
+     * Parse and process an #ifnot command.
+     * @param ifNotCommand  Lexeme of the command.
+     * @param ifnotLexeme Lexeme of the opening word of the command/
+     */
+    private void processIfNot(final String ifNotCommand, 
+                              final String ifnotLexeme) {
+        InputState topState = stack.get(stack.size() - 1);
+        if (topState.suppressed) {
+            // Doesn't matter if the condition is true or not
+            stack.add (new InputState(' ', true));
+        } else {
+            int start = commandPrefix.length() + ifnotLexeme.length();
+            while (start < ifNotCommand.length() 
+                    && ifNotCommand.charAt(start) == ' ') {
+                ++start;
+            }
+            int stop = start;
+            while (stop < ifNotCommand.length() 
+                    && ifNotCommand.charAt(stop) != ' ') {
+                ++stop;
+            }
+            if (start >= ifNotCommand.length() || stop == start) {
+                stack.add (new InputState(' ', true));
+            } else {
+                String macroName = ifNotCommand.substring(start, stop);
+                stack.add (new InputState(' ', 
+                        macroNames.contains(macroName)));
+            }
+        }
+    }
+
+    
     /**
      * Parse and process an #include command.
      * @param includeCommand  Lexeme of the command.

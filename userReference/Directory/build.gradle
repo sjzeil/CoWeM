@@ -1,0 +1,7 @@
+apply plugin: edu.odu.cs.cowem.Group
+
+subprojects {
+    documents {
+        formats = ['directory']
+    }
+}
