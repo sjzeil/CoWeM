@@ -22,6 +22,8 @@ Learning Management Systems.
 
 # Project Status
 
+* [Users' Reference Manual](https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html)
+
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cwm/utils/reports/reportsSummary/projectReports.html)
 
 * The early v0.5 release is currently in use for multiple courses. but is

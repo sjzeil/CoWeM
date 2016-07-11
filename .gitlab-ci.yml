@@ -9,7 +9,7 @@ build-job:
   stage: build
   script:
     - cd cowem-plugin
-    - ../gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
+    - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=$CI_BUILD_REF
   only:
     - master
 
