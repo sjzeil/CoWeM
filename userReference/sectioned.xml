@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-modules.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-modules-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><script src="../../styles/md-modules.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><title>CoWeM v1.0 User Reference Manual</title></head><body><section depth="1"><sectionHeader id="organization-of-the-course-website" sectionNumber="1 " tag="h1">Organization of the Course Website</sectionHeader><sectionDescription><p>Learn how the source documents for a CoWem course are organized, how the resulting website will be organized, and how to build a website using CoWeM. </p></sectionDescription><sectionContent><ol>
+  <li><a href="lecture"> </a> <a class="doc" href="../../Public/directories/index.html">Directories and Files</a></li>
+  <li><a href="lecture"> </a> <a class="doc" href="../../Public/buildingTheWebsite/index.html">Building the Website</a></li>
+</ol></sectionContent></section><section depth="1"><sectionHeader id="preparing-documents" sectionNumber="2 " tag="h1">Preparing Documents</sectionHeader><sectionContent/><section depth="2"><sectionHeader id="working-in-markdown" sectionNumber="2.1 " tag="h2">Working in Markdown</sectionHeader><sectionDescription><p>All source documents in CoWeM are written in Markdown, a notation designed for easy typing in an ordinary text editor.</p></sectionDescription><sectionContent><ol>
+  <li><a href="lecture"> </a> <a class="doc" href="../../Public/markdown/index.html">Course Documents from MarkDown</a></li>
+  <li><a href="construct"> </a> CoWeM extensions to Markdown</li>
+  <li><a href="construct"> </a> <a class="doc" href="../../Public/theOutline/index.html">Preparing a Course Outline</a></li>
+</ol></sectionContent></section><section depth="2"><sectionHeader id="special-features" sectionNumber="2.2 " tag="h2">Special Features</sectionHeader><sectionDescription/><sectionContent><ol>
+  <li><a href="construct"> </a> Conditional Text</li>
+  <li><a href="construct"> </a> URL Shortcuts</li>
+</ol></sectionContent></section></section><section depth="1"><sectionHeader id="customizing" sectionNumber="3 " tag="h1">Customizing</sectionHeader><sectionDescription/><sectionContent><ol>
+  <li>
+  <p><a href="construct"> </a> Modifying Document CSS &amp; Graphics</p></li>
+  <li>
+  <p><a href="construct"> </a> <a href="doc:docsetOptions">Modifying a Document Set’s Build Options</a></p></li>
+  <li>
+  <p><a href="construct"> </a> <a href="doc:groupOptions">Modifying a Group’s Build Options</a></p></li>
+  <li>
+  <p><a href="construct"> </a> <a href="doc:courseOptions">Modifying a Course’s Build Options</a></p></li>
+</ol></sectionContent></section><section depth="1"><sectionHeader id="preamble" sectionNumber="4 " tag="h1">Preamble</sectionHeader><sectionContent><p>This is the users’ documentation for the CoWeM (Course Websites from Markdown) system. </p></sectionContent></section><section depth="1"><sectionHeader id="postscript" sectionNumber="5 " tag="h1">Postscript</sectionHeader><sectionContent/></section><section depth="1"><sectionHeader id="presentation" sectionNumber="6 " tag="h1">Presentation</sectionHeader><sectionContent><table>
+  <thead>
+    <tr>
+      <th>Topics </th>
+      <th>Readings </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>topics </td>
+      <td>lecture construct </td>
+    </tr>
+  </tbody>
+</table><table>
+  <thead>
+    <tr>
+      <th>Document Kind </th>
+      <th>Prefix </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>lecture </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>construct </td>
+      <td>Under Construction: </td>
+    </tr>
+  </tbody>
+</table></sectionContent></section></body></html>

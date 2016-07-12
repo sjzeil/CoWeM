@@ -254,7 +254,7 @@ Each document set must have a file named "`build.gradle`". Unless you
 are [overriding the default document processing options](doc:docsetOptions),
 this can consist of a single line:
 
-    apply plugin: edu.odu.cs.cowem.Documents 
+    apply plugin: 'edu.odu.cs.cowem.Documents' 
 
 
 
@@ -310,7 +310,7 @@ as an example, to establish a default that all documents in the
 `Directory` group should be processed using the _directory_ format, I
 would put this into a `build.gradle` file in my `Directory/` folder:
 
-    apply plugin: edu.odu.cs.cowem.Group
+    apply plugin: 'edu.odu.cs.cowem.Group'
 
     subprojects {
         documents {
@@ -322,7 +322,7 @@ Similarly, in my `Public/` directory, I would place this in a
 `build.gradle` file during a semester when I am teaching a live
 course:
 
-    apply plugin: edu.odu.cs.cowem.Group
+    apply plugin: 'edu.odu.cs.cowem.Group'
 
     subprojects {
         documents {
@@ -335,7 +335,7 @@ processed into both lecture notes (scroll) and slides for in-class
 presentations. In a semester when I offer the same couse as a
 web-based offering, I would change this to
 
-    apply plugin: edu.odu.cs.cowem.Group
+    apply plugin: 'edu.odu.cs.cowem.Group'
 
     subprojects {
         documents {
@@ -423,7 +423,7 @@ buildscript {
 }
 
 
-apply plugin: edu.odu.cs.cowem.CourseWebsite    
+apply plugin: 'edu.odu.cs.cowem.CourseWebsite'    
 
                    /*1*/
 

@@ -96,7 +96,7 @@ will include those discussed in the next section plus a variety of "generic"
 Gradle targets.
 
 You can click on any of them to select it, then click the small green "run"
-button at the top of the bottom panel to execute that target.  
+button at the top of the upper panel to execute that target.    
 
 
 

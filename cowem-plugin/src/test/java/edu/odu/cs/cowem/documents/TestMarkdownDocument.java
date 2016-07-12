@@ -471,6 +471,39 @@ public class TestMarkdownDocument {
 		
 	}
 
+
+	   @Test
+	    public void testArrayMath() throws XPathExpressionException {
+	        MarkdownDocument doc = new MarkdownDocument(source, proj,
+	                properties, mdInput2);
+	        
+	        String passThrough1 =
+	                "# Section 1\n\n"
+	                + "$$ k+1 $$\n\n"
+	                + "\\\\[ \\begin{array} a & b \\\\ c & d \\\\ \\end{array} \\\\]\n\n" 
+	                + "Done.\n";    
+	        
+	        org.w3c.dom.Document basicHtml = doc.process(passThrough1);
+	        Element root = basicHtml.getDocumentElement();
+	        
+	        XPath xPath = XPathFactory.newInstance().newXPath();
+	        NodeList nl = (NodeList)xPath.evaluate("//p",
+	                root, XPathConstants.NODESET);
+	        assertEquals (3, nl.getLength());
+
+	        Node p = nl.item(0);
+	        assertTrue (p.getTextContent().contains("$"));
+	        assertTrue (p.getTextContent().contains("$"));
+
+	        p = nl.item(1);
+	        assertTrue (p.getTextContent().contains("\\["));
+	        assertTrue (p.getTextContent().contains("\\]"));
+	        
+	    }
+
+	
+	
+	
 	
 	@Test
 	public void testPostprocess() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
