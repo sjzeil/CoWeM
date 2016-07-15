@@ -404,6 +404,67 @@ public class TestPaginationTransforms {
 		}
 	}
 
+
+	
+	@Test
+	public void testIncremental1() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {
+
+	    String[] htmlInput = {
+	            "<html  test='pagination'>",
+	            "<head>",
+	            "<title>Document Title</title>",
+	            "</head>",
+	            "<body>",
+	            "<h1 id='h11'>Title 1</h1>",             // page 0
+	            "   <p id='par1'>par1</p>",
+	            "   <ul>",
+	            "     <li> <i>item1</i> <span class='incremental'> </span></li>",
+	            "     <li> <i>item2</i></li>",
+	            "     <li> <i>item3</i></li>",
+	            "   </ul>",
+	            "   <div id='div1'>Some text</div>",
+	            "</body>",
+	            "</html>"   
+	    };
+
+
+	    org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
+	    Element root = basicHtml.getDocumentElement();
+	    String htmlContent = root.getTextContent();
+
+	    assertTrue (htmlContent.contains("par1"));
+	    assertTrue (htmlContent.contains("item1"));
+	    assertTrue (htmlContent.contains("item2"));
+	    assertTrue (htmlContent.contains("item3"));
+	    assertTrue (htmlContent.contains("Some text"));
+
+	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    assertEquals ("html", root.getLocalName());
+
+	    NodeList pages = root.getElementsByTagName("page");
+	    assertEquals (4, pages.getLength());
+
+	    NodeList items = root.getElementsByTagName("li");
+	    assertEquals (6, items.getLength());
+
+	    NodeList divs = root.getElementsByTagName("div");
+	    assertEquals (1, divs.getLength());
+
+	    for (int i = 0; i < pages.getLength(); ++i) {
+	        // System.err.println("i=" + i);
+	        Node page = pages.item(i);
+	        NodeList nl = (NodeList)xPath.evaluate(".//li",
+	                page, XPathConstants.NODESET);
+	        assertEquals (i, nl.getLength());
+	    }
+
+	    NodeList h11Nodes = (NodeList)xPath.evaluate("//*[@id='h11']",
+	                    root, XPathConstants.NODESET);
+	    assertEquals (1, h11Nodes.getLength());
+	}
+
+
+
 	
 	@Test
 	public void testSectioning() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {

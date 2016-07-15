@@ -3,6 +3,8 @@ package edu.odu.cs.cowem.documents;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import edu.odu.cs.cowem.documents.ListingInjector;
@@ -13,7 +15,7 @@ public class TestListingInjector {
     @Test
     public void testApply() {
        
-        ListingInjector cleaner = new ListingInjector();
+        ListingInjector cleaner = new ListingInjector(new File("."));
         String input = 
                 "some html " 
                 + "<longlisting file='src/test/data/hello.cpp' id='anID'>"

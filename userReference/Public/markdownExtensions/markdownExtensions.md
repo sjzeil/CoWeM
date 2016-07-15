@@ -20,9 +20,12 @@ These extensions can be applied to text inside a paragraph:
 \bSidebar
 
 ```
-* Lists can be marked as incremental \incr 
-* so that, when documents are presented in the _slides_ format, 
-* the list elements will be revealed one at a time.
+* Lists can be marked as 
+  incremental \incr 
+* so that, when documents are presented
+  in the _pages_ or _slides_ format, 
+* the list elements will be revealed
+  one at a time.
 ```
 
 \eSidebar
@@ -31,7 +34,7 @@ These extensions can be applied to text inside a paragraph:
 * so that, when documents are presented in the _slides_ format, 
 * the list elements will be revealed one at a time.
 
-You can view [this document](markDownExtensions__slides.html) as slides
+You can view [this document](markdownExtensions__slides.html) as slides
 to see this in action.
 
 %define {\\} {x} {\}

@@ -167,10 +167,13 @@
     <xsl:variable name="recursivePages">
       <xsl:apply-templates select="body" mode="recurseOnPages"/>
     </xsl:variable>
+    <xsl:variable name="flattenedPages">
+        <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
+    </xsl:variable>
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:copy-of select="head"/>
-      <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
+      <xsl:apply-templates select="$flattenedPages" mode="incrementalPages"/>
     </xsl:copy>
   </xsl:template>
   
@@ -178,7 +181,10 @@
     <xsl:variable name="recursivePages">
       <xsl:apply-templates select="." mode="recurseOnPages"/>
     </xsl:variable>
-    <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
+    <xsl:variable name="flattenedPages">
+        <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
+    </xsl:variable>
+    <xsl:apply-templates select="$flattenedPages" mode="incrementalPages"/>
   </xsl:template>
   
   <xsl:template match="body" mode="recurseOnPages">
@@ -275,6 +281,92 @@
       <xsl:apply-templates select="*|text()"  mode="flattenPages"/>
     </xsl:copy>
   </xsl:template>
+
+
+<!-- Incremental pages -->
+
+
+  <xsl:template match="page" mode="incrementalPages">
+      <xsl:choose>
+        <xsl:when test=".//*[@class='incremental']">
+            <xsl:variable name="incremItem" 
+                select=".//*[@class='incremental'][1]/ancestor-or-self::li"/>
+            <xsl:variable name="itemCount" 
+                select="count(.//li)"/>
+            <xsl:variable name="thisPage" 
+                select="."/>
+            <xsl:variable name="pageCopy0">
+                <xsl:copy>
+                    <xsl:attribute name="increm">
+                        <xsl:text>0</xsl:text>
+                    </xsl:attribute>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:copy-of select="node()"/>
+                </xsl:copy>    
+            </xsl:variable>
+            <xsl:apply-templates select="$pageCopy0" mode="incremental"/>
+            <xsl:for-each select="1 to $itemCount">
+                <xsl:variable name="pageCopy">
+                    <page>
+                        <xsl:copy-of select="$thisPage/@*"/>
+                        <xsl:attribute name="increm">
+                            <xsl:value-of select="."/>
+                        </xsl:attribute>
+                        <xsl:apply-templates select="$thisPage/node()" 
+                           mode="stripIDs"/>
+                    </page>
+                </xsl:variable>
+                <xsl:apply-templates select="$pageCopy" 
+                    mode="incremental"/>
+            </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:copy-of select='.'/>
+        </xsl:otherwise>
+      </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="text()" mode="incrementalPages">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+
+  <xsl:template match="*" mode="incrementalPages">
+    <xsl:copy>
+      <xsl:copy-of select='@*'/>
+      <xsl:apply-templates select="*|text()"  mode="incrementalPages"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="text()" mode="stripIDs">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+  <xsl:template match="*" mode="stripIDs">
+    <xsl:copy>
+      <xsl:copy-of select='@*[local-name() != "id"]'/>
+      <xsl:apply-templates select="*|text()"  mode="stripIDs"/>
+    </xsl:copy>
+  </xsl:template>
+
+
+  <xsl:template match="*" mode="incremental">
+    <xsl:variable name="increm" select="./ancestor-or-self::page/@increm"/>
+    <xsl:variable name="itemCount"
+        select="count(./preceding::li) + count(.[local-name() = 'li'])"/>
+    <xsl:if test="$itemCount &lt;= $increm">
+	    <xsl:copy>
+		    <xsl:copy-of select='@*' />
+		    <xsl:apply-templates select="*|text()" mode="incremental" />
+	    </xsl:copy>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="text()" mode="incremental">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+
 
 
 

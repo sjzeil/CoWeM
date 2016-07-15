@@ -298,14 +298,16 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="h1|h2|h3" mode="toc">
-    <div class="toc-{local-name(.)}">
-      <a href="#{@id}">
-        <xsl:value-of select="@sectionNumber"/>
-        <xsl:apply-templates select="*|text()"/>
-      </a>
-    </div>
-  </xsl:template>
+	<xsl:template match="h1|h2|h3" mode="toc">
+		<xsl:if test="count(./ancestor::page[@increm &gt; 0]) = 0">
+			<div class="toc-{local-name(.)}">
+				<a href="#{@id}">
+					<xsl:value-of select="@sectionNumber" />
+					<xsl:apply-templates select="*|text()" />
+				</a>
+			</div>
+		</xsl:if>
+	</xsl:template>
 
 
 
