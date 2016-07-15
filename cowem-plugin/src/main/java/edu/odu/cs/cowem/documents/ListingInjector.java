@@ -4,6 +4,7 @@
 package edu.odu.cs.cowem.documents;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,6 +27,15 @@ public class ListingInjector implements TextSubstitutions {
      */
     private Pattern listingPattern;
     
+    
+    /**
+     * Directory from which source code was being obtained.
+     */
+    private File sourceDirectory;
+
+    
+    
+    
     /**
      * For logging error messages.
      */
@@ -34,10 +44,13 @@ public class ListingInjector implements TextSubstitutions {
 
     /**
      * Create a cleaner.
+     * 
+     * @param sourceDir; directory from which document source was loaded.
      */
-    public ListingInjector() {
+    public ListingInjector(File sourceDir) {
         listingPattern = Pattern.compile
              ("[<]longlisting ([^>]*)[>]([^<]*)[<]/longlisting([^>]*)[>]");
+        sourceDirectory = sourceDir;
     }
     
     
@@ -79,8 +92,10 @@ public class ListingInjector implements TextSubstitutions {
             buffer.append(attributes);
             buffer.append("><![CDATA[");
             
+            
             try (BufferedReader fileIn 
-                    = new BufferedReader(new FileReader(fileName))) {
+                    = new BufferedReader(new FileReader(
+                            new File(sourceDirectory, fileName)))) {
                 String line = fileIn.readLine();
                 while (line != null) {
                     buffer.append(line);

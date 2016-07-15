@@ -3,12 +3,15 @@ Author: Steven J Zeil
 Date: @docModDate@
 TOC: yes
 
-Using the [macro facility](doc:macros), CoWeM adds a number of
-extensions that I have found useful in my own courses.
+CoWeM pre-processes Markdown documents using a [macro processor](doc:macros)
+described in more detail later. Using that, I have added a number of extensions
+to the basic Markdown. Theme may not always adhering to the Markdown goal
+of keeping the source text looking suggestive of the formatted
+results, but they do add facilitiesthat I find particularly useful.
 
 # Inline mark-up 
 
-These mark-ups can be applied to text inside a paragraph: 
+These extensions can be applied to text inside a paragraph: 
 
 ## Incremental Lists
 
@@ -18,16 +21,18 @@ These mark-ups can be applied to text inside a paragraph:
 
 ```
 * Lists can be marked as incremental \incr 
-* so that, during slide shows (see [below](#slides)),
+* so that, when documents are presented in the _slides_ format, 
 * the list elements will be revealed one at a time.
 ```
 
 \eSidebar
 
 * Lists can be marked as incremental >>> 
-* so that, during slide shows (see [below](#slides)),
+* so that, when documents are presented in the _slides_ format, 
 * the list elements will be revealed one at a time.
 
+You can view [this document](markDownExtensions__slides.html) as slides
+to see this in action.
 
 %define {\\} {x} {\}
 
@@ -44,7 +49,7 @@ introduced for the first time in a document, and for
 
 \eSidebar
 
-More significant, I have a markup for \firstterm{new terms} being
+I have a markup for \firstterm{new terms} being
 introduced for the first time in a document, and for
 \emph{very strong emphasis}.  
 
@@ -168,7 +173,7 @@ horizontally past a certain
 percentage of the page width.
 Any multiple of 5 can be given as
 a maximum with. 33 and 67 are also
-suppported.
+supported.
 
 If no value is
 given, the default is 50.

@@ -40,12 +40,10 @@ Assorted text decorations (from docbook, originally)
 
 
   Highlighting
-%ifdef _html
 %define <\hli> (highlightedText) {<span class='hli'>highlightedText</span>}
 %define <\hlii> (highlightedText) {<span class='hlii'>highlightedText</span>}
 %define <\hliii> (highlightedText) {<span class='hliii'>highlightedText</span>}
 %define <\hliv> (highlightedText) {<span class='hliv'>highlightedText</span>}
-%endif
 
 %ifdef _epub
 %define <\hli> (highlightedText) {<span class='hli'>&#x2460;&#8594;highlightedText&#8592;&#x2460;</span>}
@@ -83,9 +81,7 @@ Image processing:
 
 
 Listings:
-%ifdef _html
 %define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)
-%endif
 
 %ifdef _epub
 %define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)

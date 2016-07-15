@@ -59,33 +59,35 @@
       <organizations default="toc00001">
           <organization identifier="toc00001">
               <xsl:apply-templates select="/imscc/navigation/*" 
-                          mode="nav-menu"/>
+                  mode="navigation"/>
+    <!-- 
               <item identifier="itm00001" identifierref="res00001">
                   <title><xsl:value-of select="$bbContentLabel"/></title>
                   <item identifier="itm00002" identifierref="res00002">
-                      <title>--TOP--</title>
-                      <xsl:apply-templates select="/imscc/navigation/*" 
-                          mode="navigation"/>
+                      <title>- -TOP- -</title>
                  </item>
               </item>
+      -->
           </organization>
       </organizations>
       <resources>
+      <!-- 
           <resource bb:file="res00001.dat" 
               bb:title="{$bbContentLabel}" 
               identifier="res00001" 
               type="course/x-bb-coursetoc" 
               xml:base="res00001"/>
           <resource bb:file="res00002.dat" 
-              bb:title="--TOP--" 
+              bb:title="- -TOP- -" 
               identifier="res00002" 
               type="resource/x-bb-document" 
               xml:base="res00002"/>
-      
+       -->
           <xsl:apply-templates select="/imscc/navigation/*" mode="nav-resources"/>
           <xsl:apply-templates select="/imscc/outline/*" mode="calendar"/>
       </resources>
     </manifest>
+    <!-- 
     <xsl:result-document 
         href="{$workDir}/res00001.dat"
         format="resources">
@@ -112,7 +114,7 @@
         href="{$workDir}/res00002.dat"
         format="resources">
 	<CONTENT id="{$tocContentID}">
-		<TITLE value="--TOP--" />
+		<TITLE value="- -TOP- -" />
 		<TITLECOLOR value="#000000" />
 		<BODY>
 			<TEXT />
@@ -152,7 +154,7 @@
 		<FILES />
 	</CONTENT>
     </xsl:result-document>
-    
+    -->
     <xsl:result-document 
         href="{$workDir}/.bb-package-info"
         format="textual">
@@ -210,7 +212,7 @@
             <xsl:value-of select="$title"/>
          </title>
       </item>
-      <xsl:call-template name="generateMenuResource">
+      <xsl:call-template name="generateMenuResources">
           <xsl:with-param name="url" select="@href"/>
           <xsl:with-param name="itemID" select="$itemID"/>
           <xsl:with-param name="label" select="$title"/>
@@ -221,11 +223,175 @@
       <xsl:apply-templates select="*" mode="nav-menu"/>
   </xsl:template>
 
-	<xsl:template name="generateMenuResource">
-		<xsl:param name="url" />
-		<xsl:param name="itemID" />
-		<xsl:param name="label" />
-
+  <xsl:template name="generateMenuResources">
+	  <xsl:param name="url" />
+	  <xsl:param name="itemID" />
+	  <xsl:param name="label" />
+		
+	  <xsl:result-document 
+        href="{$workDir}/entry-{$itemID}.dat"
+        format="resources">
+        <COURSETOC id="4{$itemID}_1">
+          <LABEL value="{$label}"/>
+          <URL value=""/>
+          <TARGETTYPE value="CONTENT"/>
+          <INTERNALHANDLE value="content"/>
+          <FLAGS>
+            <LAUNCHINNEWWINDOW value="false"/>
+            <ISENABLED value="true"/>
+            <ISENTRYPOINT value="false"/>
+            <ALLOWOBSERVERS value="false"/>
+            <ALLOWGUESTS value="false"/>
+          </FLAGS>
+        </COURSETOC>
+    </xsl:result-document>
+    
+    <xsl:result-document 
+        href="{$workDir}/top-{$itemID}.dat"
+        format="resources">
+    <CONTENT id="5{$itemID}_1">
+        <TITLE value="--TOP--" />
+        <TITLECOLOR value="#000000" />
+        <BODY>
+            <TEXT />
+            <TYPE value="S" />
+        </BODY>
+        <DATES>
+            <CREATED value="" />
+            <UPDATED value="{$now}" />
+            <START value="" />
+            <END value="" />
+        </DATES>
+        <FLAGS>
+            <ISAVAILABLE value="true" />
+            <ISFROMCARTRIDGE value="false" />
+            <ISFOLDER value="true" />
+            <ISDESCRIBED value="false" />
+            <ISTRACKED value="false" />
+            <ISLESSON value="false" />
+            <ISSEQUENTIAL value="false" />
+            <ALLOWGUESTS value="true" />
+            <ALLOWOBSERVERS value="true" />
+            <LAUNCHINNEWWINDOW value="false" />
+            <ISREVIEWABLE value="false" />
+            <ISGROUPCONTENT value="false" />
+            <ISSAMPLECONTENT value="false" />
+        </FLAGS>
+        <CONTENTHANDLER value="resource/x-bb-folder" />
+        <RENDERTYPE value="REGULAR" />
+        <URL value="" />
+        <VIEWMODE value="TEXT_ICON_ONLY" />
+        <OFFLINENAME value="" />
+        <OFFLINEPATH value="" />
+        <LINKREF value="" />
+        <PARENTID value="{'{unset id}'}" />
+        <VERSION value="3" />
+        <EXTENDEDDATA />
+        <FILES />
+    </CONTENT>
+    </xsl:result-document>
+		
+    <xsl:variable name="linkHref">
+        <xsl:call-template name='formatURL'>
+            <xsl:with-param name='url' select='@href' />
+        </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="fileID">
+        <xsl:value-of select="concat('_7', $itemID, '_1')" />
+    </xsl:variable>
+    
+    
+    <xsl:result-document href="{concat($workDir, '/res-', $itemID, '.dat')}"
+         format="resources">
+        <CONTENT id="6{$itemID}_1">
+            <TITLE>
+                <xsl:attribute name="value">
+                    <xsl:value-of select="$label" />
+                </xsl:attribute>
+            </TITLE>
+            <TITLECOLOR value="#000000" />
+            <BODY>
+                <TEXT>
+                    <xsl:text>Item is </xsl:text>
+                    <xsl:value-of select="$itemID"/>
+                    <br/>
+                    <xsl:text>
+                    url is </xsl:text> 
+                    <xsl:value-of select="$url"/>
+                </TEXT>
+                <xsl:choose>
+                    <xsl:when test="contains($linkHref, '://')">
+                        <TYPE value="H" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <TYPE value="S" /> 
+                    </xsl:otherwise>
+                </xsl:choose>
+            </BODY>
+            <DATES>
+                <CREATED value="" />
+                <UPDATED value="{$now}" />
+                <START value="" />
+                <END value="" />
+            </DATES>
+            <FLAGS>
+                <ISAVAILABLE value="true" />
+                <ISFROMCARTRIDGE value="false" />
+                <ISFOLDER value="false" />
+                <ISDESCRIBED value="false" />
+                <ISTRACKED value="false" />
+                <ISLESSON value="false" />
+                <ISSEQUENTIAL value="false" />
+                <ALLOWGUESTS value="true" />
+                <ALLOWOBSERVERS value="true" />
+                <LAUNCHINNEWWINDOW value="true" />
+                <ISREVIEWABLE value="false" />
+                <ISGROUPCONTENT value="false" />
+                <ISSAMPLECONTENT value="false" />
+            </FLAGS>
+            <xsl:choose>
+                <xsl:when test="contains($linkHref, '://')">
+                    <CONTENTHANDLER value="resource/x-bb-externallink" />
+                    <RENDERTYPE value="URL" />
+                    <URL value="{$linkHref}" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <CONTENTHANDLER value="resource/x-bb-file" />
+                    <RENDERTYPE value="REGULAR" />
+                    <URL value="" />
+                </xsl:otherwise>
+            </xsl:choose>
+            <VIEWMODE value="TEXT_ICON_ONLY" />
+            <OFFLINENAME value="" />
+            <OFFLINEPATH value="" />
+            <LINKREF value="" />
+            <PARENTID value="5{$itemID}_1" />
+            <VERSION value="3" />
+            <EXTENDEDDATA />
+            <FILES>
+                <xsl:choose>
+                    <xsl:when test="contains($linkHref, '://')">
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <FILE id="{$fileID}">
+                            <NAME>
+                                <xsl:value-of select="$linkHref" />
+                            </NAME>
+                            <FILEACTION value="EMBED" />
+                            <LINKNAME value="{$linkHref}" />
+                            <STORAGETYPE value="CS" />
+                            <DATES>
+                                <CREATED value="" />
+                                <UPDATED value="2015-06-12 08:51:05 EDT" />
+                            </DATES>
+                            <REGISTRY />
+                        </FILE>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </FILES>
+        </CONTENT>
+    </xsl:result-document>
+<!-- 
 		<xsl:result-document href="{concat($workDir, '/menu-', $itemID, '.dat')}"
 			format="resources">
 			<COURSETOC id="_2{$itemID}_1">
@@ -273,6 +439,8 @@
 			</LINK>
 		</xsl:result-document>
 	</xsl:if>
+	
+	-->
   </xsl:template>
 
 
@@ -282,12 +450,17 @@
       </xsl:variable>
       <xsl:variable name="title"
           select="normalize-space(*|text())"/>
-      <item identifier="item-{$itemID}" identifierref="res-{$itemID}">
-          <title>
-            <xsl:value-of select="$title"/>
-          </title>
+      <item identifier="entry{$itemID}" identifierref="entry-{$itemID}">
+          <title><xsl:value-of select="$title"/></title>
+          <item identifier="top{$itemID}" identifierref="top-{$itemID}">
+              <title>--TOP--</title>
+              <item identifier="item{$itemID}" identifierref="res-{$itemID}">
+                  <title><xsl:value-of select="$title"/></title>
+              </item>
+          </item>
       </item>
-      <xsl:call-template name="generateLinkResource">
+      
+      <xsl:call-template name="generateMenuResources">
           <xsl:with-param name="url" select="@href"/>
           <xsl:with-param name="itemID" select="$itemID"/>
           <xsl:with-param name="label" select="$title"/>
@@ -305,31 +478,57 @@
       </xsl:variable>
       <xsl:variable name="title"
           select="normalize-space(*|text())"/>
+          
+          
+      <resource bb:file="entry-{$itemID}.dat" 
+              bb:title="{$title}" 
+              identifier="entry-{$itemID}" 
+              type="course/x-bb-coursetoc" 
+              xml:base="entry-{$itemID}"/>
+      <resource bb:file="top-{$itemID}.dat" 
+              bb:title="--TOP--" 
+              identifier="top-{$itemID}" 
+              type="resource/x-bb-document" 
+              xml:base="top-{$itemID}"/>
       <resource
           bb:file="res-{$itemID}.dat"
           bb:title="{$title}"
           identifier="res-{$itemID}"
           type="resource/x-bb-document"
           xml:base="res-{$itemID}"/>
-      <resource
-          bb:file="menu-{$itemID}.dat"
-          bb:title="{$title}"
-          identifier="menu-{$itemID}"
-          type="course/x-bb-coursetoc"
-          xml:base="menu-{$itemID}"/>
-	<xsl:if test="not(contains(@href, '://'))">
-		<resource bb:file="link-{$itemID}.dat"
-		          bb:title="{$title}"
-			      identifier="link-{$itemID}"
-			      type="course/x-bb-link"
-			      xml:base="link-{$itemID}" />
-	</xsl:if>
     
   </xsl:template>
 
   <xsl:template match="table|tr|td" mode="nav-resources">
       <xsl:apply-templates select="*" mode="nav-resources"/>
   </xsl:template>
+
+
+
+  <xsl:template match="a" mode="nav-links">
+      <xsl:variable name="itemID">
+           <xsl:call-template name="navItemID"/>
+      </xsl:variable>
+      <xsl:variable name="title"
+          select="normalize-space(*|text())"/>
+      <xsl:if test="not(contains(@href, '://'))">
+        <resource bb:file="link-{$itemID}.dat"
+                  bb:title="{$title}"
+                  identifier="link-{$itemID}"
+                  type="course/x-bb-link"
+                  xml:base="link-{$itemID}" />
+      </xsl:if>
+    
+  </xsl:template>
+
+  <xsl:template match="table|tr|td" mode="nav-links">
+      <xsl:apply-templates select="*" mode="nav-links"/>
+  </xsl:template>
+
+
+
+
+
 
 
 	<xsl:template name='formatURL'>

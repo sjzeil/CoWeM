@@ -257,7 +257,13 @@ bb
     * All dates found in items in the course outline 
       (`Directory/outline`) are added to the Blackboard calendar. 
 
-> Currently, this fat Blackboard package is not working.
+> Currently, this fat Blackboard package is not working.  It can be
+> accomplished in two steps, however, by
+> 1. Create a **zip** package and upload and unpack it to your course's
+>    Content Area on Blackboard.
+> 2. Create a **bbthin** package, as described below, setting its `baseURL`
+>    to the URL of the root directory of the unpacked content on Blackboard.
+>    (This URL will have the form `https://`...`/bbcswebdav/`... 
 
 \bSidebar{66}
 

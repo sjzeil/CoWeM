@@ -391,7 +391,7 @@ public class MarkdownDocument implements Document {
 		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;
 		htmlText = new CommonEntitySubstitutions().apply(htmlText);
 		htmlText = new CWMcleaner().apply(htmlText);
-		htmlText = new ListingInjector().apply(htmlText);
+		htmlText = new ListingInjector(sourceDirectory).apply(htmlText);
 		        
 		org.w3c.dom.Document basicHtml = null;
 		try {
