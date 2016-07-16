@@ -231,11 +231,17 @@
 	  <xsl:result-document 
         href="{$workDir}/entry-{$itemID}.dat"
         format="resources">
-        <COURSETOC id="4{$itemID}_1">
+        <COURSETOC id="_4{$itemID}_1">
           <LABEL value="{$label}"/>
           <URL value=""/>
           <TARGETTYPE value="CONTENT"/>
           <INTERNALHANDLE value="content"/>
+          <DATES>
+            <CREATED value="" />
+            <UPDATED value="{$now}" />
+            <START value="" />
+            <END value="" />
+          </DATES>
           <FLAGS>
             <LAUNCHINNEWWINDOW value="false"/>
             <ISENABLED value="true"/>
@@ -249,7 +255,7 @@
     <xsl:result-document 
         href="{$workDir}/top-{$itemID}.dat"
         format="resources">
-    <CONTENT id="5{$itemID}_1">
+    <CONTENT id="_5{$itemID}_1">
         <TITLE value="--TOP--" />
         <TITLECOLOR value="#000000" />
         <BODY>
@@ -306,6 +312,7 @@
         <CONTENT id="6{$itemID}_1">
             <TITLE>
                 <xsl:attribute name="value">
+                    <xsl:text>go to </xsl:text>
                     <xsl:value-of select="$label" />
                 </xsl:attribute>
             </TITLE>
@@ -324,7 +331,8 @@
                         <TYPE value="H" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <TYPE value="S" /> 
+                        <!-- <TYPE value="S" />  --> 
+                        <TYPE value="H" /> 
                     </xsl:otherwise>
                 </xsl:choose>
             </BODY>
@@ -356,7 +364,8 @@
                     <URL value="{$linkHref}" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <CONTENTHANDLER value="resource/x-bb-file" />
+                    <!--  <CONTENTHANDLER value="resource/x-bb-file" /> -->
+                    <CONTENTHANDLER value="resource/x-bb-document" />
                     <RENDERTYPE value="REGULAR" />
                     <URL value="" />
                 </xsl:otherwise>
@@ -365,7 +374,7 @@
             <OFFLINENAME value="" />
             <OFFLINEPATH value="" />
             <LINKREF value="" />
-            <PARENTID value="5{$itemID}_1" />
+            <PARENTID value="_5{$itemID}_1" />
             <VERSION value="3" />
             <EXTENDEDDATA />
             <FILES>
@@ -377,8 +386,9 @@
                             <NAME>
                                 <xsl:value-of select="$linkHref" />
                             </NAME>
-                            <FILEACTION value="EMBED" />
-                            <LINKNAME value="{$linkHref}" />
+                            <!--  <FILEACTION value="EMBED" />  -->
+                            <FILEACTION value="LINK" />
+                            <LINKNAME value="{$label}" />
                             <STORAGETYPE value="CS" />
                             <DATES>
                                 <CREATED value="" />
@@ -492,7 +502,7 @@
               xml:base="top-{$itemID}"/>
       <resource
           bb:file="res-{$itemID}.dat"
-          bb:title="{$title}"
+          bb:title="go to {$title}"
           identifier="res-{$itemID}"
           type="resource/x-bb-document"
           xml:base="res-{$itemID}"/>
@@ -593,7 +603,7 @@
                     <TEXT>
                         <xsl:text>Item is </xsl:text>
                         <xsl:value-of select="$itemID"/>
-                        <br/>
+                        <xsl:text>&amp;lt;br/&amp;gt;</xsl:text>
                         <xsl:text>
                         url is </xsl:text> 
                         <xsl:value-of select="$url"/>
@@ -603,7 +613,8 @@
 							<TYPE value="H" />
 						</xsl:when>
 						<xsl:otherwise>
-							<TYPE value="S" /> 
+							<!-- TYPE value="S" /> --> 
+                            <TYPE value="H" /> 
 						</xsl:otherwise>
 					</xsl:choose>
 				</BODY>
@@ -635,9 +646,14 @@
 						<URL value="{$linkHref}" />
 					</xsl:when>
 					<xsl:otherwise>
+					<!-- 
 						<CONTENTHANDLER value="resource/x-bb-file" />
 						<RENDERTYPE value="REGULAR" />
 						<URL value="" />
+						 -->
+                        <CONTENTHANDLER value="resource/x-bb-document" />
+                        <RENDERTYPE value="REGULAR" />
+                        <URL value="" />
 					</xsl:otherwise>
 				</xsl:choose>
 				<VIEWMODE value="TEXT_ICON_ONLY" />
@@ -656,7 +672,8 @@
 								<NAME>
 									<xsl:value-of select="$linkHref" />
 								</NAME>
-								<FILEACTION value="EMBED" />
+								<!--  <FILEACTION value="EMBED" /> -->
+								<FILEACTION value="LINK" />
 								<LINKNAME value="{$linkHref}" />
 								<STORAGETYPE value="CS" />
 								<DATES>
