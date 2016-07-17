@@ -30,7 +30,7 @@ Learning Management Systems.
   largely limited to Linux machines with a
   fair amount of support software needing to be installed.
   
-* The v1.0 release currently under development is a pure Java + Gradle
+* Beginning with v1.0, CoWeM is a pure Java + Gradle
   implementation that should run portably on Linux, Windows, & OS/X. 
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and

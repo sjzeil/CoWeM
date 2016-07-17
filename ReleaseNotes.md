@@ -18,7 +18,6 @@ Supports
        
 Features deferred to future releases:
 * EPUB & Mobi publication
-* Fat Blackboard export packages
 * IMS CC exports (thin and fat)
 * Dating of documents from a combination of file mod dates &
   (if the course materials are in a Git repository) Git log info.

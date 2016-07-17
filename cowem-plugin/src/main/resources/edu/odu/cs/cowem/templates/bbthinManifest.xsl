@@ -141,7 +141,14 @@
         format="resources">
       <COURSETOC id="_id{$itemID}_">
          <LABEL value="{$label}"/>
-         <URL value="{concat($baseURL, 'Directory/navigation/',$url)}"/>
+         <xsl:choose>
+            <xsl:when test="contains($url, '://')">
+                <URL value="{$url}"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <URL value="{concat($baseURL, 'Directory/navigation/',$url)}"/>
+            </xsl:otherwise>
+         </xsl:choose>
          <TARGETTYPE value="URL"/>
          <INTERNALHANDLE value=""/>
          <FLAGS>
