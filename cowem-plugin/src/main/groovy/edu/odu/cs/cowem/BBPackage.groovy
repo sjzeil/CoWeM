@@ -26,6 +26,8 @@ import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream
@@ -72,6 +74,7 @@ class BBPackage {
 
     File tempAreaAbs;
     File webcontentAbs;
+    String webcontentRel;
 
     /**
      * Initialize the package builder
@@ -114,15 +117,20 @@ class BBPackage {
     void copyFiles (boolean isThin)
     {
         if (isThin) {
-            webcontentAbs = new File(tempAreaAbs, 'webcontent')
+            webcontentRel = 'webcontent'
+            webcontentAbs = new File(tempAreaAbs, webcontentRel)
             webcontentAbs.mkdirs()
             File placeHolder = new File(webcontentAbs, 'placeHolder.txt')
             placeHolder.withWriter('UTF-8') {
                 it.writeLine('foo')
             }
         } else {
+            DateTimeFormatter format = DateTimeFormatter.ofPattern(
+                "yyyy-MM-dd'T'HH-mm-ss")
+            webcontentRel = 'webcontent-' + 
+                LocalDateTime.now().format(format)
             webcontentAbs = tempAreaAbs.toPath().resolve(
-                    'csfiles/home_dir/webcontent').toFile()
+                    'csfiles/home_dir/' + webcontentRel).toFile()
             webcontentAbs.mkdirs()
             def websiteFiles = project.fileTree(
                     dir: 'build/website/', include: '**/*')
@@ -163,7 +171,6 @@ class BBPackage {
         outlineDoc.append("<outline>\n")
         outlineDoc.append(result)
         outlineDoc.append("\n</outline>\n<navigation>\n")
-
 
         MarkdownDocument navDoc =
                 new MarkdownDocument(project.file('Directory/navigation/navigation.md'),
@@ -282,6 +289,7 @@ class BBPackage {
             Templates template = transFact.newTemplates(xslSource);
             Transformer xform = template.newTransformer();
             xform.setParameter("workDir", tempAreaAbs.toString());
+            xform.setParameter("webcontentURL", webcontentRel);
             for (Object okey: projProperties.keySet()) {
                 String key = okey.toString();
                 String value = projProperties.getProperty(key).toString();

@@ -5,6 +5,7 @@
     >
 
   <xsl:param name="workDir" select="'bbthin'"/>
+  <xsl:param name="webcontentURL" select="'webcontent'"/>
 
   <xsl:param name="bbContentLabel" select="'_'"/>
 
@@ -309,7 +310,11 @@
     
     <xsl:result-document href="{concat($workDir, '/res-', $itemID, '.dat')}"
          format="resources">
-        <CONTENT id="6{$itemID}_1">
+         <xsl:message>
+            <xsl:text>linkHref is </xsl:text>
+            <xsl:value-of select="$linkHref"/>
+         </xsl:message>
+        <CONTENT id="_6{$itemID}_1">
             <TITLE>
                 <xsl:attribute name="value">
                     <xsl:text>go to </xsl:text>
@@ -374,7 +379,7 @@
             <OFFLINENAME value="" />
             <OFFLINEPATH value="" />
             <LINKREF value="" />
-            <PARENTID value="_5{$itemID}_1" />
+            <PARENTID value="_7{$itemID}_1" />
             <VERSION value="3" />
             <EXTENDEDDATA />
             <FILES>
@@ -388,7 +393,7 @@
                             </NAME>
                             <!--  <FILEACTION value="EMBED" />  -->
                             <FILEACTION value="LINK" />
-                            <LINKNAME value="{$label}" />
+                            <LINKNAME value="click here" />
                             <STORAGETYPE value="CS" />
                             <DATES>
                                 <CREATED value="" />
@@ -460,59 +465,103 @@
       </xsl:variable>
       <xsl:variable name="title"
           select="normalize-space(*|text())"/>
-      <item identifier="entry{$itemID}" identifierref="entry-{$itemID}">
-          <title><xsl:value-of select="$title"/></title>
-          <item identifier="top{$itemID}" identifierref="top-{$itemID}">
-              <title>--TOP--</title>
-              <item identifier="item{$itemID}" identifierref="res-{$itemID}">
+      <xsl:choose>
+          <xsl:when test="contains(@href, '://')">
+              <item identifier="entry{$itemID}" 
+                    identifierref="url-{$itemID}">
                   <title><xsl:value-of select="$title"/></title>
               </item>
-          </item>
-      </item>
+          </xsl:when>
+          <xsl:otherwise>
+              <item identifier="entry{$itemID}" identifierref="entry-{$itemID}">
+                  <title><xsl:value-of select="$title"/></title>
+                  <item identifier="top{$itemID}" identifierref="top-{$itemID}">
+                      <title>--TOP--</title>
+                      <item identifier="item{$itemID}" identifierref="res-{$itemID}">
+                          <title><xsl:value-of select="$title"/></title>
+                      </item>
+                  </item>
+              </item>
+          </xsl:otherwise>
+      </xsl:choose>
       
-      <xsl:call-template name="generateMenuResources">
-          <xsl:with-param name="url" select="@href"/>
-          <xsl:with-param name="itemID" select="$itemID"/>
-          <xsl:with-param name="label" select="$title"/>
-      </xsl:call-template>
+      <xsl:choose>
+          <xsl:when test="contains(@href, '://')">
+              <xsl:call-template name="generateExternalURLResources">
+                  <xsl:with-param name="url" select="@href"/>
+                  <xsl:with-param name="itemID" select="$itemID"/>
+                  <xsl:with-param name="label" select="$title"/>
+              </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:call-template name="generateMenuResources">
+                  <xsl:with-param name="url" select="@href"/>
+                  <xsl:with-param name="itemID" select="$itemID"/>
+                  <xsl:with-param name="label" select="$title"/>
+              </xsl:call-template>
+          </xsl:otherwise>
+      </xsl:choose>
   </xsl:template>
 
   <xsl:template match="table|tr|td" mode="navigation">
       <xsl:apply-templates select="*" mode="navigation"/>
   </xsl:template>
-  
 
-  <xsl:template match="a" mode="nav-resources">
-      <xsl:variable name="itemID">
-           <xsl:call-template name="navItemID"/>
-      </xsl:variable>
-      <xsl:variable name="title"
-          select="normalize-space(*|text())"/>
-          
-          
-      <resource bb:file="entry-{$itemID}.dat" 
-              bb:title="{$title}" 
-              identifier="entry-{$itemID}" 
-              type="course/x-bb-coursetoc" 
-              xml:base="entry-{$itemID}"/>
-      <resource bb:file="top-{$itemID}.dat" 
-              bb:title="--TOP--" 
-              identifier="top-{$itemID}" 
-              type="resource/x-bb-document" 
-              xml:base="top-{$itemID}"/>
-      <resource
-          bb:file="res-{$itemID}.dat"
-          bb:title="go to {$title}"
-          identifier="res-{$itemID}"
-          type="resource/x-bb-document"
-          xml:base="res-{$itemID}"/>
-    
-  </xsl:template>
+
+	<xsl:template match="a" mode="nav-resources">
+		<xsl:variable name="itemID">
+			<xsl:call-template name="navItemID" />
+		</xsl:variable>
+		<xsl:variable name="title" select="normalize-space(*|text())" />
+
+		<xsl:choose>
+			<xsl:when test="contains(@href, '://')">
+				<resource bb:file="url-{$itemID}.dat" bb:title="{$title}"
+					identifier="url-{$itemID}" type="course/x-bb-coursetoc"
+					xml:base="url-{$itemID}" />
+			</xsl:when>
+			<xsl:otherwise>
+				<resource bb:file="entry-{$itemID}.dat" bb:title="{$title}"
+					identifier="entry-{$itemID}" type="course/x-bb-coursetoc"
+					xml:base="entry-{$itemID}" />
+				<resource bb:file="top-{$itemID}.dat" bb:title="--TOP--"
+					identifier="top-{$itemID}" type="resource/x-bb-document"
+					xml:base="top-{$itemID}" />
+				<resource bb:file="res-{$itemID}.dat" bb:title="go to {$title}"
+					identifier="res-{$itemID}" type="resource/x-bb-document"
+					xml:base="res-{$itemID}" />
+			</xsl:otherwise>
+		</xsl:choose>
+
+	</xsl:template>
 
   <xsl:template match="table|tr|td" mode="nav-resources">
       <xsl:apply-templates select="*" mode="nav-resources"/>
   </xsl:template>
 
+  <xsl:template name="generateExternalURLResources">
+      <xsl:param name="url"/>
+      <xsl:param name="itemID"/>
+      <xsl:param name="label"/>
+      
+    <xsl:result-document 
+        href="{concat($workDir, '/url-', $itemID, '.dat')}"
+        format="resources">
+      <COURSETOC id="_id{$itemID}_">
+         <LABEL value="{$label}"/>
+         <URL value="{$url}"/>
+         <TARGETTYPE value="URL"/>
+         <INTERNALHANDLE value=""/>
+         <FLAGS>
+             <LAUNCHINNEWWINDOW value="true"/>
+             <ISENABLED value="true"/>
+             <ISENTRYPOINT value="false"/>
+             <ALLOWOBSERVERS value="true"/>
+             <ALLOWGUESTS value="true"/>
+         </FLAGS>
+      </COURSETOC>
+    </xsl:result-document>
+   </xsl:template>
 
 
   <xsl:template match="a" mode="nav-links">
@@ -552,15 +601,18 @@
 		      </xsl:call-template>
 		  </xsl:when>
 		  <xsl:when test="starts-with($url, '../../')">
-		      <xsl:value-of select = "concat('webcontent/', 
+		      <xsl:value-of select = "concat($webcontentURL, '/', 
                       substring-after($url, '../../'))"/>
           </xsl:when>
           <xsl:when test="starts-with($url, '../')">
-              <xsl:value-of select = "concat('webcontent/Directory/', 
+              <xsl:value-of select = "concat($webcontentURL, '/Directory/', 
                       substring-after($url, '../'))"/>
           </xsl:when>
+          <xsl:when test="contains($url, '://')">
+              <xsl:value-of select = "$url"/>
+          </xsl:when>
           <xsl:otherwise>
-              <xsl:value-of select="$url"/>
+              <xsl:value-of select = "concat($webcontentURL, '/', $url)"/>
           </xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
