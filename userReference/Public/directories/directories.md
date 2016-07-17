@@ -85,7 +85,7 @@ such as a zip archive of the generated website, you will find that in
 > Everything in the `build` directory can be reconstructed quickly and
 > easily. It is safe to delete any subdirectory in there, or the
 > entire `build` directory. In fact, that is the easiest way to
-> "reset" the build process.
+> "reset" the build process back to a clean state.
 
 # Document Sets
 
@@ -195,6 +195,15 @@ artificially chopped into short segments.
     this page.
     
 %endif
+
+    * Navigation through both the _pages_ and _slides_ formats can
+    be accomplished by clicking on the <img src="graphics:prev.png"/> 
+    and <img src="graphics:next.png"/>
+    symbols at the top and bottom of each page or, on most system, 
+    using the left and right arrow keys.  It is possible to change
+    the bindings to use other keys and events (e.g., click/Enter to
+    advance) by a fairly simple [modification of the Javascript in
+    the `styles/` directory](doc:graphicsAndStyles).
 
 You may notice that the text above changes slightly as you move from one
 format to another.  You can use [conditional text](doc:conditionalText) to

@@ -115,7 +115,7 @@ Prepare the basic outline using the normal Markdown headers `#`, `##`,
 If a section/subsection is going to be further subdivided, do not add
 any text in the enclosing level.
 
-Example:
+\bExample(Dividing the Outline into Sections)
 
 ```
 Title: @courseName@ Outline
@@ -143,7 +143,7 @@ Author: @semester@
 
 ```
 
-
+\eExample
 
 
 ### Descriptive material
@@ -152,7 +152,7 @@ A section (or subsection or subsubsection or...) that is not further
 subdivided can have descriptive content. This material will appear in
 the _modules_ view, but not the more compace _topics_ view.
 
-Example: 
+\bExample(Adding Descriptive Material)
 
 ```
 ## Finite Automata
@@ -246,6 +246,8 @@ Example:
  
 ```
 
+\eExample
+
 ### Activities
 
 The core content of the outline is a list of activities in each of the
@@ -261,6 +263,8 @@ a simple a paragraph.
 
 Here is an example of a complete section of a course outline , with multiple
 activities:
+
+\bExample{Adding Activities}
 
 ```
 
@@ -325,6 +329,8 @@ activities:
 
 ```
 
+\eExample
+
 Each activity begins with a "fake" Markdown link `[text](url)`.
 
 For this fake link, the URL part designates the "kind" of activity.
@@ -334,7 +340,7 @@ loaded from the website's `graphics/` directory.
 
 In the _modules_ format, if the text part of the fake link is blank (must
 have at least 1 blank character), then
-the presentation table (described [below](#presentation-table) is checked
+the presentation table (described [below](#presentation) is checked
 to see if there is a standard prefix for that "kind". If so, that prefix text
 is inserted. If the text part is non-blank, it overrides the
 standard prefix, e.g.,
@@ -360,47 +366,61 @@ distinct processing in the _modules_ and _topics_ formats.
 
 ### The Preamble
 
-This outline, like all other documents in the course, is prepared as a
-[Markdown](https://en.wikipedia.org/wiki/Markdown) document.
+A section titled "Preamble" provides content that appears aobve the outline
+in either the _modules_ or _topics_ format.
 
-Most of the sections of the document become part of the course outline
-that you see below. There are three exceptions to that rule:
+> It is actually a bug that this section must appear after the main
+> outline sections.  Ideally, you should be able to put it anywhere, but,
+> currently, placing it above the outline causes incorrect section numbering
+> in the outline itself.
 
-1. A section titled "Preamble" provides content to be written above the 
-   outline. You are reading the Preamble right now.
-   
-2. A section titled "Postscript" provides content to be written below the 
-   outline. A typical use for the Postscript is to provide a symbol key like
-   the one at the bottom of this page.
-   
-3. A section titled "Presentation" does not provide visible content, but is
-   used to control formatting of the outline (in both the expandable modules
-   form and the more compressed tabular format).   
-
-# Postscript
+The preamble is typically used to provide general navigation instructions
+to students entering the website.
 
 
-| Symbol Key ||
-|:-----------------------------------------------:|:------------------| 
-| <img alt="lecture" src="graphics:lecture.png"/> | Lecture Notes     |
-| <img alt="slides" src="graphics:slides.png"/>   | Slides            |
-| <img alt="text" src="graphics:text.png"/>       | Textbook readings |
-| <img alt="lab" src="graphics:lab.png"/>         | Lab               |
+### The Postscript
 
-All times in this schedule are given in Eastern Time.
+A section titled "Postscript" provides content that appears below the outline
+in either the _modules_ or _topics_ format.
 
-# Presentation
+Typical content in the postscript might include a symbol key for the various
+kinds of activities listed in the main outline, or a 
+"All times in this schedule are given in "... time zone notice.
+
+### The Presentation 
+
+A final section, titled "Presentation" is a required element in the outline.
+
+This section will contain two tables that provide formatting information
+used in the _topics_ and _modules_ formats, respectively.
 
 
-<!-- The first table controls the number of columns in the table view and
-     the arrangement of items within those columns -->
+The first table controls the number of columns in the _topics_ view, the
+headings of those columns, and the arrangement of activities within those
+columns.
+
+For example, this table,
 
 | Topics | Lecture Notes | Readings | Assignments & Other Events |
 |--------|---------------|----------|----------------------------|
 | topics | slides video lecture construct | text | quiz asst selfassess exam event |
 
 
-<!-- The second table controls prefix wording inserted before items in the moules view. -->
+which can be typed in Markdown like this:
+
+    | Topics | Lecture Notes  | Readings | Assignments & Other Events |
+    |--------|----------------|----------|----------------------------|
+    | topics | slides lecture | text     | quiz asst selfassess exam  |
+
+
+indicates that topics headings go into the first column, that `slides` and
+`lecture` activities appear in the second column, `text` activities in the third,
+and that various kinds of tests and assignments appear in the fourth column.
+   
+
+
+The second table controls wording inserted before activity items in the _modules
+view.  For example, this table
 
 | Document Kind | Prefix        |
 |---------------|---------------|
@@ -408,3 +428,23 @@ All times in this schedule are given in Eastern Time.
 | lab           | In the lab:   |
 | event         | Attend        |
  
+which can be typed in Markdown as
+ 
+    | Document Kind | Prefix        |
+    |---------------|---------------|
+    | lecture       | Read:         |
+    | lab           | In the lab:   |
+    | event         | Attend        |
+ 
+indicates that any `lecture` activity has the "Read:" appearing in
+front of it by default.  These default prefixes are used only
+when no text is supplied when the activity kind is set.  For example,
+the activities
+
+    1. [ ](lecture) Notes on getting started.
+    2. [Join](lecture) orientation session by net-conference
+    
+would appear in the _modules_ listing as:
+
+    1. Read: Notes on getting started
+    2. Join orientation session by net-conference 

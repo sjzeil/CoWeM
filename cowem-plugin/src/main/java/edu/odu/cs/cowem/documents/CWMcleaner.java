@@ -87,9 +87,9 @@ public class CWMcleaner implements TextSubstitutions {
             start = cwmStop;
         }
         buffer.append(target.substring(start));
+        //System.err.println("***CWM substitution");
         //System.err.println(buffer.toString());
         //System.err.println("*********");
-        //System.err.println("Applied " + counter + " substitutions.");
         
         return buffer.toString();
     }

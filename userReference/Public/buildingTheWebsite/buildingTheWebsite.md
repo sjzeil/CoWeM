@@ -1,6 +1,7 @@
 Title: Building the Website
 Author: Steven Zeil
 Date: @docModDate@
+TOC: yes
 
 CoWeM uses [Gradle](https://gradle.org) to automate the process of building the website.
 
@@ -241,10 +242,9 @@ Build options are:
 zip
 :  Package the website as a Zip archive.
 
-    One way to deploy a website to Blackboard, for example, is to
-    create a `zip` package, then upload that package to your
-    course's Blackboard "Content Area". Blackboard can be instructed
-    to unpack the Zip as soon as it has been transferred.
+    This can be unpacked in any directory managed by a web server
+    to make the course content available. This includes a
+    [Blackboard content collection](#importing-a-zip-package). 
 
 bb
 : Package the website as a fat Blackboard module that can be imported into
@@ -257,13 +257,8 @@ bb
     * All dates found in items in the course outline 
       (`Directory/outline`) are added to the Blackboard calendar. 
 
-> Currently, this fat Blackboard package is not working.  It can be
-> accomplished in two steps, however, by
-> 1. Create a **zip** package and upload and unpack it to your course's
->    Content Area on Blackboard.
-> 2. Create a **bbthin** package, as described below, setting its `baseURL`
->    to the URL of the root directory of the unpacked content on Blackboard.
->    (This URL will have the form `https://`...`/bbcswebdav/`... 
+    Brief instructions on importing Blackboard packages is given
+    [below](#importing-a-bb-or-bbthin-package).
 
 \bSidebar{66}
 
@@ -294,17 +289,9 @@ bbthin
     * All dates found in items in the course outline 
       (`Directory/outline`) are added to the Blackboard calendar. 
 
-When importing either of these Blackboard packages, it is important to
-realize that Blackboard always duplicates items when importing the same content
-two or more times. You can wind up with a really messy calendar and navigation bar
-if you import more than once, unless you 
+    Brief instructions on importing Blackboard packages is given
+    [below](#importing-a-bb-or-bbthin-package).
 
-* delete the old navigation and calendar entries before doing another import, or
-* make careful use of the Blackboard "import" options to import only the part
-  of the package that has changed.  For example, if a navigation link has
-  changed but no calendar dates have changed, you can opt to import Navigation
-  Settings but not Calendar entries when usign the Blackboard "import package"
-  command.     
 
 ### Unsupported in v1.0
 
@@ -360,4 +347,95 @@ There are several ways to do this:
   
         ./gradlew :Public:syllabus:build
   
-  
+#  Importing CoWeM Packages into Blackboard
+
+## Importing a Zip Package
+
+1. Create a _zip package_ using the _zip_ build target, as described above.
+2. Go to your course on Blackboard, and enter a content collection area,
+   either the course content area (visible only to students in that course)
+   or your user content area (potentially visible to everyone on Blackboard).
+3. Use the Blackboard controls to enter the folder where you want to put
+   the course materials, or to create a new folder to hold them.
+4. <img src='uploadZipPackage.png' align='right' style='max-width: 66%;'/> In the `Upload` menu, 
+   select "Upload Zip Package". 
+5. Click the "Choose file" button, and select the Zip package you
+   created in step 1.  You'll find it in your course's
+   `build/packages/` directory.
+6. Click "Submit".
+
+    The Zip package will be uploaded, and after it has been uploaded,
+    Blackboard will unpack it into the Content Collection folder you
+    had selected.
+
+Using the Blackboard controls, you can navigate to any items you like
+(e.g., the course outline), then copy the URL from your web browser's address
+bar and paste it into a document available to your students.
+
+You can also add any item uploaded this way into your
+Blackboard course's navigation bar by clicking the "+" at the upper left of
+the navigation bar and selecting `Course Link`.  
+
+
+## Importing a bb or bbthin Package
+
+> **Important**:  When you use the Blackboard "import package" procedure,
+> content is _added_ to your Blackboard course but never _replaces_ existing
+> content.  You can not _update_ existing imported materials.  
+> 
+> It's important, therefore, that whenever you import material for the second
+> (or third or ...) time, you delete the old versions first. Otherwise
+> you are likely to wind up with really _ugly_ calendars and navigation bars
+> and your content collection area will get increasingly large and confusing.  
+
+1. Create a _bb_ or _bbthin_ package using the corresponding build target, 
+   as described above.
+2. \picOnRight{importPackage1,67} Go to your course on Blackboard, 
+   select "`Import Package`" under `Packages 
+   and Utilities`, then select "Import Package".
+3. \picOnRight{importPackage2,67} Click the "Browse My Computer" button and 
+   select the _bb_ or _bbthin_ package you
+   created in step 1.  You'll find it in your course's
+   `build/packages/` directory.
+4. In the `Select Course Materials` area, choose the items you want to
+   import:
+    * Select `Calendar` if you want to add calendar entries from
+      your course outline to the Blackboard calendar for your course.
+      Leave this unselected if you have no dates in your outline, or
+      if you have already imported calendar entries and have no need
+      to change them, or if oyu have not yet finalized your dates and
+      want to wait a little while.
+      
+        (Deleting calendar entries in Blackboard is particularly
+         tedious, so I generally do this only when I am pretty sure I
+         have nailed down all of my important dates.)
+         
+     * Select `Content Areas` and  `Navigation Settings` to update
+       course content (`bb` packages) and the Blackboard navigation
+       bar (both `bb` and `bbthin`).
+       
+         \picOnRight{importPackage3,67}
+         Entries from your CoWeM navigation document will be added to
+         the main Blackboard course navigation bar.  For a fat `bb`
+         package, these entries will point to the copy of the website
+         uploaded into the course Content Collection area. For the
+         `bbthin` package, these entries will point to the "real"
+         external website indicated by your course's `baseURL`
+         parameter.  
+      
+      No other entries in this area will have any effect.
+      
+      
+6. Click "Submit".  Blackboard will upload the package you specified and
+   will queue up a background job to process it.
+   
+    Processing typically takes several minutes, but can take quite a
+    long time if you have a very
+    large website or if many other people have background jobs queued. 
+    (For example, requests to copy materials from one Blackboard
+    course to another are also handled as background jobs, and are
+    quite common in the weeks
+    leading up to a new semester.)
+     
+7. After the import has completed, you may want to rearrange the new navigation
+   bar entries. (New entries are always added to the bottom of the bar.)

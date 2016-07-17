@@ -71,7 +71,7 @@
           </form>
 	      
 	      <xsl:variable name="prefixTable"
-              select="section[sectionHeader/@id = 'presentation']/sectionContent//table[2]"/>
+              select="section[sectionHeader/@id = 'presentation']/sectionContent//table[1]"/>
 	      
 	      <table border="1" rules="all" frame="box" role="outline">
              <tr class="columnheader">
@@ -207,9 +207,6 @@
               <xsl:if test="contains($selectors, concat(' ', $kind, ' '))">
                   <p>
                       <img src="{$baseURL}graphics/{$kind}-kind.png" alt="{$kind}"/>
-                      <xsl:text> :1:</xsl:text>
-                      <xsl:apply-templates select="$item/a[1]/node()"/>
-                      <xsl:text> :2:</xsl:text>
                       <xsl:apply-templates select="$item/a[1]/following-sibling::node()"/>
                   </p>
               </xsl:if>

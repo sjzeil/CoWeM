@@ -28,8 +28,8 @@ for easy typing in an ordinary text editor.
 ---
 
 1. [ ](lecture)  [TBD](doc:markdown)
-2. [ ](construct)  [TBD](doc:markdownExtensions)
-3. [ ](construct)  [TBD](doc:theOutline)
+2. [ ](lecture)  [TBD](doc:markdownExtensions)
+3. [ ](lecture)  [TBD](doc:theOutline)
 
 
 ## Special Features
