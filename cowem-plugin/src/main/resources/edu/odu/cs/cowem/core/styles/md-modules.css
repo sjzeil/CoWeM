@@ -1,13 +1,16 @@
 html    {
 	}
 
-body	{
-         background: #67859e;
-	     background: -moz-linear-gradient(left, #67859e 0%, #d6e3ee 150px); /* FF3.6+ */
-         background: linear-gradient(to right, #67859e 0%, #d6e3ee 150px);
+body    {
+background: #cfeff9; /* Old browsers */
+background: -moz-linear-gradient(left, #cfeff9 0%, #aae6f7 6%, #37c4ef 6%, #aae6f7 8%, #cfeff9 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(left, #cfeff9 0%,#aae6f7 5%,#37c4ef 6%,#aae6f7 8%,#cfeff9 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to right, #cfeff9 0%,#aae6f7 5%,#37c4ef 6%,#aae6f7 8%,#cfeff9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
          padding-left: 175px;
          background-attachment: fixed;
-	}
+}
+
+
 
 div.courseName {
   color: #002441;
@@ -168,8 +171,8 @@ hr { clear: both;}
 
 /* .titleblock { background-color: #0000A0; color: #E0E0E0;} */
 
-div.titleblock h1 { background-color: #002441; text-align: center; color: #919693;}
-div.titleblock h2 { background-color: #002441; text-align: center; color: #919693;}
+div.titleblock h1 { background-color: #002441; text-align: center; color: #D0D0D0;}
+div.titleblock h2 { background-color: #002441; text-align: center; color: #D0D0D0;}
 
 h1 a { background-color: #0000A0; text-align: center; color: #E0E0E0;}
 .hli {background-color: #ffff99; }
