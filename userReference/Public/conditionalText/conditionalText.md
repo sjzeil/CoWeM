@@ -115,16 +115,93 @@ text conditional on **not** being processed in _slides_ format.
 
 For example, the original slide
 
-TBW
+%define <\mac> <> <%>
+%define <\cmd> <> <\>
+%define <\uscore> <> <_>
+
+
+---
+
+```
+# Integration Testing
+
+
+\cmd{}firstterm{Integration testing} is testing that combines
+    several modules, but still falls short of exercising the entire program
+    all at once. 
+
+
+*  Integration testing usually combines a small number of
+    modules that call upon one another.
+   
+
+*  Integration testing can be conducted 
+    *  \cmd{}firstterm{bottom-up}
+        *   relieves the need for stubs
+
+    *  or \cmd{}firstterm{top-down} 
+
+```
+
+---
 
 might become
 
-TBW
+
+
+---
+
+```
+# Integration Testing
+
+
+\cmd{}firstterm{Integration testing} is testing that combines
+    several modules, but still falls short of exercising the entire program
+    all at once. 
+
+
+*  Integration testing usually combines a small number of
+    modules that call upon one another.
+   
+
+*  Integration testing can be conducted 
+    *  \cmd{}firstterm{bottom-up }
+
+\mac{}ifnot _slides
+        (start by unit-testing the modules that dont'call anything
+        else, then add the modules that call those starting modules
+        and thest the combination, then add the modules that call
+        those, and so on until you are ready to test
+        \function{main()}.)
+\mac{}endif
+
+        *   relieves the need for stubs
+
+    *  or \cmd{}firstterm{top-down} 
+
+\mac{}ifnot _slides
+        (start by unit-testing \function{main()} with stubs for
+        everything it calls, then replace those stubs by the real
+        code, but leaving in stubs for anything called from the
+        replacement code, then replacng those stubs, and so on, until
+        you have assembled and tested the entire program).
+
+
+It's worth noting that unit testing and integration testing can
+sometimes use some of the same test inputs (and maybe the same
+expected outputs), because we are testing the software in different
+configurations.
+\mac{}endif
+
+```
+
+---
 
 
 The upshot of this is that my original slides remain and can still be used for live presentations.
-But the _scroll_ format will contain the more detailed text, and can be deployed as the
+But the *scroll* format will contain the more detailed text, and can be deployed as the
 web course content or as lecture notes for students in the live version.
 
-If I wanted the extra material to appear only in web versions of the course, I would change the
-"\macro{ifnot} `_slides`" to "\macro{if} `_online`".
+If, instead,  I wanted the extra material to appear only in web versions of
+the course, I would change the
+"\macro{ifnot} `_slides`" to "\macro{if} `\uscore{}online`".

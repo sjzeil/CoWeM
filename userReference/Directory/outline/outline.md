@@ -39,7 +39,7 @@ for easy typing in an ordinary text editor.
 
 1. [ ](lecture)  [Macros](doc:macros)
 1. [ ](lecture)  [Conditional Text](doc:conditionalText)
-2. [ ](construct)  [URL Shortcuts](doc:urlShortcuts)
+2. [ ](lecture)  [URL Shortcuts](doc:urlShortcuts)
 
 # Customizing
 

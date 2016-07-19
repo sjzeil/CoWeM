@@ -43,13 +43,69 @@ For example, `[TBD]`<tt>(doc:directories)</tt> would actually appear as the link
 
 ## graphics: and styles: shortcuts
 
-If the URL in a link is written as `graphics:`_fileName_, it is treated as a
+If the URL in a link is written as `graphics:`<i>fileName</i>, it is treated as a
 shortcut to that file within the website's main `graphics/` directory. For example,
 I could insert the "home" navigation  icon as `<img src='graphics:home.png'/>`: 
 <img src='graphics:home.png'/>
 
-Similarly, a styles:_fileName_` directory is resolved as a link to the website's main `styles/` directory. 
+Similarly, a `styles:`<i>fileName</i> URL is resolved as a link to the website's main `styles/` directory. 
 
 
 
 # Special URLs for Dates
+
+A handful of special URLs are used to flag dates and times in the course
+outline for special processing. These can be used anywhere, but their main
+purpose is to flag activity items in the course outline for export into
+calendars.
+
+## date:
+
+A link with the URL `date:` declares a date or date-time combination.
+The text of the link should specify a date in ISO 8601 format: _YYYY-MM-DDThh:mm:ss_
+
+The seconds may be omitted from the end of the time. The entire time (starting
+with the separating character 'T') may be omitted if only the date is desired.
+
+These will be reformatted into more readable forms. Examples:
+
+`[2016-01-02T07:30]`<tt>(date:)</tt>
+: is reformatted as [2016-01-02T07:30](date:)
+
+`[2016-01-03]`<tt>(date:)</tt>
+: is reformatted as [2016-01-03](date:)
+
+
+## due:
+
+This is like `date:`, but has slightly different handling when
+imported into calendars.  A `date:` with no time component is assumed to
+refer to the start of the day. A `due:` with no time component is assumed to
+refer to the end of the day.  
+
+`[2016-01-02T07:30]`<tt>(due:)</tt>
+: is reformatted as [2016-01-02T07:30](date:)
+
+`[2016-01-03]`<tt>(due:)</tt>
+: is reformatted as [2016-01-03](date:)
+
+
+## enddate:
+
+A `date:` link can be immediately followed by a link with an `enddate:` URL
+to specify a range of dates and times.
+
+`[2016-01-02T07:30]`<tt>(date:)</tt> `[2016-01-05T08:50]`<tt>(enddate:)</tt>
+: is reformatted as [2016-01-02T07:30](date:) [2016-01-05T08:50](enddate:)
+
+`[2016-01-02]`<tt>(date:)</tt> `[2016-01-05]`<tt>(enddate:)</tt>
+: is reformatted as [2016-01-02](date:) [2016-01-05](enddate:)
+
+`[2016-01-02T07:30]`<tt>(date:)</tt> `[2016-01-02T08:50]`<tt>(enddate:)</tt>
+: is reformatted as [2016-01-02T07:30](date:) [2016-01-02T08:50](enddate:)
+
+>  No support is provided in CoWeM v1.0 for time zones. That may be added in
+>  later versions.
+ 
+ 
+ 
