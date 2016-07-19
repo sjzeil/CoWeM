@@ -31,7 +31,7 @@ public class TestMacroProc {
 		proc.defineMacro(m1);
 		proc.defineMacro(m2);
 		
-		assertEquals ("1a2B:y.z", proc.process("1 A 2 B(y,z)").trim());
+		assertEquals ("1a 2B:y.z", proc.process("1 A 2 B(y,z)").trim());
 	}
 	
 	@Test
@@ -41,10 +41,10 @@ public class TestMacroProc {
 		MacroProcessor proc = new MacroProcessor();
 		assertEquals ("1 A 2 B(y,z)", proc.process("1 A 2 B(y,z)").trim());
 		proc.defineMacro(m1);
-		assertEquals ("1a2 B(y,z)", proc.process("1 A 2 B(y,z)").trim());
+		assertEquals ("1a 2 B(y,z)", proc.process("1 A 2 B(y,z)").trim());
 		String s = proc.process("#define (B)(a,b)<B:a.b>");
 		assertEquals("", s);
-		assertEquals ("1a2B:y.z", proc.process("1 A 2 B(y,z)").trim());
+		assertEquals ("1a 2B:y.z", proc.process("1 A 2 B(y,z)").trim());
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class TestMacroProc {
 		MacroProcessor proc = new MacroProcessor();
 		assertEquals ("1 A 2 B(y,z)", proc.process("1 A 2 B(y,z)").trim());
 		proc.defineMacro(m1);
-		assertEquals ("1a2 B(y,z)", proc.process("1 A 2 B(y,z)").trim());
+		assertEquals ("1a 2 B(y,z)", proc.process("1 A 2 B(y,z)").trim());
 		String s = proc.process("#define {B}(a,b){a");
 		assertEquals("", s);
 		s = proc.process("bQ}");
@@ -238,7 +238,7 @@ public class TestMacroProc {
 	public void testCalloutDefine() {
 		MacroProcessor proc = new MacroProcessor("%");
 		proc.process("%define <\\co1> <> [<span>&#x278a;</span>]");
-		assertEquals ("> - <span>&#x278a;</span> a callout", proc.process("> - \\co1  a callout").trim());
+		assertEquals ("> - <span>&#x278a;</span>  a callout", proc.process("> - \\co1  a callout").trim());
 
 		proc = new MacroProcessor("%");
 		proc.process("%define <\\bSlide> <title> <");

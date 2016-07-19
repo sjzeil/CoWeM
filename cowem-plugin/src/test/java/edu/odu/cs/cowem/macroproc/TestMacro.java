@@ -13,20 +13,21 @@ public class TestMacro {
 	@Test
 	public void testMacro0() {
 		Macro m = new Macro("mac", "x");
-		assertEquals ("abcxdef", m.apply("abc mac def"));
-		assertEquals ("abc x def", m.apply("abc  mac  def"));
-		assertEquals ("abc macdef", m.apply("abc macdef"));
+		assertEquals ("abcx def", m.apply("abc mac def"));
+		assertEquals ("abc x  def", m.apply("abc  mac  def"));
+		assertEquals ("abcxdef", m.apply("abc macdef"));
 		assertEquals ("abcmac def", m.apply("abcmac def"));
-		assertEquals ("abcxdefx", m.apply("abc mac def mac"));
-		assertEquals ("abc mac() def mac[]", m.apply("abc mac() def mac[]"));
-		assertEquals ("abc mac{} def mac<>", m.apply("abc mac{} def mac<>"));
+		assertEquals ("abcx defx", m.apply("abc mac def mac"));
+		assertEquals ("abcx defx", m.apply("abc mac() def mac[]"));
+		assertEquals ("abcx defx", m.apply("abc mac{} def mac<>"));
 	}
 
 	@Test
 	public void testMacro0a() {
 		Macro m = new Macro("\\mac", "x");
-		assertEquals ("abc xdef", m.apply("abc \\mac def"));
-		assertEquals ("abcx def", m.apply("abc\\mac  def"));
+		assertEquals ("abc x def", m.apply("abc \\mac def"));
+		assertEquals ("abcx  def", m.apply("abc\\mac  def"));
+		assertEquals ("abcxdef", m.apply("abc\\mac{}def"));
 	}
 
 	@Test
@@ -85,7 +86,7 @@ public class TestMacro {
 	@Test
 	public void testReplacement2() {
 		Macro m1 = new Macro("\\co1", "z");
-		assertEquals ("> - z a callout", m1.apply("> - \\co1  a callout"));
+		assertEquals ("> - z  a callout", m1.apply("> - \\co1  a callout"));
 	}
 	
 	

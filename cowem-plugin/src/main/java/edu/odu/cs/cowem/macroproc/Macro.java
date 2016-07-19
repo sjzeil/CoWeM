@@ -101,7 +101,9 @@ public class Macro {
 			case '<' : closer = '>'; break;
 			default:
 			}
-			if (!Character.isWhitespace(opener) && closer == ' ') {
+			// If closer == ' ', we must be looking at a zero-parmaeter
+			// macro.
+			if (closer == ' ' && formalParams.size() > 0) {
 				// Not a valid macro call
 				start = pos + 1;
 				continue;
@@ -117,9 +119,9 @@ public class Macro {
 			}
 			String preMatch = target.substring(0, Math.max(0, callStart));
 			String postMatch;
-			if (Character.isWhitespace(opener)) {
+			if (closer == ' ') {
 				actualParams = new String[0];
-				postMatch = target.substring(Math.min(pos + name.length() + 1,
+				postMatch = target.substring(Math.min(pos + name.length(),
 				                             target.length()));
 			} else {
 				int closePos = target.indexOf(closer, pos + name.length() + 1);
@@ -138,7 +140,17 @@ public class Macro {
 					actualParams[0] = args;
 				}
 			}
-			if (actualParams.length != formalParams.size()) {
+			if (formalParams.size() == 0 && actualParams.length > 1) {
+                start = pos + 1;
+                continue;			    
+			}
+            if (formalParams.size() == 0 && actualParams.length == 1
+                    && !actualParams[0].equals("")) {
+                start = pos + 1;
+                continue;               
+            }
+			if (formalParams.size() > 0 
+			        && actualParams.length != formalParams.size()) {
 				start = pos + 1;
 				continue;
 			}
