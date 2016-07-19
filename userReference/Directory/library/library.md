@@ -2,6 +2,10 @@ Title: Reference Materials
 
 # Markdown
 
+* [Markdown](https://en.wikipedia.org/wiki/Markdown) is a document format designed for
+  easy typing and reading. The basic idea is that Markdown is typed as simple text, but
+  "looks like" how it would be formatted.
+
 There are many dialects of Markdown
 
 * CoWem uses [PegDown](https://github.com/sirthias/pegdown), which unfortunately

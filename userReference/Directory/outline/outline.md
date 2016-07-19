@@ -22,7 +22,8 @@ using CoWeM.
 
 ## Working in Markdown
 
-All source documents in CoWeM are written in Markdown, a notation designed
+All source documents in CoWeM are written in [Markdown](https://en.wikipedia.org/wiki/Markdown),
+a notation designed
 for easy typing in an ordinary text editor.
 
 ---
@@ -36,9 +37,9 @@ for easy typing in an ordinary text editor.
 
 ---
 
-1. [ ](construct)  Macros
-1. [ ](construct)  [Conditional Text](doc:conditionalText)
-2. [ ](construct)  URL Shortcuts
+1. [ ](lecture)  [Macros](doc:macros)
+1. [ ](lecture)  [Conditional Text](doc:conditionalText)
+2. [ ](construct)  [URL Shortcuts](doc:urlShortcuts)
 
 # Customizing
 
