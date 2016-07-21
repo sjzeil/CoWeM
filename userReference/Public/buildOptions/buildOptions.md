@@ -3,271 +3,370 @@ Author: Steven J Zeil
 Date: @docModDate@
 TOC: yes
 
-Appearances and behaviors of documents are controlled by
+The `build.gradle` files in each directory of the website source control
+a variety of options as to how the website will be built.
 
-* CSS and Javascript files in the`styles/` directory,
-* Graphics in the `graphics/` directory.
+For the most part, these have been provided with reasonable defaults. But
+when the default behavior is not what you want, you have options.
 
-The general rule is that anything placed in a course's `styles/` or `graphics/` directory
-will be copied in to the corresponding dirctory of the webite. If  you place a file there  that has
-the same name as any of the CoWeM defaults, it  ill replace  the default  file.
+# Document Set Options
 
-# CSS
-
-## Modifying All Documents in a Format
-
-When a primary or secondary document is processed using a _format_, the generated web page loads
-CSS from
-
-`styles/md-`<i>format</i>`.css`
-: This contains all of the default CSS for that format.  You can override the CSS for all documents
-  in the website that use that _format_ by supplying your own version of that file.  Do  this only if 
-  you need to override  all or most of the default CSS. You would probably
-  want to build the website first, get a copy of the default from the generated `styles/` directory, 
-  and modify that to make your own version. 
-  
-`styles/md-`<i>format</i>`-ext.css`
-: This is loaded after the `styles/md-`<i>format</i>`.css` file, and  so can extend or override
-  any of the default CSS. The default version of this file is empty. So, if you only want  to
-  change  a few items in the CSS, supply your own version  of this file with just those CSS  items.
-  
-
-
-\bExample{Changing  the background  of  slides}
-
-The default slide background can be
-seen [here](../directories/directories__slides.html).
-
-Suppose that we want to change that for all slides in a course.
-
-The CSS for the _slides_ format is in files `styles/md-slides.css` and the
-initially empty `styles/md-slides.css`. A look at the default
-`styles/md-slides.css` shows that the background is set in this rule:
+Each document set will have a `build.grade` file in its directory. At a minimum,
+this will consist of a single line:
 
 ```
-body
-{
-  font-size: 28pt;
-  font-family: "Arial", "Helvetica", "sans-serif";
-  margin-left: 4ex;
-  margin-right: 4ex;
-  width: 95%;
-  max-width: 95%;
-  overflow: false;
-
-  background: #c6c6c6; /* Old browsers */
-  background: -moz-linear-gradient(top, #0484ef 0%, #f7f7f7 9%, #c6c6c6 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0484ef), color-stop(9%,#f7f7f7),  color-stop(100%,#c6c6c6)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* W3C */
-}
-```
-The background clauses define a gradient. You can google
-"HTML CSS gradient generators" and find any number of online tools that would
-allow you to generate replacements for these.
-
-For now, however, let's assume that we simply wanted to replace the background
-by a solid, light-gray color.
-
-Since only one CSS rule is affected, we could accomplish this by
-
-1. Creating a `styles` directory in the course root directory, if we don't
-   have one already.
-   
-2. In that directory, create a file `md-slides-ext.css` containing
-   the single rule:
-   
-    ```  
-    body
-    {
-     font-size: 28pt;
-     font-family: "Arial", "Helvetica", "sans-serif";
-     margin-left: 4ex;
-     margin-right: 4ex;
-     width: 95%;
-     max-width: 95%;
-     overflow: false;
-
-     /*+*/background: #c0c0c0;/*-*/
-    }
-    ```
-
-The next time that the course website is deployed, the new CSS will take effect.
-
-\eExample
-
-
-\bExample{Changing  the background  of directory pages (using a background graphic)}
-
-The default directory background can be
-seen [here](doc:library).
-
-Suppose that we want to change that for all directory pages in a course to
-[this](doc:directory330).  This uses a graphic that I created to suggest
-a theme of "interacting objects" for my course in object-oriented
-programming and design.  
-
-The CSS for the _directory_ format is in files `styles/md-directory.css` and the
-initially empty `styles/md-directory.css`. A look at the default
-`styles/md-directory.css` shows that the background is set in this rule:
-
-```
-body    {
-background: #cfeff9; /* Old browsers */
-background: -moz-linear-gradient(left, #cfeff9 0%, #aae6f7 6%, #37c4ef 6%, #aae6f7 8%, #cfeff9 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(left, #cfeff9 0%,#aae6f7 5%,#37c4ef 6%,#aae6f7 8%,#cfeff9 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to right, #cfeff9 0%,#aae6f7 5%,#37c4ef 6%,#aae6f7 8%,#cfeff9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-
-padding-left: 175px;
-background-attachment: fixed;
-}
-```
-Again, with only one rule affected, the easiest route is to override
-that single rule in an `-ext.css` file:
-
-1. Create `styles/` and `graphics/` directories in the course root directory,
-   if we don't have them already.
-   
-2. In the `styles/` directory, create a file `md-directory-ext.css` containing
-   the single rule:
-   
-    ```  
-    body
-    {
-     background-color: #ebcda5;  
-     background-image: url(../graphics/cs330-border2.png); 
-     background-repeat: repeat-y;}
-     padding-left: 175px;
-    }
-    ```
-3. Place the file [cs330-border2.png](../../Directory/directory330/cs330-border2.png) 
-   into the `graphics/` directory.
-
-
-In practice, I would probably then also change some of the other CSS entries
-to change the dark blues to shades of brown.
-
-For visual consistency, I would also want to make similar changes to the
-backgrounds of the _modules_ and _topics_ styles.  
-
-\eExample
-
-
-## Modifying Individual Documents
-
-You can add additional CSS files  that affect only a single document 
-by listing CSS URLs (relative or absolute) in `CSS:` lines in
-the document's opening metadata.
-
-
-
-
-
-# Graphics
-
-There are a number of graphics files stored in the default `graphics/` directory. You can supply
-your own versions of  any of these or augment  the common graphics pool by adding your own.
-
-Most of the default graphics are
-
-* The activity kind icons _activity_`-kind.png` mark the various activities in the  course  outline.
-  Examples are `lab-kind.png` <img src="graphics:/lab-kind.png"/> and `lecture-kind.png` 
-  <img src="graphics:/lecture-kind.png"/>.
-
-* The navigation icons that appear at the top and bottom of most pages:
-    <img src="graphics:/prev.png"/>, <img src="graphics:/home.png"/>,
-    <img src="graphics:/slides.png"/>, etc.
-
-\bExample{Adding a New Activity Kind}
-
-Suppose that we wished to add a a new "fieldTrip" activity kind to our
-course outline, so that we could designate activity items like this:
-
-```
-4. [ ](fieldTrip) Visit a local museum.
+apply plugin: 'edu.odu.cs.cowem.Documents' 
 ```
 
-In fact, all that is necessary to support this is to
-
-
-1. Create a `graphics/` directory in the course root directory,
-   if we don't have it already.
-   
-2. Create an appropriate icon in a `graphics/fieldTrip-kind.png` file.  
-   Typically, these would be
-   about 32x32 pixels.
-
-
-\eExample
-
-
-
-# Javascript
-
-When a primary or secondary document is processed using a _format_, the generated web page loads
-Javascript from `styles/md-`<i>format</i>`.js`.
-  
- 
-
-\bExample{Changing Keyboard  Bindings  for Advancing  Pages/Slides}
-
-In the _slides_ and _pages_ formats, a reader can advance to
-the next slide/page using the right-arrow key, down-arrow, or space keys.
-
-This binding can be found in the `md-slides.js` file:
+More generally, this file would have the form:
 
 ```
-function doKeyPressed (e) {
-   // alert ("key pressed " + e.keyCode);
-   if (e.keyCode == 39 || e.keyCode == 40) {
-       sshowforward(sshowControl0);
-   } else 
+apply plugin: 'edu.odu.cs.cowem.Documents' 
+
+documents {
    /*...*/
 }
-
-document.addEventListener("keydown", doKeyPressed, false);
 ```
 
-To add the Enter key to that list, we would:
+with any of the following appearing in the `documents` area:
 
-1. Create a `styles/` directory in the course root directory,
-   if we don't have it already.
+`primary` = _fileName_
+: indicates that the name of the primary document will not be the same as
+  the name of the directory holding the document set ( followed by "`.md`"),
+  but will be _fileName-.[^This feature has not been extensively tested.] 
+
+`formats = [` _list-of-formats_ `]`
+: Sets the list of formats in which the the primary document will
+  be generated. Possibilities are:  _scroll_, _pages_, _slides_,
+  _directory_, _navigation_, _modules_, and
+  _topics_. 
+
+    Example: `formats = [slides, scroll]`
+
+    A primary document `foo.md` produces a webpage `foo__`_format_`.html`
+    for each _format_ listed. There are two underscore characters between
+    the document name and the format (to reduce the chances of an accidental
+    conflict with support file names. 
+
+
+ `index =` _format_
+ : One format of the primary document is designated as the "index" of the
+   document set.  It can be accessed as `index.html`, and this is the format
+   that other documents will l8ink to when using the `doc:` URL shortcut.
    
-2. make a copy of the default `md-slides.js` in that directory.
-
-3. Edit the `if` line above to 
-
-        if (e.keyCode == 39 || e.keyCode == 40 || e.keyCode == 13) {
+     By default, the first format named in the `formats =` specification is the
+     index format.
 
 
-\eExample
+`docs` _file-specification_
+: Adds some files to the list of secondary documents for this document set.
+  Secondary documents will be converted to 'scroll' format.  
+  
+    By default, the secondary documents are all `*.mmd` and `*.md` files 
+    (excluding the primary document).
+    
+    A secondary document `foo.mmd` produces a webpage `foo.mmd.html`.
+    
+    To add a single file `secondary.mtxt` to the list of secondary documents,
+    just say
+    
+        docs 'secondary.mtxt'
+        
+    To add all files ending in '`.mtxt`' use the `fileTree` construct of Gradle:
+    
+        docs  fileTree('.').include('*.mtxt')
+        
+    It is also possible to add a `.exclude(`_pattern_')' to
+    exclude selected files.  Intead of the `'.'`, the current
+    document set directory, secondary documents could be loaded from
+    a subdirectory.
+    
+    
+ `clearDocs()`
+:  Clears the entire list of secondary documents. Not even the normal
+    defaults will be retained.
 
 
-\bExample{Click to Advance Slides}
+`listings` _file-specification_
+: Adds some files to the list of listing documents for this document set.
+  Listings are processed into 'scroll' format while preserving all
+  indentation and line breaks.  
+  
+    By default, the listing documents are all `*.h`, *.cpp`, `*.java` and
+    `*.listing` files. 
+    
+    A secondary document `foo.cpp` produces a webpage `foo.cpp.html`.
+    
+    To add a single file `bar.pl` to the list of listing documents,
+    just say
+    
+        listings 'bar.pl'
 
-Many people are used to clicking on a Powerpoint slide to advance it.
-I dislike this behavior myself, as I often click-and-drag the mouse
-across text to select/highlight it during lectures, and I often wind up 
-advancing to the next slide by accident.
+    `fileTree`s can also be used to add multiple listing files at a time,
+    as described for secondary documents, above.
+            
+    
+ `clearListings()`
+:  Clears the entire list of listing documents. Not even the normal
+    defaults will be retained.
 
-But if you want this behavior, it's fairly simple to add.
 
-1. Create a `styles/` directory in the course root directory,
-   if we don't have it already.
+
+`support` _file-specification_
+: Adds some files to the list of listing documents for this document set.
+  Support documents are copied, u hanged, to the website. 
+  
+    By default, the support documents are all `*.html`, *.css`, `*.js` and
+    most common graphics format files. 
+        
+    To add a single file `bar.gif` to the list of listing documents,
+    just say
+    
+        support 'bar.gif'
+
+    `fileTree`s can also be used to add multiple listing files at a time,
+    as described for secondary documents, above.
+            
+    
+`clearListings()`
+ :  Clears the entire list of listing documents. Not even the normal
+    defaults will be retained.
+
+
+`math =`_mode_
+: Sets the mode used for mathematics processing. 
+  Valid values are:
+  
+     *    `latex`: Detect and render LaTeX mathematics
+     *    `ascii`: Detect and render AsciiMath mathematics
+     *    `none` : Do not use MathJax to render mathematics
+
+
+# Group Options
+
+Document groups (the directories containing one or more document sets) are not
+required to have a `build.gradle` file. They can, however, use one to
+establish defaults for all document sets within the group.
+
+Such a group `build.gradle` would take the form:
+
+```
+apply plugin: 'edu.odu.cs.cwm.Group'
+
+subprojects {
+    project.documents {
+        /*...*/
+    }
+}
+```
+
+Within the `project.documents` area, you can place any of the document set
+options described in the previous section. These will become the defaults for
+all document sets within the group. They can still be overidden by the
+`build.gradle` specification for individual document sets.
+
+One difference is that any uses of `fileTree` must now be written as
+`project.fileTree` and placed in side `{ }` brackets.
+
+For example:
+
+```
+ apply plugin: 'edu.odu.cs.cwm.Group'
+
+subprojects {
+    project.documents {
+        formats = ['scroll', 'slides']
+        support {
+            project.fileTree('.').include('*.zip')
+        }
+    }
+}
+``` 
+
+
+
+
+
+# Course Options   
+
+## Adding and Removing Groups
+
+The number and name of the document groups is established within the
+`settings.gradle` file in the root directory.
+
+
+```
+def includeFrom = {
+    dir ->  new File(rootDir,dir).eachFileRecurse { f ->
+        if ( f.name == "build.gradle" ) {
+            String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
+            String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
+            include projectName
+        }
+   }
+}
+
+// Don't touch anything abode this line
+
+rootProject.name = 'CS350'   // any short descriptive word or phrase - no blanks  
+
+
+// The following lines establish the course groups.
+includeFrom('Directory')
+includeFrom('Public')
+includeFrom('Protected')
+
+```
+
+In general, you need at least one group, but can have as many as you
+like.  The only restrictions:
+
+* If you have any pages in _directory_, _modules_, or _topics_ format,
+  you need a `Directory` group and a _navigation_ document set within
+  that group.
+  
+* If you intend to export your course website to Blackboard, you need
+  a `Directory` group and a _navigation_ document set within that
+  group.
+
+That said, most websites will have a `Directory` group and both
+_outline_ and _navigation_ document sets within that group.
+
+
+## Course Options
+
+The root directory's `build.gradle` file describes the course for which
+the website is being built.
+
+```
+// Top-level build.gradle for a course.
+
+
+buildscript { 
+     repositories {
+         jcenter()
+         mavenCentral()
+ 
+        ivy { // Use my own CS dept repo
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0+'
+         classpath 'edu.odu.cs.zeil:cowem-plugin:1.0+'
+     }
+}
+
+
+apply plugin: 'edu.odu.cs.cowem.CourseWebsite'    
+
+
+course {
+    /*...*/
+}
+
+```
+
+Within the `course` area, any of the following can be specified
+
+### Required Properties
+
+`courseName = ` _string_
+: The short name of course, generally in DeptNumber form.
+
+
+`courseTitle = ` _string_
+: The  full name of course.
+
+
+`semester =` _string_
+: The semester of this offering.
+
+`sem =` _string_
+: Abbreviated name for the  semester of this offering.
+
+
+`instructor =` _string_
+: The instructor name.
+
+
+
+### Optional Parameters: Course properties
+    
+
+`email = ` _string_
+: The email address for inquiries about the course. This appears as a `mailto:`
+  link at the top and bottom of most pages.
+      
+
+`copyright =` _string_
+: A copyright notification.
+
+`delivery =` _string_
+: The course delivery style, commonly used in conditional text within documents
+  to select variant text for web versus face to face courses.
+  
+    Typical values are  "online"   or  "live"
+
+`homeURL =` _URL_
+: URL used in "home" links from documents (generally in document footers).
+  If omitted,  such links should be suppressed.
+ 
+
+### Optional Parameters: Deployment
+    
+
+`baseURL = ` _URL_
+:  The URL at which the root directory of the website will be located.
+   This is only used when preparing "thin" packages that allow Blackboard
+   or other Learning Management Systems to link to a course website.
    
-2. make a copy of the default `md-slides.js` in that directory.
+     Currently used only with the Gradle `bbthin` target.
+   
+   
+    
+`deployDestination =` _local-directory`     
+:  A directory on the local machine to which course materials
+   should be copied to deploy the website.
+   
+     Used only with the Gradle `deploy` target. 
+     
 
-3. Add to the end of that file:
+`sshDeployURL = ` _URL_
+: An ssh URL, usually on a remote machine, to which course materials
+  should be copied to deploy the website.
+  
+     Used only with the Gradle `deployBySsh` target. 
+  
+    
+`sshDeployKey = ` _file_
+: An ssh key used for deploying to a remote machine.
+  
+     Used only with the Gradle `deployBySsh` target. 
 
-        document.addEventListener("click", function(){
-           sshowforward(sshowControl0);
-        });
 
-\eExample
+`rsyncDeployURL = ` _URL_
+: An ssh URL, usually on a remote machine, to which course materials
+  should be copied to deploy the website.
+  
+     Used only with the Gradle `deployByRsync` target. 
+  
+    
+`rsyncDeployKey = ` _file_
+: An ssh key used for deploying to a remote machine.
+  
+     Used only with the Gradle `deployByRsync` target. 
 
 
 
+### Optional Properties; Website
 
+
+`mathjaxURL = ` _URL_
+: The URL used for mathematics rendering.  Defaults 
+  to `https://cdn.mathjax.org/mathjax/latest`
+  
+`highlightjsURL = ` _URL_
+: The URL used for code highlighting.
+ 
 
