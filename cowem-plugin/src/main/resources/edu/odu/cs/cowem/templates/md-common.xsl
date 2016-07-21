@@ -107,12 +107,12 @@
 
   <xsl:template name="generateCSSLinks">
     <xsl:if test="$CSS != ''">
-      <xsl:for-each select="tokenize($CSS,',')">
+      <xsl:for-each select="tokenize($CSS,'\t')">
           <link 
             rel="stylesheet" 
             type="text/css" 
             media="screen, projection, print"
-            href="normalize-space(.)" />
+            href="{normalize-space(.)}" />
       </xsl:for-each>
     </xsl:if>
   </xsl:template>

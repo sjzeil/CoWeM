@@ -1,4 +1,4 @@
-Title: Modifying Appearances & Behaviors
+Title: Modifying Build Options
 Author: Steven J Zeil
 Date: @docModDate@
 TOC: yes
