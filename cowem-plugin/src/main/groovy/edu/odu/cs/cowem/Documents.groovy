@@ -285,13 +285,14 @@ class Documents implements Plugin<Project> {
             }
 
             String sshCmd = "ssh";
+            String rsyncCmd = 'rsync'
             if (project.course.rsyncDeployKey != null) {
-                sshCmd = "-i ${project.course.rsyncDeployKey}"
+                rsyncCmd='SSH_AGENT_PID=; SSH_AUTH_SOCK=;rsync'
+                sshCmd = "'ssh -i ${project.course.rsyncDeployKey}'"
             }
 
-            project.exec {
-                commandLine = [
-                    'rsync',
+            def cmd = [
+                    rsyncCmd,
                     '-auzv',
                     '-e',
                     sshCmd,
@@ -300,6 +301,9 @@ class Documents implements Plugin<Project> {
                         +  ((project.course.rsyncDeployURL.endsWith('/'))? '' : '/')
                         + "${project.parent.name}/${project.name}/"
                     ]
+            println ("Issuing rsync command\n" + cmd.iterator().join(" "))
+            project.exec {
+                commandLine = cmd
             }
         }
 

@@ -215,11 +215,9 @@ class CourseWebsite implements Plugin<Project> {
 
             String sshCmd = "ssh";
             if (project.course.rsyncDeployKey != null) {
-                sshCmd = "-i ${project.course.rsyncDeployKey}"
+                sshCmd = "'ssh -i ${project.course.rsyncDeployKey}'"
             }
-
-            project.exec {
-                commandLine = [
+            def cmd = [
                     'rsync',
                     '-auzv',
                     '-e',
@@ -229,6 +227,14 @@ class CourseWebsite implements Plugin<Project> {
                        ((project.course.rsyncDeployURL.endsWith('/')) ?
                            "" : '/')
                     ]
+
+            println ("Issuing rsync command\n" + cmd.iterator().join(" "))
+            project.exec {
+                commandLine = cmd
+                if (project.course.rsyncDeployKey != null) {
+                    environment ('SSH_AGENT_PID', '')
+                    environment ('SSH_AUTH_SOCK', '')
+                }
             }
         }
 

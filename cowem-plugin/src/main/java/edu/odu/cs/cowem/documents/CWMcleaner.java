@@ -30,7 +30,7 @@ public class CWMcleaner implements TextSubstitutions {
      * Create a cleaner.
      */
     public CWMcleaner() {
-        cwmPattern = Pattern.compile("(<p>)?[<]cwm ([^>]*)/[>](</p>)?");
+        cwmPattern = Pattern.compile("(<p> *)?[<]cwm ([^>]*)/[>]( *</p>)?");
     }
     
     

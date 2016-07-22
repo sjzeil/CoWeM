@@ -390,6 +390,7 @@ public class MarkdownDocument implements Document {
 		String pdResults = pdProc.markdownToHtml(markDownText);
 		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;
 		htmlText = new CommonEntitySubstitutions().apply(htmlText);
+		//logger.warn("pre-cwm clean:\n" + htmlText);
 		htmlText = new CWMcleaner().apply(htmlText);
 		htmlText = new ListingInjector(sourceDirectory).apply(htmlText);
 		        
