@@ -234,6 +234,34 @@ public class TestMarkdownDocument {
 
 	
 	@Test
+	public void testCSSMetadata() throws XPathExpressionException {
+	    String mdInput = "Title: Title of Document\n"
+	            + "Author: John Doe\n"
+	            + "CSS: file1.css\n"
+	            + "CSS: file2.css\n\n"
+	            + "# Section 1\n\n"
+	            + "%if _includeThis\n"
+	            + "## Section 1.1\n\n"
+	            + "A paragraph in\nsection 1.1\n\n"
+	            + "%endif\n\n"
+	            + "## Section 1.2\n\n"
+	            + "A paragraph in\nsection 1.2\n\n"
+	            + "Something in _italics_ and\n"
+	            + "something else in **bold**\n";
+
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput);
+		
+		assertEquals ("Title of Document", doc.getMetadata("Title"));
+		assertEquals ("John Doe", doc.getMetadata("Author"));
+		assertEquals ("file1.css\tfile2.css", doc.getMetadata("CSS"));
+		
+	}
+
+	
+	
+	
+	@Test
 	public void testProcess() throws XPathExpressionException {
         MarkdownDocument doc = new MarkdownDocument(source, proj,
                 properties, mdInput2);
@@ -548,6 +576,35 @@ public class TestMarkdownDocument {
 				root, XPathConstants.NODESET);
 		assertEquals(0, pages.getLength());
 	}
+	
+
+	
+	@Test
+	public void testPostprocessCSS() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		String html0 = "<html><head><title>@Title@</title></head><body>\n"
+				+ "<p id='p1'>paragraph 1</p>\n"
+				+ "<h1>Section 1</h1>\n"
+				+ "<p>paragraph 1</p>\n"
+				+ "<img src='something.png'/>\n"
+				+ "<hr/>\n"
+				+ "<p id='p2'>paragraph 2</p>\n"
+				+ "<h2>Section 1.1</h2>"
+				+ "<p id='p3'>paragraph 3</p>\n"
+				+ "<p id='p4'>paragraph 4</p>\n"
+				+ "</body></html>";
+		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		org.w3c.dom.Document basicHtml = b.parse(new InputSource(new StringReader(html0)));
+		properties.setProperty("CSS", "file1.css\tfile2.css");
+		
+        MarkdownDocument doc = new MarkdownDocument(source, proj,
+                properties, mdInput2);
+		String htmlResult = doc.postprocess(basicHtml, "scroll");
+		
+		assertTrue(htmlResult.contains("file1.css"));
+		assertTrue(htmlResult.contains("file2.css"));
+		
+	}
+
 	
 	
 	@Test

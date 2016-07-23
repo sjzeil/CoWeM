@@ -171,6 +171,32 @@ public class ITestScrollFormat {
 	}
 	
 
+	/**
+	 * Test method for {@link edu.odu.cs.cowem.documents.MarkdownDocument#transform(java.lang.String, java.util.Properties)}.
+	 * @throws XPathExpressionException 
+	 * @throws ParserConfigurationException 
+	 * @throws IOException 
+	 * @throws SAXException 
+	 */
+	@Test
+	public void testSimpleDocCSS() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		String mdInput = String.join(System.getProperty("line.separator"),
+				"Title: Title of Document", 
+				"Author: John Doe",
+				"CSS: file1.css",
+				"CSS: file2.css",
+				"",
+				"A short",
+				"paragraph."
+				);
+		MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
+		
+		String htmlContent = doc.transform(FORMAT);
+		
+		assertTrue (htmlContent.contains("John Doe"));
+		assertTrue (htmlContent.contains("file1.css"));
+		assertTrue (htmlContent.contains("file2.css"));
+	}
 	
 	   @Test
 	    public void testSectionTitles() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {

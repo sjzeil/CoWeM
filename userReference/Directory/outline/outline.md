@@ -45,13 +45,9 @@ for easy typing in an ordinary text editor.
 
 ---
 
-1. [ ](construct) Modifying Document CSS & Graphics
+1. [ ](lecture) [TBD](doc:appearances)
 
-2. [ ](construct) [Modifying a Document Set's Build Options](doc:docsetOptions)
-
-3. [ ](construct) [Modifying a Group's Build Options](doc:groupOptions)
-
-4. [ ](construct) [Modifying a Course's Build Options](doc:courseOptions)
+2. [ ](lecture) [Modifying the Build Options](doc:buildOptions)
 
 
 # Preamble
