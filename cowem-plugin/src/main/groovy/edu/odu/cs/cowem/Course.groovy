@@ -133,7 +133,7 @@ class Course {
      *
      * If null, deployByRsync will use sshDeployKey
      */
-    File rsyncDeployKey = null;
+    String rsyncDeployKey = null;
 
     
     /**

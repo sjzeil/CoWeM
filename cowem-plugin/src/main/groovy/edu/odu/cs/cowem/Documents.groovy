@@ -4,6 +4,7 @@ package edu.odu.cs.cowem
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Zip
@@ -210,7 +211,9 @@ class Documents implements Plugin<Project> {
 
 		project.rootProject.tasks['build'].dependsOn(project.build)
 
-        project.task ('deploy', type: Sync, dependsOn: 'build') {
+        
+        
+        project.task ('deployDoc', type: Sync, dependsOn: 'build') {
             description 'Copy this document set to a local deployDestination directory.'
             group 'Deployment'
             from websiteArea
@@ -228,8 +231,8 @@ class Documents implements Plugin<Project> {
             //onlyIf {true}
             
             from "../../build/website"
-            include project.fileTree(websiteArea)
-                .include("${project.parent.name}/${project.name}/*")
+            include "${project.parent.name}/${project.name}/**"
+            
             destinationDir = project.file('../../build/packages')
             archiveName "website-${project.name}.zip"
             dirMode 0775
@@ -238,7 +241,7 @@ class Documents implements Plugin<Project> {
         }
     
 
-        project.task ('deployBySsh', dependsOn: 'doczip') {
+        project.task ('deployDocBySsh', dependsOn: 'doczip') {
             description 'Copy course website to a remote machine.'
             group 'Deployment'
             inputs.file 'build/packages/website.zip'
@@ -271,7 +274,7 @@ class Documents implements Plugin<Project> {
 
 
 
-        project.task ('deployByRsync', dependsOn: 'build') {
+        project.task ('deployDocByRsync', dependsOn: 'build') {
             // Deloy by rsync requires an external installation of rsync and ssh.
             description 'Copy course website to a remote machine by rsync'
             group 'Deployment'
@@ -284,26 +287,31 @@ class Documents implements Plugin<Project> {
                 }
             }
 
-            String sshCmd = "ssh";
-            String rsyncCmd = 'rsync'
-            if (project.course.rsyncDeployKey != null) {
-                rsyncCmd='SSH_AGENT_PID=; SSH_AUTH_SOCK=;rsync'
-                sshCmd = "'ssh -i ${project.course.rsyncDeployKey}'"
+            if (!project.course.rsyncDeployURL.endsWith('/')) {
+                project.course.rsyncDeployURL = project.course.rsyncDeployURL + '/'
             }
+            def sourceDir = "../../build/website/${project.parent.name}/${project.name}/"
 
+            String sshCmd = "ssh";
+            if (project.course.rsyncDeployKey != null) {
+                sshCmd = "ssh -i ${project.rootProject.file(project.course.rsyncDeployKey)}"
+            }
             def cmd = [
-                    rsyncCmd,
-                    '-auzv',
-                    '-e',
-                    sshCmd,
-                    "build/website/${project.parent.name}/${project.name}/",
-                    project.course.rsyncDeployURL
-                        +  ((project.course.rsyncDeployURL.endsWith('/'))? '' : '/')
-                        + "${project.parent.name}/${project.name}/"
-                    ]
+                'rsync',
+                '-auzv',
+                '-e' + sshCmd,
+                sourceDir,
+                project.course.rsyncDeployURL + 
+                    "${project.parent.name}/${project.name}/"
+                ]
+
             println ("Issuing rsync command\n" + cmd.iterator().join(" "))
             project.exec {
                 commandLine = cmd
+                if (project.course.rsyncDeployKey != null) {
+                    environment ('SSH_AGENT_PID', '')
+                    environment ('SSH_AUTH_SOCK', '')
+                }
             }
         }
 

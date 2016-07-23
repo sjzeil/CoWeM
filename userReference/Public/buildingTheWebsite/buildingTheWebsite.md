@@ -117,8 +117,13 @@ build
 The `build` target is the default. If you don't specify a target at the
 command line, `build` is run.
 
-As noted earlier, you can "clean" a project by simply deleting the
-entire `build` directory.
+
+clean
+: Delete all files that can be reconstructed via the `build` target. This is
+  done by deleting the entire `build` directory. 
+
+    As noted earlier, you can "clean" a project by simply deleting the
+    `build` directory via normal operating system commands.
 
 
 ## Deploying the Website
@@ -177,8 +182,11 @@ deployBySsh
 
     * You may optionally also specify an SSH key for access to that
       remote machine as `sshDeployKey`.
-    * If no such key is used, this will still take advantage of any
-      ssh key agent you might have running.
+    * If no such key is used, this use any
+      ssh key agent you might have running to authenticate
+      on the remote machine.
+        * There is currently no option for supplying a simple password.
+          (Coming?)
     * Currently this deployment is done by packing the entire website
       into a Zip file archive, sending that file to the remote
       directory, and remotely issuing an `unzip` command there. 
@@ -315,18 +323,15 @@ All of these were available in an earlier protoype of CoWeM.
 ## Building a Specific Document Set Directory
 
 If you are working intensively on a single document or document set, you can
-instruct Gradle to build or deploy only that one document set, saving some
+instruct CoWeM to build or deploy only that one document set, saving some
 time.
-
-This can be done with any of the build or deployment targets, but not the
-packaging targets.
 
 There are several ways to do this:
 
 * If working in the Gradle GUI, you will see your CoWem groups as expandable
   items in the list of targets. Expanding one of those groups will give you a
    list of the document sets in that group. Expand one of those document sets
-   and you can select a taget to be applied to that document set. 
+   and you can select a target to be applied to that document set. 
 
 * Working at the command line, if you `cd` into the document set directory,
   you can specify the build targets just as you would at the top. The one
@@ -346,6 +351,25 @@ There are several ways to do this:
   syllabus you could say
   
         ./gradlew :Public:syllabus:build
+  
+  
+The targets that can be launched for a single document set are:
+
+build
+:  Same as the yop-level `build` target, but builds only the
+   indicated document set.
+  
+deployDoc
+: Like the top-level `deploy`, this builds the document set and copies it
+  to the appropriate deployment directory on the same machine.
+       
+deployDocBySsh
+: Like the top-level `deployBySsh`, this builds the document set and copies it
+  to a remote machine via secure shell. 
+
+deployDocByRsync
+: Like the top-level `deployByRsync`, this builds the document set and copies it
+  to a remote machine via an `rsync` command. 
   
 #  Importing CoWeM Packages into Blackboard
 

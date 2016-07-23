@@ -2,6 +2,7 @@ package edu.odu.cs.cowem
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
@@ -114,6 +115,16 @@ class CourseWebsite implements Plugin<Project> {
             description 'Process documents and course outline to prepare the basic course website.'
             group 'Build'
         }
+        
+        
+        project.task ('clean', type: Delete)
+        {
+            description 'Clean the project (delete the build directory)'
+            delete 'build'
+            //followSymlinks = false
+        }
+
+
 
         project.task ('packages', dependsOn: 'build')  {
             description 'prepare optional course cartridges'
@@ -212,25 +223,29 @@ class CourseWebsite implements Plugin<Project> {
                     project.course.rsyncDeployKey = project.course.sshDeployKey
                 }
             }
+            if (!project.course.rsyncDeployURL.endsWith('/')) {
+                project.course.rsyncDeployURL = project.course.rsyncDeployURL + '/'
+            }
+            def sourceDir = project.file('build/website/').toString()
+            if (!sourceDir.endsWith('/')) {
+                sourceDir = sourceDir + '/'
+            }
 
             String sshCmd = "ssh";
             if (project.course.rsyncDeployKey != null) {
-                sshCmd = "'ssh -i ${project.course.rsyncDeployKey}'"
+                sshCmd = "ssh -i ${project.course.rsyncDeployKey}"
             }
             def cmd = [
                     'rsync',
                     '-auzv',
-                    '-e',
-                    sshCmd,
-                    'build/website/',
-                    project.course.rsyncDeployURL +
-                       ((project.course.rsyncDeployURL.endsWith('/')) ?
-                           "" : '/')
+                    '-e' + sshCmd,
+                    sourceDir,
+                    project.course.rsyncDeployURL
                     ]
 
             println ("Issuing rsync command\n" + cmd.iterator().join(" "))
             project.exec {
-                commandLine = cmd
+                commandLine cmd
                 if (project.course.rsyncDeployKey != null) {
                     environment ('SSH_AGENT_PID', '')
                     environment ('SSH_AUTH_SOCK', '')
