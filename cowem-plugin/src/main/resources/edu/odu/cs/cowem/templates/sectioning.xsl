@@ -21,9 +21,6 @@
 
 
   <xsl:template match="html" mode="sectioning">
-    <xsl:message>
-        <xsl:text>Testing sectioning.</xsl:text>
-    </xsl:message>
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:copy-of select="head"/>
@@ -75,20 +72,8 @@
 				</presentation>
 			</xsl:when>
 			<xsl:otherwise>
-			    <xsl:message>
-			        <xsl:text>h1 section </xsl:text>
-			        <xsl:value-of select="$title"/>
-			    </xsl:message>
-                <xsl:message>
-                    <xsl:text># exclusions </xsl:text>
-                    <xsl:value-of select="count($exclusions)"/>
-                </xsl:message>
 			    <xsl:variable name='innerSections' select="./following-sibling::h2[1] 
 			       | ./following-sibling::h2[1]/following-sibling::*"/>
-                <xsl:message>
-                    <xsl:text># inner </xsl:text>
-                    <xsl:value-of select="count($innerSections)"/>
-                </xsl:message>
 				<section depth="1">
 					<sectionHeader tag="h1">
 						<xsl:copy-of select="@* | node()" />
@@ -112,21 +97,9 @@
                | ./following-sibling::h2[1] | ./following-sibling::h2[1]/following-sibling::*" />
 		<xsl:variable name="thisSection"
 			select="./following-sibling::* except $exclusions" />
-		<xsl:message>
-			<xsl:text>h2 section </xsl:text>
-			<xsl:value-of select="$title" />
-		</xsl:message>
-		<xsl:message>
-			<xsl:text># exclusions </xsl:text>
-			<xsl:value-of select="count($exclusions)" />
-		</xsl:message>
 		<xsl:variable name='innerSections'
 			select="./following-sibling::h3[1] 
                    | ./following-sibling::h3[1]/following-sibling::*" />
-		<xsl:message>
-			<xsl:text># inner </xsl:text>
-			<xsl:value-of select="count($innerSections)" />
-		</xsl:message>
 		<section depth="2">
 			<sectionHeader tag="h2">
 				<xsl:copy-of select="@* | node()" />
@@ -150,21 +123,9 @@
                />
         <xsl:variable name="thisSection"
             select="./following-sibling::* except $exclusions" />
-        <xsl:message>
-            <xsl:text>h3 section </xsl:text>
-            <xsl:value-of select="$title" />
-        </xsl:message>
-        <xsl:message>
-            <xsl:text># exclusions </xsl:text>
-            <xsl:value-of select="count($exclusions)" />
-        </xsl:message>
         <xsl:variable name='innerSections'
             select="./following-sibling::h4[1] 
                    | ./following-sibling::h4[1]/following-sibling::*" />
-        <xsl:message>
-            <xsl:text># inner </xsl:text>
-            <xsl:value-of select="count($innerSections)" />
-        </xsl:message>
         <section depth="3">
             <sectionHeader tag="h3">
                 <xsl:copy-of select="@* | node()" />
@@ -189,21 +150,9 @@
                />
         <xsl:variable name="thisSection"
             select="./following-sibling::* except $exclusions" />
-        <xsl:message>
-            <xsl:text>h4 section </xsl:text>
-            <xsl:value-of select="$title" />
-        </xsl:message>
-        <xsl:message>
-            <xsl:text># exclusions </xsl:text>
-            <xsl:value-of select="count($exclusions)" />
-        </xsl:message>
         <xsl:variable name='innerSections'
             select="./following-sibling::h5[1] 
                    | ./following-sibling::h5[1]/following-sibling::*" />
-        <xsl:message>
-            <xsl:text># inner </xsl:text>
-            <xsl:value-of select="count($innerSections)" />
-        </xsl:message>
         <section depth="4">
             <sectionHeader tag="h4">
                 <xsl:copy-of select="@* | node()" />
@@ -229,14 +178,6 @@
                />
         <xsl:variable name="thisSection"
             select="./following-sibling::* except $exclusions" />
-        <xsl:message>
-            <xsl:text>h5 section </xsl:text>
-            <xsl:value-of select="$title" />
-        </xsl:message>
-        <xsl:message>
-            <xsl:text># exclusions </xsl:text>
-            <xsl:value-of select="count($exclusions)" />
-        </xsl:message>
         <section depth="5">
             <sectionHeader tag="h5">
                 <xsl:copy-of select="@* | node()" />

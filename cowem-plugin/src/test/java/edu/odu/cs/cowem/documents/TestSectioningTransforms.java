@@ -384,13 +384,116 @@ public class TestSectioningTransforms {
                 XPathConstants.NODESET);
         assertEquals (2, subsections.getLength());
         
+        for (int i = 1; i <= 7; ++i) {
+        	NodeList nl = (NodeList)xPath.evaluate("//*[@id='" 
+        			+ "activities" + Integer.toString(i) + "']",
+        			root, XPathConstants.NODESET);
+        	assertEquals ("Checking for activities" + i, 1, nl.getLength());
+        }
+        
+        
+        
     }
 
     
+    @Test
+    public void testSectioningWithHRs2() 
+            throws XPathExpressionException, TransformerException,
+            ParserConfigurationException, SAXException, IOException {
+        
+        String[] htmlInput = {
+			"<html test='sectioning'>",
+			"<head>",
+			"<title>@Title@</title>",
+			"</head>",
+			"<body>",
+			"<h1><a href='#software-for-courses' name='software-for-courses'></a>Software for Courses</h1>",
+			"<h2><a href='#course-websites-documents' name='course-websites-documents'></a>Course Websites &amp; Documents</h2>",
+			"<p><strong>Overview</strong></p>",
+			"<p>A general discussion.</p>",
+			"<hr/>",
+			"<p><strong>Subject <a href='note1'>Note</a></strong></p>",
+			"<ol>",
+			"<li>Look at the <a href='item1'>Course Websites</a></li>",
+			"<li><a href='lecture'>Old:</a> <a href='item2'>TBD</a></li>",
+			"</ol>",
+			"<h2><a href='#assignment-submission-and-grading' name='assignment-submission-and-grading'></a>Assignment Submission and Grading</h2>",
+			"<p>Support for submitting assignments via the web and triggering automatic grading.</p>",
+			"<ol>",
+			"<li><a href='lecture'> </a> <a href='item3'>Web-based Assignment Submission</a></li>",
+			"<li><a href='lab'> </a> <a href='item4'>Programming Assignments</a></li>",
+			"</ol>",
+			"<h1><a href='#preamble' name='preamble'></a>Preamble</h1>",
+			"<p>preamble text</p>",
+			"<h1><a href='#postscript' name='postscript'></a>Postscript</h1>",
+			"<p>All times in this schedule are given in Eastern Time.</p>",
+			"<h1><a href='#presentation' name='presentation'></a>Presentation</h1>",
+			"<table>",
+			"<thead>",
+			"<tr>",
+			"<th>Topics </th>",
+			"<th>Lecture Notes </th>",
+			"<th>Readings </th>",
+			"<th>Assignments &amp; Other Events </th>",
+			"</tr>",
+			"</thead>",
+			"<tbody>",
+			"<tr>",
+			"<td>topics </td>",
+			"<td>slides video lecturenotes construct </td>",
+			"<td>text </td>",
+			"<td>quiz asst selfassess lecture exam event </td>",
+			"</tr>",
+			"</tbody>",
+			"</table>",
+			"<table>",
+			"<thead>",
+			"<tr>",
+			"<th>Document Kind </th>",
+			"<th>Prefix </th>",
+			"</tr>",
+			"</thead>",
+			"<tbody>",
+			"<tr>",
+			"<td>lecture </td>",
+			"<td>Read chapters </td>",
+			"</tr>",
+			"</tbody>",
+			"</table></body>",
+			"</html>"
+		};    
     
-    
-    
-    
+        org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
+        Element root = basicHtml.getDocumentElement();
+        String htmlContent = root.getTextContent();
+        
+        assertTrue ("checking for preamble", htmlContent.contains("preamble text"));
+        assertTrue ("checking for postscripot", htmlContent.contains("Eastern Time"));
+        assertTrue ("checking for presentation", htmlContent.contains("event"));
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        assertEquals ("html", root.getLocalName());
+
+        NodeList sections = (NodeList)xPath.evaluate(
+                "/html/body//section[@depth='1']", root,
+                XPathConstants.NODESET);
+        assertEquals (1, sections.getLength());
+                
+        NodeList subsections = (NodeList)xPath.evaluate(
+                ".//section[@depth='2']", root,
+                XPathConstants.NODESET);
+        assertEquals (2, subsections.getLength());
+                
+        for (int i = 1; i <= 4; ++i) {
+        	NodeList nl = (NodeList)xPath.evaluate("//*[@href='" 
+        			+ "item" + Integer.toString(i) + "']",
+        			root, XPathConstants.NODESET);
+        	assertEquals ("Checking for item" + i, 1, nl.getLength());
+        }
+        
+        
+        
+    }   
 	
     private org.w3c.dom.Document formatHTML(String[] htmlInput) 
             throws TransformerException, ParserConfigurationException, SAXException, IOException {

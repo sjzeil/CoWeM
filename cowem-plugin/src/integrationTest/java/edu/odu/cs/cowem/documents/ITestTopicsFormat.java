@@ -349,7 +349,7 @@ public class ITestTopicsFormat {
                 XPathConstants.NODE);
         assertNotNull(item4);
         
-        assertTrue (item2.getTextContent().contains("Old: "));
+        assertFalse (item2.getTextContent().contains("Old: "));
         assertFalse (item3.getTextContent().contains("Read chapters "));
         assertFalse (item4.getTextContent().contains("In the lab: "));
     

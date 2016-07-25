@@ -69,7 +69,7 @@
           </form>
 	      
 	      <xsl:variable name="prefixTable"
-              select="section[sectionHeader/@id = 'presentation']/sectionContent//table[1]"/>
+              select="presentation//table[1]"/>
 	      
 	      <table border="1" rules="all" frame="box" role="outline">
              <tr class="columnheader">
@@ -112,7 +112,7 @@
 
   <xsl:template match="ol" mode="activities">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader/@id = 'presentation']/sectionContent//table[1]"/>
+        select="ancestor::body/presentation//table[1]"/>
       
       <xsl:variable name="theList" select='.'/>
       <tr class="item">
@@ -137,7 +137,7 @@
 
   <xsl:template match="*" mode="activities">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader//a[@name = 'presentation']]//table[1]"/>
+        select="ancestor::body/presentation//table[1]"/>
       <tr class="subject{@depth}">
           <td class="subject{@depth}" colspan="{count($prefixTable/thead/tr[1]/*)}">
               <xsl:apply-templates select="."/>
