@@ -4,8 +4,10 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
+  <xsl:include href="normalizeHeaders.xsl"/>
+  <xsl:include href="sectionNumbering.xsl"/>
+  <xsl:include href="sectioning.xsl"/>
   <xsl:include href="md-common.xsl"/>
-  <xsl:include href="paginate.xsl"/>
   
   <xsl:param name="format" select="'modules'"/>
 
@@ -57,11 +59,7 @@
 	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
 	    </div>
 	    <div class="rightPart">
-	      <xsl:variable name="preamble" select="section[sectionHeader/@id = 'preamble']"/>
-	      <xsl:if test="$preamble">
-             <xsl:apply-templates select="$preamble/sectionDescription/node()"/>
-	         <xsl:apply-templates select="$preamble/sectionContent/node()"/>
-	      </xsl:if>
+         <xsl:apply-templates select="preamble/node()"/>
 	      <form action="">
             <div class="showHideControls">
 	          <input type="button" value="expand all" onclick="expandAll()"/>
@@ -72,22 +70,8 @@
             </div>
           </form>
 	      
-	      <xsl:for-each select="section">
-	           <xsl:variable name="sectionName" select="sectionHeader/@id"/>
-	           <xsl:choose>
-	               <xsl:when test="$sectionName = 'preamble'"/>
-                   <xsl:when test="$sectionName = 'postscript'"/>
-	               <xsl:when test="$sectionName = 'presentation'"/>
-	               <xsl:otherwise>
-                      <xsl:apply-templates select="."/>
-	               </xsl:otherwise>
-	           </xsl:choose>
-	      </xsl:for-each>
-          <xsl:variable name="postscript" select="section[sectionHeader/@id = 'postscript']"/>
-          <xsl:if test="$postscript">
-             <xsl:apply-templates select="$postscript/sectionDescription/node()"/>
-             <xsl:apply-templates select="$postscript/sectionContent/node()"/>
-          </xsl:if>
+          <xsl:apply-templates select="section"/>
+          <xsl:apply-templates select="postscript/node()"/>
 	      <xsl:call-template name="insertFooter"/>
 	    </div>
       </div>
@@ -194,7 +178,7 @@
 
   <xsl:template match="p|li" mode="activities2">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader/@id = 'presentation']/sectionContent//table[2]"/>
+        select="ancestor::body/presentation//table[2]"/>
       <xsl:choose>
           <xsl:when test="(local-name(*[1]) = 'a') and (normalize-space(*[1]/preceding-sibling::node()) = '')">
               <xsl:variable name="kind" select="normalize-space(a[1]/@href)"/>

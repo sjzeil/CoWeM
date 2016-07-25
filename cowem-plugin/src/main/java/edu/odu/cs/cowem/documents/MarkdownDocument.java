@@ -541,6 +541,7 @@ public class MarkdownDocument implements Document {
 		}
 		
 		// Apply property and other final substitutions.
+		//logger.warn("Sectioned text is\n" + htmlText);
 		String result = performTextSubstitutions(htmlText);
 		
 		return result;

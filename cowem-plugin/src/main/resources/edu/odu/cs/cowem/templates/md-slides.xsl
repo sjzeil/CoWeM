@@ -5,7 +5,10 @@
 >
 
   <xsl:include href="md-common.xsl"/>
+  <xsl:include href="normalizeHeaders.xsl"/>
+  <xsl:include href="sectionNumbering.xsl"/>
   <xsl:include href="paginate.xsl"/>
+
   
   <xsl:param name="format" select="'slides'"/>
   

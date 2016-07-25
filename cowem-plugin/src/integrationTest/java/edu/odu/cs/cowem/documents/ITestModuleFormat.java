@@ -288,7 +288,93 @@ public class ITestModuleFormat {
     
     }
 
-    
+    /**
+     * Regression test for a mistake in processing large outlines.
+     * @throws XPathExpressionException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void test333Outline() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+        File mdInput = Paths.get("src/test/data/proj1/group1/outline333/outline333.md").toFile();
+        WebsiteProject proj = new WebsiteProject(Paths.get("src/test/data/proj1")
+                .toFile().getAbsoluteFile());
+        MarkdownDocument doc = new MarkdownDocument(mdInput, proj, properties);
+        doc.setDebugMode(true);
+        
+        String htmlContent = doc.transform(FORMAT);
+        
+        assertFalse(htmlContent.contains("Preamble"));
+        assertFalse(htmlContent.contains("Postscript"));
+        assertFalse(htmlContent.contains("Presentation"));
+        
+        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
+        Element root = finalHtml.getDocumentElement();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        
+
+        int[] subsectionsExpected = {0, 5, 9, 9};
+        
+        NodeList sections = (NodeList)xPath.evaluate(
+                "/html/body//div[@class='topic1']", root,
+                XPathConstants.NODESET);
+        assertEquals (4, sections.getLength());
+        for (int i = 0; i < sections.getLength(); ++i) {
+            Node div = sections.item(i);
+            String content = div.getTextContent();
+            String number = Integer.toString(i+1);
+            assertTrue("Did not find " + number + " in " + content,
+                    content.startsWith(number));
+        }
+
+        NodeList subsections = (NodeList)xPath.evaluate(
+                "/html/body//div[@class='topic2' or @class='topic1']", root,
+                XPathConstants.NODESET);
+        int m = 0;
+        for (int i = 0; i < sections.getLength(); ++i) {
+            Node div = subsections.item(m);
+            String content = div.getTextContent();
+            String number = Integer.toString(i+1) + " ";
+            assertTrue("Did not find " + number + " in " + content,
+                    content.startsWith(number));
+            ++m;
+            for (int j = 0; j < subsectionsExpected[i]; ++j) {
+                div = subsections.item(m);
+                content = div.getTextContent();
+                number = Integer.toString(i+1) 
+                        + "." + Integer.toString(j+1);
+                assertTrue("Did not find " + number + " in " + content,
+                        content.startsWith(number));
+                ++m;
+            }
+        }
+
+        
+        int[] subsubsectionsExpected = {0, 3, 0, 0, 2};
+        NodeList subsubsections = (NodeList)xPath.evaluate(
+                "/html/body//div[@class='topic3']", root,
+                XPathConstants.NODESET);
+        m = 0;
+        for (int i = 0; i < sections.getLength(); ++i) {
+            for (int j = 0; j < subsectionsExpected[i]; ++j) {
+                for (int k = 0; k < subsubsectionsExpected[m]; ++k) {
+                    Node div = subsubsections.item(m);
+                    String content = div.getTextContent();
+                    String number = Integer.toString(i+1) 
+                            + "." + Integer.toString(j+1)
+                            + "." + Integer.toString(k+1);
+                    assertTrue("Did not find " + number + " in " + content,
+                            content.startsWith(number));
+                    ++m;
+                }
+            }
+        }
+        
+        
+    }
+     
     
     
 }

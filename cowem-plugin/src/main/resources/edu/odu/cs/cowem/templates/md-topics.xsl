@@ -5,7 +5,9 @@
 >
 
   <xsl:include href="md-common.xsl"/>
-  <xsl:include href="paginate.xsl"/>
+  <xsl:include href="normalizeHeaders.xsl"/>
+  <xsl:include href="sectionNumbering.xsl"/>
+  <xsl:include href="sectioning.xsl"/>
   
   <xsl:param name="format" select="'topics'"/>
 
@@ -57,11 +59,7 @@
 	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
 	    </div>
 	    <div class="rightPart">
-	      <xsl:variable name="preamble" select="section[sectionHeader/@id = 'preamble']"/>
-          <xsl:if test="$preamble">
-             <xsl:apply-templates select="$preamble/sectionDescription/node()"/>
-             <xsl:apply-templates select="$preamble/sectionContent/node()"/>
-	      </xsl:if>
+	      <xsl:apply-templates select="preamble/node()"/>
 	      <form action="">
             <div class="showHideControls">
 	          <xsl:if test="contains($formats, 'modules')">
@@ -79,23 +77,9 @@
                    mode="columnHeaders"/>
              </tr>
 
-	         <xsl:for-each select="section">
-	             <xsl:variable name="sectionName" select="sectionHeader/@id"/>
-                 <xsl:choose>
-	               <xsl:when test="$sectionName = 'preamble'"/>
-                   <xsl:when test="$sectionName = 'postscript'"/>
-	               <xsl:when test="$sectionName = 'presentation'"/>
-	               <xsl:otherwise>
-                      <xsl:apply-templates select="."/>
-	               </xsl:otherwise>
-	             </xsl:choose>
-	          </xsl:for-each>
+             <xsl:apply-templates select="section"/>
 	       </table>
-          <xsl:variable name="postscript" select="section[sectionHeader/@id = 'postscript']"/>
-          <xsl:if test="$postscript">
-             <xsl:apply-templates select="$postscript/sectionDescription/node()"/>
-             <xsl:apply-templates select="$postscript/sectionContent/node()"/>
-          </xsl:if>
+           <xsl:apply-templates select="postscript/node()"/>
 	      <xsl:call-template name="insertFooter"/>
 	    </div>
       </div>
@@ -111,7 +95,7 @@
   
   <xsl:template match="section">
       <xsl:variable name="prefixTable"
-        select="ancestor::body/section[sectionHeader/@id = 'presentation']/sectionContent//table[1]"/>
+        select="ancestor::body/presentation//table[1]"/>
       
       <tr class="topic{@depth}">
           <td class="topic{@depth}" colspan="{count($prefixTable/thead/tr[1]/*)}">
