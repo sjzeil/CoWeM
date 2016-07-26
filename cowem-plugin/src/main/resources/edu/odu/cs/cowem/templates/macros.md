@@ -87,6 +87,9 @@ Listings:
 %define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)
 %endif
 
+<%define <\linklisting> <filePath> <[`filepath`](filePath.html]>
+
+
 
 %define {\bExample} {theTitle} {<cwm tag="example" title="theTitle"/>}
 %define {\eExample} {} {<cwm tag="/example"/>
