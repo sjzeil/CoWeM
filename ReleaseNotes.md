@@ -22,3 +22,8 @@ Features deferred to future releases:
 * Dating of documents from a combination of file mod dates &
   (if the course materials are in a Git repository) Git log info.
   
+
+v1.1 August 13, 2016
+
+* Various bug fixes.
+* Support for rsync from Widows (Mingw/MSYS version)

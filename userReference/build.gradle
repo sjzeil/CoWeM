@@ -8,15 +8,24 @@ buildscript {
          jcenter()
          mavenCentral()
  
+         /*
          // Use my own CS dept repo
          ivy {
              // url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
          }
+         */
+         flatDir {
+            dirs project.file('../cowem-plugin/build/libs')
+         }
+         
      }
      dependencies {
          classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
          //classpath 'edu.odu.cs.zeil:cowem-plugin:1.0+'
-         classpath files('../cowem-plugin/build/libs/cowem-plugin-1.0.jar')
+         classpath name: 'cowem-plugin-1.0'
+         classpath 'org.pegdown:pegdown:1.6.0+'
+         classpath 'org.slf4j:slf4j-api:1.7.0+'
+         classpath 'net.sf.saxon:saxon-dom:8.7+'
      }
 }
   

@@ -1,5 +1,7 @@
 package edu.odu.cs.cowem
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
@@ -226,10 +228,8 @@ class CourseWebsite implements Plugin<Project> {
             if (!project.course.rsyncDeployURL.endsWith('/')) {
                 project.course.rsyncDeployURL = project.course.rsyncDeployURL + '/'
             }
-            def sourceDir = project.file('build/website/').toString()
-            if (!sourceDir.endsWith('/')) {
-                sourceDir = sourceDir + '/'
-            }
+
+            def sourceDir = 'build/website/'
 
             String sshCmd = "ssh";
             if (project.course.rsyncDeployKey != null) {
