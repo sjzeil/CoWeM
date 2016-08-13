@@ -1,6 +1,6 @@
 = Release Notes
 
-v1.0 July 10, 2016
+== v1.0 July 10, 2016
 
 Initial release.
 
@@ -23,7 +23,7 @@ Features deferred to future releases:
   (if the course materials are in a Git repository) Git log info.
   
 
-v1.1 August 13, 2016
+== v1.1 August 13, 2016
 
 * Various bug fixes.
 * Support for rsync from Widows (Mingw/MSYS version)
