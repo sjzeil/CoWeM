@@ -14,6 +14,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -290,9 +292,12 @@ public class MarkdownDocument implements Document {
 			String macroFilesList = metadata.getProperty("Macros");
 			String[] macroFiles = macroFilesList.split("\t");
 			for (String macroFileName: macroFiles) {
-				File macroFile = new File(macroFileName);
-				if (macroFile.exists()) {
-					macroProc.process(macroFile);
+				Path macroFile = Paths.get(macroFileName);
+				if (!macroFile.isAbsolute()) {
+				    macroFile = sourceDirectory.toPath().resolve(macroFileName);
+				}
+				if (macroFile.toFile().exists()) {
+					macroProc.process(macroFile.toFile());
 				} else {
 					logger.warn("Could not find macro file " + macroFileName);
 				}
