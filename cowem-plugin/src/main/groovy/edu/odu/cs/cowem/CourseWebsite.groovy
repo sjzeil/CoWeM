@@ -171,7 +171,7 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         
-        project.task ('deploy', type: Sync, dependsOn: 'build') {
+        project.task ('deploy', type: Copy, dependsOn: 'build') {
             description 'Copy course website to a local deployDestination directory.'
             group 'Deployment'
             from 'build/website'

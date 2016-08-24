@@ -18,208 +18,112 @@
 
   
   <xsl:template match="html" mode="paginate">
-    <xsl:variable name="recursivePages">
-      <xsl:apply-templates select="body" mode="recurseOnPages"/>
-    </xsl:variable>
-    <xsl:variable name="flattenedPages">
-        <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
-    </xsl:variable>
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:copy-of select="head"/>
-      <xsl:apply-templates select="$flattenedPages" mode="incrementalPages"/>
+      <xsl:apply-templates select="body" mode="paginate"/>
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="body" mode="paginate">
-    <xsl:variable name="recursivePages">
-      <xsl:apply-templates select="." mode="recurseOnPages"/>
-    </xsl:variable>
-    <xsl:variable name="flattenedPages">
-        <xsl:apply-templates select="$recursivePages" mode="flattenPages"/>
-    </xsl:variable>
-    <xsl:apply-templates select="$flattenedPages" mode="incrementalPages"/>
-  </xsl:template>
-  
-  <xsl:template match="body" mode="recurseOnPages">
-    <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <page>
-	    <xsl:if test="*">
-	      <xsl:apply-templates select="*[1]" mode="recurseOnPages"/>
-	    </xsl:if>
-      </page>
-    </xsl:copy>
-  </xsl:template>
-  
-  <xsl:template match="h1|h2|h3" mode="recurseOnPages">
-    <page>
-      <xsl:copy>
-	    <xsl:copy-of select="@*"/>
-	    <xsl:copy-of select="node()"/>
-      </xsl:copy>
-      <xsl:if test="following-sibling::*">
-	    <xsl:apply-templates select="following-sibling::*[1]" mode="recurseOnPages"/>
-      </xsl:if>
-    </page>
-  </xsl:template>
-
-  <xsl:template match="hr" mode="recurseOnPages">
-    <xsl:copy-of select='.'/>
-    <page>
-      <xsl:if test="following-sibling::*">
-	<xsl:apply-templates select="following-sibling::*[1]" 
-			     mode="recurseOnPages"/>
-      </xsl:if>
-    </page>
-  </xsl:template>
-  
-  <xsl:template match="text()" mode="recurseOnPages">
-    <xsl:copy-of select='.'/>
-  </xsl:template>
-
-  <xsl:template match="*" mode="recurseOnPages">
-    <xsl:copy-of select='.'/>
-    <xsl:if test="following-sibling::*">
-      <xsl:apply-templates select="following-sibling::*[1]"
-			   mode="recurseOnPages"/>
-    </xsl:if>
+  <xsl:template match="*|text()" mode="copy-of">
+      <xsl:copy-of select="."/>
   </xsl:template>
 
 
+	<xsl:template match="body" mode="paginate">
+		<xsl:variable name="split">
+			<xsl:copy>
+				<xsl:copy-of select="@*" />
+				<xsl:variable name="splits" select="h1 | h2 | h3 | hr" />
+				<xsl:choose>
+					<xsl:when test="count($splits) = 0">
+						<xsl:copy-of select='*' />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:variable name="firstSplit" select="$splits[1]" />
+						<xsl:if test="generate-id(*[1]) != generate-id($firstSplit)">
+							<xsl:variable name="exclusions"
+								select="$firstSplit | $firstSplit/following-sibling::*" />
+							<page>
+								<xsl:apply-templates select="* except $exclusions"
+									mode="copy-of" />
+							</page>
+						</xsl:if>
+						<xsl:variable name="pageCount" select="count($splits)-1" />
+						<xsl:for-each select="$splits">
+							<page>
+								<xsl:copy-of select="." />
+								<xsl:variable name="stoppers"
+									select="./following-sibling::h1
+							| ./following-sibling::h2 | ./following-sibling::h3 | ./following-sibling::hr" />
+								<xsl:choose>
+									<xsl:when test="count($stoppers) = 0">
+										<xsl:apply-templates mode="copy-of"
+											select="./following-sibling::*" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:variable name="stop" select="$stoppers[1]" />
+										<xsl:variable name="exclusions"
+											select="$stop | $stop/following-sibling::*" />
+										<xsl:apply-templates mode="copy-of"
+											select="./following-sibling::* except $exclusions" />
+									</xsl:otherwise>
+								</xsl:choose>
+							</page>
+						</xsl:for-each>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:copy>
+		</xsl:variable>
+		<xsl:apply-templates select="$split" mode="merging" />
+	</xsl:template>
 
-<!-- Flatten pages -->
-
-
-  <xsl:template match="page" mode="flattenPages">
-    <xsl:choose>
-        <xsl:when test="p|div">
-            <!-- This page has at least one paragraph. Keep it. -->
-            <page>
-               <xsl:copy-of select='@*'/>
-               <xsl:copy-of select="*[local-name() != 'page']|text()"/>
-            </page>
-            <xsl:apply-templates select="page"  mode="flattenPages"/>
-        </xsl:when>
-        <xsl:when test="page/p | page/div">
-            <!-- This page has no paragraphs of its own, but the next one does. Merge with next page. -->
-            <page>
-               <xsl:copy-of select='@*'/>
-               <xsl:copy-of select="*[local-name() != 'page']|text()"/>
-               <xsl:copy-of select="page/*[local-name() != 'page']| page/text()"/>
-            </page>
-            <xsl:apply-templates select="page/page"  mode="flattenPages"/>
-        </xsl:when>
-        <xsl:otherwise>
-            <!-- This page has no paragraphs of its own. Neither does the next one. Merge with next two pages. -->
-            <page>
-               <xsl:copy-of select='@*'/>
-               <xsl:copy-of select="*[local-name() != 'page']|text()"/>
-               <xsl:copy-of select="page/*[local-name() != 'page']| page/text()"/>
-               <xsl:copy-of select="page/page/*[local-name() != 'page']| page/page/text()"/>
-            </page>
-            <xsl:apply-templates select="page/page/page"  mode="flattenPages"/>
-        </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-
-  <xsl:template match="text()" mode="flattenPages">
-    <xsl:copy-of select='.'/>
-  </xsl:template>
-
-
-  <xsl:template match="*" mode="flattenPages">
-    <xsl:copy>
-      <xsl:copy-of select='@*'/>
-      <xsl:apply-templates select="*|text()"  mode="flattenPages"/>
-    </xsl:copy>
-  </xsl:template>
-
-
-<!-- Incremental pages -->
-
-
-  <xsl:template match="page" mode="incrementalPages">
-      <xsl:choose>
-        <xsl:when test=".//*[@class='incremental']">
-            <xsl:variable name="incremItem" 
-                select=".//*[@class='incremental'][1]/ancestor-or-self::li"/>
-            <xsl:variable name="itemCount" 
-                select="count(.//li)"/>
-            <xsl:variable name="thisPage" 
-                select="."/>
-            <xsl:variable name="pageCopy0">
-                <xsl:copy>
-                    <xsl:attribute name="increm">
-                        <xsl:text>0</xsl:text>
-                    </xsl:attribute>
-                    <xsl:copy-of select="@*"/>
-                    <xsl:copy-of select="node()"/>
-                </xsl:copy>    
-            </xsl:variable>
-            <xsl:apply-templates select="$pageCopy0" mode="incremental"/>
-            <xsl:for-each select="1 to $itemCount">
-                <xsl:variable name="pageCopy">
-                    <page>
-                        <xsl:copy-of select="$thisPage/@*"/>
-                        <xsl:attribute name="increm">
-                            <xsl:value-of select="."/>
-                        </xsl:attribute>
-                        <xsl:apply-templates select="$thisPage/node()" 
-                           mode="stripIDs"/>
-                    </page>
-                </xsl:variable>
-                <xsl:apply-templates select="$pageCopy" 
-                    mode="incremental"/>
-            </xsl:for-each>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:copy-of select='.'/>
-        </xsl:otherwise>
-      </xsl:choose>
-  </xsl:template>
-
-  <xsl:template match="text()" mode="incrementalPages">
-    <xsl:copy-of select='.'/>
-  </xsl:template>
-
-
-  <xsl:template match="*" mode="incrementalPages">
-    <xsl:copy>
-      <xsl:copy-of select='@*'/>
-      <xsl:apply-templates select="*|text()"  mode="incrementalPages"/>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="text()" mode="stripIDs">
-    <xsl:copy-of select='.'/>
-  </xsl:template>
-
-  <xsl:template match="*" mode="stripIDs">
-    <xsl:copy>
-      <xsl:copy-of select='@*[local-name() != "id"]'/>
-      <xsl:apply-templates select="*|text()"  mode="stripIDs"/>
-    </xsl:copy>
-  </xsl:template>
-
-
-  <xsl:template match="*" mode="incremental">
-    <xsl:variable name="increm" select="./ancestor-or-self::page/@increm"/>
-    <xsl:variable name="itemCount"
-        select="count(./preceding::li) + count(.[local-name() = 'li'])"/>
-    <xsl:if test="$itemCount &lt;= $increm">
-	    <xsl:copy>
-		    <xsl:copy-of select='@*' />
-		    <xsl:apply-templates select="*|text()" mode="incremental" />
-	    </xsl:copy>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template match="text()" mode="incremental">
-    <xsl:copy-of select='.'/>
-  </xsl:template>
-
+	<xsl:template match="body" mode="merging">
+		<xsl:copy>
+			<xsl:copy-of select="@*" />
+			<xsl:apply-templates select="*" mode="merging" />
+		</xsl:copy>
+	</xsl:template>
+	
+	<xsl:template match="page" mode="merging">
+	   <xsl:variable name="prior" select="./preceding-sibling::page[1]"/>
+       <xsl:variable name="next" select="./following-sibling::page[1]"/>
+       <!-- 
+       <xsl:message>
+           <xsl:text>merging </xsl:text>
+           <xsl:value-of select="count($prior)"/>
+           <xsl:text> </xsl:text>
+           <xsl:value-of select="local-name(*[1])"/>
+           <xsl:text> </xsl:text>
+           <xsl:value-of select="count(*)"/>
+           <xsl:text> </xsl:text>
+           <xsl:value-of select="count($next)"/>
+       </xsl:message>
+        -->
+	   <xsl:choose>
+	       <xsl:when test="count(*) = 1 and count($next) = 1 and count($next/*) = 1">
+	           <xsl:copy-of select= '.'/>
+	       </xsl:when>
+           <xsl:when test="count(*) = 1 and count($next) = 1">
+               <!--  omit this page -->
+           </xsl:when>
+           <xsl:when test="count(*) = 1 and count($next) = 0">
+               <xsl:copy-of select= '.'/>
+           </xsl:when>
+           <xsl:when test="count($prior) = 0">
+               <xsl:copy-of select= '.'/>
+           </xsl:when>
+           <xsl:when test="count(*) &gt; 1 and count($prior) = 1 and count($prior/*) = 1">
+               <page>
+                   <xsl:copy-of select="$prior/*"/>
+                   <xsl:apply-templates select="*" mode="copy-of"/>
+               </page>
+           </xsl:when>
+           <xsl:otherwise>
+               <xsl:copy-of select= '.'/>
+           </xsl:otherwise>
+	   </xsl:choose>
+	</xsl:template>
 
 
 </xsl:stylesheet>
