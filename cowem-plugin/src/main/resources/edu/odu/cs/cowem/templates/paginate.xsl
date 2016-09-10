@@ -75,7 +75,10 @@
 				</xsl:choose>
 			</xsl:copy>
 		</xsl:variable>
-		<xsl:apply-templates select="$split" mode="merging" />
+		<xsl:variable name="merged">
+		    <xsl:apply-templates select="$split" mode="merging" />
+		</xsl:variable>
+		<xsl:apply-templates select="$merged" mode="incremental" />
 	</xsl:template>
 
 	<xsl:template match="body" mode="merging">
@@ -124,6 +127,69 @@
            </xsl:otherwise>
 	   </xsl:choose>
 	</xsl:template>
+
+
+
+    <xsl:template match="body" mode="incremental">
+        <xsl:copy>
+            <xsl:copy-of select="@*" />
+            <xsl:apply-templates select="*" mode="incremental" />
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="page" mode="incremental">
+        <xsl:choose>
+            <xsl:when test="count(.//span[@class='incremental']) &gt; 0">
+                <xsl:variable name="thisPage" select='.'/>
+                <xsl:for-each select=".//li">
+                    <xsl:call-template name="copyIncremental">
+                        <xsl:with-param name="thisPage" select="$thisPage"/>
+                        <xsl:with-param name="upTo" select="."/>
+                        <xsl:with-param name="node" select="$thisPage"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+                <xsl:copy-of select="$thisPage"/> 
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select='.'/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+	<xsl:template name="copyIncremental">
+		<xsl:param name="thisPage" />
+		<xsl:param name="upTo" />
+		<xsl:param name="node" />
+
+		<xsl:variable name="upToID" select="generate-id($upTo)" />
+		<xsl:variable name="ancestors" select="$node/ancestor::*" />
+		<xsl:variable name="followers" select="$node/following::* | $node/descendant::*" />
+		
+		
+		<xsl:choose>
+		    <xsl:when test="self::*">
+            <xsl:if test="count($ancestors[generate-id() = $upToID])
+		               + count($followers[generate-id() = $upToID]) &gt; 0">
+			<xsl:element name="{local-name($node)}">
+			    <xsl:copy-of select="@*[local-name() != 'id']"/>
+				<xsl:for-each select="$node/* | $node/text()">
+					<xsl:call-template name="copyIncremental">
+						<xsl:with-param name="thisPage" select="$thisPage" />
+						<xsl:with-param name="upTo" select="$upTo" />
+						<xsl:with-param name="node" select="." />
+					</xsl:call-template>
+				</xsl:for-each>
+			</xsl:element>
+			</xsl:if>
+		    </xsl:when>
+            <xsl:when test="self::text()">
+                <xsl:copy-of select='.'/>
+            </xsl:when>
+		</xsl:choose>
+	</xsl:template>
+
+
+
 
 
 </xsl:stylesheet>

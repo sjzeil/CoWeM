@@ -193,6 +193,12 @@ class CourseWebsite implements Plugin<Project> {
             project.remotes.remotehost.user = userName
             def remotePath = project.course.sshDeployURL.substring(k1+1)
             if (project.course.sshDeployKey != null) {
+                File keyFile = project.file(project.course.sshDeployKey)
+                keyFile.setReadable(false,false)
+                keyFile.setWritable(false,false)
+                keyFile.setExecutable(false,false)
+                keyFile.setReadable(true, true)
+                keyFile.setWritable(true, true)
                 project.remotes.remotehost.identity =
                         project.file(project.course.sshDeployKey)
             }
@@ -233,6 +239,13 @@ class CourseWebsite implements Plugin<Project> {
 
             String sshCmd = "ssh";
             if (project.course.rsyncDeployKey != null) {
+                File keyFile = project.file(project.course.rsyncDeployKey)
+                println "keyFile is " + keyFile.toString() + ": setting permissions" 
+                keyFile.setReadable(false,false)
+                keyFile.setWritable(false,false)
+                keyFile.setExecutable(false,false)
+                keyFile.setReadable(true, true)
+                keyFile.setWritable(true, true)
                 sshCmd = "ssh -i ${project.course.rsyncDeployKey}"
             }
             def cmd = [

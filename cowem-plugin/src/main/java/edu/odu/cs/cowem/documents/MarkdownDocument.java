@@ -273,7 +273,7 @@ public class MarkdownDocument implements Document {
 				xsltLocation + defaultMacrosFile);
 		if (macrosInStream == null) {
 		    logger.error("Unable to load " 
-		       + xsltLocation + defaultMacrosFile + " from utils library.");
+		       + xsltLocation + defaultMacrosFile + " from CoWeM library.");
 		}
 		try {
 			BufferedReader macrosIn = new BufferedReader(

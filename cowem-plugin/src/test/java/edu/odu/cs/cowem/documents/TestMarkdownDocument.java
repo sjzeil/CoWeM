@@ -649,7 +649,7 @@ public class TestMarkdownDocument {
 		
 		NodeList pages = (NodeList)xPath.evaluate("/html/body/div[@class='page']",
 				root, XPathConstants.NODESET);
-		assertEquals(5, pages.getLength());
+		assertEquals(4, pages.getLength());
 		
 		Element[] p = new Element[5];
 		Element[] par = new Element[5];
@@ -659,7 +659,7 @@ public class TestMarkdownDocument {
 			par[i] = (Element)p[i].getParentNode();
 			assertEquals("page", par[i].getAttribute("class"));
 		}
-		assertNotSame(par[0],  par[1]);
+		assertSame(par[0],  par[1]);
 		assertNotSame(par[1],  par[2]);
 		assertNotSame(par[2],  par[3]);
 		assertSame(par[3],  par[4]);
