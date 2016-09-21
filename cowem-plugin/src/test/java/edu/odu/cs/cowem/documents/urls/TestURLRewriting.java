@@ -116,6 +116,59 @@ public class TestURLRewriting {
 	}
 
 
+	
+	   @Test
+	    public void testDocWithAnchor() 
+	            throws XPathExpressionException, TransformerException, 
+	            ParserConfigurationException, SAXException, IOException {
+
+	        String[] htmlInput = {
+	                "<html>",
+	                "<head>",
+	                "<title>A Title</title>",
+	                "</head>",
+	                "<body>",
+	                "<p>Some text leading to ",
+	                "<a id='a1' href='doc:DocSet1#anchor'/>",
+	                " but this does not work: ",
+	                "<a id='a2' href='doc:NotADocSet'>not a link</a>",
+	                "and this doesn't make much sense, but",
+	                "<img id='img1' src='doc:DocSet3'/>",
+	                "</p>",
+	                "</body>",
+	                "</html>"   
+	        };
+
+
+	        org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
+	        
+	        URLRewriting rewriter = new URLRewriting(documentDir, proj, BB_URL);
+	        rewriter.rewrite(basicHtml);
+	        
+	        
+	        Element link1 = getElementById(basicHtml, "a1");
+	        assertNotNull (link1);
+	        String href = link1.getAttribute("href");
+	        assertEquals (THE_BASE_URL + "Group1/DocSet1/index.html#anchor", href);
+	        
+	        Element link2 = getElementById(basicHtml, "a2");
+	        assertNotNull (link2);
+	        href = link2.getAttribute("href");
+	        assertEquals ("doc:NotADocSet", href);
+	        
+	        Element img1 = getElementById(basicHtml, "img1");
+	        assertNotNull (img1);
+	        String src = img1.getAttribute("src");
+	        assertEquals (THE_BASE_URL + "Group2/DocSet3/index.html", src);
+	    }
+
+	
+	
+	
+	
+	
+	
+	
     @Test
     public void testDocOnSecondary() 
             throws XPathExpressionException, TransformerException, 

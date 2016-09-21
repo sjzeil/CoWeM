@@ -75,6 +75,12 @@ public class DocURLs implements SpecialURL {
 	    if (url.startsWith("doc:") || url.startsWith("docex:")) {
 	        int dividerPos = url.indexOf(':');
 	        String documentSpec = url.substring(dividerPos + 1);
+	        int anchorPos = documentSpec.indexOf('#');
+	        String anchor = "";
+	        if (anchorPos >= 0) {
+	            anchor = documentSpec.substring(anchorPos);
+	            documentSpec = documentSpec.substring(0, anchorPos);
+	        }
 	        if (documentSpec.contains("/")) {
                 int k = documentSpec.indexOf('/');
 	            String documentSetName = documentSpec.substring(0, k);
@@ -85,7 +91,7 @@ public class DocURLs implements SpecialURL {
 	                        sourceDirectory, 
 	                        documentSetName);
 	                relative = relative.resolve(continuation);
-	                String newLink = relative.toString() + ".html";
+	                String newLink = relative.toString() + ".html" + anchor;
 	                link.setAttribute(linkAttr, newLink);
 	                if (url.startsWith("doc:")) {
 	                    link.setAttribute("class", "doc");
@@ -115,7 +121,7 @@ public class DocURLs implements SpecialURL {
                             sourceDirectory, 
                             targetDocSet);
                     relative = relative.resolve(documentSpec);
-                    String newLink = relative.toString() + ".html";
+                    String newLink = relative.toString() + ".html" + anchor;
                     link.setAttribute(linkAttr, newLink);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
@@ -133,7 +139,8 @@ public class DocURLs implements SpecialURL {
                     Path relative = project.relativePathToDocumentSet(
                             sourceDirectory, 
                             documentSetName);
-                    String newLink = relative.resolve("index.html").toString();
+                    String newLink = relative.resolve("index.html").toString()
+                            + anchor;
                     link.setAttribute(linkAttr, newLink);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
