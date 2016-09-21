@@ -163,28 +163,33 @@
 
 		<xsl:variable name="upToID" select="generate-id($upTo)" />
 		<xsl:variable name="ancestors" select="$node/ancestor::*" />
-		<xsl:variable name="followers" select="$node/following::* | $node/descendant::*" />
-		
-		
+		<xsl:variable name="followers"
+			select="$node/following::* | $node/descendant::*" />
+
+
 		<xsl:choose>
-		    <xsl:when test="self::*">
-            <xsl:if test="count($ancestors[generate-id() = $upToID])
+			<xsl:when test="self::*">
+				<xsl:if
+					test="count($ancestors[generate-id() = $upToID])
 		               + count($followers[generate-id() = $upToID]) &gt; 0">
-			<xsl:element name="{local-name($node)}">
-			    <xsl:copy-of select="@*[local-name() != 'id']"/>
-				<xsl:for-each select="$node/* | $node/text()">
-					<xsl:call-template name="copyIncremental">
-						<xsl:with-param name="thisPage" select="$thisPage" />
-						<xsl:with-param name="upTo" select="$upTo" />
-						<xsl:with-param name="node" select="." />
-					</xsl:call-template>
-				</xsl:for-each>
-			</xsl:element>
-			</xsl:if>
-		    </xsl:when>
-            <xsl:when test="self::text()">
-                <xsl:copy-of select='.'/>
-            </xsl:when>
+					<xsl:element name="{local-name($node)}">
+						<xsl:copy-of select="@*[local-name() != 'id']" />
+						<xsl:if test="local-name($node)='page'">
+						    <xsl:attribute name="increm">1</xsl:attribute>
+						</xsl:if>
+						<xsl:for-each select="$node/* | $node/text()">
+							<xsl:call-template name="copyIncremental">
+								<xsl:with-param name="thisPage" select="$thisPage" />
+								<xsl:with-param name="upTo" select="$upTo" />
+								<xsl:with-param name="node" select="." />
+							</xsl:call-template>
+						</xsl:for-each>
+					</xsl:element>
+				</xsl:if>
+			</xsl:when>
+			<xsl:when test="self::text()">
+				<xsl:copy-of select='.' />
+			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 

@@ -291,6 +291,9 @@
 
 
   <xsl:template match="h1|h2|h3|h4|h5">
+    <xsl:if test="contains(@id, '-')">
+        <a id="{translate(@id, '-', '')}" />
+    </xsl:if>
     <xsl:copy>
       <xsl:copy-of select="@*[local-name() != 'sectionNumber']"/>
       <xsl:value-of select="@sectionNumber"/>

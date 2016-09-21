@@ -443,6 +443,9 @@ public class TestPaginationTransforms {
 
 	    NodeList pages = root.getElementsByTagName("page");
 	    assertEquals (4, pages.getLength());
+	    
+	    Element page2 = (Element)pages.item(1);
+	    assertEquals ("1", page2.getAttribute("increm"));
 
 	    NodeList items = root.getElementsByTagName("li");
 	    assertEquals (6, items.getLength());
