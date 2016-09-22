@@ -92,7 +92,7 @@
   <xsl:template match="a" mode="navigation">
       <xsl:variable name="itemID" select="generate-id()"/>
       <xsl:variable name="title"
-          select="normalize-space(*|text())"/>
+          select="./normalize-space()"/>
       <item identifier="itm-{$itemID}" identifierref="res-{$itemID}">
           <title>
             <xsl:value-of select="$title"/>
@@ -113,7 +113,7 @@
   <xsl:template match="a" mode="nav-resources">
       <xsl:variable name="itemID" select="generate-id()"/>
       <xsl:variable name="title"
-          select="normalize-space(*|text())"/>
+          select="./normalize-space()"/>
       <resource
           bb:file="res-{$itemID}.dat"
           bb:title="{$title}"
@@ -167,8 +167,8 @@
 		mode="calendar">
 		<!-- Now add calendar entries if appropriate -->
 
-		<xsl:variable name="item" select="./ancestor::p[1]" />
-		<xsl:if test="$item">
+		<xsl:variable name="item" select=".." />
+		<xsl:if test="local-name($item) != 'div'">
 			<xsl:variable name="ident" select="generate-id($item)" />
 			<xsl:variable name="rawEventTitle">
 				<xsl:apply-templates select="$item/* | $item/text()"

@@ -393,46 +393,50 @@
 
 
 
-   
-   
-  <xsl:template match="span[@class='date' and @startsAt != '']" mode="calendar">
-      <!-- Now add calendar entries if appropriate -->
 
-      <xsl:variable name="item" select="./ancestor::p[1]"/>
-      <xsl:variable name="ident" select="generate-id($item)"/>
-      <xsl:variable name="rawEventTitle">
-          <xsl:apply-templates select="$item/* | $item/text()" mode="itemTitle"/>
-      </xsl:variable>
-      <xsl:variable name="eventTitle" select="normalize-space($rawEventTitle)"/>
 
-      <resource bb:title="{/imscc/courseName/text()}: {$eventTitle}" 
-        identifier="date-{$ident}"
-        bb:file="date-{$ident}.dat"
-        type="resource/x-bb-calendar"
-        xml:base="date-{$ident}"/>
+	<xsl:template match="span[@class='date' and @startsAt != '']"
+		mode="calendar">
+		<!-- Now add calendar entries if appropriate -->
 
-      <xsl:variable name="title" select="concat(/imscc/courseName/text(),
-              ': ', normalize-space($eventTitle))"/>
-      <xsl:result-document 
-          href="{$workDir}/date-{$ident}.dat"
-          format="resources">
-          <CALENDAR id="date-{$ident}">
-              <TITLE value="{$title}"/>
-              <DESCRIPTION>
-                <TEXT> </TEXT>
-                <TYPE value="S"/>
-              </DESCRIPTION>
-              <!-- USERID value="??"/ -->
-              <TYPE value="COURSE"/>
-              <DATES>
-                  <CREATED value=""/>
-                  <UPDATED value="{$now}"/>
-                  <START value="{@startsAt}"/>
-                  <END value="{@endsAt}"/>
-              </DATES>
-          </CALENDAR>
-      </xsl:result-document>
-  </xsl:template>
+		<xsl:variable name="item" select=".." />
+		<xsl:if test="local-name($item) != 'div'">
+
+			<xsl:variable name="ident" select="generate-id($item)" />
+			<xsl:variable name="rawEventTitle">
+				<xsl:apply-templates select="$item/* | $item/text()"
+					mode="itemTitle" />
+			</xsl:variable>
+			<xsl:variable name="eventTitle" select="normalize-space($rawEventTitle)" />
+
+			<resource bb:title="{/imscc/courseName/text()}: {$eventTitle}"
+				identifier="date-{$ident}" bb:file="date-{$ident}.dat" type="resource/x-bb-calendar"
+				xml:base="date-{$ident}" />
+
+			<xsl:variable name="title"
+				select="concat(/imscc/courseName/text(),
+              ': ', normalize-space($eventTitle))" />
+			<xsl:result-document href="{$workDir}/date-{$ident}.dat"
+				format="resources">
+				<CALENDAR id="date-{$ident}">
+					<TITLE value="{$title}" />
+					<DESCRIPTION>
+						<TEXT>
+						</TEXT>
+						<TYPE value="S" />
+					</DESCRIPTION>
+					<!-- USERID value="??"/ -->
+					<TYPE value="COURSE" />
+					<DATES>
+						<CREATED value="" />
+						<UPDATED value="{$now}" />
+						<START value="{@startsAt}" />
+						<END value="{@endsAt}" />
+					</DATES>
+				</CALENDAR>
+			</xsl:result-document>
+		</xsl:if>
+	</xsl:template>
   
   <xsl:template match="*" mode="calendar">
       <xsl:apply-templates select="*" mode="calendar"/>

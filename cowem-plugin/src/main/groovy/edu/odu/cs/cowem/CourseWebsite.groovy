@@ -161,7 +161,7 @@ class CourseWebsite implements Plugin<Project> {
         
         project.task ('bbthin', dependsOn: 'build') {
             description 'Create a Blackboard package that will link back to the website content.'
-            inputs.dir 'build/website'
+            inputs.files (project.fileTree('Directory').include('**/*.md'))
             outputs.file 'build/packages/bbthin-${project.name}.zip'
         } << {
             new BBPackage(project,
