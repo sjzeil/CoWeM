@@ -213,7 +213,7 @@ class Documents implements Plugin<Project> {
 
         
         
-        project.task ('deployDoc', type: Sync, dependsOn: 'build') {
+        project.task ('deployDoc', type: Copy, dependsOn: 'build') {
             description 'Copy this document set to a local deployDestination directory.'
             group 'Deployment'
             from websiteArea

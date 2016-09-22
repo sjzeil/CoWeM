@@ -1,5 +1,7 @@
 package edu.odu.cs.cowem
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
@@ -169,7 +171,7 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         
-        project.task ('deploy', type: Sync, dependsOn: 'build') {
+        project.task ('deploy', type: Copy, dependsOn: 'build') {
             description 'Copy course website to a local deployDestination directory.'
             group 'Deployment'
             from 'build/website'
@@ -191,6 +193,12 @@ class CourseWebsite implements Plugin<Project> {
             project.remotes.remotehost.user = userName
             def remotePath = project.course.sshDeployURL.substring(k1+1)
             if (project.course.sshDeployKey != null) {
+                File keyFile = project.file(project.course.sshDeployKey)
+                keyFile.setReadable(false,false)
+                keyFile.setWritable(false,false)
+                keyFile.setExecutable(false,false)
+                keyFile.setReadable(true, true)
+                keyFile.setWritable(true, true)
                 project.remotes.remotehost.identity =
                         project.file(project.course.sshDeployKey)
             }
@@ -226,13 +234,18 @@ class CourseWebsite implements Plugin<Project> {
             if (!project.course.rsyncDeployURL.endsWith('/')) {
                 project.course.rsyncDeployURL = project.course.rsyncDeployURL + '/'
             }
-            def sourceDir = project.file('build/website/').toString()
-            if (!sourceDir.endsWith('/')) {
-                sourceDir = sourceDir + '/'
-            }
+
+            def sourceDir = 'build/website/'
 
             String sshCmd = "ssh";
             if (project.course.rsyncDeployKey != null) {
+                File keyFile = project.file(project.course.rsyncDeployKey)
+                println "keyFile is " + keyFile.toString() + ": setting permissions" 
+                keyFile.setReadable(false,false)
+                keyFile.setWritable(false,false)
+                keyFile.setExecutable(false,false)
+                keyFile.setReadable(true, true)
+                keyFile.setWritable(true, true)
                 sshCmd = "ssh -i ${project.course.rsyncDeployKey}"
             }
             def cmd = [

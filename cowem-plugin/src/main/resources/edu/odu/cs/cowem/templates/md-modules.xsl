@@ -97,7 +97,7 @@
       	    	       <xsl:value-of select="concat('but_topic_', $toggleID)"/>
       	    	    </xsl:attribute>
       	    	</input>
-      	        <xsl:apply-templates select="sectionHeader/*[local-name() != 'a'] | sectionHeader/text()"/>
+      	        <xsl:apply-templates select="sectionHeader/* | sectionHeader/text()"/>
       	    </xsl:otherwise>
       	</xsl:choose>
       </div>
