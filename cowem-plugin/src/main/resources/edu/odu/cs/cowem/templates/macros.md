@@ -53,6 +53,13 @@ Assorted text decorations (from docbook, originally)
 %endif
 
 
+Footnotes
+
+%define {\fn} [fnid]  {[<sup>fnid</sup>](#fnid)<a id="ret-fnid"/> }
+
+%define {\footnote} [fnid] {[fnid](#ret-fnid)<a id="fnid"/>: }
+
+
 
 Callout numbers
 %define <\co1> <> [<span>&#x2780;</span>]
