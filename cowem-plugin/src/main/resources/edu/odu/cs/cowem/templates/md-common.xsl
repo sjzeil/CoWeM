@@ -314,19 +314,19 @@
 
 
 
-  <xsl:template match="code">
+  <xsl:template match="code[local-name(..) = 'pre']">
     <xsl:choose>
-      <xsl:when test="@class != ''">
-    <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates select="*|text()"/>
-    </xsl:copy>
-      </xsl:when>
-      <xsl:otherwise>
+      <xsl:when test="@class = 'raw'">
     <tt>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates select="*|text()"/>
     </tt>
+      </xsl:when>
+      <xsl:otherwise>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="*|text()"/>
+    </xsl:copy>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>

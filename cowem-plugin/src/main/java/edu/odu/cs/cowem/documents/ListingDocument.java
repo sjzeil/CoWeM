@@ -72,9 +72,6 @@ public class ListingDocument implements Document {
         sout.append("Title: ");
         sout.append(sourceFile.getName());
         sout.append("\n\n");
-        sout.append("[unformatted source](" 
-            + sourceFile.getName() 
-            + ")\n\n\n");
         try (BufferedReader documentIn 
                 = new BufferedReader (new FileReader (sourceFile));) {
             String line = documentIn.readLine();
@@ -84,7 +81,10 @@ public class ListingDocument implements Document {
                 sout.append("\n");
                 line = documentIn.readLine();
             }
-            sout.append("'''\n");
+            //sout.append("'''\n");
+            sout.append("\n[unformatted source](" 
+                    + sourceFile.getName() 
+                    + ")\n\n\n");
         } catch (IOException e) {
             logger.warn("Unable to read from " + sourceFile + ": " + e);
         }
