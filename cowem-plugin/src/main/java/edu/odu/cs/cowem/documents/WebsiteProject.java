@@ -68,6 +68,7 @@ public class WebsiteProject implements Iterable<String> {
                         }
                         documentSets.put(docSet.getName(), 
                                 docSet.getAbsoluteFile());
+                        //logger.warn("Remember doc set " + docSet.getName() + " at " + docSet.getAbsoluteFile());
                     }
                 }
             }

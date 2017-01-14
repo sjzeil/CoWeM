@@ -81,6 +81,7 @@ public class DocURLs implements SpecialURL {
 	            anchor = documentSpec.substring(anchorPos);
 	            documentSpec = documentSpec.substring(0, anchorPos);
 	        }
+	        //logger.warn("Document spec is " + documentSpec);
 	        if (documentSpec.contains("/")) {
                 int k = documentSpec.indexOf('/');
 	            String documentSetName = documentSpec.substring(0, k);
@@ -134,6 +135,7 @@ public class DocURLs implements SpecialURL {
                 }
             } else {
 	            String documentSetName = documentSpec;
+	            //logger.warn("Hunting for document set name " + documentSpec);
 	            File targetFile = project.documentSetLocation(documentSetName);
                 if (targetFile != null) {
                     Path relative = project.relativePathToDocumentSet(
