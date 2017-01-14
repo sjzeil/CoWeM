@@ -36,6 +36,12 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       
+      <script>
+          window.onload = function() {
+              modulePageLoad();
+          }
+      </script>
+      
       <div class="titleblock">
         <div class="courseName">@courseName@, @semester@</div>
         <h1 class="title">

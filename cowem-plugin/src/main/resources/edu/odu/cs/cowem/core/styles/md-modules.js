@@ -1,16 +1,62 @@
+var openCloseMap = new Map();
+
+function showOCMap ()
+{
+    var str = "";
+    
+    for (var key of openCloseMap.keys()) {
+	if (str != "") {
+	    str = str + " ";
+	}
+	str = str + key;
+    }
+    return str;
+}
+
+
+function setCookie(cname, cvalue) {
+    var d = new Date();
+    var expirationInDays = 7;
+    var cookiePath = document.href;
+    d.setTime(d.getTime() + (expirationInDays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=" + cookiePath;
+}
+
+function getCookie(cname) {
+    // From http://www.w3schools.com/js/js_cookies.asp
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+
 function toggleDisplay (sectionName)
 {
     var theDiv = document.getElementById(sectionName);
     var theButton = document.getElementById("but" + sectionName);
-  if (theDiv) {
-    if (theDiv.style.display == 'block') {
-        theDiv.style.display = "none";
-	theButton.value = "+";
-     } else {
-        theDiv.style.display = "block";
-	theButton.value = "-";
-     }
-  }
+    if (theDiv) {
+	if (theDiv.style.display == 'block') {
+            theDiv.style.display = "none";
+	    theButton.value = "+";
+	    openCloseMap.delete(sectionName);
+	} else {
+            theDiv.style.display = "block";
+	    theButton.value = "-";
+	    openCloseMap.set(sectionName, 1);
+	}
+    }
+    setCookie ("openCloseMap", showOCMap());
 };
 
 function collapseAll()
@@ -52,4 +98,16 @@ function expandAll()
 function visitPage (url)
 {
     location.href = url;
+}
+
+
+function modulePageLoad()
+{
+    var ocValues = getCookie("openCloseMap");
+    collapseAll();
+    for (var key of ocValues.split(" ")) {
+	if (key != "") {
+	    toggleDisplay(key);
+	}
+    }
 }
