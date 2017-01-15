@@ -192,7 +192,83 @@ public class TestCalendarFormatting {
 	}
 
 
-	@Test
+    @Test
+    public void testDatesInHeader() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {
+
+        String[] htmlInput = {
+                "<html>",
+                "<head>",
+                "<title>A Title</title>",
+                "</head>",
+                "<body>",
+                "<h1 id='h11'>Section 1</h1>",
+                "<ul>",
+                
+                "<li id='li1'> A <a href='date:'>2016-01-02T07:30</a> date</li>",
+                "<li id='li2'> A <a href='date:'>2016-01-03</a> date</li>",
+                "<li id='li3'>item3</li>",
+                "</ul>",
+                "<h1 id='h12'>Section 2 <a href='date:'>2017-01-15</a> is dated</h1>",
+                "<h2 id='h21'>Subsection 1</h2>",
+                "<ul>",
+                "<li id='li4'> A <a href='due:'>2020-01-01</a> date</li>",
+                "<li id='li5'>item5</li>",
+                "</ul>",
+                "<h2 id='h22'>Subsection 2</h2>",
+                "<ul>",
+                "<li id='li6'>item6</li>",
+                "</ul>",
+                "</body>",
+                "</html>"   
+        };
+
+
+        org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
+        Element root = basicHtml.getDocumentElement();
+        String htmlContent = root.getTextContent();
+
+        assertFalse (htmlContent.contains("Section 1"));
+        
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+        assertEquals ("html", root.getLocalName());
+
+        
+        Element item1 = getElementById(basicHtml, "li1");
+        assertNotNull (item1);
+        Node container = item1.getParentNode();
+        
+        Element item2 = getElementById(basicHtml, "li2");
+        assertNotNull (item2);
+        assertSame (container, item2.getParentNode());
+        
+        Element item3 = getElementById(basicHtml, "li3");
+        assertNull (item3);
+        Element item4 = getElementById(basicHtml, "li4");
+        assertNotNull (item4);
+        assertSame (container, item2.getParentNode());
+
+        Element item5 = getElementById(basicHtml, "li5");
+        assertNull (item5);
+        
+        Element headerItem1 = getElementById(basicHtml, "h12");
+        assertNotNull (headerItem1);
+        
+        Element headerItem2 = getElementById(basicHtml, "h21");
+        assertNull (headerItem2);
+        
+        assertEquals("2016-01-02T07:30:00", item1.getAttribute("start"));
+        assertEquals("2016-01-02T07:30:59", item1.getAttribute("stop"));
+        
+        assertEquals("2016-01-03T00:00:00", item2.getAttribute("start"));
+        assertEquals("2016-01-03T23:59:59", item2.getAttribute("stop"));
+        
+        assertEquals("2020-01-01T23:59:00", item4.getAttribute("start"));
+        assertEquals("2020-01-01T23:59:59", item4.getAttribute("stop"));
+    }
+
+    
+    @Test
 	public void testEndingDates() throws XPathExpressionException, TransformerException, ParserConfigurationException, SAXException, IOException {
 
 		String[] htmlInput = {

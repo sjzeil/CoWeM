@@ -18,11 +18,14 @@
   </xsl:template>
 
   <xsl:template match="html">
-    <html>
-      <xsl:copy-of select="@*"/>
-	  <xsl:apply-templates select="head"/>  
-	  <xsl:apply-templates select="body"/>    
-    </html>
+      <xsl:variable name="pass1"> 
+          <html>
+            <xsl:copy-of select="@*"/>
+	        <xsl:apply-templates select="head"/> 
+	        <xsl:apply-templates select="body"/>
+	      </html>
+	  </xsl:variable>    
+	  <xsl:apply-templates select="$pass1" mode="sortEvents"/>
   </xsl:template>
 
 
@@ -36,24 +39,22 @@
           }
       </script>
       
-      <xsl:apply-templates select="*//li"/>
+      <xsl:apply-templates select="*//li | .//h1 | .//h2 | .//h2 | .//h4" mode="activities1"/>
     </xsl:copy>
   </xsl:template>
   
   
 
    
-  <xsl:template match="li">
+  <xsl:template match="li"  mode="activities1">
     <xsl:if test="count(.//a[@href='date:']) + count(.//a[@href='due:']) &gt; 0">
         <xsl:choose>
             <xsl:when test="local-name(*[1]) = 'p'">
                 <div class='calendarEvent'>
                     <xsl:copy-of select="@*"/>
                     <xsl:call-template name="checkForDates"/>
-                    <p>
-                        <xsl:apply-templates select="*[1]" mode="activities2"/>
-                    </p>
-                    <xsl:apply-templates select="*[position &gt; 1]"/>
+                    <xsl:apply-templates select="*[1]" mode="activities2"/>
+                    <xsl:apply-templates select="*[position &gt; 1]" mode="flatten"/>
                 </div>
               </xsl:when>
               <xsl:otherwise>
@@ -67,33 +68,44 @@
      </xsl:if>
   </xsl:template>
 
-  <xsl:template match="p|li" mode="activities2">
+  <xsl:template match="h1|h2|h3|h4"  mode="activities1">
+    <xsl:if test="count(.//a[@href='date:']) + count(.//a[@href='due:']) &gt; 0">
+        <div class='calendarEvent'>
+            <xsl:copy-of select="@*"/>
+            <xsl:call-template name="checkForDates"/>
+            <xsl:apply-templates select="node()" mode="flatten"/>
+        </div>
+     </xsl:if>
+  </xsl:template>
+
+
+
+ <xsl:template match="p|li" mode="activities2">
       <xsl:variable name="prefixTable"
         select="ancestor::body/presentation//table[2]"/>
       <xsl:choose>
           <xsl:when test="(local-name(*[1]) = 'a') and (normalize-space(*[1]/preceding-sibling::node()) = '')">
               <xsl:variable name="kind" select="normalize-space(a[1]/@href)"/>
-              <img src="{$baseURL}graphics/{$kind}-kind.png" alt="{$kind}"/>
-              <xsl:text> </xsl:text>
               <xsl:choose>
                  <xsl:when test="normalize-space(a[1]) = ''">
                      <xsl:variable name="kindTD" select="$prefixTable//td[normalize-space() = $kind]"/>
                      <xsl:if test="$kindTD">
-                       <xsl:apply-templates select="$kindTD/../td[2]/node()"/>
+                       <xsl:apply-templates select="$kindTD/../td[2]/node()" mode="flatten"/>
                      </xsl:if>
                  </xsl:when>
                  <xsl:otherwise>
-                    <xsl:apply-templates select="a[1]/node()"/>
+                    <xsl:apply-templates select="a[1]/node()" mode="flatten"/>
                     <xsl:text> </xsl:text>
                  </xsl:otherwise>
               </xsl:choose>
-              <xsl:apply-templates select="a[1]/following-sibling::node()"/>
+              <xsl:apply-templates select="a[1]/following-sibling::node()" mode="flatten"/>
           </xsl:when>
           <xsl:otherwise>
-             <xsl:apply-templates select="node()"/>
+             <xsl:apply-templates select="node()" mode="flatten"/>
           </xsl:otherwise>
       </xsl:choose>
   </xsl:template>
+
 
 
   <xsl:template match="text()">
@@ -107,6 +119,75 @@
       <xsl:apply-templates select="*|text()"/>
     </xsl:copy>
   </xsl:template>
+
+  <xsl:template match="p|br" mode="flatten">
+      <xsl:text> </xsl:text>
+      <xsl:apply-templates select="node()" mode="flatten"/>
+  </xsl:template>
+
+  <xsl:template match="a" mode="flatten">
+      <xsl:if test="normalize-space(node()) != ''">
+          <xsl:copy>
+              <xsl:copy-of select="@*"/>
+              <xsl:apply-templates select="node()" mode="flatten"/>
+          </xsl:copy>
+      </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="text()"  mode="flatten">
+    <xsl:copy-of select='.'/>
+  </xsl:template>
+
+
+  <xsl:template match="*"  mode="flatten">
+    <xsl:copy>
+      <xsl:copy-of select='@*'/>
+      <xsl:apply-templates select="*|text()"  mode="flatten"/>
+    </xsl:copy>
+  </xsl:template>
+
+
+  <xsl:template match="html" mode="sortEvents">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="head" mode="sortEvents"/>
+      <xsl:apply-templates select="body" mode="sortEvents"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="head" mode="sortEvents">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:copy-of select="*"/>
+      <base target="_blank"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="body" mode="sortEvents">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:copy-of select="script"/>
+      
+      
+      <script>
+          window.onload = function() {
+              calendarPageLoad();
+          }
+      </script>
+      
+      <xsl:for-each select="div">
+        <xsl:sort select="@start"/>  
+        <xsl:sort select="@stop"/>
+        
+        <xsl:copy-of select="."/>
+      </xsl:for-each>
+    </xsl:copy>
+  </xsl:template>
+  
+
+
+
+
   
   <xsl:variable name="midnight" select="concat('00:00:00','')"/>
   <xsl:variable name="lastMinute" select="concat('23:59:00','')"/>
