@@ -46,17 +46,18 @@ function toggleDisplay (sectionName)
     var theDiv = document.getElementById(sectionName);
     var theButton = document.getElementById("but" + sectionName);
     if (theDiv) {
-	if (theDiv.style.display == 'block') {
-            theDiv.style.display = "none";
-	    theButton.value = "+";
-	    openCloseMap.delete(sectionName);
-	} else {
+	if (theDiv.style.display == 'none') {
             theDiv.style.display = "block";
 	    theButton.value = "-";
+	    openCloseMap.delete(sectionName);
+	} else {
+            theDiv.style.display = "none";
+	    theButton.value = "+";
 	    openCloseMap.set(sectionName, 1);
 	}
     }
     setCookie ("openCloseMap", showOCMap());
+    //alert("OCMap: " + showOCMap());
 };
 
 function collapseAll()
@@ -104,7 +105,8 @@ function visitPage (url)
 function modulePageLoad()
 {
     var ocValues = getCookie("openCloseMap");
-    collapseAll();
+    //alert ("cookie: " + ocValues);
+    expandAll();
     for (var key of ocValues.split(" ")) {
 	if (key != "") {
 	    toggleDisplay(key);

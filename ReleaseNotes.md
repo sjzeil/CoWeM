@@ -1,5 +1,30 @@
 = Release Notes
 
+== v1.6 January 16, 2017
+
+* Outline has a new output format, "calendar". This is a simple list
+  of the dated items from the outline. The accompanying Javascript
+  will compare each item in the list to the current date, marking the
+  items as past, recent, current, & future.  CSS formats each
+  separately.
+
+  This is suitable for access via a short iframe to provide a
+  date-sensitive list of upcoming events. Such an iframe can be
+  inserted into the "modules" listing or into a Blackboard item.
+
+* In the "modules" format, adding the metadata
+
+        Calendar: yes
+
+    to the top of the outline.md will insert an Upcoming Events
+    section after the preamble.
+
+* Modules output format now defaults to fully expanded. (Note that
+  v1.5 allowed this page to remember which modules had been collapsed
+  on previous visits.  An expand/collapse button has been added for
+  the preamble.
+
+	
   
 == v1.5 January 14, 2017
 

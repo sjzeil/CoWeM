@@ -10,7 +10,7 @@
   <xsl:include href="md-common.xsl"/>
   
   <xsl:param name="format" select="'modules'"/>
-
+  <xsl:param name="Calendar" select="''"/>
   
 
   <xsl:template match="/">
@@ -65,7 +65,7 @@
 	      <iframe src="../navigation/index.html" class="navigation">_</iframe>
 	    </div>
 	    <div class="rightPart">
-         <xsl:apply-templates select="preamble/node()"/>
+	    
 	      <form action="">
             <div class="showHideControls">
 	          <input type="button" value="expand all" onclick="expandAll()"/>
@@ -75,13 +75,42 @@
 	          </xsl:if>
             </div>
           </form>
+
+         <xsl:apply-templates select="preamble"/>
 	      
+        
+          <xsl:if test="$Calendar != ''">
+              <div class="calendar-title">Upcoming Events</div>
+              <iframe class="calendar" src="outline__calendar.html">
+                 Unable to display iframes.
+              </iframe>
+          </xsl:if>
+        
           <xsl:apply-templates select="section"/>
           <xsl:apply-templates select="postscript/node()"/>
 	      <xsl:call-template name="insertFooter"/>
 	    </div>
       </div>
     </xsl:copy>
+  </xsl:template>
+  
+  
+  <xsl:template match="preamble">
+      <xsl:variable name="toggleID" select="generate-id()"/>
+      <div class="preamble">
+          <input type="button" value="-" class="expandButton" 
+              onclick="toggleDisplay('{concat('_topic_', $toggleID)}')">
+               <xsl:attribute name="id">
+                  <xsl:value-of select="concat('but_topic_', $toggleID)"/>
+               </xsl:attribute>
+          </input>
+      </div>
+      <div class="module">
+         <xsl:attribute name="id">
+            <xsl:value-of select="concat('_topic_', $toggleID)"/>
+         </xsl:attribute>
+          <xsl:apply-templates select="node()"/>
+      </div>
   </xsl:template>
   
   
@@ -97,7 +126,7 @@
       		    <xsl:apply-templates select="sectionHeader/node()" mode="activities"/>
       	    </xsl:when>
       	    <xsl:otherwise>
-      	    	<input type="button" value="+" class="expandButton" 
+      	    	<input type="button" value="-" class="expandButton" 
       	    	   onclick="toggleDisplay('{concat('_topic_', $toggleID)}')">
       	    	    <xsl:attribute name="id">
       	    	       <xsl:value-of select="concat('but_topic_', $toggleID)"/>

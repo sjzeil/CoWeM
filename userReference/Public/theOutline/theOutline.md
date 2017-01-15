@@ -378,6 +378,18 @@ The preamble is typically used to provide general navigation instructions
 to students entering the website.
 
 
+#### Upcoming Events
+
+If a metadata item
+
+    Calendar: yes
+
+has been added to the top of the `outline.md` document, and if the
+"calendar" format has been generated for the outline, then an
+"Upcoming Events" section is displayed in the "modules" view
+immediately following the preamble.
+
+
 ### The Postscript
 
 A section titled "Postscript" provides content that appears below the outline

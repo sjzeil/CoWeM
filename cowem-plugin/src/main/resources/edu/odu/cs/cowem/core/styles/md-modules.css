@@ -58,6 +58,22 @@ div.rightPart {
 }
 
 
+
+div.calendar-title {
+  font-size: 14pt;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1.5em;
+}
+
+iframe.calendar {
+    width: 60%;
+    height: 8em;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 1.5em;
+}
+
 .topic1 {
    font-size: 16pt;
    font-weight: bold;
@@ -107,7 +123,7 @@ span.topicSpacing {
 }
 
 div.module {
-     display: none;
+     display: block;
   }
 
 

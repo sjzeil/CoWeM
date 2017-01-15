@@ -181,7 +181,7 @@ public class ITestModuleFormat {
 		NodeList modules = (NodeList)xPath.evaluate(
 				"/html/body//div[@class='module']", root,
 				XPathConstants.NODESET);
-		assertEquals (3, modules.getLength());
+		assertEquals (4, modules.getLength());
 
 	}
 	

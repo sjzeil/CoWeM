@@ -251,6 +251,16 @@ topics
       example of a page in _topics_
       format. 
 
+calendar
+: Yet another format for presenting the course outline. It renders as a
+  simple list of those activities in the outline that have been given
+  dates, with formatting assigned based upon whther the event is in
+  the past, is currently running, or is in the future.   It is
+  intended to serve as a notice of upcoming events.
+
+    This list can appear as a component of the "modules" format
+    listing but can also be used separately, e.g. by inserting an
+    `iframe` into a Blackboard item.
 
 
 Early versions of CoWeM also supported and _epub_ format for preparing
