@@ -106,7 +106,7 @@ class DocumentSet {
      * List of formats in which the the primary document will
      * be generated. Possibilities are:  scroll, pages, slides,
      *   slidy (deprecated), epub, directory, navigation, modules,
-     *   topics. 
+     *   topics, calendar. 
      */
     ArrayList<String> formats = ['scroll']
 
