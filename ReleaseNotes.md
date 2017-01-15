@@ -1,7 +1,7 @@
 = Release Notes
 
   
-== v1.6 January 14, 2017
+== v1.5 January 14, 2017
 
 * "modules" format of outline now remembers which modules were
   expanded/compressed and restores state when page is revisited.
@@ -9,7 +9,7 @@
 * Improved formatting of tables in slides format.
 
 
-== v1.3 -- v1.5
+== v1.3 -- v1.4
 
 * Various bug fixes.
 
