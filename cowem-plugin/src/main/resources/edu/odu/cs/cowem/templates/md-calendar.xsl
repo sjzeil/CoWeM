@@ -38,8 +38,9 @@
               calendarPageLoad();
           }
       </script>
-      
+      <ul>
       <xsl:apply-templates select="*//li | .//h1 | .//h2 | .//h2 | .//h4" mode="activities1"/>
+      </ul>
     </xsl:copy>
   </xsl:template>
   
@@ -50,19 +51,19 @@
     <xsl:if test="count(.//a[@href='date:']) + count(.//a[@href='due:']) &gt; 0">
         <xsl:choose>
             <xsl:when test="local-name(*[1]) = 'p'">
-                <div class='calendarEvent'>
+                <li class='calendarEvent'>
                     <xsl:copy-of select="@*"/>
                     <xsl:call-template name="checkForDates"/>
                     <xsl:apply-templates select="*[1]" mode="activities2"/>
                     <xsl:apply-templates select="*[position &gt; 1]" mode="flatten"/>
-                </div>
+                </li>
               </xsl:when>
               <xsl:otherwise>
-                  <div class='calendarEvent'>
+                  <li class='calendarEvent'>
                   <xsl:copy-of select="@*"/>
                   <xsl:call-template name="checkForDates"/>
                   <xsl:apply-templates select="." mode="activities2"/>
-                </div>
+                </li>
               </xsl:otherwise>
         </xsl:choose>
      </xsl:if>
@@ -70,11 +71,11 @@
 
   <xsl:template match="h1|h2|h3|h4"  mode="activities1">
     <xsl:if test="count(.//a[@href='date:']) + count(.//a[@href='due:']) &gt; 0">
-        <div class='calendarEvent'>
+        <li class='calendarEvent'>
             <xsl:copy-of select="@*"/>
             <xsl:call-template name="checkForDates"/>
             <xsl:apply-templates select="node()" mode="flatten"/>
-        </div>
+        </li>
      </xsl:if>
   </xsl:template>
 
@@ -175,12 +176,15 @@
           }
       </script>
       
-      <xsl:for-each select="div">
-        <xsl:sort select="@start"/>  
-        <xsl:sort select="@stop"/>
+      <ul>
+        <xsl:for-each select="ul/li">
+          <xsl:sort select="@start"/>  
+          <xsl:sort select="@stop"/>
         
-        <xsl:copy-of select="."/>
+          <xsl:text>&#10;</xsl:text>
+          <xsl:copy-of select="."/>
       </xsl:for-each>
+      </ul>
     </xsl:copy>
   </xsl:template>
   
