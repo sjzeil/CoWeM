@@ -33,7 +33,7 @@ Learning Management Systems.
 
 * [Users' Reference Manual](https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html)
 
-* [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cwm/utils/reports/reportsSummary/projectReports.html)
+* [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
 * Currently in version 1.6.
   
