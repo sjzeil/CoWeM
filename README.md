@@ -2,9 +2,18 @@
 
 This is a system for for building course websites, including lecture notes, 
 slides & organizational pages, from Markdown documents. 
-You can see examples of these websites linked from my
-[home page](http://www.cs.odu.edu/~zeil/), including the course sites
-for CS 250, 330, 333, 350, 361, and 382.
+CoWeM has been used to support both traditional face-to-face and web courses, 
+including the course sites
+for [the CS 250 pretest](https://www.cs.odu.edu/~zeil/cs250PreTest/latest/), 
+[CS 252](https://www.cs.odu.edu/~zeil/cs252/latest/),
+300 (in development), 
+[CS 330](https://www.cs.odu.edu/~tkennedy/cs330/s17/), 
+[CS 333](https://www.cs.odu.edu/~zeil/cs333/latest/), 
+[CS 350]((https://www.cs.odu.edu/~zeil/cs350/latest/)), 
+[CS 361](https://www.cs.odu.edu/~zeil/cs361/latest/),
+[CS 382]((https://www.cs.odu.edu/~zeil/cs382/latest/),
+[CS 410](https://www.cs.odu.edu/~tkennedy/cs330/s17/), and
+[CS 411w](https://www.cs.odu.edu/~tkennedy/cs330/s17/).
 
 The primary input document format for course content is Markdown --
 specifically [multimarkdown](http://fletcherpenney.net/multimarkdown/). 
@@ -26,12 +35,7 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cwm/utils/reports/reportsSummary/projectReports.html)
 
-* The early v0.5 release is currently in use for multiple courses. but is
-  largely limited to Linux machines with a
-  fair amount of support software needing to be installed.
-  
-* Beginning with v1.0, CoWeM is a pure Java + Gradle
-  implementation that should run portably on Linux, Windows, & OS/X. 
+* Currently in version 1.6.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
