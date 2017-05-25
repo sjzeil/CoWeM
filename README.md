@@ -11,7 +11,7 @@ for [the CS 250 pretest](https://www.cs.odu.edu/~zeil/cs250PreTest/latest/),
 [CS 333](https://www.cs.odu.edu/~zeil/cs333/latest/), 
 [CS 350]((https://www.cs.odu.edu/~zeil/cs350/latest/)), 
 [CS 361](https://www.cs.odu.edu/~zeil/cs361/latest/),
-[CS 382]((https://www.cs.odu.edu/~zeil/cs382/latest/),
+[CS 382](https://www.cs.odu.edu/~zeil/cs382/latest/),
 [CS 410](https://www.cs.odu.edu/~tkennedy/cs330/s17/), and
 [CS 411w](https://www.cs.odu.edu/~tkennedy/cs330/s17/).
 
