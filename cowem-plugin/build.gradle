@@ -85,7 +85,7 @@ dependencies {
     compile 'net.sf.saxon:saxon-dom:8.7+'
     compile 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201705170830-rc1+'
     testCompile 'junit:junit:4.12'
-    testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
+    testRuntime 'edu.odu.cs.zeil:report_accumulator:1.1+'
     testRuntime 'org.slf4j:slf4j-simple:1.7.0+'
 }
 
