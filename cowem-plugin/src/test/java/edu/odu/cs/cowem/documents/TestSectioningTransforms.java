@@ -3,7 +3,12 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -468,7 +473,7 @@ public class TestSectioningTransforms {
         String htmlContent = root.getTextContent();
         
         assertTrue ("checking for preamble", htmlContent.contains("preamble text"));
-        assertTrue ("checking for postscripot", htmlContent.contains("Eastern Time"));
+        assertTrue ("checking for postscript", htmlContent.contains("Eastern Time"));
         assertTrue ("checking for presentation", htmlContent.contains("event"));
 
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -495,6 +500,12 @@ public class TestSectioningTransforms {
         
     }   
 	
+    
+    
+ 
+    
+    
+    
     private org.w3c.dom.Document formatHTML(String[] htmlInput) 
             throws TransformerException, ParserConfigurationException, SAXException, IOException {
         org.w3c.dom.Document formattedDoc = null;

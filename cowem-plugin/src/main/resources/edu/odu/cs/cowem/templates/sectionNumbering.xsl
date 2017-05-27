@@ -48,7 +48,7 @@
       <xsl:copy-of select="@*"/>
       <xsl:if test="(local-name(..) = 'body') and (number($numberDepth) &gt; 0)">
 	    <xsl:variable name="sectionNumber">
-	      <xsl:value-of select="1 + count(preceding-sibling::h1)"/>
+	      <xsl:value-of select="1 + count(preceding-sibling::h1[text() != 'Preamble'])"/>
 	    </xsl:variable>
 	    <xsl:attribute name="sectionNumber">
 	      <xsl:value-of select="concat($sectionNumber, ' ')"/>
@@ -63,7 +63,7 @@
       <xsl:copy-of select="@*"/>
       <xsl:if test="(local-name(..) = 'body') and (number($numberDepth) &gt; 1)">
 	<xsl:variable name="sectionNumber">
-	  <xsl:value-of select="count(preceding-sibling::h1)"/>
+	  <xsl:value-of select="count(preceding-sibling::h1[text() != 'Preamble'])"/>
 	</xsl:variable>
 	<xsl:variable name="subsectionNumber">
 	  <xsl:choose>
@@ -90,7 +90,7 @@
       <xsl:copy-of select="@*"/>
       <xsl:if test="(local-name(..) = 'body') and (number($numberDepth) &gt; 2)">
 	<xsl:variable name="sectionNumber">
-	  <xsl:value-of select="count(preceding-sibling::h1)"/>
+	  <xsl:value-of select="count(preceding-sibling::h1[text() != 'Preamble'])"/>
 	</xsl:variable>
 	<xsl:variable name="subsectionNumber">
 	  <xsl:choose>

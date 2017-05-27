@@ -673,7 +673,7 @@ public class MarkdownDocument implements Document {
 	                    }
 	                }
 	            }
-	        } catch (IOException | GitAPIException e) {
+	        } catch (Exception e) {
 	            // Do nothing: fall through to use file modification date;
 	        }
 	    }
@@ -722,7 +722,6 @@ public class MarkdownDocument implements Document {
                 while (treeWalk.next()) {
                     String pathStr = treeWalk.getPathString();
                     Path path = Paths.get(pathStr).toAbsolutePath();
-                    System.out.println("no parent: " + path);
                     if (path.equals(existingFile)) {
                         return true;
                     }
@@ -743,7 +742,6 @@ public class MarkdownDocument implements Document {
                     for (DiffEntry diff : diffs) {
                         String pathStr = diff.getNewPath();
                         Path path = Paths.get(pathStr).toAbsolutePath();
-                            System.out.println("parent: " + path);
                         if (path.equals(existingFile)) {
                             return true;
                         }
