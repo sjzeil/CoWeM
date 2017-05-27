@@ -5,7 +5,7 @@ stages:
 
 build-job:
   tags:
-    - atria
+    - e-3208
   stage: build
   script:
     - ls
