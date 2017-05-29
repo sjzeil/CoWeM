@@ -161,6 +161,11 @@ more spaces.
     for (int i = 0; i < 100; ++i)
        cout << i << ": " << a[i] << endl; 
 
+
+(Notice the general pattern of treating 4 spaces of
+ indentation as significant. Anything less is considered accidental and
+  ignored.)
+
 ```
 
 \eSidebar
@@ -188,6 +193,35 @@ more spaces.
 (Notice the general pattern of treating 4 spaces of
 indentation as significant. Anything less is considered accidental and
   ignored.)
+
+
+> **Note on C++ & Java code**: There is a glitch in the Markdown processor
+> caused by a conflict between the code typesetting conventions and
+> the ability to insert HTML elements directly into the Markdown
+> source. Code like this:
+>
+>        vector<int> v;
+>
+> will not be typeset properly if the backward apostrophes
+> technique is used. The
+> `<int>` will be interpreted as a (bad) HTML tag and passed directly
+> through into the HTML output documents.
+>
+> * And because there is no balancing `</int>` tag, this eventually
+>   results in an error during document processing.
+>
+> You **can**, however, typeset that code using the 4-space
+> indentation markup instead of three backwards apostrophes.
+>
+> Consequently the indentation style is heavily recommended for
+> C++ and Java code.
+
+
+
+
+
+
+
 
 
 \bSidebar{60}
@@ -303,7 +337,46 @@ put a backslash in front: my \$.02 worth.
 
 The rendering of LaTeX mathematics can be turned off as a document set option.
 It is also possible to switch to [AsciiMath](http://asciimath.org/)
-instead of LaTeX. 
+instead of LaTeX.
+
+Take note of the double-backslashes used to surround the mathematics
+regions. The normal convention in LaTeX would be to use
+<span>\\</span>(...<span>\\</span>)
+and
+<span>\\</span>[...<span>\\</span>]. But the Markdown processor treats
+backslashes oddly:
+
+* If followed by a space or letter, a backslash is just a backslash.
+* If followed by a punctuation character, a  backslash must be doubled.
+
+This affects not only the 
+<span>\\</span>(...<span>\\</span>)
+and
+<span>\\</span>[...<span>\\</span>], but also selected uses of \
+within LaTeX, most notable the use of set brackets { } and the \\\\ used
+to signal a line break in tables, arrays, or multi-line equations.
+
+
+\bSidebar{60}
+
+```
+\\[ \begin{align}
+s & = \\{ i | i \in \cal{N} \; \wedge \; i \bmod 2 = 0 \\} \\\\
+  & = \\{ 2i | i \in \cal{N} \\}
+\end{align} \\]
+
+
+```
+
+\eSidebar
+
+
+\\[ \begin{align}
+s & = \\{ i | i \in \cal{N} \; \wedge \; i \bmod 2 = 0 \\} \\\\
+  & = \\{ 2i | i \in \cal{N} \\}
+\end{align} \\]
+
+
 
 # Syntax Highlighting of Source Code
 
