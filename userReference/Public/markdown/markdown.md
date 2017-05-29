@@ -388,8 +388,12 @@ Author
 
 Date
 : Appears in the header as "Last modified: ...".  The special value
-  @docModDate@ is repalced by the last modification date of the Markdown source
-  file.
+<span><tt> @</tt></span>`docModDate@` is replaced by the
+
+    * The last change checked into the repository if the course
+	   document is part of a `git` repository, or
+    * the last modification date of the Markdown source
+       file, if that file is not within a `git` repository.
   
 TOC
 : "yes" or "true" indicates that a table of contents should be generated at

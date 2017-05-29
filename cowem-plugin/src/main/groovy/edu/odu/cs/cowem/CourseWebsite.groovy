@@ -79,7 +79,7 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         project.task ('setup_copy_website_overrides',
-            dependsOn: 'setup_copy_website_defaults') << {
+            dependsOn: 'setup_copy_website_defaults') .doLast {
             project.copy  {
                 from 'graphics'
                 into 'build/website/graphics'
@@ -151,7 +151,7 @@ class CourseWebsite implements Plugin<Project> {
             description 'Package the website for import into Blackboard.'
             inputs.dir 'build/website'
             // outputs.file 'build/packages/bb-${project.name}.zip'
-        } << {
+        } .doLast {
             new BBPackage(project,
                 project.course, 
                 project.file('build')
@@ -163,7 +163,7 @@ class CourseWebsite implements Plugin<Project> {
             description 'Create a Blackboard package that will link back to the website content.'
             inputs.files (project.fileTree('Directory').include('**/*.md'))
             outputs.file 'build/packages/bbthin-${project.name}.zip'
-        } << {
+        } .doLast {
             new BBPackage(project,
                 project.course,
                 project.file('build')
@@ -184,7 +184,7 @@ class CourseWebsite implements Plugin<Project> {
             description 'Copy course website to a remote machine.'
             group 'Deployment'
             inputs.file 'build/packages/website.zip'
-        } << {
+        } .doLast {
             int k0 = project.course.sshDeployURL.indexOf('@')
             int k1 = project.course.sshDeployURL.indexOf(':')
             def hostName = project.course.sshDeployURL.substring(k0+1,k1)
@@ -224,7 +224,7 @@ class CourseWebsite implements Plugin<Project> {
             description 'Copy course website to a remote machine by rsync'
             group 'Deployment'
             inputs.dir 'build/website'
-        } << {
+        } .doLast {
             if (project.course.rsyncDeployURL == null) {
                 project.course.rsyncDeployURL = project.course.sshDeployURL
                 if (project.course.rsyncDeployKey == null) {
@@ -272,7 +272,7 @@ class CourseWebsite implements Plugin<Project> {
         }
 
 
-        project.task('listProperties') << {
+        project.task('listProperties') .doLast {
             println "All course properties:\n" + project.course.properties.collect{it}.join('\n')
         }
     }

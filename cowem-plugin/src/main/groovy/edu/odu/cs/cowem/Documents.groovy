@@ -68,7 +68,7 @@ class Documents implements Plugin<Project> {
 			outputs.dir project.documents.indexTarget.parentFile
 		}
 
-		project.doc_mainDoc << {
+		project.doc_mainDoc .doLast {
 			Properties docProperties = new Properties()
 			docProperties.put('_' + project.rootProject.course.delivery, '1')
 			project.rootProject.course.properties.each { prop, value ->
@@ -118,7 +118,7 @@ class Documents implements Plugin<Project> {
 		project.task ('doc_secondaryDocs', dependsOn: project.doc_setup) {
             inputs.files project.documents.secondaryDocuments
             outputs.dir project.documents.indexTarget.parentFile
-		} << {
+		} .doLast {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
             project.rootProject.course.properties.each { prop, value ->
@@ -160,7 +160,7 @@ class Documents implements Plugin<Project> {
 		project.task ('doc_Listings', dependsOn: project.doc_setup) {
             inputs.files project.documents.listingDocuments
             outputs.dir project.documents.indexTarget.parentFile
-		} << {
+		} .doLast {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
             project.rootProject.course.properties.each { prop, value ->
@@ -245,7 +245,7 @@ class Documents implements Plugin<Project> {
             description 'Copy course website to a remote machine.'
             group 'Deployment'
             inputs.file 'build/packages/website.zip'
-        } << {
+        } .doLast {
             int k0 = project.course.sshDeployURL.indexOf('@')
             int k1 = project.course.sshDeployURL.indexOf(':')
             def hostName = project.course.sshDeployURL.substring(k0+1,k1)
@@ -279,7 +279,7 @@ class Documents implements Plugin<Project> {
             description 'Copy course website to a remote machine by rsync'
             group 'Deployment'
             inputs.dir 'build/website'
-        } << {
+        } .doLast {
             if (project.course.rsyncDeployURL == null) {
                 project.course.rsyncDeployURL = project.course.sshDeployURL
                 if (project.course.rsyncDeployKey == null) {
@@ -317,7 +317,7 @@ class Documents implements Plugin<Project> {
 
 
 
-		project.task('listProperties') << {
+		project.task('listProperties') .doLast {
 			println "All docSet properties:\n" + project.documents.properties.collect{it}.join('\n')
 			println "\n secondaryDocuments:\t" + project.documents.secondaryDocuments.collect{it}.join(' ')
 			println " listingDocuments:\t" + project.documents.listingDocuments.collect{it}.join(' ')
