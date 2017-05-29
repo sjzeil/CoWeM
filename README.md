@@ -12,8 +12,8 @@ for [the CS 250 pretest](https://www.cs.odu.edu/~zeil/cs250PreTest/latest/),
 [CS 350]((https://www.cs.odu.edu/~zeil/cs350/latest/)), 
 [CS 361](https://www.cs.odu.edu/~zeil/cs361/latest/),
 [CS 382](https://www.cs.odu.edu/~zeil/cs382/latest/),
-[CS 410](https://www.cs.odu.edu/~tkennedy/cs330/s17/), and
-[CS 411w](https://www.cs.odu.edu/~tkennedy/cs330/s17/).
+[CS 410](https://www.cs.odu.edu/~tkennedy/cs410/s17/), and
+[CS 411w](https://www.cs.odu.edu/~tkennedy/cs411/s17/).
 
 The primary input document format for course content is Markdown --
 specifically [multimarkdown](http://fletcherpenney.net/multimarkdown/). 
@@ -35,10 +35,21 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.7.
+* Currently in version 1.8.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
   set of files that will "bootstrap" the fetching of CoWeM code and the
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
+
+
+# New in v1.8
+
+* @docModDate@ in earlier versions was replaced by the last
+  modification date of the document's source file. Now, that is the
+  fallback, but if the document is in a `git` repository, it's last
+  change (commit) date is used instead.
+
+* {{{ and }}} can now be used to surround paragraphs that should be
+  omitted from slides.

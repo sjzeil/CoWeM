@@ -684,7 +684,9 @@ public class MarkdownDocument implements Document {
 	    Calendar dateChanged = new GregorianCalendar();
         dateChanged.setTimeInMillis(lastUpdatedOn);
         SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");  
-        return formatter.format(dateChanged.getTime());
+        String result = formatter.format(dateChanged.getTime());
+        logger.trace("mod date is " + result);
+        return result;
 	}
 
     private File findGitRepository(File input) {
@@ -701,6 +703,7 @@ public class MarkdownDocument implements Document {
             repoDir = new File(thisDir, repoName);
         }
         if (found) {
+            logger.trace("found repo at " + repoDir);
             return repoDir;
         } else {
             return null;
@@ -721,8 +724,7 @@ public class MarkdownDocument implements Document {
                 treeWalk.setRecursive(true);
                 while (treeWalk.next()) {
                     String pathStr = treeWalk.getPathString();
-                    Path path = Paths.get(pathStr).toAbsolutePath();
-                    if (path.equals(existingFile)) {
+                    if (existingFile.toString().endsWith(pathStr)) {
                         return true;
                     }
                 }
@@ -741,8 +743,8 @@ public class MarkdownDocument implements Document {
                     List<DiffEntry> diffs = df.scan(parent.getTree(), commit.getTree());
                     for (DiffEntry diff : diffs) {
                         String pathStr = diff.getNewPath();
-                        Path path = Paths.get(pathStr).toAbsolutePath();
-                        if (path.equals(existingFile)) {
+                        if (existingFile.toString().endsWith(pathStr)) {
+                            //logger.warn("Match at " + new SimpleDateFormat("MMM d, yyyy").format(1000L*commit.getCommitTime()));
                             return true;
                         }
                     }

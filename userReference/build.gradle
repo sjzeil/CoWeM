@@ -37,7 +37,7 @@ apply plugin: edu.odu.cs.cowem.CourseWebsite
  
 
 course {
-	courseName        = 'CoWeM v1.7'
+	courseName        = 'CoWeM v1.8'
 	courseTitle       = 'Course Websites from Markdown'
 	semester          = '2017'
 	sem               = 'latest'

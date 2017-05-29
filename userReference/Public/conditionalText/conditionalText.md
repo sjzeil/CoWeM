@@ -10,7 +10,108 @@ abbreviated slides and a lengthier full-text version.
 
 %define {\macro} {macroName} {<tt>&#x25;</tt><tt>macroName</tt>}
 
-# Macro Conditional Commands
+
+
+# Special Case - Slide Markup
+
+The markers <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt> can be used to
+surround text that will only appear in any output format **except**
+`Slides`.
+
+\bSidebar
+
+<tt>{</tt><tt>{{</tt>
+
+	This paragraph will appear in
+
+	* scrolls
+	* pages
+	* but not in slides.
+
+
+<tt>}</tt><tt>}}</tt>
+
+\eSidebar
+
+
+{{{
+
+This paragraph will appear in
+
+* scrolls
+* pages
+* but not in slides.
+
+}}}
+
+(Look [here](conditionalText__slides.html#special-case-slide-markup) to see the slides.)
+
+\bSidebar{20}
+
+For the purpose of this example, I am
+typing `{({` and `})}` instead of
+<tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt>
+so that the CoWeM processing does not make
+conditional markers disappear.
+
+\eSidebar
+
+
+There are a few limitations on the placements of these markers.
+
+
+\bSidebar{60}
+
+```
+
+* If only a single paragraph is affected, the markers can be placed at
+  the beginning and end of that paragraph.
+
+    {({E.g., like this.})}
+
+* If more than one paragraph is affected, the markers must go in
+  separate paragraphs.
+
+    {({
+
+    * Like this.
+
+    * Notice that the paragraph form "respects" the indentation
+      of the regular Markdown text.
+
+        * In fact, the closing marker can never appear at a different
+          indentation than the opening one.
+
+    })}
+
+```
+
+\eSidebar
+
+* If only a single paragraph is affected, the markers can be placed at
+  the beginning and end of that paragraph.
+
+    {{{E.g., like this.}}}
+
+* If more than one paragraph is affected, the markers must go in
+  separate paragraphs.
+
+    {{{
+
+    * Like this.
+
+    * Notice that the paragraph form "respects" the indentation
+      of the regular Markdown text.
+
+        * In fact, the closing marker can never appear at a different
+          indentation than the opening one.
+
+    }}}
+
+
+# The General Case
+
+## Macro Conditional Commands
 
 The macro commands that allow this are 
 
@@ -78,14 +179,21 @@ Of course, I _never_ define a macro names "`_ignore`".
 \eExample
 
 
-# Predefined Macros for Conditional Text
+## Predefined Macros for Conditional Text
 
 There are two macros that are pre-defined when processing primary documents:
 
 1. The _format_ (scroll, slides, pages, directory, ...) in which the document
    is being processed is added as a macro named with a leading underscore, e.g.,
    `_slides`.
-   
+
+
+    In fact, the <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt>
+    markers introduced earlier are just macros providing a convenient
+	shorthand for <tt>%</tt>`ifnot _slides` and <tt>%</tt>`endif`.
+	
+
+
 2. In the course configuration `build.gradle`, you can specify a property "`delivery`", e.g.,
 
         course {
@@ -96,7 +204,7 @@ There are two macros that are pre-defined when processing primary documents:
         }
 
     Whatever value is given to this property is declared as a macro, again named
-    with a leading underscore. In this example, a macro named `_online` would
+    with a leading underscore. In this example, a macro named <tt>_</tt>`online` would
     be declared.
     
     This property could be any string, but I usually use either "online" or "live".
@@ -118,7 +226,7 @@ For example, the original slide
 %define <\mac> <> <%>
 %define <\cmd> <> <\>
 %define <\uscore> <> <_>
-
+%define <\wNoSlides> <>  [<span>}</span><span>}}</span>]
 
 ---
 
@@ -151,6 +259,17 @@ might become
 
 ---
 
+\bSidebar{20}
+
+Again, for the purpose of this example, I am
+typing `{({` and `})}` instead of
+<tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt>
+so that the CoWeM processing does not make
+conditional markers disappear.
+
+\eSidebar
+
+
 ```
 # Integration Testing
 
@@ -167,41 +286,44 @@ might become
 *  Integration testing can be conducted 
     *  \cmd{}firstterm{bottom-up }
 
-\mac{}ifnot _slides
-        (start by unit-testing the modules that dont'call anything
+        {({
+        (start by unit-testing the modules that don't call anything
         else, then add the modules that call those starting modules
         and thest the combination, then add the modules that call
         those, and so on until you are ready to test
         \function{main()}.)
-\mac{}endif
+        })}
+
 
         *   relieves the need for stubs
 
     *  or \cmd{}firstterm{top-down} 
 
-\mac{}ifnot _slides
+        {({
+
         (start by unit-testing \function{main()} with stubs for
         everything it calls, then replace those stubs by the real
         code, but leaving in stubs for anything called from the
         replacement code, then replacng those stubs, and so on, until
         you have assembled and tested the entire program).
 
+        })}
 
-It's worth noting that unit testing and integration testing can
+{({It's worth noting that unit testing and integration testing can
 sometimes use some of the same test inputs (and maybe the same
 expected outputs), because we are testing the software in different
-configurations.
-\mac{}endif
+configurations.})}
+
 
 ```
 
 ---
 
 
-The upshot of this is that my original slides remain and can still be used for live presentations.
-But the *scroll* format will contain the more detailed text, and can be deployed as the
-web course content or as lecture notes for students in the live version.
+The upshot of this is that my original slides remain and can still be
+used for live presentations.  But the *scroll* format will contain the
+more detailed text, and can be deployed as the web course content or
+as lecture notes for students in the live version.
 
-If, instead,  I wanted the extra material to appear only in web versions of
-the course, I would change the
-"\macro{ifnot} `_slides`" to "\macro{if} `\uscore{}online`".
+
+
