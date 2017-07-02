@@ -49,13 +49,14 @@ h1,h2,h3,h4,h5,h6 {
 
 h1 { color: #000040; 
      clear: both;
-     font-size: 150%;
+     font-size: 200%;
    }
 h2 { color: #000020; 
      clear: both;
-     font-size: 120%;
+     font-size: 160%;
    }
-h3 { clear: both;}
+h3 { clear: both;
+     font-size: 120%;}
 hr { clear: both;}
 
 
