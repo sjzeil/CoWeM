@@ -72,6 +72,9 @@ class Documents implements Plugin<Project> {
 		                      project.rootProject.course.properties.each { prop, value ->
 	                            propFilters.put(prop, value.toString())
 		                      }
+		                      project.rootProject.course.ext.properties.each { prop, value ->
+                              propFilters.put(prop, value.toString())
+                            }
 		                      propFilters;
 		                    }()
 		                   )
