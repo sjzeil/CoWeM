@@ -1,4 +1,9 @@
 apply plugin: edu.odu.cs.cowem.Documents
 
+documents {
+    filtered {
+            project.fileTree('.').include('*.dat')
+        }
+}
 
 

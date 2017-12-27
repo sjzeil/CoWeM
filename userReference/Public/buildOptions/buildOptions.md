@@ -113,8 +113,8 @@ with any of the following appearing in the `documents` area:
 
 
 `support` _file-specification_
-: Adds some files to the list of listing documents for this document set.
-  Support documents are copied, u hanged, to the website. 
+: Adds some files to the list of support documents for this document set.
+  Support documents are copied, unchanged, to the website. 
   
     By default, the support documents are all `*.html`, *.css`, `*.js` and
     most common graphics format files. 
@@ -127,7 +127,42 @@ with any of the following appearing in the `documents` area:
     `fileTree`s can also be used to add multiple listing files at a time,
     as described for secondary documents, above.
             
-    
+
+`filtered` _file-specification_
+: Adds some files to the list of filtered documents for this document set.
+  Support documents are copied to the website after changing all
+  tokens of the form `@propertyName@` by the corresponding property.
+
+    For example, if the main course `build.gradle` said
+
+		course {
+			courseName        = 'CS252'
+			courseTitle       = 'Introduction to Unix for Programmers'
+			semester          = 'Spring 2017'
+			sem               = 's17'
+			instructor        = 'Steven J Zeil'
+              /*...*/
+
+    and we had a file named `tag.txt` containing
+
+        @courseName@ will be taught by @instructor@
+        in @semester@.
+
+    Then adding
+
+        filtered 'tag.txt'
+
+    to the document `build.gradle` would cause that file to be copied
+    to the website as
+
+        CS252 will be taught by Steven J Zeil
+        in Spring 2017.
+
+
+    By default, the filtered documents list is empty.
+
+
+
 `clearListings()`
  :  Clears the entire list of listing documents. Not even the normal
     defaults will be retained.

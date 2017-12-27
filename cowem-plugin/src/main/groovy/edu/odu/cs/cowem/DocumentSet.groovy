@@ -217,11 +217,37 @@ class DocumentSet {
     }
 
     /**
-     * Clear the current list of listing documents.
+     * Clear the current list of support documents.
      */
     void clearSupport () {
         supportDocuments = []
     }
+
+
+
+    /**
+     * The filtered support documents in this set. These will be copied to
+     * the corresponding directory of the website replacing any tokens of
+	 * the form @properyName@ by the corresponding course property.
+     * Defaults to an empty list.
+     */
+    FileCollection filteredDocuments
+
+    /**
+     * Add a set of files to the current list of filtered documents.
+     */
+    void filtered (Object... files) {
+        FileCollection additions = _inProject.files(files)
+        filteredDocuments = filteredDocuments.plus (additions)
+    }
+
+    /**
+     * Clear the current list of filtered support documents.
+     */
+    void clearFiltered () {
+        filteredDocuments = filetree('non-existent')
+    }
+
 
     /**
      * What support is provided for typesetting Mathematics?
@@ -252,6 +278,7 @@ class DocumentSet {
                 include('*.cpp').include('*.java').include('*.listing').
                 include('*.html').include('*.css').include('*.js').
                 include('*.png').include('*.jpg').include('*.gif');
+        filteredDocuments = project.files()
 
         _inProject.logger.debug(_inProject.name + ": created DocumentSet");
 

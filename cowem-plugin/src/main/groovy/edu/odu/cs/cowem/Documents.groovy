@@ -2,6 +2,7 @@ package edu.odu.cs.cowem
 
 
 import org.gradle.api.Plugin
+
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
@@ -9,6 +10,7 @@ import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Zip
 
+import org.apache.tools.ant.filters.ReplaceTokens
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -59,9 +61,24 @@ class Documents implements Plugin<Project> {
 					+ project.documents.listingDocuments}
 			into websiteArea
 		}
+		project.task (type: Copy,
+		        dependsOn: project.rootProject.tasks['setup'],
+		        'filtered_setup') {
+		            from {return project.documents.filteredDocuments}
+		            into websiteArea
+		            filter (ReplaceTokens,  
+		                    tokens:  {  
+		                      Map<String,String> propFilters = new HashMap<String,String>(); 
+		                      project.rootProject.course.properties.each { prop, value ->
+	                            propFilters.put(prop, value.toString())
+		                      }
+		                      propFilters;
+		                    }()
+		                   )
+		        }
 		
 		project.task ('doc_mainDoc',
-            dependsOn: ['doc_setup', project.configurations.build]) {
+            dependsOn: ['doc_setup', 'filtered_setup', project.configurations.build]) {
             //println ("mainDoc: " + project.documents.primaryDocument
 			//	+ " => " + project.documents.primaryTargets.join(','))
 		    inputs.file project.documents.primaryDocument
