@@ -78,16 +78,23 @@ class CourseWebsite implements Plugin<Project> {
             include 'styles/**'
         }
 
-        project.task ('setup_copy_website_overrides',
-            dependsOn: 'setup_copy_website_defaults') .doLast {
-            project.copy  {
+        project.task ('setup_copy_graphics_overrides',
+            type: Copy, dependsOn: 'setup_cowem'
+        ) {
                 from 'graphics'
                 into 'build/website/graphics'
-            }
-            project.copy  {
+        }
+        
+        project.task ('setup_copy_styles_overrides',
+            type: Copy, dependsOn: 'setup_cowem'
+        ) {
                 from 'styles'
                 into 'build/website/styles'
-            }
+        }
+
+        project.task ('setup_copy_index_overrides',
+            dependsOn: 'setup_cowem'
+        ) {
             if (project.file('index.html').exists()) {
                 project.copy  {
                     from 'index.html'
@@ -104,7 +111,9 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         project.task ('setup_website',
-            dependsOn: 'setup_copy_website_overrides')
+            dependsOn: ['setup_copy_index_overrides', 
+                        'setup_copy_graphics_overrides',
+                        'setup_copy_styles_overrides'])
 
 
         project.task ("setup") {
