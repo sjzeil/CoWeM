@@ -79,21 +79,21 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         project.task ('setup_copy_graphics_overrides',
-            type: Copy, dependsOn: 'setup_cowem'
+            type: Copy, dependsOn: 'setup_copy_website_defaults'
         ) {
                 from 'graphics'
                 into 'build/website/graphics'
         }
         
         project.task ('setup_copy_styles_overrides',
-            type: Copy, dependsOn: 'setup_cowem'
+            type: Copy, dependsOn: 'setup_copy_website_defaults'
         ) {
                 from 'styles'
                 into 'build/website/styles'
         }
 
         project.task ('setup_copy_index_overrides',
-            dependsOn: 'setup_cowem'
+            dependsOn: 'setup_copy_styles_overrides'
         ) {
             if (project.file('index.html').exists()) {
                 project.copy  {
