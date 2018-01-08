@@ -8,7 +8,7 @@ class Course {
     /**
      *  URL used for mathematics rendering.
      */
-    URL mathJaxURL = new URL("https://cdn.mathjax.org/mathjax/latest");
+    URL mathJaxURL = new URL("https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2");
     
     /**
      *  URL used for code highlighting.
