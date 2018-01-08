@@ -33,7 +33,7 @@ class Group implements Plugin<Project> {
             into new File(project.rootDir, 'build/website/' + project.name)
             include ('*.*')
             exclude ('build.gradle')
-        } << {
+        } .doLast {
             File groupIndex = new File(project.rootDir, 'build/website/' 
                 + project.name + '/' + 'index.html')
             if (!groupIndex.exists()) {

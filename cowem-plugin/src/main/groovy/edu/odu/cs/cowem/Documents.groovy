@@ -2,6 +2,7 @@ package edu.odu.cs.cowem
 
 
 import org.gradle.api.Plugin
+
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
@@ -9,6 +10,7 @@ import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Zip
 
+import org.apache.tools.ant.filters.ReplaceTokens
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -59,16 +61,34 @@ class Documents implements Plugin<Project> {
 					+ project.documents.listingDocuments}
 			into websiteArea
 		}
+		project.task (type: Copy,
+		        dependsOn: project.rootProject.tasks['setup'],
+		        'filtered_setup') {
+		            from {return project.documents.filteredDocuments}
+		            into websiteArea
+		            filter (ReplaceTokens,  
+		                    tokens:  {  
+		                      Map<String,String> propFilters = new HashMap<String,String>(); 
+		                      project.rootProject.course.properties.each { prop, value ->
+	                            propFilters.put(prop, value.toString())
+		                      }
+		                      project.rootProject.course.ext.properties.each { prop, value ->
+                              propFilters.put(prop, value.toString())
+                            }
+		                      propFilters;
+		                    }()
+		                   )
+		        }
 		
 		project.task ('doc_mainDoc',
-            dependsOn: ['doc_setup', project.configurations.build]) {
+            dependsOn: ['doc_setup', 'filtered_setup', project.configurations.build]) {
             //println ("mainDoc: " + project.documents.primaryDocument
 			//	+ " => " + project.documents.primaryTargets.join(','))
 		    inputs.file project.documents.primaryDocument
 			outputs.dir project.documents.indexTarget.parentFile
 		}
 
-		project.doc_mainDoc << {
+		project.doc_mainDoc .doLast {
 			Properties docProperties = new Properties()
 			docProperties.put('_' + project.rootProject.course.delivery, '1')
 			project.rootProject.course.properties.each { prop, value ->
@@ -118,7 +138,7 @@ class Documents implements Plugin<Project> {
 		project.task ('doc_secondaryDocs', dependsOn: project.doc_setup) {
             inputs.files project.documents.secondaryDocuments
             outputs.dir project.documents.indexTarget.parentFile
-		} << {
+		} .doLast {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
             project.rootProject.course.properties.each { prop, value ->
@@ -160,7 +180,7 @@ class Documents implements Plugin<Project> {
 		project.task ('doc_Listings', dependsOn: project.doc_setup) {
             inputs.files project.documents.listingDocuments
             outputs.dir project.documents.indexTarget.parentFile
-		} << {
+		} .doLast {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
             project.rootProject.course.properties.each { prop, value ->
@@ -245,7 +265,7 @@ class Documents implements Plugin<Project> {
             description 'Copy course website to a remote machine.'
             group 'Deployment'
             inputs.file 'build/packages/website.zip'
-        } << {
+        } .doLast {
             int k0 = project.course.sshDeployURL.indexOf('@')
             int k1 = project.course.sshDeployURL.indexOf(':')
             def hostName = project.course.sshDeployURL.substring(k0+1,k1)
@@ -279,7 +299,7 @@ class Documents implements Plugin<Project> {
             description 'Copy course website to a remote machine by rsync'
             group 'Deployment'
             inputs.dir 'build/website'
-        } << {
+        } .doLast {
             if (project.course.rsyncDeployURL == null) {
                 project.course.rsyncDeployURL = project.course.sshDeployURL
                 if (project.course.rsyncDeployKey == null) {
@@ -317,7 +337,7 @@ class Documents implements Plugin<Project> {
 
 
 
-		project.task('listProperties') << {
+		project.task('listProperties') .doLast {
 			println "All docSet properties:\n" + project.documents.properties.collect{it}.join('\n')
 			println "\n secondaryDocuments:\t" + project.documents.secondaryDocuments.collect{it}.join(' ')
 			println " listingDocuments:\t" + project.documents.listingDocuments.collect{it}.join(' ')

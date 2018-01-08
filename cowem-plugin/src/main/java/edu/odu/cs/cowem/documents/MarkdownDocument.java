@@ -17,7 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +39,18 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.pegdown.PegDownProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -639,13 +653,108 @@ public class MarkdownDocument implements Document {
 	 * @param input file to be checked
 	 * @return  Data of last modification
 	 */
-	private String getModificationDate(File input) {
-	    // TODO Add code to check Git repository.
-	    Date lastModified = new Date(input.lastModified()); 
-	    SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");  
-	    return formatter.format(lastModified);
+	public String getModificationDate(File input) {
+	    File repoDir = findGitRepository(input);
+	    Path existingFile = input.toPath().toAbsolutePath();
+	    long lastUpdatedOn = 0; 
+	    if (repoDir != null) {
+	        try (
+	                Repository repo = new FileRepositoryBuilder()
+	                .setGitDir(repoDir)
+	                .build()) {
+	            try (Git git = new Git(repo)) {
+	                Iterable<RevCommit> log = git.log().call();
+	                for (RevCommit commit : log) {
+	                    long commitTime = 1000L * commit.getCommitTime();
+	                    if (commitTime > lastUpdatedOn) {
+	                        if (commitContains(commit, existingFile, repo)) {
+	                            lastUpdatedOn = commitTime;
+	                        }
+	                    }
+	                }
+	            }
+	        } catch (Exception e) {
+	            // Do nothing: fall through to use file modification date;
+	        }
+	    }
+	    if (lastUpdatedOn <= 0) {
+	        // Fall back to using the file modification date.
+	        lastUpdatedOn = input.lastModified();
+	    }
+	    Calendar dateChanged = new GregorianCalendar();
+        dateChanged.setTimeInMillis(lastUpdatedOn);
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");  
+        String result = formatter.format(dateChanged.getTime());
+        logger.trace("mod date is " + result);
+        return result;
 	}
 
+    private File findGitRepository(File input) {
+        final String repoName = ".git";
+        File thisDir = input.getParentFile();
+        File repoDir = new File(thisDir, repoName);
+        boolean found = false;
+        while (!(found = repoDir.isDirectory())) {
+            thisDir = thisDir.getParentFile();
+            if (thisDir == null) {
+                found = true;
+                break;
+            }
+            repoDir = new File(thisDir, repoName);
+        }
+        if (found) {
+            logger.trace("found repo at " + repoDir);
+            return repoDir;
+        } else {
+            return null;
+        }
+    }
+
+
+
+    private boolean commitContains(RevCommit commit, 
+            Path existingFile, 
+            Repository repo) 
+    {
+        if (commit.getParentCount() == 0) {
+            // No parent. (First commit?)
+            RevTree tree = commit.getTree(); 
+            try (TreeWalk treeWalk = new TreeWalk(repo)) {
+                treeWalk.addTree(tree);
+                treeWalk.setRecursive(true);
+                while (treeWalk.next()) {
+                    String pathStr = treeWalk.getPathString();
+                    if (existingFile.toString().endsWith(pathStr)) {
+                        return true;
+                    }
+                }
+            } catch (IOException e) {
+                return false;
+            } 
+            return false;
+        } else {
+            try (RevWalk rw = new RevWalk(repo)) {
+                RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
+                try (DiffFormatter df = 
+                        new DiffFormatter(DisabledOutputStream.INSTANCE)) {
+                    df.setRepository(repo);
+                    df.setDiffComparator(RawTextComparator.DEFAULT);
+                    df.setDetectRenames(true);
+                    List<DiffEntry> diffs = df.scan(parent.getTree(), commit.getTree());
+                    for (DiffEntry diff : diffs) {
+                        String pathStr = diff.getNewPath();
+                        if (existingFile.toString().endsWith(pathStr)) {
+                            //logger.warn("Match at " + new SimpleDateFormat("MMM d, yyyy").format(1000L*commit.getCommitTime()));
+                            return true;
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                return false;
+            }
+            return false;
+        }
+    }
 
 
 }

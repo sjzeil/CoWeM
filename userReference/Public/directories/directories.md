@@ -270,7 +270,7 @@ supported, but may be restored in future versions.
 ## The build.gradle File
 
 Each document set must have a file named "`build.gradle`". Unless you
-are [overriding the default document processing options](doc:docsetOptions),
+are [overriding the default document processing options](doc:buildOptions#document-set-options),
 this can consist of a single line:
 
     apply plugin: 'edu.odu.cs.cowem.Documents' 

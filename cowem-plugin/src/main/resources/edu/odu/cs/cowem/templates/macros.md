@@ -8,10 +8,24 @@
 %define {>>>} <> {<span class="incremental"> </span>
 
 }
+
+%define <{{{> {} {
+
+%ifndef _slides
+
+}
+%define <}}}> {} {
+
+%endif
+
+}
 %else
 %define {>>>} <> {
 
 }
+%define <{{{> {} {}
+%define <}}}> {} {}
+
 %endif
 
 

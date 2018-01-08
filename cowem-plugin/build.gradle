@@ -13,7 +13,7 @@ apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 group = 'edu.odu.cs.zeil'
-version = '1.6'
+version = '1.9'
 
 // Credentials are loaded from ~/.gradle/gradle.properties
 if(project.hasProperty("ivyRepoUser")){
@@ -83,8 +83,9 @@ dependencies {
     compile 'org.pegdown:pegdown:1.6.0+'
     compile 'org.slf4j:slf4j-api:1.7.0+'
     compile 'net.sf.saxon:saxon-dom:8.7+'
+    compile 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201705170830-rc1+'
     testCompile 'junit:junit:4.12'
-    testRuntime 'edu.odu.cs.zeil:reportAccumulator:1.1+'
+    testRuntime 'edu.odu.cs.zeil:report_accumulator:1.1+'
     testRuntime 'org.slf4j:slf4j-simple:1.7.0+'
 }
 
