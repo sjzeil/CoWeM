@@ -94,6 +94,9 @@ class Documents implements Plugin<Project> {
 			project.rootProject.course.properties.each { prop, value ->
 				docProperties.put(prop, value.toString())
 			}
+			project.rootProject.course.ext.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+			}
 			project.documents.properties.each { prop, value ->
 				docProperties.put(prop, value.toString())
 			}
@@ -144,6 +147,9 @@ class Documents implements Plugin<Project> {
             project.rootProject.course.properties.each { prop, value ->
                 docProperties.put(prop, value.toString())
             }
+            project.rootProject.course.ext.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
             project.documents.properties.each { prop, value ->
                 docProperties.put(prop, value.toString())
             }
@@ -184,6 +190,9 @@ class Documents implements Plugin<Project> {
             Properties docProperties = new Properties()
             docProperties.put('_' + project.rootProject.course.delivery, '1')
             project.rootProject.course.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            project.rootProject.course.ext.properties.each { prop, value ->
                 docProperties.put(prop, value.toString())
             }
             project.documents.properties.each { prop, value ->
