@@ -35,7 +35,7 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.8.
+* Currently in version 1.9.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
@@ -43,13 +43,12 @@ Learning Management Systems.
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
 
+# New in v1.9
 
-# New in v1.8
+* Added filtered option to document sets.  Like support files, filtered files
+  are copied into the website, but parameters from the course build.gradle
+  are replaced, e.g., @semester@ will be replaced by the semester value.
+  
+* Course build.gradle can name extension parameters and these will also be
+  replaced in all documents and filtered files. 
 
-* @docModDate@ in earlier versions was replaced by the last
-  modification date of the document's source file. Now, that is the
-  fallback, but if the document is in a `git` repository, it's last
-  change (commit) date is used instead.
-
-* {{{ and }}} can now be used to surround paragraphs that should be
-  omitted from slides.
