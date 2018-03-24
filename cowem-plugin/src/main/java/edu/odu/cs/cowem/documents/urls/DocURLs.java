@@ -110,7 +110,7 @@ public class DocURLs implements SpecialURL {
                     File candidateDir = project.documentSetLocation(documentSetName);
                     File candidateFile = new File(candidateDir, documentSpec);
                     if (candidateFile.exists()) {
-                        if (targetFile == null) {
+                        if (targetFile != null) {
                             logger.warn("Ambiguous URL shortcut: " + documentSpec);
                         }
                         targetFile = candidateFile;
