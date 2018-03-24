@@ -10,7 +10,7 @@ build-job:
   script:
     - cd cowem-plugin
     - export BUILD_LABEL="`date -Idate` $CI_BUILD_REF"
-    - ./gradlew build deployReports -Dorg.gradle.project.buildNumber=$BUILD_LABEL
+    - ./gradlew build deployReports -Dorg.gradle.project.buildNumber="$BUILD_LABEL"
   only:
     - master
 
