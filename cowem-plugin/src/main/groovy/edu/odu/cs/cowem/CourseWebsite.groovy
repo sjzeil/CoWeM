@@ -156,6 +156,21 @@ class CourseWebsite implements Plugin<Project> {
 
 
         
+        project.task ('singleScroll', dependsOn: 'build') {
+            description 'Package the website into a single scroll.'
+            inputs.dir 'build/website'
+            // outputs.file 'build/combined/scroll-{nbasename}'
+        } .doLast {
+            def scrollDocument = "Directory/outline"  // eventually get from Course properties
+            def baseDocument = scrollDocument.substring(scrollDocument.lastIndexOf('/'))
+            new SingleScroll(project,
+                project.course, 
+                project.file('build/combined/' + baseDocument),
+                scrollDocument
+                ).generate()
+        }
+
+        
         project.task ('bb', dependsOn: 'build') {
             description 'Package the website for import into Blackboard.'
             inputs.dir 'build/website'
