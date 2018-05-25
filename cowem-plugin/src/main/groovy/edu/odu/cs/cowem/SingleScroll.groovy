@@ -3,6 +3,7 @@
  */
 package edu.odu.cs.cowem;
 
+import org.apache.tools.ant.types.resources.selectors.InstanceOf
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -36,6 +37,7 @@ import java.util.zip.ZipOutputStream
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -89,7 +91,7 @@ class SingleScroll {
      * @param theBaseDocument the document forming the outline/TOC of the combined scroll
      */
     SingleScroll (Project theProject, Course theCourse,
-    File theBuildDirectory, String theBaseDocument)
+                  File theBuildDirectory, String theBaseDocument)
     {
         project = theProject
         course = theCourse
@@ -141,9 +143,11 @@ class SingleScroll {
         def baseDoc = parseXML(new FileReader(baseDocFile))
         def baseRoot = baseDoc.getDocumentElement()
         XPath xPath = XPathFactory.newInstance().newXPath()
+        
+        // Collect list of referenced docs
         org.w3c.dom.NodeList nodes = (org.w3c.dom.NodeList)xPath.evaluate("/html/body//a[@class='doc']",
             baseRoot, XPathConstants.NODESET);
-        def results = new ArrayList<String>();
+        def referencedDocuments = new ArrayList<String>();
         for (int i = 0; i < nodes.getLength(); ++i) {
             Element node = (Element)nodes.item(i);
             String href = node.getAttribute("href");
@@ -155,10 +159,36 @@ class SingleScroll {
                 def firstSlashPos = referencedDocument.indexOf('/')
                 def secondSlashPos = referencedDocument.indexOf('/', firstSlashPos+1)
                 referencedDocument = referencedDocument.substring(0, secondSlashPos);
-                results.add(referencedDocument);
+                referencedDocuments.add(referencedDocument);
                 System.out.println("Base document refers to " + referencedDocument) 
             }
         }
+        
+        // Rewrite the base document
+        
+        // 1. Remove the navigation header & footer
+        org.w3c.dom.Node body = (org.w3c.dom.Node)xPath.evaluate("/html/body",
+            baseRoot, XPathConstants.NODE);
+        def topLevel = body.getChildNodes();
+        for (int i = topLevel.getLength()-1; i >= 0; --i) {
+             def node = topLevel.item(i);
+             if (node instanceof Element) {
+                 Element el = (Element)node;
+                 if (el.getTagName().contentEquals("div")) {
+                     String elClass = el.getAttribute("class");  
+                     if (elClass.contentEquals("navHeader") || elClass.equals("navFooter")) {
+                        body.removeChild(node);
+                     }
+                 }
+             }
+        }
+        
+        // Write base document as new "index.html"
+        BufferedWriter indexOut = new BufferedWriter(new FileWriter(new File(buildDir, "index.html")));
+        write (indexOut, baseDoc);
+        indexOut.close();
+        
+        return referencedDocuments;
     }
     
     String documentName(String docRef) {
@@ -305,6 +335,28 @@ class SingleScroll {
     org.w3c.dom.Document parseXML (String xml)
     {
         return parseXML (new StringReader(xml))
+    }
+    
+    
+    void write (Writer output, org.w3c.dom.Document formattedDoc)
+    {
+        String debugMode = "no";
+        // Generate result text
+        try {
+            Transformer transformer =
+                    TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, debugMode);
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            Source source = new DOMSource(formattedDoc.getDocumentElement());
+            StreamResult htmlOut = new StreamResult(output);
+            transformer.transform(source, htmlOut);
+        } catch (TransformerConfigurationException e) {
+            logger.error ("Problem creating empty stylesheet "
+                    + ": " + e);
+        } catch (TransformerException e) {
+            logger.error ("Problem serializing formatted document "
+                    + e);
+        }
     }
 
 
