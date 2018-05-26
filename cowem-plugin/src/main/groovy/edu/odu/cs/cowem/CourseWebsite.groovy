@@ -12,6 +12,7 @@ import org.gradle.api.tasks.bundling.Zip
 
 import org.hidetake.gradle.ssh.plugin.SshPlugin
 
+import edu.odu.cs.cowem.documents.SingleScrollDocument
 import edu.odu.cs.cowem.documents.WebsiteProject
 
 /**
@@ -161,13 +162,27 @@ class CourseWebsite implements Plugin<Project> {
             inputs.dir 'build/website'
             // outputs.file 'build/combined/scroll-{nbasename}'
         } .doLast {
-            def scrollDocument = "Directory/outline"  // eventually get from Course properties
-            def baseDocument = scrollDocument.substring(scrollDocument.lastIndexOf('/'))
-            new SingleScroll(project,
-                project.course, 
-                project.file('build/combined/' + baseDocument),
-                scrollDocument
-                ).generate()
+            Properties docProperties = new Properties()
+            docProperties.put('_' + project.rootProject.course.delivery, '1')
+            project.rootProject.course.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            project.rootProject.course.ext.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+
+            String primaryName = "outline"; // eventually get from Course properties
+            String format = "scroll";
+                        
+            SingleScrollDocument doc = new SingleScrollDocument(
+                    project.rootProject.website,
+                    docProperties,
+                    project.file('build/combined/' + primaryName),
+                    project.file('build/website/'),
+                    project.rootProject.website(primaryName).documentSetGroup() + '/' + primaryName
+                    );
+            //doc.setDebugMode(true);
+            doc.generate();
         }
 
         

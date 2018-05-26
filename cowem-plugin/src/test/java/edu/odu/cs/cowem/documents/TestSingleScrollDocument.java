@@ -39,7 +39,6 @@ public class TestSingleScrollDocument {
 	
 	private Properties properties;
 	private WebsiteProject proj;
-	private File source;
 	private File buildDir;
 	
 	/**
@@ -58,9 +57,6 @@ public class TestSingleScrollDocument {
 		    clearDirectory(buildPath);
 		}
         buildDir.mkdirs();
-		source = 
-		   Paths.get("src/test/data/urlShortcuts/Group1/DocSet1/DocSet1.md")
-		   .toFile();
 	}
 
 	
@@ -101,7 +97,8 @@ public class TestSingleScrollDocument {
 
 	@Test
 	public void testBaseDocumentCopy() throws Exception {
-	    SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir, "Directory/outline");
+	    SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir,
+	            Paths.get("src/test/singleScroll").toFile(), "Directory/outline");
 	    sdoc.copyBaseDocument();
 	    
 	    File stylesDir = new File(buildDir, "styles"); 
@@ -169,10 +166,10 @@ public class TestSingleScrollDocument {
         // Website-internal links should become absolute
         String websitebase = properties.getProperty("baseURL");
 
-        Node intLinkNode1 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Public/component3/foo.png" + "']",
+        Node intLinkNode1 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Public/component3/index.html" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(intLinkNode1);
-        Node intLinkNode2 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Directory/component4/foo.png" + "']",
+        Node intLinkNode2 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Directory/component4/index.html" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(intLinkNode2);
 
@@ -198,7 +195,8 @@ public class TestSingleScrollDocument {
 	
     @Test
     public void testReferencedDocumentCopy() throws Exception {
-        SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir, "Directory/outline");
+        SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir,
+                Paths.get("src/test/singleScroll").toFile(), "Directory/outline");
         sdoc.copyBaseDocument();
         sdoc.copyComponentDocument("Public/component1");
         

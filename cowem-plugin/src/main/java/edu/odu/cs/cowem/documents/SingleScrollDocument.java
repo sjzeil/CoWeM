@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -74,26 +75,31 @@ class SingleScrollDocument {
     File tempAreaAbs;
     File webcontentAbs;
     String webcontentRel;
+    
+    File websiteBase;
 
     /**
      * Initialize the package builder
      * 
      * @param theProject
      *            the website project
-     * @param theCourse
-     *            the course website descriptor
+     * @param theProperties
+     *            the course properties
      * @param theBuildDirectory
      *            the project build directory
+     * @param theWebsite
+     *            the already constructed website
      * @param theBaseDocument
      *            the document ("Group/documentSet") forming the outline/TOC of
      *            the combined scroll
      */
     SingleScrollDocument(final WebsiteProject theProject, final Properties theProperties, File theBuildDirectory,
-            String theBaseDocument) {
+            File theWebsite, String theBaseDocument) {
         project = theProject;
         properties = theProperties;
         buildDir = theBuildDirectory;
         baseDocument = theBaseDocument;
+        websiteBase = theWebsite;
     }
 
     /**
@@ -123,7 +129,7 @@ class SingleScrollDocument {
 
     public List<String> copyBaseDocument() throws FileNotFoundException {
         System.err.println("base Document is " + baseDocument);
-        File baseDocumentSource = new File("build/website/" + baseDocument);
+        File baseDocumentSource = Paths.get(websiteBase.getAbsolutePath(), baseDocument).toFile();
         // TODO
         /*
          * project.copy { from baseDocumentSource into buildDir }
