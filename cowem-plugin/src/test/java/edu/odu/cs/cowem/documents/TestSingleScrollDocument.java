@@ -98,7 +98,7 @@ public class TestSingleScrollDocument {
 	@Test
 	public void testBaseDocumentCopy() throws Exception {
 	    SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir,
-	            Paths.get("src/test/singleScroll").toFile(), "Directory/outline");
+	            Paths.get(proj.getRootDir().getAbsolutePath(), "build/website").toFile(), "Directory/outline");
 	    sdoc.copyBaseDocument();
 	    
 	    File stylesDir = new File(buildDir, "styles"); 
@@ -120,8 +120,8 @@ public class TestSingleScrollDocument {
             }
         }
         
-
-        assertTrue (sdoc.toString().contains("Outline text"));
+        String docContents = sdoc.toString(); 
+        assertTrue (docContents.contains("Outline text"));
         
         org.w3c.dom.Document xmlDoc = sdoc.toXML();
         Node root = xmlDoc.getDocumentElement();

@@ -11,8 +11,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -77,6 +83,8 @@ class SingleScrollDocument {
     String webcontentRel;
     
     File websiteBase;
+    
+    org.w3c.dom.Document baseDoc;
 
     /**
      * Initialize the package builder
@@ -121,13 +129,12 @@ class SingleScrollDocument {
                 }
             }
             rewriteDocReferences();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException e) {
+            logger.error("Error handling files: ", e);
         }
     }
 
-    public List<String> copyBaseDocument() throws FileNotFoundException {
+    public List<String> copyBaseDocument() throws IOException {
         System.err.println("base Document is " + baseDocument);
         File baseDocumentSource = Paths.get(websiteBase.getAbsolutePath(), baseDocument).toFile();
         // TODO
@@ -136,7 +143,13 @@ class SingleScrollDocument {
          */
         File stylesDir = new File(buildDir, "styles");
         stylesDir.mkdirs();
+        copyAll (new File(websiteBase, "styles").toPath(), stylesDir.toPath());
+        File graphicsDir = new File(buildDir, "graphics");
+        graphicsDir.mkdirs();
+        copyAll (new File(websiteBase, "graphics").toPath(), graphicsDir.toPath());
+        
         /*
+         * 
          * TODO project.copy { from "build/website/styles/" into stylesDir }
          */
         String baseDocumentName = baseDocument.substring(baseDocument.indexOf('/'));
@@ -145,7 +158,7 @@ class SingleScrollDocument {
             System.err.println("Could not find scroll format for " + baseDocumentName);
             return new ArrayList<String>();
         }
-        org.w3c.dom.Document baseDoc = parseXML(new FileReader(baseDocFile));
+        baseDoc = parseXML(new FileReader(baseDocFile));
         Node baseRoot = baseDoc.getDocumentElement();
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -196,17 +209,42 @@ class SingleScrollDocument {
             logger.error ("xpath error: ", e);
         }
 
-        // Write base document as new "index.html"
-        try {
-            BufferedWriter indexOut = new BufferedWriter(new FileWriter(new File(buildDir, "index.html")));
-            write(indexOut, baseDoc);
-            indexOut.close();
-        } catch (IOException e) {
-            logger.error("Could not write out index.html", e);
-            e.printStackTrace();
-        }
         
         return referencedDocuments;
+    }
+
+    /**
+     * Copies all files from one directory into another
+     * @param from  source directory
+     * @param into  destination directory
+     * @throws IOException if unable to copy a file
+     */
+    private void copyAll(Path from, Path into) throws IOException {
+        Files.walkFileTree(from,
+                new SimpleFileVisitor<Path> () {
+            @Override
+            public FileVisitResult visitFile(Path file,
+                    BasicFileAttributes attributes) throws IOException {
+                Path targetFile = into.resolve(from.relativize(file));
+                Files.copy(file, targetFile);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir,
+                    BasicFileAttributes attributes) throws IOException {
+                Path newDir = into.resolve(from.relativize(dir));
+                if (!Files.exists(newDir)) {
+                    Files.createDirectory(newDir);
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+
+        }
+                );
+
     }
 
     String documentName(String docRef) {
@@ -291,8 +329,14 @@ class SingleScrollDocument {
     }
 
     public org.w3c.dom.Document toXML() {
-        // TODO Auto-generated method stub
-        return null;
+        return baseDoc;
+    }
+    
+    public String toString() {
+        StringWriter stringOut = new StringWriter();
+        write(stringOut, baseDoc);
+        stringOut.flush();
+        return stringOut.toString();
     }
 
     public void copyComponentDocument(String string) {

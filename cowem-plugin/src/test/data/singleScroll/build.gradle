@@ -1,0 +1,44 @@
+/*
+ * CWM course website v1 build file
+ * Steven J Zeil, Old Dominion Univ.
+ */
+
+buildscript { 
+     repositories {
+         jcenter()
+         mavenCentral()
+ 
+        ivy { // Use my own CS dept repo
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+   	    }         
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0+'
+         classpath 'edu.odu.cs.zeil:cowem-plugin:latest.integration'
+     }
+}
+
+     
+apply plugin: 'edu.odu.cs.cwm.CourseWebsite'
+
+
+course {
+	courseName        = 'CS361'
+	courseTitle       = 'Advanced Data Structures and Algorithms'
+	semester          = 'Summer 2018'
+	sem               = 'sum18'
+	instructor        = 'Steven Zeil'
+	email             = 'zeil@cs.odu.edu'
+	copyright         = '2016-2018, Old Dominion Univ.'
+	homeURL           = '../../Directory/outline/'
+	deployDestination = '/home/zeil/secure_html/cs361/sum18/'
+	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/cs361/sum18'
+    
+    ext.semesterCode  = '201730'
+    ext.CRNs = 'crn201730_32584 crn201730_32585 crn201730_32587 crn201730_34462'
+    
+}
+
+ 
+
+ 
