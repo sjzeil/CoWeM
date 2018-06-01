@@ -77,6 +77,8 @@ class SingleScrollDocument {
     File buildDir;
 
     String baseDocument;
+    
+    Set<String> documentsInScroll;
 
     File tempAreaAbs;
     File webcontentAbs;
@@ -108,6 +110,8 @@ class SingleScrollDocument {
         buildDir = theBuildDirectory;
         baseDocument = theBaseDocument;
         websiteBase = theWebsite;
+        documentsInScroll = new HashSet<String>();
+        documentsInScroll.add(theBaseDocument);
     }
 
     /**
@@ -116,12 +120,11 @@ class SingleScrollDocument {
      */
     public void generate() {
         buildDir.mkdirs();
-        List<String> referencedDocuments;
         try {
-            referencedDocuments = copyBaseDocument();
+            copyBaseDocument();
             Set<String> copiedDocuments = new HashSet<String>();
             copiedDocuments.add(baseDocument);
-            for (String docRef : referencedDocuments) {
+            for (String docRef : documentsInScroll) {
                 String docName = documentName(docRef);
                 if (!copiedDocuments.contains(docName)) {
                     copiedDocuments.add(docName);
@@ -134,7 +137,7 @@ class SingleScrollDocument {
         }
     }
 
-    public List<String> copyBaseDocument() throws IOException {
+    public Set<String> copyBaseDocument() throws IOException {
         System.err.println("base Document is " + baseDocument);
         File baseDocumentSource = Paths.get(websiteBase.getAbsolutePath(), baseDocument).toFile();
         // TODO
@@ -148,15 +151,12 @@ class SingleScrollDocument {
         graphicsDir.mkdirs();
         copyAll (new File(websiteBase, "graphics").toPath(), graphicsDir.toPath());
         
-        /*
-         * 
-         * TODO project.copy { from "build/website/styles/" into stylesDir }
-         */
-        String baseDocumentName = baseDocument.substring(baseDocument.indexOf('/'));
+        String baseDocumentName = baseDocument.substring(baseDocument.indexOf('/')+1);
+        String baseDocumentGroup = baseDocument.substring(0, baseDocument.indexOf('/'));
         File baseDocFile = new File(baseDocumentSource, baseDocumentName + "__scroll.html");
         if (!baseDocFile.exists()) {
             System.err.println("Could not find scroll format for " + baseDocumentName);
-            return new ArrayList<String>();
+            return new HashSet<String>();
         }
         baseDoc = parseXML(new FileReader(baseDocFile));
         Node baseRoot = baseDoc.getDocumentElement();
@@ -170,7 +170,6 @@ class SingleScrollDocument {
             e.printStackTrace();
             nodes = baseDoc.getElementsByTagName("emptyListPlease");
         }
-        List<String> referencedDocuments = new ArrayList<String>();
         for (int i = 0; i < nodes.getLength(); ++i) {
             Element node = (Element) nodes.item(i);
             String href = node.getAttribute("href");
@@ -182,7 +181,7 @@ class SingleScrollDocument {
                 int firstSlashPos = referencedDocument.indexOf('/');
                 int secondSlashPos = referencedDocument.indexOf('/', firstSlashPos + 1);
                 referencedDocument = referencedDocument.substring(0, secondSlashPos);
-                referencedDocuments.add(referencedDocument);
+                documentsInScroll.add(referencedDocument);
                 System.out.println("Base document refers to " + referencedDocument);
             }
         }
@@ -209,8 +208,175 @@ class SingleScrollDocument {
             logger.error ("xpath error: ", e);
         }
 
+        // 2. Rewrite links
+        try {
+            replaceURLs((NodeList)
+                    xPath.evaluate("/html/head/link[@type='text/css']", baseRoot, XPathConstants.NODESET),
+                    "href", baseDocumentGroup, baseDocumentName);
+            replaceURLs((NodeList)
+                    xPath.evaluate("/html/body//img", baseRoot, XPathConstants.NODESET),
+                    "src", baseDocumentGroup, baseDocumentName);
+            replaceURLs((NodeList)
+                    xPath.evaluate("/html/body//a", baseRoot, XPathConstants.NODESET),
+                    "href", baseDocumentGroup, baseDocumentName);
+        } catch (XPathExpressionException e) {
+            logger.error("Unable to process xpath", e);
+        }
+        // 2. Rewrite IDs
+        try {
+            replaceIDs((NodeList)
+                    xPath.evaluate("/html/body//*[@id != '']", baseRoot, XPathConstants.NODESET),
+                    baseDocumentGroup, baseDocumentName);
+        } catch (XPathExpressionException e) {
+            logger.error("Unable to process xpath", e);
+        }
         
-        return referencedDocuments;
+        // 3. Copy non-html files
+        copyAuxiliaryFiles (baseDocumentSource, buildDir, baseDocumentGroup, baseDocumentName);
+        
+        
+        return documentsInScroll;
+    }
+
+    /**
+     * Copy files that might be referenced by a document, prepending the document identification
+     * to each copied file name.  (Flat copy only?)
+     * 
+     * @param sourceDir  directory from which to copy files
+     * @param destDir    directory into which to copy files
+     * @param baseDocumentGroup document group associated with these files
+     * @param baseDocumentName  primary document associated with these files 
+     */
+    private void copyAuxiliaryFiles(File sourceDir, File destDir, String baseDocumentGroup,
+            String baseDocumentName) {
+        for (File fileToCopy: sourceDir.listFiles()) {
+            if (!fileToCopy.isDirectory()) {
+                String fileName = fileToCopy.getName();
+                if (!fileName.equals("index.html")) {
+                    if ((!fileName.endsWith(".html"))
+                            || (!fileName.contains("__"))) {
+                        String newFileName = baseDocumentGroup + "__" + baseDocumentName + "__"
+                                + fileName;
+                        File destinationFile = new File(destDir, newFileName);
+                        try {
+                            Files.copy(fileToCopy.toPath(), destinationFile.toPath());
+                        } catch (IOException e) {
+                            logger.error("Unable to copy " + fileToCopy + " to " + destinationFile, e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Replace URLs in a list of nodes.
+     * @param nodes list of nodes to examine
+     * @param attributeName name of the attribute within which urls can be found.
+     * @param thisDocumentGroup group within which this document set resides
+     * @param thisDocumentName document set name
+     */
+    private void replaceURLs(NodeList nodes, String attributeName, 
+            String thisDocumentGroup, String thisDocumentName) {
+        for (int i = 0; i < nodes.getLength(); ++i) {
+            Node node = nodes.item(i);
+            Element el = (Element)node;
+            String url = el.getAttribute(attributeName);
+            String url2 = replaceURL(url, thisDocumentGroup, thisDocumentName);
+            if (!url.equals(url2)) {
+                el.setAttribute(attributeName, url2);
+            }
+        }
+    }
+
+    /**
+     * Replace URLs in a list of nodes.
+     * @param nodes list of nodes to examine
+     * @param attributeName name of the attribute within which urls can be found.
+     * @param thisDocumentGroup group within which this document set resides
+     * @param thisDocumentName document set name
+     */
+    private void replaceIDs(NodeList nodes, String thisDocumentGroup, String thisDocumentName) {
+        for (int i = 0; i < nodes.getLength(); ++i) {
+            Node node = nodes.item(i);
+            Element el = (Element)node;
+            String id0 = el.getAttribute("id");
+            String id2 = thisDocumentGroup + "__" + thisDocumentName + "__" + id0;
+            el.setAttribute("id", id2);
+        }
+    }
+
+    /**
+     * Compute a replacement url for a link that may refer to a file that is moved in
+     * the single scroll format.
+     * @param url  the url to change
+     * @param thisDocumentGroup group within which this document set resides
+     * @param thisDocumentName document set name
+     * @return  replacement value of the url
+     */
+    private String replaceURL(String url, String thisDocumentGroup, String thisDocumentName) {
+        if (url.startsWith("../../")) {
+            String url2 = url.substring(6); // strip off the ../../
+            if (url2.startsWith("styles") || url2.startsWith("graphics")) {
+                return url2;
+            }
+            int pos = url2.indexOf('/');
+            if (pos < 0)
+                return url;
+            pos = url2.indexOf('/', pos+1);
+            if (pos < 0)
+                return url;
+            String documentSet = url2.substring(0, pos);
+            String documentSpec = url2.substring(pos+1);
+            System.err.println("group: " + documentSet + " within " + url);
+            if (documentSpec.startsWith("index.html")) {
+                // Reference to a primary document.  Is it one that we are copying into the scroll?
+                if (documentsInScroll.contains(documentSet)) {
+                    String url3 = "#" + documentSet.replace("/", "__");
+                    pos = url2.indexOf("#");
+                    if (pos >= 0) { // If original URL had an anchor, retain it.
+                        url3 = url3 + "__" + url2.substring(pos+1);
+                    }
+                    return url3;
+                } else {
+                    String baseURL = properties.getProperty("baseURL");
+                    return baseURL + ((baseURL.endsWith("/"))? "" : "/") + url2;
+                }
+            } else {
+                String baseURL = properties.getProperty("baseURL");
+                return baseURL + ((baseURL.endsWith("/"))? "" : "/") + url2;
+            }  
+
+        } else if (url.startsWith("../")) {
+            String url2 = url.substring(3); // strip off the ../../
+            int pos = url2.indexOf('/');
+            if (pos < 0)
+                return url;
+            String documentSet = thisDocumentGroup + "/" + url2.substring(0, pos);
+            String documentSpec = url2.substring(pos+1);
+            System.err.println("group: " + documentSet + " within " + url);
+            if (documentSpec.startsWith("index.html")) {
+                // Reference to a primary document.  Is it one that we are copying into the scroll?
+                if (documentsInScroll.contains(documentSet)) {
+                    String url3 = "#" + documentSet.replace("/", "__");
+                    pos = url2.indexOf("#");
+                    if (pos >= 0) { // If original URL had an anchor, retain it.
+                        url3 = url3 + "__" + url2.substring(pos+1);
+                    }
+                    return url3;
+                } else {
+                    String baseURL = properties.getProperty("baseURL");
+                    return baseURL + ((baseURL.endsWith("/"))? "" : "/") + thisDocumentGroup + "/" + url2;
+                }
+            } else {
+                String baseURL = properties.getProperty("baseURL");
+                return baseURL + ((baseURL.endsWith("/"))? "" : "/") + thisDocumentGroup + "/" + url2;                
+            }
+        } else if (url.startsWith("#")) {
+            String url2 = "#" + thisDocumentGroup + "__" + thisDocumentName + "__" + url.substring(1);
+            return url2;
+        }
+        return url;
     }
 
     /**

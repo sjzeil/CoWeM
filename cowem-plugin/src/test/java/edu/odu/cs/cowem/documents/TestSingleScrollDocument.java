@@ -109,13 +109,13 @@ public class TestSingleScrollDocument {
         assertTrue (graphicsDir.exists());
         assertTrue (new File(graphicsDir, "icon.png").exists());
 	    
-        File index = new File(buildDir, "index.html"); 
-        assertFalse (index.exists()); // Should not be written out yet - still lots of work to do first.
+        File originalScroll = new File(buildDir, "outline__scroll.html"); 
+        assertFalse (originalScroll.exists());
         
         // There should be no *__*.html files in the build directory
         File[] files = buildDir.listFiles();
         for (File f: files) {
-            if (f.getName().contains("__")) {
+            if (f.getName().contains("__") && f.getName().endsWith(".html")) {
                 fail ("Should not have copied " + f.getName());
             }
         }
@@ -145,11 +145,11 @@ public class TestSingleScrollDocument {
         
         // Should find links to component documents, converted to hashes
         
-        Node linkNode1 = (Node)xPath.evaluate("/html/body//a[@class='doc' AND @href='#Public__component1']",
+        Node linkNode1 = (Node)xPath.evaluate("/html/body//a[@class='doc' and @href='#Public__component1']",
                 root, XPathConstants.NODE);
         assertNotNull(linkNode1);
         
-        Node linkNode2 = (Node)xPath.evaluate("/html/body//a[@class='doc' AND @href='#Public__component2__originalAnchor']",
+        Node linkNode2 = (Node)xPath.evaluate("/html/body//a[@class='doc' and @href='#Public__component2__originalAnchor']",
                 root, XPathConstants.NODE);
         assertNotNull(linkNode2);
 
@@ -159,7 +159,7 @@ public class TestSingleScrollDocument {
                 root, XPathConstants.NODE);
         assertNotNull(extLinkNode1);
 
-        Node extImageNode = (Node)xPath.evaluate("/html/body//src[@src='http://www.cs.odu.edu/~zeil/zeilcs.png']",
+        Node extImageNode = (Node)xPath.evaluate("/html/body//img[@src='http://www.cs.odu.edu/~zeil/zeilcs.png']",
                 root, XPathConstants.NODE);
         assertNotNull(extImageNode);
 
@@ -182,12 +182,12 @@ public class TestSingleScrollDocument {
 
         // All IDs should now be prefixed with the document string
         String documentPrefix = "Directory__outline__";
-        Node nodeWithID = (Node)xPath.evaluate("/html/body//*[@id='#" + documentPrefix + "id1" + "']",
+        Node nodeWithID = (Node)xPath.evaluate("/html/body//*[@id='" + documentPrefix + "preamble" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(nodeWithID);
         
         // Internal links should use the longer form: 
-        Node internalLink = (Node)xPath.evaluate("/html/body//a[@href='#" + documentPrefix + "id1" + "']",
+        Node internalLink = (Node)xPath.evaluate("/html/body//a[@href='#" + documentPrefix + "preamble" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(internalLink);
         

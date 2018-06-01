@@ -33,6 +33,7 @@ course {
 	homeURL           = '../../Directory/outline/'
 	deployDestination = '/home/zeil/secure_html/cs361/sum18/'
 	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/cs361/sum18'
+    baseURL           = 'https://www.cs.odu.edu/~zeil/cowem/'
     
     ext.semesterCode  = '201730'
     ext.CRNs = 'crn201730_32584 crn201730_32585 crn201730_32587 crn201730_34462'
