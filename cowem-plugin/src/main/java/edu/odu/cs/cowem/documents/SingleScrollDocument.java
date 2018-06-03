@@ -125,13 +125,15 @@ class SingleScrollDocument {
             Set<String> copiedDocuments = new HashSet<String>();
             copiedDocuments.add(baseDocument);
             for (String docRef : documentsInScroll) {
-                String docName = documentName(docRef);
-                if (!copiedDocuments.contains(docName)) {
-                    copiedDocuments.add(docName);
-                    mergeScroll(docName);
+                if (!copiedDocuments.contains(docRef)) {
+                    copiedDocuments.add(docRef);
+                    copyComponentDocument(docRef);
                 }
             }
-            rewriteDocReferences();
+            File outputFile = new File(buildDir, "index.html");
+            Writer writer = new BufferedWriter(new FileWriter(outputFile));
+            write (writer, baseDoc);
+            
         } catch (IOException e) {
             logger.error("Error handling files: ", e);
         }
@@ -189,8 +191,9 @@ class SingleScrollDocument {
         // Rewrite the base document
 
         // 1. Remove the navigation header & footer
+        Node body = null;
         try {
-            Node body = (org.w3c.dom.Node) xPath.evaluate("/html/body", baseRoot, XPathConstants.NODE);
+            body = (org.w3c.dom.Node) xPath.evaluate("/html/body", baseRoot, XPathConstants.NODE);
             NodeList topLevel = body.getChildNodes();
             for (int i = topLevel.getLength() - 1; i >= 0; --i) {
                 Node node = topLevel.item(i);
@@ -230,6 +233,9 @@ class SingleScrollDocument {
         } catch (XPathExpressionException e) {
             logger.error("Unable to process xpath", e);
         }
+        Element eBody = (Element)body;
+        eBody.setAttribute("id", baseDocumentGroup + "__" + baseDocumentName);
+        
         
         // 3. Copy non-html files
         copyAuxiliaryFiles (baseDocumentSource, buildDir, baseDocumentGroup, baseDocumentName);
@@ -237,6 +243,84 @@ class SingleScrollDocument {
         
         return documentsInScroll;
     }
+    
+    
+    public void copyComponentDocument(String documentID) throws IOException {
+        System.err.println("component Document is " + documentID);
+        File componentDocSource = Paths.get(websiteBase.getAbsolutePath(), documentID).toFile();
+        // TODO
+        /*
+         * project.copy { from baseDocumentSource into buildDir }
+         */
+        
+        String compDocumentName = documentID.substring(documentID.indexOf('/')+1);
+        String compDocumentGroup = documentID.substring(0, documentID.indexOf('/'));
+        File compDocFile = new File(componentDocSource, compDocumentName + "__scroll.html");
+        if (!compDocFile.exists()) {
+            System.err.println("Could not find scroll format for " + compDocumentName);
+        }
+        org.w3c.dom.Document componentDoc = parseXML(new FileReader(compDocFile));
+        Node componentRoot = componentDoc.getDocumentElement();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+ 
+        // Rewrite the component document
+
+        // 1. Find the main content area
+       
+        Node content = null;
+        try {
+            content = (org.w3c.dom.Node) xPath.evaluate("/html/body/div[@class='mainBody']", componentRoot, 
+                    XPathConstants.NODE);
+        } catch (XPathExpressionException e1) {
+            content = null;
+        }
+        if (content == null) {
+            logger.error("Unable to find mainContent in " + documentID);
+            return;
+        }
+        
+
+        // 2. Rewrite links
+        try {
+            replaceURLs((NodeList)
+                    xPath.evaluate("/html/head/link[@type='text/css']", componentRoot, XPathConstants.NODESET),
+                    "href", compDocumentGroup, compDocumentName);
+            replaceURLs((NodeList)
+                    xPath.evaluate("/html/body//img", componentRoot, XPathConstants.NODESET),
+                    "src", compDocumentGroup, compDocumentName);
+            replaceURLs((NodeList)
+                    xPath.evaluate("/html/body//a", componentRoot, XPathConstants.NODESET),
+                    "href", compDocumentGroup, compDocumentName);
+        } catch (XPathExpressionException e) {
+            logger.error("Unable to process xpath", e);
+        }
+        // 2. Rewrite IDs
+        try {
+            replaceIDs((NodeList)
+                    xPath.evaluate("/html/body//*[@id != '']", componentRoot, XPathConstants.NODESET),
+                    compDocumentGroup, compDocumentName);
+        } catch (XPathExpressionException e) {
+            logger.error("Unable to process xpath", e);
+        }
+        Element eContent = (Element)content;
+        eContent.setAttribute("id", compDocumentGroup + "__" + compDocumentName);
+
+        
+        // 3. Copy non-html files
+        copyAuxiliaryFiles (componentDocSource, buildDir, compDocumentGroup, compDocumentName);
+        
+        // 4. Add component to main document.
+        try {
+            Node baseRoot = baseDoc.getDocumentElement();
+            Node body = (org.w3c.dom.Node) xPath.evaluate("/html/body", baseRoot, XPathConstants.NODE);
+            Node adoptedContent = baseDoc.importNode(content, true);
+            body.appendChild(adoptedContent);
+        } catch (XPathExpressionException e) {
+            logger.error ("xpath error: ", e);
+        }
+    }
+
 
     /**
      * Copy files that might be referenced by a document, prepending the document identification
@@ -505,9 +589,5 @@ class SingleScrollDocument {
         return stringOut.toString();
     }
 
-    public void copyComponentDocument(String string) {
-        // TODO Auto-generated method stub
-        
-    }
 
 }

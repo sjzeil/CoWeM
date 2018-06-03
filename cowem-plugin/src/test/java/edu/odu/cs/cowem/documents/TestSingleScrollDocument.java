@@ -10,7 +10,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +22,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Properties;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -29,6 +34,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * @author zeil
@@ -196,7 +204,7 @@ public class TestSingleScrollDocument {
     @Test
     public void testReferencedDocumentCopy() throws Exception {
         SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir,
-                Paths.get("src/test/singleScroll").toFile(), "Directory/outline");
+                Paths.get(proj.getRootDir().getAbsolutePath(), "build/website").toFile(), "Directory/outline");
         sdoc.copyBaseDocument();
         sdoc.copyComponentDocument("Public/component1");
         
@@ -204,7 +212,7 @@ public class TestSingleScrollDocument {
         // There should be no *__*.html files in the build directory
         File[] files = buildDir.listFiles();
         for (File f: files) {
-            if (f.getName().contains("__")) {
+            if (f.getName().contains("__") && f.getName().endsWith(".html")) {
                 fail ("Should not have copied " + f.getName());
             }
         }
@@ -235,15 +243,15 @@ public class TestSingleScrollDocument {
         
         // Should find links to component documents, converted to hashes
         
-        Node linkNode1 = (Node)xPath.evaluate("/html/body//a[@class='doc' AND @href='#Public__component1']",
+        Node linkNode1 = (Node)xPath.evaluate("/html/body//a[@class='doc' and @href='#Public__component1']",
                 root, XPathConstants.NODE);
         assertNotNull(linkNode1);
         
-        Node linkNode2 = (Node)xPath.evaluate("/html/body//a[@class='doc' AND @href='#Public__component2__originalAnchor']",
+        Node linkNode2 = (Node)xPath.evaluate("/html/body//a[@class='doc' and @href='#Public__component2__originalAnchor']",
                 root, XPathConstants.NODE);
         assertNotNull(linkNode2);
 
-        Node linkNode3 = (Node)xPath.evaluate("/html/body//a[@class='doc' AND @href='#Directory__outline']",
+        Node linkNode3 = (Node)xPath.evaluate("/html/body//a[@class='doc' and @href='#Directory__outline']",
                 root, XPathConstants.NODE);
         assertNotNull(linkNode3);
 
@@ -253,30 +261,30 @@ public class TestSingleScrollDocument {
                 root, XPathConstants.NODE);
         assertNotNull(extLinkNode1);
 
-        Node extImageNode = (Node)xPath.evaluate("/html/body//src[@src='https://www.cs.odu.edu/~zeil/cs252/sum18/graphics/home.png']",
+        Node extImageNode = (Node)xPath.evaluate("/html/body//img[@src='https://www.cs.odu.edu/~zeil/cs252/sum18/graphics/home.png']",
                 root, XPathConstants.NODE);
         assertNotNull(extImageNode);
 
         // Website-internal links should become absolute
         String websitebase = properties.getProperty("baseURL");
 
-        Node intLinkNode1 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Public/component5/foo.png" + "']",
+        Node intLinkNode1 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Public/component3/index.html" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(intLinkNode1);
-        Node intLinkNode2 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Directory/component6/foo.png" + "']",
+        Node intLinkNode2 = (Node)xPath.evaluate("/html/body//a[@href='" + websitebase + "Directory/component4/index.html" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(intLinkNode2);
 
-        Node intImgNode1 = (Node)xPath.evaluate("/html/body//img[@src='" + websitebase + "Public/component5/foo.png" + "']",
+        Node intImgNode1 = (Node)xPath.evaluate("/html/body//img[@src='" + websitebase + "Public/component3/foo.png" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(intImgNode1);
-        Node intImgNode2 = (Node)xPath.evaluate("/html/body//img[@src='" + websitebase + "Directory/component6/foo.png" + "']",
+        Node intImgNode2 = (Node)xPath.evaluate("/html/body//img[@src='" + websitebase + "Directory/component4/foo.png" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(intImgNode2);
 
         // All IDs should now be prefixed with the document string
         String documentPrefix = "Public__component1__";
-        Node nodeWithID = (Node)xPath.evaluate("/html/body//*[@id='#" + documentPrefix + "id2" + "']",
+        Node nodeWithID = (Node)xPath.evaluate("/html/body//*[@id='" + documentPrefix + "id2" + "']",
                 root, XPathConstants.NODE);
         assertNotNull(nodeWithID);
         
@@ -286,6 +294,48 @@ public class TestSingleScrollDocument {
         assertNotNull(internalLink);
         
     }
-	
+
+    
+    
+    @Test
+    public void testGenerate() throws Exception {
+        SingleScrollDocument sdoc = new SingleScrollDocument(proj, properties, buildDir,
+                Paths.get(proj.getRootDir().getAbsolutePath(), "build/website").toFile(), "Directory/outline");
+        sdoc.generate();
+        
+        File documentOut = new File(buildDir, "index.html");
+        assertTrue (documentOut.exists());
+        
+        
+        
+        
+        org.w3c.dom.Document xmlDoc = parseXML(new FileReader(documentOut));
+        Node root = xmlDoc.getDocumentElement();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+        // Check for presence of the base document and components
+        Node baseNode = (Node)xPath.evaluate("/html//*[@id='Directory__outline']",
+                root, XPathConstants.NODE);
+        assertNotNull(baseNode);
+        
+        Node component1 = (Node)xPath.evaluate("/html/body//div[@id='Public__component1']",
+                root, XPathConstants.NODE);
+        assertNotNull(baseNode);
+        
+        Node component2 = (Node)xPath.evaluate("/html/body//div[@id='Public__component2']",
+                root, XPathConstants.NODE);
+        assertNotNull(baseNode);
+        
+    }
+
+    
+    
+    org.w3c.dom.Document parseXML(Reader xmlIn) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        org.w3c.dom.Document result = b.parse(new InputSource(xmlIn));
+        return result;
+    }
+   
+    
 	
 }

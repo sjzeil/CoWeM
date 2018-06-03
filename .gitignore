@@ -1,6 +1,5 @@
 /*~
 **/*~
-**/*__*
 /*.epub
 /*.mobi
 **/epub
@@ -8,6 +7,5 @@
 /ant.log
 /course.info.tex
 **/bin/
-build/
 .settings/
 .gradle/
