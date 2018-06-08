@@ -64,11 +64,17 @@ task pdfScript (type: Copy, dependsOn: 'build') {
     into "build"
     filter(ReplaceTokens, 
            tokens: [scrollFile: project.rootDir.toString() + '/build/combined/outline/index.html',
+                    pdfDir: project.rootDir.toString() + '/build/combined/' + course.courseName + "-",
                     pdfFile: project.rootDir.toString() + '/build/combined/outline.pdf',
+                    testFile: project.rootDir.toString() + '/src/test/data/scroll.html',
                     pdfFormat: 'A4'])
 }
 
 task pdf(type: NodeTask, dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {
     script = file('build/pdfScript.js')
 }
+pdf.doLast {
+    project.delete('build/pdfScript.js')
+}
+
 

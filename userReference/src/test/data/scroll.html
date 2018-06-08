@@ -1,0 +1,1233 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><title>Case Studies: Analyzing Standalone Functions</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="../../Directory/outline/" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CS361%2C%20Case%20Studies%3A%20Analyzing%20Standalone%20Functions"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="titleblock"><h1 class="title">Case Studies: Analyzing Standalone Functions</h1><h2 class="author">Steven J. Zeil</h2><div class="date">Last modified: May 20, 2018</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#some-simple-examples">1 Some Simple Examples</a></div><div class="toc-h2"><a href="#diagonal-matrix">1.1 Diagonal Matrix</a></div><div class="toc-h2"><a href="#working-with-a-matrix">1.2 Working with a Matrix</a></div><div class="toc-h2"><a href="#books-and-authors">1.3 Books and Authors</a></div><div class="toc-h1"><a href="#ordered-insert">2 Ordered Insert</a></div><div class="toc-h2"><a href="#analysis-of-addinorder">2.1 Analysis of addInOrder</a></div><div class="toc-h2"><a href="#special-case-behavior">2.2 Special Case Behavior</a></div><div class="toc-h2"><a href="#addinorder-as-a-template">2.3 addInOrder as a template</a></div><div class="toc-h2"><a href="#addinorder-as-an-iterator-style-template">2.4 addInOrder as an Iterator-style Template</a></div><div class="toc-h1"><a href="#sequential-search">3 Sequential Search</a></div><div class="toc-h2"><a href="#analysis">3.1 Analysis</a></div><div class="toc-h1"><a href="#ordered-sequential-search">4 Ordered Sequential Search</a></div><div class="toc-h1"><a href="#binary-search">5 Binary Search</a></div><div class="toc-h2"><a href="#starting-the-analysis">5.1 Starting the Analysis</a></div><div class="toc-h2"><a href="#logarithmic-behavior">5.2 Logarithmic Behavior</a></div><div class="toc-h2"><a href="#back-to-the-analysis">5.3 Back to the Analysis</a></div></div><p>We’ll illustrate the techniques we’ve learned with some common functions, including some of the array manipulation functions that we <a class="doc" href="../../Public/iterators/index.html">converted to iterator style</a>.</p><a id="somesimpleexamples"/><h1 id="some-simple-examples">1 Some Simple Examples</h1><a id="diagonalmatrix"/><h2 id="diagonal-matrix">1.1 Diagonal Matrix</h2><p>This block of code might be found in an early step in a linear algebra application. It sets up an NxN matrix with 1.0 on the diagonals and 0.0 on all of the off-diagonal elements:</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    for (int j = 0; j &lt; N; ++j)
+    {
+       if (i == j)
+         matrix[i][j] = 1.0;   &#x2780;
+       else
+         matrix[i][j] = 0.0;   &#x2781;
+    }
+}
+</code></pre><p>The most deeply nested statements in this code are <span>➀</span> and <span>➁</span>. Looking at them the involve address calculations for the array indexing, and assignment of a single double. All of those are $O(1)$.</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    for (int j = 0; j &lt; N; ++j)
+    {
+       if (i == j)
+         matrix[i][j] = 1.0;   <span class='hli'>// O(1)</span>
+       else
+         matrix[i][j] = 0.0;   <span class='hli'>// O(1)</span>
+    }
+}
+</code></pre><p>The <code>if</code> statement condition is $O(1)$,</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    for (int j = 0; j &lt; N; ++j)
+    {
+       if (i == j)         <span class='hli'>// cond: O(1)</span>
+         matrix[i][j] = 1.0;   // O(1)
+       else
+         matrix[i][j] = 0.0;   // O(1)
+    }
+}
+</code></pre><p>which means that</p><p>\[ \begin{align} t_{\mbox{if}} &amp;= t_{\mbox{condition}} +  \max(t_{\mbox{then}}, t_{\mbox{else}}) \\  &amp;= O(1) + \max(O(1), O(1)) \\  &amp;= O(1) \end{align} \]</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    for (int j = 0; j &lt; N; ++j)
+    {
+       if (i == j)         // cond: O(1)  <span class='hli'>total: O(1)</span>
+         matrix[i][j] = 1.0;   // O(1)
+       else
+         matrix[i][j] = 0.0;   // O(1)
+    }
+}
+</code></pre><p>Collapsing,</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    for (int j = 0; j &lt; N; ++j)
+    {
+       <span class='hli'>// O(1)</span>
+    }
+}
+</code></pre><p>The inner for loop has initialization, condition, and increment all O(1). It executes <code>N</code> times.</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    <span class='hli'>// init: O(1)</span>
+    for (int j = 0; j &lt; N; ++j) <span class='hli'>// cond: O(1)  incr: O(1)  #: N</span>
+    {
+       // O(1)
+    }
+}
+</code></pre><p>So by our rule for for loops,</p><p>\[\begin{align} t_{\mbox{for}} &amp;= t_{\mbox{init}}  + \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{increment}} + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= O(1) + \sum_{j=0}^{N-1}(O(1) + O(1) + O(1)) + O(1) \\  &amp;= O(1) + N * (O(1) + O(1) + O(1)) + O(1) \\  &amp;= O(1) + N * (O(1)) + O(1) \\  &amp;= O(1) + O(N) + O(1) \\  &amp;= O(N) \end{align}\]</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    // init: O(1)
+    for (int j = 0; j &lt; N; ++j) // cond: O(1)  incr: O(1)  #: N  <span class='hli'>total: O(N)</span>
+    {
+       // O(1)
+    }
+}
+</code></pre><p>Collapsing:</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N];
+    // init: O(1)
+    <span class='hli'>// O(N)</span>
+}
+</code></pre><p>Now look at the first statement in the remaining loop body. We have talked a bit <a href="implementingADTs#the-default-constructor">already</a> about what happens when arrays are allocated. First a block of memory is obtained, then the array elements are each initialized by the data type’s default constructor — unless it is a primitive type in which case no such initialization occurs.</p><p>In this case we are dealing with an array of <code>double</code>, a primitive type. So no initialization occurs. The only time spent is to get a block of memory from the operating system, which, interestingly enough, does not depend upon the size of the block requested. </p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    matrix[i] = new double[N]; <span class='hli'>// O(1)</span>
+    // init: O(1)
+    // O(N)
+}
+</code></pre><p>So the statement sequence making up this function body adds up to $O(N)$</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i)
+{
+    <span class='hli'>// O(N)</span>
+}
+</code></pre><p>The remaining for loop has initialization, condition, and increment all O(1). It executes <code>N</code> times.</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i) <span class='hli'>// cond: O(1)  incr: O(1)  #: N</span>
+{
+    // O(N)
+}
+</code></pre><p>And so the time for this loop is</p><p>\[\begin{align} t_{\mbox{for}} &amp;= t_{\mbox{init}}  + \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{increment}} + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= O(1) + \sum_{i=0}^{N-1}(O(1) + O(1) + O(N)) + O(1) \\  &amp;= O(1) + N * (O(1) + O(1) + O(N)) + O(1) \\  &amp;= O(1) + N * (O(1)) + O(1) \\  &amp;= O(1) + O(N^2) + O(1) \\  &amp;= O(N^2) \end{align}\]</p><pre><code>double** matrix = new double*[N];
+for (int i = 0; i &lt; N; ++i) // cond: O(1)  incr: O(1)  #: N  <span class='hli'>total: O(N^2)</span>
+{
+    // O(N)
+}
+</code></pre><p>Collapsing:</p><pre><code>double** matrix = new double*[N];
+<span class='hli'>// O(N^2)</span>
+</code></pre><p>The first statement allocates an array of pointers. Pointer are primitive types and are not initialized, so we have only the $O(1)$ time to get the block of memory:</p><pre><code>double** matrix = new double*[N];  <span class='hli'>// O(1)</span>
+// O(N^2)
+</code></pre><p>and the entire statement sequence adds up to $O(N^2)$.</p><p>There are a few things that I hope you take notice of here:</p><ul>
+  <li>Note the general flow of the analysis from most deeply nested  towards the outermost statements.</li>
+  <li>If we had not been able to guess that the “size” measure for this code  would be $N$, nonetheless $N$ emerged naturally from the analysis  when we considered the natural behavior of the loops.</li>
+  <li>If we had done a  <a class="doc" href="../../Public/stmtrules/index.html#surprises-demand-explanation">sanity check</a> of “If  the loops are nested $k$ deep, and each appears to execute up to $N$  times, then $N^k$ is a reasonable first guess”, we would have  guessed at $O(N^2)$. The fact that the full analysis came out to  that same value is reassuring.</li>
+</ul><a id="workingwithamatrix"/><h2 id="working-with-a-matrix">1.2 Working with a Matrix</h2><p>Continuing with our NxN matrix, suppose that later in the code we saw:</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];
+        matrix[j][i] += matrix[i][i];
+        if (i == j)
+        {
+            for (int k = 0; k &lt; N; ++k)
+                matrix[i][i] *= 2.0;
+        }
+    }
+}
+</code></pre><p>Here we have three nested loops, each apparently repeating N times, so we might gues that this will be $O(N^3)$. let’s see if this guess holds up.</p><p>Again, we can start by marking simple statements that involve only arithmetic and assignment of primitive types.</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];     <span class='hli'>// O(1)</span>
+        matrix[j][i] += matrix[i][i];     <span class='hli'>// O(1)</span>
+        if (i == j)
+        {
+            for (int k = 0; k &lt; N; ++k)
+                matrix[i][i] *= 2.0;      <span class='hli'>// O(1)</span>
+        }
+    }
+}
+</code></pre><p>Looking at the innermost loop,</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)
+        {
+            for (int k = 0; k &lt; N; ++k)   <span class='hli'>//cond: O(1)  iter:    O(1) #: N</span>
+                matrix[i][i] *= 2.0;      // O(1)
+        }
+    }
+}
+</code></pre><p>and the loop time is</p><p>\[\begin{align} t_{\mbox{for}} &amp;= t_{\mbox{init}}  + \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{increment}} + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= O(1) + \sum_{k=0}^{N-1}(O(1) + O(1) + O(1)) + O(1) \\  &amp;= O(1) + N * (O(1) + O(1) + O(1)) + O(1) \\  &amp;= O(1) + N * (O(1)) + O(1) \\  &amp;= O(1) + O(N) + O(1) \\  &amp;= O(N) \end{align}\]</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)
+        {
+            for (int k = 0; k &lt; N; ++k)   //cond: O(1)  iter: O(1) #: N  <span class='hli'>total: O(N)</span>
+                matrix[i][i] *= 2.0;      // O(1)
+        }
+    }
+}
+</code></pre><p>Collapsing:</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)
+        {
+           <span class='hli'>// O(N)</span>
+        }
+    }
+}
+</code></pre><p>The <code>if</code> condition is $O(1)$.</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)  <span class='hli'>// cond: O(1)</span>
+        {
+           // O(N)
+        }
+    }
+}
+</code></pre><p>And we can then evaluate the <code>if</code> as</p><p>\[ \begin{align} t_{\mbox{if}} &amp;= t_{\mbox{condition}} +  \max(t_{\mbox{then}}, t_{\mbox{else}}) \\ &amp;= O(1) + \max(O(N), O(1)) \\ &amp;= O(N) \end{align} \]</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)
+    {
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)  // cond: O(1)  <span class='hli'>total: O(N)</span>
+        {
+           // O(N)
+        }
+    }
+}
+</code></pre><p>Now, commonly we would, at this point, collapse the <code>if</code> code and just retain the total complexity. But there are three things that hint to me that this might not be the best approach:</p><ol>
+  <li>The <code>if</code> is inside a loop.</li>
+  <li>The <code>then</code> and <code>else</code> part complexities are different, and</li>
+  <li>The <code>if</code> condition seems highly selective (will take one path much  more often than the other).</li>
+</ol><p>Whenever I see those two characteristics together, I think it’s worth asking whether the more expensive of the two <code>if</code> parts gets executed often enough, in the worst case, to actually dominate the overall loop.</p><p>Ignore the outermost loop for the moment.</p><pre><code>    for (int j = 0; j &lt; N; ++j)
+    {<span class='hli'>// O(N)</span>
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)  // cond: O(1)  <span class='hli'>total: O(N)</span>
+        {
+           // O(N)
+        }
+    }
+</code></pre><p><strong>Question: How many times, total, is the <code>if</code> statement going to be executed by this loop?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e226" onclick="toggleDisplay('_details_d6e226')" type="button" value="+"/><div id="_details_d6e226" style="display: none;">
+<p>It will be executed a total of $N$ times.</p>
+</div></div><p><strong>Question: How many times, total, will the <code>if</code> statement take the  “then” (true) branch?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e237" onclick="toggleDisplay('_details_d6e237')" type="button" value="+"/><div id="_details_d6e237" style="display: none;">
+<p>Only one time. </p>
+</div></div><p><strong>Question: How many times, total, will the <code>if</code> statement take the  “then” (true) branch?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e249" onclick="toggleDisplay('_details_d6e249')" type="button" value="+"/><div id="_details_d6e249" style="display: none;">
+<p>$N-1$ times. </p>
+</div></div><p>OK, now the rest of that loop is easy enough to handle:</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)  <span class='hli'>// cond: O(1)  iter: O(1)  #: N</span>
+    {// O(N)
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)  // cond: O(1)  <span class='hli'>total: O(N)</span>
+        {
+           // O(N)
+        }
+    }
+}
+</code></pre><p>so that</p><p>\[\begin{align} t_{\mbox{for}} &amp;= t_{\mbox{init}}  + \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{increment}} + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= O(1) + \sum_{j=0}^{N-1}(O(1) + O(1) + t_{\mbox{body}}) + O(1) \\  &amp;= O(1) + \sum_{j=0}^{N-1}(O(1) + O(1)) + \sum_{j=0}^{N-1} t_{\mbox{body}} + O(1) \\  &amp;= O(1) + N * O(1) + \sum_{j=0}^{N-1} t_{\mbox{body}} \\  &amp;= O(1) + O(N) + \sum_{j=0}^{N-1} t_{\mbox{body}} \\  &amp;= O(N) + \sum_{j=0}^{N-1} t_{\mbox{body}} \\ \end{align}\]</p><p>OK, now let’s think about what our earlier questions told us about the sum of the loop body times over all of the iterations. That sum will add together a total of N executions of the body. Exactly one of those will take $O(N)$ time and $N-1$ of those will take $O(1)$ time. So</p><p>\[\begin{align} t_{\mbox{for}} &amp;= O(N) + \sum_{j=0}^{N-1} t_{\mbox{body}} \\  &amp;= O(N) + O(N) + (N-1)O(1) \\  &amp;= O(N) + O(N) + O(N) - O(1) \\  &amp;= O(N) \\ \end{align}\]</p><p>So what we can see is that the expensive option of the <code>if</code> is done so rarely that it does not dominate the rest of the sum – it kind of disappears into the overall sum.</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    for (int j = 0; j &lt; N; ++j)  // cond: O(1)  iter: O(1)  #: N  <span class='hli'>total: O(N)</span>
+    { // O(N)
+        matrix[i][j] += matrix[i][i];     // O(1)
+        matrix[j][i] += matrix[i][i];     // O(1)
+        if (i == j)  // cond: O(1)  <span class='hli'>total: O(N)</span>
+        {
+           // O(N)
+        }
+    }
+}
+</code></pre><p>Now we can collapse that “j” loop:</p><pre><code>for (int i = 0; i &lt; N; ++i)
+{
+    <span class='hli'>// O(N)</span>
+}
+</code></pre><p>The final loop follows the familiar form:</p><pre><code>for (int i = 0; i &lt; N; ++i)  <span class='hli'>// cond: O(1)  iter: O(1)  #: N</span>
+{
+    <span class='hli'>// O(N)</span>
+}
+</code></pre><p>\[\begin{align} t_{\mbox{for}} &amp;= t_{\mbox{init}}  + \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{increment}} + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= O(1) + \sum_{i=0}^{N-1}(O(1) + O(1) + O(N)) + O(1) \\  &amp;= O(1) + N * (O(1) + O(1) + O(N)) + O(1) \\  &amp;= O(1) + N * (O(1)) + O(1) \\  &amp;= O(1) + O(N^2) + O(1) \\  &amp;= O(N^2) \end{align}\]</p><p>And the entire block of code is $O(N^2)$.</p><p>That is not what we predicted by just looking at the depth of nesting of the loops. <em>Surprises demand explanation.</em> In this case we have the explanation: the innermost loop is executed only (1/N)th of the time, so we wind up being a factor of $N$ faster than we had originally predicted.</p><a id="booksandauthors"/><h2 id="books-and-authors">1.3 Books and Authors</h2><p>Consider this code from our early <a class="doc" href="../../Public/implementingADTs/index.html#function-members">Book ADT</a></p><pre><code>void Book::addAuthor (const Author&amp; anAuthor)
+{
+  authors[numAuthors] = anAuthor;
+  ++numAuthors;
+}
+
+void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;
+  while (i &lt; numAuthors &amp;&amp;
+        authors[i]-&gt;getID() != anAuthor-&gt;getID())
+    ++i;
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];
+      ++i;
+    }
+  --numAuthors;
+}
+</code></pre><p>Let’s analyze each of the functions, in turn.</p><p>First, look at <code>addAuthor</code>. We expect any function’s complexity to be written <a class="doc" href="../../Public/stmtrules/index.html#complexity-is-written-in-terms-of-the-inputs">in terms of its inputs</a>, so <strong>what are the inputs to this function?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e316" onclick="toggleDisplay('_details_d6e316')" type="button" value="+"/><div id="_details_d6e316" style="display: none;">
+<p>The inputs are <code>anAuthor</code> and <code>this</code>, the pointer to the current value of the <code>Book</code> that we want to modify. Don’t forget “<code>this</code>”!</p>
+<p>We expect the answer to be written in terms of some numerical properties of that author and/or that book.</p>
+</div></div><p>That said, there are no loops or conditionals in <code>addAuthor</code>, so the analysis is pretty straightforward.</p><p><strong>What is the complexity of <code>authors[numAuthors] = anAuthor;</code> ? How  do we annotate it?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e348" onclick="toggleDisplay('_details_d6e348')" type="button" value="+"/><div id="_details_d6e348" style="display: none;">
+<p>The statement does some address calculations for the array indexing, but those are all $O(1)$. There is an assicment of an object of the <code>Author</code> class. To see the complexity of that, we would have to visit <a class="doc" href="../../Public/implementingADTs/index.html#related-adts">that class</a> and look at its code. It turns out that we chose to use the compiler-proved assignment operator, and so this assignment involves assignment of one <code>string</code> (the author name), one <code>Address</code> (itself a collection of 4 strings), and one <code>long</code>. I’m going to assume that all the strings in this application have a fairly small upper bound (a few hundred characters at most), in which case this assignment is $O(1)$.</p>
+<pre><code>void Book::addAuthor (const Author&amp; anAuthor)
+{
+  authors[numAuthors] = anAuthor; <span class='hli'>// O(1)</span>
+  ++numAuthors;
+}
+</code></pre>
+</div></div><p>Clearly the second statement, <code>++numAuthors;</code>, is $O(1)$.</p><p><strong>What is the overall complexity of the statement sequence that makes up the function body?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e380" onclick="toggleDisplay('_details_d6e380')" type="button" value="+"/><div id="_details_d6e380" style="display: none;">
+<pre><code>void Book::addAuthor (const Author&amp; anAuthor)
+{
+  authors[numAuthors] = anAuthor; // O(1)
+  ++numAuthors;                   // O(1)
+}
+</code></pre>
+<p>For a statement sequence, we add up the complexities of the component statements, and $O(1) + O(1) = O(1)$.</p>
+<pre><code>void Book::addAuthor (const Author&amp; anAuthor)
+{//total: O(1)
+  authors[numAuthors] = anAuthor; // O(1)
+  ++numAuthors;                   // O(1)
+}
+</code></pre>
+<p>So the complexity of the entire function is $O(1)$.</p>
+</div></div><p>The <code>removeAuthor</code> function looks a but more challenging.</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;
+  while (i &lt; numAuthors &amp;&amp;
+        authors[i]-&gt;getID() != anAuthor-&gt;getID())
+    ++i;
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];
+      ++i;
+    }
+  --numAuthors;
+}
+</code></pre><p>To speed things up just a tad, let’s mark all the simple statements that are clearly $O(1)$.</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      <span class='hli'>// O(1)</span>
+  while (i &lt; numAuthors &amp;&amp;
+        authors[i]-&gt;getID() != anAuthor-&gt;getID())
+    ++i;                          <span class='hli'>// O(1)</span>
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];  <span class='hli'>// O(1)</span>
+      ++i;                        <span class='hli'>// O(1)</span>
+    }
+  --numAuthors;                   <span class='hli'>// O(1)</span>
+}
+</code></pre><p>Now let’s look at the first loop. As occasionally happens, all the hard work in this loop seems to be done in the condition. But <code>i &lt;
+numAuthors</code> is just an integer comparison, which is $O(1)$. <code>authors[i]-&gt;</code> is a simple address calculation, also $O(1)$. For the <code>getID()</code> calls, we need to go back to the <code>Author</code> class and see that this just retrieves a <code>long</code> data member, in $O(1)$ time. That means that the <code>!=</code> is just comparing two <code>long int</code>s, and that’s $O(1)$. Finally, the <code>&amp;&amp;</code> boolean operator is $O(1)$. So, messy as that condition is, it’s still just $O(1)$.</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  while (i &lt; numAuthors &amp;&amp;
+        authors[i]-&gt;getID() != anAuthor-&gt;getID()) <span class='hli'>//cond: O(1)</span>
+    ++i;                          // O(1)
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>How often does that loop repeat in the worst case? It uses <code>i</code>, which starts at 0 and goes up as high as <code>numAuthors</code> before we force an exist. So, in the worst case, the author we are looking for is not in the array, and the loop repeats a total of <code>numAuthors</code> times.</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  while (i &lt; numAuthors &amp;&amp;
+        authors[i]-&gt;getID() != anAuthor-&gt;getID()) //cond: O(1)  <span class='hli'>#: numAuthors</span>
+    ++i;                          // O(1)
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>So the time for the first loop is</p><p>\[ \begin{align} t_{\mbox{while}} &amp;=  \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\ &amp;= \sum_{i=0}^{\mbox{numAuthors}} (O(1) + O(1)) + O(1) \\ &amp;= \mbox{numAuthors} * (O(1) + O(1)) + O(1) \\ &amp;= \mbox{numAuthors} * (O(1)) + O(1) \\ &amp;= O(\mbox{numAuthors}) + O(1) \\ &amp;= O(\mbox{numAuthors}) \end{align} \]</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  while (i &lt; numAuthors &amp;&amp;
+        authors[i]-&gt;getID() != anAuthor-&gt;getID()) //cond: O(1)   #: numAuthors 
+                                                   <span class='hli'>//total: O(numAuthors)</span>
+     ++i;                          // O(1)
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>and, collapsing,</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  <span class='hli'>// O(numAuthors)</span>
+  while (i &lt; numAuthors-1)
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>The second loop also has an $O(1)$ condition:</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  // O(numAuthors)
+  while (i &lt; numAuthors-1) <span class='hli'>//cond: O(1)</span>
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>How often does this loop execute? Interestingly enough, if the first loop executed $k$ times, the second one executes $\mbox{numAuthors}-k-1$ times. In essence, the second loop visits all of the elements in the array that the first loop doesn’t. In the worst case, then, this loop executes $\mbox{numAuthors}-1$ times.</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  // O(numAuthors)
+  while (i &lt; numAuthors-1) //cond: O(1)  <span class='hli'>#: numAuthors-1</span>
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>and so we have</p><p>\[ \begin{align} t_{\mbox{while}} &amp;=  \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\ &amp;= \sum_{j=0}^{\mbox{numAuthors-1}} (O(1) + O(1)) + O(1) \\ &amp;= (\mbox{numAuthors}-1) * (O(1) + O(1)) + O(1) \\ &amp;= (\mbox{numAuthors}-1) * (O(1)) + O(1) \\ &amp;= O(\mbox{numAuthors}-1) + O(1) \\ &amp;= O(\mbox{numAuthors}) \end{align} \]</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  // O(numAuthors)
+  while (i &lt; numAuthors-1) //cond: O(1)  #: numAuthors-1  <span class='hli'>total: O(numAuthors)</span>
+    {
+      authors[i] = authors[i+1];  // O(1)
+      ++i;                        // O(1)
+    }
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>Collapsing,</p><pre><code>void Book::removeAuthor (Author* anAuthor)
+{
+  int i = 0;                      // O(1)
+  // O(numAuthors)
+  <span class='hli'>// O(numAuthors)</span>
+  --numAuthors;                   // O(1)
+}
+</code></pre><p>we now are reduced to a statement sequence with four components. We add them up:</p><p>\[ t_{\mbox{removeAuthor}} = O(1) + O(\mbox{numAuthors}) + O(\mbox{numAuthors}) + O(1) = O(\mbox{numAuthors}) \]</p><a id="orderedinsert"/><h1 id="ordered-insert">2 Ordered Insert</h1><p>We start with a function for inserting an element into a sorted array.</p><pre><code class="c++">/**
+ *
+ * Assume the elements of the array are already in order
+ * Find the position where value could be added to keep
+ * everything in order, and insert it there.
+ *
+ * Return the position where it was inserted
+ *  - Assumes that we have a separate integer (size) indicating how
+ *     many elements are in the array
+ *  - and that the "true" size of the array is at least one larger 
+ *      than the current value of that counter
+ *
+ *  @param array array into which to add an element
+ *  @param size  number of data elements in the array. Must be less than
+ *               the number of elements allocated for the array.
+ *               Incremented upon output from this function.
+ *  @param value value to add into the array
+ *  @return the position where the element was added
+ */
+int addInOrder (int* array, int&amp; size, int value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                               &#x2780;
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {    &#x2781;
+    array[toBeMoved+1] = array[toBeMoved];                &#x2782;
+    --toBeMoved;
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                              &#x2783;
+  ++size;
+  return toBeMoved+1;
+}
+</code></pre><ul>
+  <li>
+    <p>We start from the high end of the array (<span>➀</span>) and check to see if  that’s where we want to insert the data (<span>➁</span>).</p>
+    <ul>
+      <li>If so, fine. We exit from the loop.</li>
+      <li>If not, we move the preceding element up one (<span>➂</span>) and then  check to see if we want to insert <code>value</code> into the “hole” left  behind. We repeat this step as necessary.</li>
+    </ul>
+  </li>
+  <li>
+  <p>Once we exit from the loop (<span>➃</span>), we insert the <code>value</code> into the  hole at our chosen position.</p></li>
+  <li>
+    <p>You can <a href="https://www.cs.odu.edu/~zeil/AlgAE/weiss/arrayOps.html">run this  algorithm</a>  until you are comfortable with your understanding of how it works.</p>
+    <ul>
+      <li>
+      <p>From the “Algorithm” menu, select “generate an array”. Create an  array with 5-10 elements.</p></li>
+      <li>
+      <p>Again, from the “Algorithm” menu, select “add in order” to try  the algorithm. Press the forward button to step through the  execution.</p></li>
+      <li>
+      <p>Try inserting values that should fall near the middle of the  array.</p></li>
+      <li>
+      <p>Try inserting values that are smaller than any  already in the array.</p></li>
+      <li>
+      <p>Try inserting values that are larger than any  already in the array.</p></li>
+    </ul>
+    <p>Then we can move on to the analysis.</p>
+  </li>
+</ul><a id="analysisofaddinorder"/><h2 id="analysis-of-addinorder">2.1 Analysis of addInOrder</h2><p>We start our analysis with the easy stuff – mark all of the non-compound statements.</p><pre><code class="C++">int addInOrder (int* array, int&amp; size, int value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                             // <span class='hli'>O(1)</span>
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {
+    array[toBeMoved+1] = array[toBeMoved];              // <span class='hli'>O(1)</span>
+    --toBeMoved;                                        // <span class='hli'>O(1)</span>
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                            // <span class='hli'>O(1)</span>
+  ++size;                                                // <span class='hli'>O(1)</span>
+  return toBeMoved+1;                                    // <span class='hli'>O(1)</span>
+}
+</code></pre><p>Next, looking at the <code>while</code> loop, we see that its condition can be evaluated in O(1) time, and that the loop repeats at most <code>size</code> times.</p><pre><code class="C++">int addInOrder (int* array, int&amp; size, int value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                             // O(1)
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {  // <span class='hli'>cond: O(1)  #: size </span> 
+    array[toBeMoved+1] = array[toBeMoved];              // O(1)
+    --toBeMoved;                                        // O(1)
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                            // O(1)
+  ++size;                                                // O(1)
+  return toBeMoved+1;                                    // O(1)
+}
+</code></pre><p>The loop body is $O(1)$, so</p><p>\[ \begin{align} t_{\mbox{while}} &amp;=  \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= \sum_{i=1}^{\mbox{size}} (O(1) + O(1)) + O(1) \\  &amp;= O\left(\sum_{i=1}^{\mbox{size}} 1\right) + O(1) \\  &amp;= O(\mbox{size}) + O(1) \\  &amp;= O(\mbox{size}) \end{align} \]</p><pre><code class="C++">int addInOrder (int* array, int&amp; size, int value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                             // O(1)
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {  // cond: O(1)  #: size <span class='hli'> total: O(size)</span> 
+    array[toBeMoved+1] = array[toBeMoved];              // O(1)
+    --toBeMoved;                                        // O(1)
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                            // O(1)
+  ++size;                                                // O(1)
+  return toBeMoved+1;                                    // O(1)
+}
+</code></pre><p>Replacing the loop by this quantity … ,</p><pre><code class="C++">int addInOrder (int* array, int&amp; size, int value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                             // O(1)
+  <span class='hli'> // O(size)</span> 
+  // Insert the new value
+  array[toBeMoved+1] = value;                            // O(1)
+  ++size;                                                // O(1)
+  return toBeMoved+1;                                    // O(1)
+}
+</code></pre><p>… we get down to a statement sequence composed of $O(1)$ and  $O(\mbox{size})$ terms. The total run time is therefore</p><p>\[ t_{\mbox{addInOrder}} = O(1) + O(\mbox{size}) + O(1) + O(1) + O(1) = O(\mbox{size}) \]</p><pre><code class="C++">template &lt;typename int&gt;
+int addInOrder (int* array, int&amp; size, int value)
+{
+  <span class='hli'> // O(size)</span> 
+}
+</code></pre><p>Note that, because none of the inputs to this function are actually named “n”, it is <span class="emph">not</span> proper to say the function is “O(n)” unless we <span class="emph">explicitly</span> define “n” to be equal to <code>size</code>.</p><a id="specialcasebehavior"/><h2 id="special-case-behavior">2.2 Special Case Behavior</h2><pre><code class="c++">int addInOrder (int* array, int&amp; size, int value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {
+    array[toBeMoved+1] = array[toBeMoved];
+    --toBeMoved;
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;
+  ++size;
+  return toBeMoved+1;
+}
+</code></pre><p>A special point worth noting:</p><ul>
+  <li>
+  <p>If we are adding a value that is greater than all elements already  in <code>array</code>, this algorithm does 0 iterations of the loop.</p></li>
+  <li>
+    <p>Suppose we are given a series of values to insert into an initially  empty array, and that these values are already sorted.</p>
+    <ul>
+      <li>
+      <p>Then each new value will be greater than all the ones  already inserted into the array.</p></li>
+      <li>
+      <p>Each call to <code>addInOrder</code> will use 0  iterations.</p></li>
+      <li>
+      <p>and so each call runs in $O(1)$ time (for this special case of  inserting sorted elements)</p></li>
+    </ul>
+  </li>
+  <li>
+  <p>We’ll make use of this special case later when we incorporate this function into more complex algorithms.</p></li>
+</ul><a id="addinorderasatemplate"/><h2 id="addinorder-as-a-template">2.3 addInOrder as a template</h2><p>Suppose that, instead of working on arrays of integers, we wrote addInOrder as a template that would work on arrays of any data type that supported assignment and comparison with <code>&lt;</code>:</p><pre><code>template &lt;typename Comparable&gt;
+int addInOrder (Comparable* array, int&amp; size, Comparable value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                               
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {    
+    array[toBeMoved+1] = array[toBeMoved];                
+    --toBeMoved;
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                              
+  ++size;
+  return toBeMoved+1;
+}
+</code></pre><p>Again, we might start by marking certain “obvious” lines as $O(1)$:</p><pre><code>template &lt;typename Comparable&gt;
+int addInOrder (Comparable* array, int&amp; size, Comparable value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                          <span class='hli'>// O(1)</span>
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {    
+    array[toBeMoved+1] = array[toBeMoved];           &#x2780;
+    --toBeMoved;                                     <span class='hli'>// O(1)</span>
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                        &#x2781; 
+  ++size;                                            <span class='hli'>// O(1)</span>
+  return toBeMoved+1;                                <span class='hli'>// O(1)</span>
+}
+</code></pre><p>But look at the lines <span>➀</span> and <span>➁</span>. What are the complexity of these? It’s actually hard to say.</p><ul>
+  <li>The address calculation involved in indexing into the array is  $O(1)$.</li>
+  <li>But the assignment operation is another matter. This is an  assignment of one <code>Comparable</code> value to another. We have no idea,  really, what kinds of data types might be supplied for <code>Comparable</code>,  other than the fact that they will all need to support <code>operator=</code>  and <code>operator&lt;</code>. Not all assignments are $O(1)$. In fact, we  know that programmers can write their own assignment operators, so  these could be arbitrarily complicated.</li>
+</ul><p>So the best that we can do is to introduce a symbol for the time to perform an assignment of a <code>Comparable</code> value. Let’s call that $t_{a}$. </p><pre><code>template &lt;typename Comparable&gt;
+int addInOrder (Comparable* array, int&amp; size, Comparable value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                          // O(1)
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {    
+    array[toBeMoved+1] = array[toBeMoved];           <span class='hli'>// O(t_a)</span>
+    --toBeMoved;                                     // O(1)
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                        <span class='hli'>// O(t_a)</span>
+  ++size;                                            // O(1)
+  return toBeMoved+1;                                // O(1)
+}
+</code></pre><p>That means that the entire loop body it $O(t_a)$ (i.e., $O(t_a + 1) = O(t_a)$, because nothing can be smaller than $O(1)$.</p><pre><code>template &lt;typename Comparable&gt;
+int addInOrder (Comparable* array, int&amp; size, Comparable value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                          // O(1)
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) {    
+    <span class='hli'>// O(t_a)</span>
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                        // O(t_a)
+  ++size;                                            // O(1)
+  return toBeMoved+1;                                // O(1)
+}
+</code></pre><p>Now, let’s look at the while loop. We have another problem in determining the complexity of the loop condition. We don’t know what the complexity of <code>operator&lt;</code> will be for an arbitrary <code>Comparable</code> type. So let $t_c$ denote the time required to compare two <code>Comparable</code> values using <code>&lt;</code>. Then the condition is $O(1)$ for the integer comparison and the boolean <code>&amp;&amp;</code> plus $t_c$ for the <code>Comparable</code> comparison:</p><pre><code>template &lt;typename Comparable&gt;
+int addInOrder (Comparable* array, int&amp; size, Comparable value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                          // O(1)
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) { // <span class='hli'>cond: O(t_c)</span>
+    // O(t_a)
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                        // O(t_a)
+  ++size;                                            // O(1)
+  return toBeMoved+1;                                // O(1)
+}
+</code></pre><p>At worst, the loop repeats <code>size</code> times:</p><pre><code>int addInOrder (Comparable* array, int&amp; size, Comparable value)
+{
+  // Make room for the insertion
+  int toBeMoved = size - 1;                          // O(1)
+  while (toBeMoved &gt;= 0 &amp;&amp; value &lt; array[toBeMoved]) { // cond: O(t_c)  <span class='hli'>#: size</span>
+    // O(t_a)
+  }
+  // Insert the new value
+  array[toBeMoved+1] = value;                        // O(t_a)
+  ++size;                                            // O(1)
+  return toBeMoved+1;                                // O(1)
+}
+</code></pre><p>That makes the total time for the while loop:</p><p>\[ \begin{align} t_{\mbox{while}} &amp;=  \sum_{\mbox{iterations}}(t_{\mbox{condition}}  + t_{\mbox{body}})  + t_{\mbox{condition}}^{\mbox{final}} \\  &amp;= \sum_{i=1}^{\mbox{size}} (O(t_c) + O(t_a)) + O(t_c) \\  &amp;= O\left(\mbox{size} * t_a + (\mbox{size}+1)*t_c\right) \\  &amp;= O(\mbox{size} * t_a + \mbox{size} * t_c) \end{align} \]</p><p>We would summarize this in English by stating that in the worst case, <code>addInOrder</code> performs <code>O(size)</code> assignments and <code>O(size)</code> comparisons of the <code>Comparable</code> type.</p><a id="addinorderasaniteratorstyletemplate"/><h2 id="addinorder-as-an-iterator-style-template">2.4 addInOrder as an Iterator-style Template</h2><p>A more modern style of C++ would urge writing it in terms of iterators so that it could be used with containers other than conventional arrays:</p><pre><code>/**
+ *
+ * Assume the elements of a container are already in order
+ * Find the position where value could be added to keep
+ * everything in order, and insert it there.
+ *
+ * Return the position where it was inserted. This assumes that
+ * we have room in the container for one more element at the
+ * given stop position.
+ *
+ *  @param start beginning position of the sequence within which
+ *               to insert a value.
+ *  @param stop  Position just after the last element to be examined
+ *               in determining where to place value. In other words,
+ *               the range (start,stop] is considered to contain
+ *               already ordered data.
+ *  @param value value to add into the container
+ *  @return the position where the element was added.
+ *          Upon exit from this function, all data in the range
+ *          (start,stop) will be ordered.
+ */
+template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;
+  --preStop;
+  while (stop != start &amp;&amp; value &lt; *preStop) {
+    *stop = *preStop;
+    --stop;
+    --preStop;
+  }
+  // Insert the new value
+  *stop = value;
+  return stop;
+}
+</code></pre><ul>
+  <li>Instead of introducing a separate position <code>toBeMoved</code> as in  the earlier array-based version, we here use <code>stop</code>, decrementing  it until we find the right position at which to insert the <code>value</code>.</li>
+  <li>The variable <code>preStop</code> in this code fulfills the same purpose as  the expression <code>array[toBeMoved-1]</code> – it holds the position just in  front of the one we are considering as a candidate insertion  position.</li>
+</ul><p>In all analyses in this course, we will assume, unless stated otherwise, that iterator operations have the same complexity as pointer operations. Thus <code>*stop</code>, <code>--stop</code>, iterator assignment, and iterator comparison are all $O(1)$. So we can, gain, start by marking some “obvious” statements:</p><pre><code>template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;    <span class='hli'>// O(1)</span>
+  --preStop;                  <span class='hli'>// O(1)</span>
+  while (stop != start &amp;&amp; value &lt; *preStop) {
+    *stop = *preStop;         &#x2780;
+    --stop;                   <span class='hli'>// O(1)</span>
+    --preStop;                <span class='hli'>// O(1)</span>
+  }
+  // Insert the new value
+  *stop = value;              &#x2781;
+  return stop;                <span class='hli'>// O(1)</span>
+}
+</code></pre><p>As before, the assignments (<span>➀</span>, <span>➁</span>) of <code>Comparable</code> objects are of unknown complexity, so we introduce a symbol to denote the cime required for such assignments:</p><pre><code>template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;    // O(1)
+  --preStop;                  // O(1)
+  while (stop != start &amp;&amp; value &lt; *preStop) {
+    *stop = *preStop;         <span class='hli'>// O(t_a)</span>
+    --stop;                   // O(1)
+    --preStop;                // O(1)
+  }
+  // Insert the new value
+  *stop = value;              <span class='hli'>// O(t_a)</span>
+  return stop;                // O(1)
+}
+</code></pre><p>and introduce a symbol $t_c$ for the time to perform a comparison:</p><pre><code>template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;    // O(1)
+  --preStop;                  // O(1)
+  while (stop != start &amp;&amp; value &lt; *preStop) { <span class='hli'>// comp: O(t_c)</span>
+    *stop = *preStop;         // O(t_a)
+    --stop;                   // O(1)
+    --preStop;                // O(1)
+  }
+  // Insert the new value
+  *stop = value;              // O(t_a)
+  return stop;                // O(1)
+}
+</code></pre><p>We can collapse the loop body:</p><pre><code>template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;    // O(1)
+  --preStop;                  // O(1)
+  while (stop != start &amp;&amp; value &lt; *preStop) { // comp: O(t_c)
+    <span class='hli'>// O(t_a)</span>
+  }
+  // Insert the new value
+  *stop = value;              // O(t_a)
+  return stop;                // O(1)
+}
+</code></pre><p>How do we express the worst-case number of iterations of the loop? We no longer have the parameter <code>size</code> to tell us how many elements were in the container, but that’s the <em>idea</em> that we need.</p><div class="noFloat"> </div><div class="sidebar pct35">
+<p>I like <code>distance(...)</code> as a notation for discussing iterators, but would <strong>strongly discourage</strong> you from ever using it in actual code. The reason is that <code>distance</code> is one of those functions that is implemented differently (using the same iterator traits trick that we used <a class="doc" href="../../Public/iterators/index.html#letting-the-compiler-choose">earlier</a>) depending on what variety of iterators it is given.</p>
+<p>If the two iterators are random-access iterators, <code>distance</code> is implemented as</p>
+<pre><code>template &lt;typename Iterator&gt;
+size_t distance (Ierator start, Iterator stop)
+{
+  return stop - start;
+}
+</code></pre>
+<p>which is $O(1)$.</p>
+<p>But if the two iterators are not random access, then </p>
+<p><code>distance</code> is implemented as</p>
+<pre><code>template &lt;typename Iterator&gt;
+size_t distance (Ierator start, Iterator stop)
+{
+  size_t counter = 0;
+  while (start != stop)
+  {
+    ++counter;
+    ++stop;
+  }
+  return counter;
+}
+</code></pre>
+<p>which is <code>O(distance(start,stop))</code>.</p>
+<p>So I have seen some <em>horrible</em> code like</p>
+<pre><code>template &lt;typename Iterator&gt;
+void doSomething (Iterator start, Iterator stop)
+{
+   Iterator pos = start;
+   for (int i = 0; i &lt; distance(start, stop); ++i)
+   {
+      doSomethingWith(*pos);
+      ++pos;
+   }
+}
+</code></pre>
+<p>which <em>looks</em> like it should be linear in the number of elements being processed, but is often quadratic instead.</p>
+</div><p>There is a way to express that notion within C++. There is a <code>std</code> function <code>distance(iter1,iter2)</code> that, for a pair of iterators, returns the number of distinct positions in the range starting at <code>iter1</code> and going up to, but not including, <code>iter2</code>.</p><p>So we could annotate the loop as</p><pre><code>  while (stop != start &amp;&amp; value &lt; *preStop) { // comp: O(t_c)  <span class='hli'>#: distance(start,stop)</span>
+</code></pre><p>but that has two problems:</p><ul>
+  <li>
+    <p>First, the value of <code>stop</code> is constantly changing inside the loop.  What we really want to say is  <code>distance(start,value_of_stop_when_we_first_entered_the_function)</code>.  This is actually a common enough problem that we’ll adopt a  convention in this course:</p>
+    <blockquote>
+      <p>For any parameter $x$ to a function that is reassigned new values as the function runs, we will use the notation $x_0$ to denote its value upon entry to the function. Inside the code, we write this as <code>x_0</code>.</p>
+    </blockquote>
+    <p>So we could annotate that loop as</p>
+    <pre><code>while (stop != start &amp;&amp; value &lt; *preStop) { // comp: O(t_c)  #: distance(start,<span class='hli'>stop_0</span>)
+</code></pre>
+  </li>
+  <li>
+  <p>But even that is more than I want to be typing out within  mathematical expressions, so…</p></li>
+</ul><p>Let $N$ denote <code>distance(start,stop_0)</code>. Then we have:</p><pre><code>template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;    // O(1)
+  --preStop;                  // O(1)
+  while (stop != start &amp;&amp; value &lt; *preStop) { // comp: O(t_c)  <span class='hli'>#: N</span>
+    <span class='hli'>// O(t_a)</span>
+  }
+  // Insert the new value
+  *stop = value;              // O(t_a)
+  return stop;                // O(1)
+}
+</code></pre><p>We can then quickly conclude that</p><p>\[ t_{\mbox{while}} = O(N t_a + N t_c) \]</p><pre><code>template &lt;typename Iterator, typename Comparable&gt;
+int addInOrder (Iterator start, Iterator stop, const Comparable&amp; value)
+{
+  Iterator preStop = stop;    // O(1)
+  --preStop;                  // O(1)
+  while (stop != start &amp;&amp; value &lt; *preStop) { // comp: O(t_c)  #: N  <span class='hli'>total: O(N t_a + n t_c)</span>
+    <span class='hli'>// O(t_a)</span>
+  }
+  // Insert the new value
+  *stop = value;              // O(t_a)
+  return stop;                // O(1)
+}
+</code></pre><p>and eventually that the entire function is $O(N t_a + N t_c)$ where $N$ is <code>distance(start,stop)</code> and $t_a$ and $t_c$ denote the time required to assign and compare <code>Comparable</code> values, respectively.</p><a id="sequentialsearch"/><h1 id="sequential-search">3 Sequential Search</h1><p>Another common utility function is to search through a rnage of data looking for a “search key”, returning the position where it is found and some “impossible” position if it cannot be found.</p><p>You might have seen code like this, for example,:</p><pre><code class="c++">/*
+ * Search an array for a given value, returning the index where 
+ *    found or -1 if not found.
+ *
+ * From Malik, C++ Programming: From Problem Analysis to Program Design
+ *
+ * @param list the array to be searched
+ * @param listLength the number of data elements in the array
+ * @param searchItem the value to search for
+ * @return the position at which value was found, or -1 if not found
+ */
+template &lt;typename T&gt;
+int seqSearch(const T list[], int listLength, T searchItem)
+{
+    int loc;
+
+    for (loc = 0; loc &lt; listLength; loc++)
+        if (list[loc] == searchItem)
+            return loc;
+
+    return -1;
+}
+</code></pre><p>You may <a href="https://www.cs.odu.edu/~zeil/AlgAE/weiss/arrayOps.html">run this algorithm</a> if you wish.</p><p>But we’re going to look at the standard, iterator-based version. The <code>std</code> library has a function <code>find</code> that could be implemented as</p><pre><code>template &lt;typename Iterator, typename T&gt;
+Iterator find (Iterator start, Iterator stop, const T&amp; key)
+{
+   while (start != stop &amp;&amp; !(key == *start))
+      ++start;
+   return start;
+}
+</code></pre><ul>
+  <li>We check to see if <code>start</code> points to a value equal to <code>key</code>. If so,  we return the <code>start</code> position. Otherwise, we increment it and  keep going.</li>
+  <li>If we run out of items to check (<code>start</code> has become equal to  <code>stop</code>), we exit the loop and return <code>start</code>, which is equal  to <code>stop</code>.</li>
+</ul><p>Note that we never examine the data at position <code>stop</code>, because ranges in the C++ iterator style are always “up to but not including” the second iterator. So we could not possibly find the <code>key</code> at position <code>stop</code> because we will never look there. Hence returning a value of <code>stop</code> is the “impossible” value return that says we could not find the <code>key</code>.</p><h2 id="analysis">3.1 Analysis</h2><p>Again, we can start the analysis by marking the “easy” stuff – the non-compound statements.</p><pre><code>template &lt;typename Iterator, typename T&gt;
+Iterator find (Iterator start, Iterator stop, const T&amp; key)
+{
+   while (start != stop &amp;&amp; !(key == *start))
+      ++start;      <span class='hli'>// O(1)</span>
+   return start;    <span class='hli'>// O(1)</span>
+}
+</code></pre><p>Looking at the while loop condition, <code>start != stop</code> and the <code>&amp;&amp;</code>, <code>!</code>, and <code>*</code> operations are $O(1)$. But <code>key == *start</code> depends on the underlying type <code>T</code>.</p><p>Let $t_c$ denote the complexity of comparing two <code>T</code> values of equality. Then</p><pre><code>template &lt;typename Iterator, typename T&gt;
+Iterator find (Iterator start, Iterator stop, const T&amp; key)
+{
+   while (start != stop &amp;&amp; !(key == *start)) <span class='hli'>// cond: O(t_c)</span>
+      ++start;      // O(1)
+   return start;    // O(1)
+}
+</code></pre><p>Let $N$ denote <code>distance(start,stop)</code>, the number of elements we can search through.</p><pre><code>template &lt;typename Iterator, typename T&gt;
+Iterator find (Iterator start, Iterator stop, const T&amp; key)
+{
+   while (start != stop &amp;&amp; !(key == *start)) // cond: O(t_c)  <span class='hli'>#: N</span>
+      ++start;      // O(1)
+   return start;    // O(1)
+}
+</code></pre><p>The while loop is therefore $O(N t_c)$:</p><pre><code>template &lt;typename Iterator, typename T&gt;
+Iterator find (Iterator start, Iterator stop, const T&amp; key)
+{
+   while (start != stop &amp;&amp; !(key == *start)) // cond: O(t_c) #: N   <span class='hli'>total: O(N t_c)</span>
+      ++start;      // O(1)
+   return start;    // O(1)
+}
+
+template &lt;typename Iterator, typename T&gt;
+Iterator find (Iterator start, Iterator stop, const T&amp; key)
+{
+   <span class='hli'>// O(N t_c)</span>
+   return start;    // O(1)
+}
+</code></pre><p>and the entire function is $O(N t_c)$ where $N$ denotes <code>distance(start,stop)</code> (the number of elements we can search through) and $t_c$ denotes the complexity of comparing two <code>T</code> values of equality.</p><a id="orderedsequentialsearch"/><h1 id="ordered-sequential-search">4 Ordered Sequential Search</h1><p>In <a class="doc" href="../../Public/iterators/index.html#example-searching-via-iterator-variants-">our introduction to iterators</a> we looked at the interesting function <code>std::lower_bound</code>, which makes a compile-time choice of doing either an ordered search or a binary search depending on what kinds of iterators it is passed.</p><p>We wrap up these case studies by analyzing those two search functions, starting with the ordered sequential search.</p><pre><code>template &lt;typename Iterator, typename Value&gt;
+Iterator orderedSearch (Iterator start, Iterator stop, const Value&amp; key)
+{
+    while ((start != stop) &amp;&amp; (*start &lt; key))
+        ++start;
+    return start;
+}
+</code></pre><p>We can mark the simple statements that are $O(1)$:</p><pre><code>template &lt;typename Iterator, typename Value&gt;
+Iterator orderedSearch (Iterator start, Iterator stop, const Value&amp; key)
+{
+    while ((start != stop) &amp;&amp; (*start &lt; key))
+        ++start;      <span class='hli'>//O(1)</span>
+    return start;     <span class='hli'>//O(1)</span>
+}
+</code></pre><p>Looking at the while loop condition, the <code>(start != stop)</code> part will be $O(1)$, as will the applications of the <code>&amp;&amp;</code> and <code>*</code> operators. The <code>&lt;</code> operator, however, is an operation provided by the unknown <code>Value</code> type, so</p><ul>
+  <li>Let $t_c$ denote the time required to compare to objects of the  <code>Value</code> type.</li>
+</ul><p>The loop condition is then $O(t_c)$.</p><pre><code>Iterator orderedSearch (Iterator start, Iterator stop, const Value&amp; key)
+{
+    while ((start != stop) &amp;&amp; (*start &lt; key))  <span class='hli'>//cond: O(t_c)</span>
+        ++start;      //O(1)
+    return start;     //O(1)
+}
+</code></pre><p><strong>Question: What is the worst case input for this function (for any fixed input size)?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e1190" onclick="toggleDisplay('_details_d6e1190')" type="button" value="+"/><div id="_details_d6e1190" style="display: none;">
+<p>The worst case occurs when <code>key</code> is nowhere in the range being searched. In that case, the loop repeats until <code>start</code> is advanced all the way forward to<code>stop</code>.</p>
+</div></div><p><strong>Question: How many times does the loop repeat in that worst case?</strong></p><div class="details"><span class="summary">Click to reveal</span> <input id="but_details_d6e1207" onclick="toggleDisplay('_details_d6e1207')" type="button" value="+"/><div id="_details_d6e1207" style="display: none;">
+<p>$\mbox{distance}(\mbox{start}_0,\mbox{stop})$, a.k.a., the number of positions between (the initial value of) <code>start</code> and <code>stop</code>.</p>
+</div></div><ul>
+  <li>Let $N$ denote the number of positions between (the initial value  of) <code>start</code> and <code>stop</code>.</li>
+</ul><p>Then we have</p><pre><code>Iterator orderedSearch (Iterator start, Iterator stop, const Value&amp; key)
+{
+    while ((start != stop) &amp;&amp; (*start &lt; key))  //cond: O(t_c)  <span class='hli'>#: N</span>
+        ++start;      //O(1)
+    return start;     //O(1)
+}
+</code></pre><p>So we have a loop that repeats $N$ times, and the times of its body and condition do not depend on which iteration they are evaluated in. We’ve seen that pattern enough times to know how it works:</p><p>\[ t_{\mbox{while}} = N*O(t_c) = O(N * t_c) \]</p><pre><code>Iterator orderedSearch (Iterator start, Iterator stop, const Value&amp; key)
+{
+    while ((start != stop) &amp;&amp; (*start &lt; key))  //cond: O(t_c)  #: N<span class='hli'>  total: O(N*t_c)</span>
+        ++start;      //O(1)
+    return start;     //O(1)
+}
+</code></pre><p>Collapsing the loop:</p><pre><code>Iterator orderedSearch (Iterator start, Iterator stop, const Value&amp; key)
+{
+    <span class='hli'>// O(N*t_c)</span>
+    return start;     //O(1)
+}
+</code></pre><p>and the total complexity is $O(N t_c)$.</p><p>This function’s time is linear in the number of elements being searched.</p><a id="binarysearch"/><h1 id="binary-search">5 Binary Search</h1><p>Finally, let’s look at binary search. </p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;
+    auto high = stop - start - 1;                     
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;
+       RandomAccessIterator midPos = start + mid;   
+       if( *midPos &lt; key )
+         low = mid + 1;
+       else if( key &lt; *midPos )
+         high = mid - 1;
+       else
+         return midPos;   // Found
+    }
+    return start + low;                             
+}
+</code></pre><a id="startingtheanalysis"/><h2 id="starting-the-analysis">5.1 Starting the Analysis</h2><p>Let’s mark the simple $O(1)$ statements to start:</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  <span class='hli'>// O(1)</span>
+    auto high = stop - start - 1;                  <span class='hli'>// O(1)</span>
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             <span class='hli'>// O(1)</span>
+       RandomAccessIterator midPos = start + mid; <span class='hli'>// O(1)</span>
+       if( *midPos &lt; key )
+         low = mid + 1;                         <span class='hli'>// O(1)</span>
+       else if( key &lt; *midPos )
+         high = mid - 1;                        <span class='hli'>// O(1)</span>
+       else
+         return midPos;   // Found              <span class='hli'>// O(1)</span>
+    }
+    return start + low;                            <span class='hli'>// O(1)</span>
+}
+</code></pre><p>Now look at the innermost <code>if</code> (the “<code>else if</code>”). The then parts and else parts are already marked as $O(1)$. The condition, however, depends on the time required to compare two elements of the unknown <code>Value</code> type.</p><ul>
+  <li>Let $t_c$ denote the time required to compare to objects of the  <code>Value</code> type.</li>
+</ul><p>Then the condition is $O(t_c)$:</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       if( *midPos &lt; key )
+         low = mid + 1;                         // O(1)
+       else if( key &lt; *midPos )         <span class='hli'>//cond: O(t_c)</span>
+         high = mid - 1;                        // O(1)
+       else
+         return midPos;   // Found              // O(1)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>So that <code>if</code> takes time $O(t_c) + \max{O(1), O(1)} = O(t_c)$.</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       if( *midPos &lt; key )
+         low = mid + 1;                         // O(1)
+       else if( key &lt; *midPos )         //cond: O(t_c)  <span class='hli'>total: O(t_c)</span>
+         high = mid - 1;                        // O(1)
+       else
+         return midPos;   // Found              // O(1)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>Collapsing:</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       if( *midPos &lt; key )
+         low = mid + 1;                         // O(1)
+       else
+         <span class='hli'>// O(t_c)</span>
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>The remaining <code>if</code> also has a condition that takes time $O(t_c)$:</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       if( *midPos &lt; key )     <span class='hli'>//cond: O(t_c)</span>
+         low = mid + 1;                         // O(1)
+       else
+         // O(t_c)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>which means that this <code>if</code> takes time $O(t_c) + \max{O(1), O(t_c)}$.</p><p>Despite the more expensive <code>else</code> part than in the previously analyzed <code>if</code>, this still simplifies to $O(t_c)$.</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       if( *midPos &lt; key )     //cond: O(t_c)  <span class='hli'>total: O(t_c)</span>
+         low = mid + 1;                         // O(1)
+       else
+         // O(t_c)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>Collapsing,</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       <span class='hli'>// O(t_c)</span>
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>which means that the loop body is $O(1) + O(1) + O(t_c) = O(t_c)$.</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {<span class='hli'>//total: O(t_c)</span>
+       auto mid = ( low + high ) / 2;             // O(1)
+       RandomAccessIterator midPos = start + mid; // O(1)
+       // O(t_c)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>Collapsing,</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )
+    {
+        <span class='hli'>// O(t_c)</span>
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>The loop condition is $O(1)$:</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )  <span class='hli'>//cond: O(1)</span>
+    {
+        // O(t_c)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>Now, how many times does this loop repeat?</p><p>To answer this question let’s go back to the original listing.</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;
+    auto high = stop - start - 1;                     
+
+    while( low &lt;= high )
+    {
+       auto mid = ( low + high ) / 2;
+       RandomAccessIterator midPos = start + mid;   
+       if( *midPos &lt; key )
+         low = mid + 1;
+       else if( key &lt; *midPos )
+         high = mid - 1;
+       else
+         return midPos;   // Found
+    }
+    return start + low;                             
+}
+</code></pre><p>Remember how this function actually works. </p><ul>
+  <li>
+  <p><code>low</code> … <code>high</code> define our current search area. Initially, there  are <code>distance(start, stop)</code> items in this area.</p></li>
+  <li>
+  <p>The two values $\mbox{low}$ and $\mbox{high}$ define our current search range. If the value we are looking for is somewhere in the array, it is going to be at a position $\geq \mbox{low}$ and $\leq \mbox{high}$. So the difference, $\mbox{high} - \mbox{low} + 1$, defines how many values we have left in the search range.</p></li>
+</ul><p>On any given iteration of the loop: </p><ul>
+  <li>
+    <p>there are $\mbox{high} - \mbox{low} + 1$ items in the search area</p>
+    <ul>
+      <li>
+      <p>Each time around the loop, we cut this area in  half.</p></li>
+      <li>
+      <p>We stop when the search area has been reduced to a single  item.</p></li>
+    </ul>
+  </li>
+  <li>
+    <p>Let $N$ denote <code>distance(start, stop)</code>, the number of positions  being searched.</p>
+    <p>How many times can we divide $N$ things into $2$ equal parts before getting down to only $1$?</p>
+  </li>
+</ul><p>That’s the interesting question!</p><a id="logarithmicbehavior"/><h2 id="logarithmic-behavior">5.2 Logarithmic Behavior</h2><p>If I start with $N$ things in this search area, how many times can I keep cutting that search area of $N$ things in half till I get to only a single item? (An item that <span class="emph">must</span> be the value we are looking for, if that value is anywhere in the array at all.)</p><p>Let’s assume for the sake of our argument that $N$ is some power of 2 to start with. So we cut $N$ in half – we get $N/2$. Next time we cut that half which makes $N/4$, then $N/8$ and then $N/16$ and so on. And the question is, how often can we keep doing that until we reduce the number down to just $1$?</p><p>The answer may be a bit clearer if we turn the problem around. Start at $1$ and keep doubling until we get $N$. So we proceed</p><p>$$1, 2, 4, \ldots $$</p><p>and we keep going until we actually get up to $N$. The number of steps we did in doubling is same as number of steps when we start at $N$ and kept dividing by $2$.</p><p>How many steps is that? Well, what power of $2$ do we reach when we finally get to $N$? Suppose we took $k$ steps. Then we are saying that $N = 2^k$. Solving for $k$, <a class="doc" href="../../Public/faq361/index.html#yucch-nobody-told-me-i-needed-to-know-about-logarithms-">we get</a> $k = \log_2 N$.</p><p>The use of $\log_2\mbox{}$ is so common in Computer Science that we generally assume that any logarithm written without its base is to the base 2. In other words, computer scientists would usually write this as $k = \log N$. (That’s in contrast to other mathematical fields, where a logarithm with no base is generally assumed to be base 10.)</p><p>What if $N$ is not an exact power of 2? In that case, $\log_2 N$ is not an integer, and we would need to divide or double</p><p>$$\left\lceil \log_2 N \right\rceil$$</p><p>times, where $\lceil \; \rceil$ denotes the <span class="firstterm">ceiling</span> or “next integer higher than”.</p><p>In practice, we won’t need to worry about that fractional part, because we are going to use this inside a big-O expression, where the fractional part will be dominated in any sum by the logarithm itself.</p><a id="backtotheanalysis"/><h2 id="back-to-the-analysis">5.3 Back to the Analysis</h2><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )  //cond: O(1)  <span class='hli'>#: log N</span>
+    {
+        // O(t_c)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>Again, the condition and body times are independent of which iteration we are in, so</p><p>\[ t_{\mbox{while}} = (\log N)*(O(1) + O(t_c)) + O(1) = O(t_c \log N) \]</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    while( low &lt;= high )  //cond: O(1)  #: log N  <span class='hli'>total: O(t_c log(N))</span>
+    {
+        // O(t_c)
+    }
+    return start + low;                            // O(1)
+}
+</code></pre><p>Collapsing,</p><pre><code>template &lt;typename RandomAccessIterator, typename Value&gt;
+RandomAccessIterator binarySearch (RandomAccessIterator start,
+                       RandomAccessIterator stop,
+                       const Value&amp; key)
+{
+    auto low = 0;                                  // O(1)
+    auto high = stop - start - 1;                  // O(1)
+
+    <span class='hli'>// O(t_c log(N))</span>
+
+    return start + low;                            // O(1)
+}
+</code></pre><p>and the total complexity of the function is $O(t_c \log(N))$ where $t_c$ is the time required to compare two elements and where $N$ is the number of positions being searched.</p><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="../../Directory/outline/" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CS361%2C%20Case%20Studies%3A%20Analyzing%20Standalone%20Functions"><img src="../../graphics/email.png"
+																												title="Email
+																													   to
+																													   instructor"/></a><span style="margin:
+																																					 0
+																																					 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">©
+	  2016-2018, Old Dominion Univ.</div>
+	<script>
+	    MathJax.Hub.Queue(function() {
+		   var monitoredDiv = document.getElementById("mathJaxHasCompleted");
+		   monitoredDiv.style.display = 'block';
+		});
+	</script>
+	<div id="mathJaxHasCompleted" style="display: none;"><hr/></div>
+
+</body></html>
