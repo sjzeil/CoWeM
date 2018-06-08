@@ -30,7 +30,11 @@ buildscript {
          
      }
 }
-  
+
+plugins {
+    id "com.moowork.node" version "1.2.0"  // Mockup for what will eventually go into the plugin
+}
+
 apply plugin: edu.odu.cs.cowem.CourseWebsite
 
 
@@ -50,6 +54,21 @@ course {
     baseURL           = 'https://www.cs.odu.edu/~zeil/cowem/'
 }
 
- 
+node {  
+    version = '8.11.2' // current LTS version
+    download = true  // download node
+}
+import org.apache.tools.ant.filters.ReplaceTokens
+task pdfScript (type: Copy, dependsOn: 'build') {
+    from "build/website/styles/pdfScript.js"
+    into "build"
+    filter(ReplaceTokens, 
+           tokens: [scrollFile: project.rootDir.toString() + '/build/combined/outline/index.html',
+                    pdfFile: project.rootDir.toString() + '/build/combined/outline.pdf',
+                    pdfFormat: 'A4'])
+}
 
- 
+task pdf(type: NodeTask, dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {
+    script = file('build/pdfScript.js')
+}
+

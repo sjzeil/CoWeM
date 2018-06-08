@@ -2,3 +2,4 @@
 /.settings/
 **/gradle.log
 /gradle-app.setting
+/node_modules/
