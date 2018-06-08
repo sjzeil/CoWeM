@@ -171,15 +171,17 @@ class CourseWebsite implements Plugin<Project> {
                 docProperties.put(prop, value.toString())
             }
 
-            String primaryName = "outline"; // eventually get from Course properties
+            String primaryName = "Directory/outline"; // eventually get from Course properties
+            String primaryDoc = primaryName.substring(primaryName.indexOf('/')+1)
             String format = "scroll";
-                        
+
+            project.delete('build/combined/' + primaryDoc)
             SingleScrollDocument doc = new SingleScrollDocument(
                     project.rootProject.website,
                     docProperties,
-                    project.file('build/combined/' + primaryName),
+                    project.file('build/combined/' + primaryDoc),
                     project.file('build/website/'),
-                    project.rootProject.website(primaryName).documentSetGroup() + '/' + primaryName
+                    primaryName
                     );
             //doc.setDebugMode(true);
             doc.generate();

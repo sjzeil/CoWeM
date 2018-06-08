@@ -59,7 +59,7 @@ import org.xml.sax.SAXParseException;
  * @author zeil
  *
  */
-class SingleScrollDocument {
+public class SingleScrollDocument {
 
     private static Logger logger = LoggerFactory.getLogger(SingleScrollDocument.class);
 
