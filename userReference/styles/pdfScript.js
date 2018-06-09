@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const formats = require("./website/styles/pdfFormats.js").formats;
 
 console.log('Node version is: ' + process.version);
 (async () => {
@@ -10,6 +11,17 @@ console.log('Node version is: ' + process.version);
 					  {visible: true, timeout: 60000});
     console.log('path: @pdfFile@, format: @pdfFormat@');
 	
+	for (formatNum in formats) {
+	   formatSpec = formats[formatNum];
+       console.log ("formatSpec: " + formatSpec.name);
+	   await page.pdf({
+	      path: 'build/website/' + formatSpec.name + ".pdf",
+	      width: formatSpec.width, height: formatSpec.height,
+	      margin: formatSpec.margin 
+	   });
+	}
+	
+	/*
 	await page.pdf({path: '@pdfDir@' + 'letter.pdf' , format: 'letter',
 				    margin: {top: '0.75in', bottom: '0.5in',
 							 left: '0.5in', right: '0.5in'} });
@@ -21,6 +33,6 @@ console.log('Node version is: ' + process.version);
 					width: "6.0in", height: "3.5in",
 				    margin: {top: '0.2in', bottom: '0.2in',
 							 left: '0.25in', right: '0.25in'} });
-
+*/
   await browser.close();
 })();

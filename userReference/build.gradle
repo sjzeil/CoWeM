@@ -56,8 +56,22 @@ course {
 
 node {  
     version = '8.11.2' // current LTS version
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.buildDir}")
+    nodeModulesDir = file("${project.buildDir}")
     download = true  // download node
 }
+
+build.doLast {
+    project.copy {
+        from 'build/website/styles/'
+        include 'pdf-package.json'
+        into 'build/'
+        rename '.+', 'package.json'
+    }
+}
+npm_install.dependsOn('build')
+
 import org.apache.tools.ant.filters.ReplaceTokens
 task pdfScript (type: Copy, dependsOn: 'build') {
     from "build/website/styles/pdfScript.js"
