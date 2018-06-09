@@ -58,6 +58,12 @@
         href="{$stylesURL}/md-{$format}-ext.css" />
       <xsl:call-template name="generateCSSLinks"/>
       <meta name="viewport" content="width=device-width, initial-scale=1"/> 
+      <link rel="stylesheet" 
+        href="@highlightjsURL@/styles/googlecode.css"/>
+      <script src="@highlightjsURL@/highlight.pack.js">
+    <xsl:text> </xsl:text>
+      </script>
+      <script>hljs.initHighlightingOnLoad();</script>
       <script type="text/javascript"
           src="{$stylesURL}/md-{$format}.js">
           <xsl:text> </xsl:text>
@@ -92,12 +98,6 @@
            </script>
         </xsl:when>
       </xsl:choose>
-      <link rel="stylesheet" 
-        href="@highlightjsURL@/styles/googlecode.css"/>
-      <script src="@highlightjsURL@/highlight.pack.js">
-    <xsl:text> </xsl:text>
-      </script>
-      <script>hljs.initHighlightingOnLoad();</script>
       <xsl:copy-of select="*"/>
     </xsl:copy>
       <xsl:call-template name="generateJSLinks"/>
@@ -342,7 +342,7 @@
       <input id="but{$idValue}" type="button" value="+"
         onclick="toggleDisplay('{$idValue}')"
         />
-      <div style="display: none;">
+      <div class="detailsBody" style="display: none;">
     <xsl:attribute name="id">
       <xsl:value-of select="$idValue"/>
     </xsl:attribute>

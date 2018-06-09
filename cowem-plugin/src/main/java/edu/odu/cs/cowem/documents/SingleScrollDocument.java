@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -32,12 +33,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -130,22 +134,83 @@ public class SingleScrollDocument {
                     copyComponentDocument(docRef);
                 }
             }
+            
+            org.w3c.dom.Document finalDoc = transformEntireScroll();
+            
             File outputFile = new File(buildDir, "index.html");
             Writer writer = new BufferedWriter(new FileWriter(outputFile));
-            write (writer, baseDoc);
+            write (writer, finalDoc);
             
         } catch (IOException e) {
             logger.error("Error handling files: ", e);
         }
     }
 
+    /**
+     * Perform final transformations on entire scroll.
+     * (From md-combined.xsl)
+     */
+    private org.w3c.dom.Document transformEntireScroll() {
+        final String xsltLocation  = "/edu/odu/cs/cowem/templates/";
+        final InputStream formatConversionSheet = 
+                MarkdownDocument.class.getResourceAsStream(
+                    xsltLocation + "md-combined.xsl");
+        
+        System.setProperty("javax.xml.transform.TransformerFactory", 
+                "net.sf.saxon.TransformerFactoryImpl"); 
+        TransformerFactory transFact = TransformerFactory.newInstance();
+        transFact.setURIResolver((href, base) -> {
+            //System.err.println("resolving URI to: " + xsltLocation + href);
+            final InputStream s = this.getClass()
+                    .getResourceAsStream(xsltLocation + href);
+            return new StreamSource(s);
+        });
+
+        DocumentBuilder dBuilder = null;
+        try {
+            DocumentBuilderFactory dbFactory = 
+                    DocumentBuilderFactory.newInstance();
+            dBuilder = dbFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            logger.error ("Problem creating new XML document ", e); 
+            return null;        
+        }
+        
+        
+        // Transform basic HTML into the selected format
+        
+        org.w3c.dom.Document formattedDoc = null;       
+        try {
+            Source xslSource = new StreamSource(formatConversionSheet);
+            xslSource.setSystemId("http://www.cs.odu.edu/~zeil");
+            formattedDoc = dBuilder.newDocument();
+            Templates template = transFact.newTemplates(xslSource);
+            Transformer xform = template.newTransformer();
+            xform.setParameter("format", "combined");
+            for (Object okey: properties.keySet()) {
+                String key = okey.toString();
+                xform.setParameter(key, properties.getProperty(key));
+                System.err.println("prop " + key + " => " 
+                                   + properties.getProperty(key));
+            }
+            Source xmlIn = new DOMSource(baseDoc.getDocumentElement());
+            DOMResult htmlOut = new DOMResult(formattedDoc);
+            xform.transform(xmlIn, htmlOut);
+            logger.trace("combined transformation completed");
+            baseDoc = formattedDoc;
+        } catch (TransformerConfigurationException e) {
+            logger.error ("Problem parsing XSLT2 stylesheet " 
+                    + formatConversionSheet, e);
+        } catch (TransformerException e) {
+            logger.error ("Problem applying stylesheet " 
+                    + formatConversionSheet, e);
+        }
+        return formattedDoc;
+    }
+
     public Set<String> copyBaseDocument() throws IOException {
-        System.err.println("base Document is " + baseDocument);
+        logger.info("base Document is " + baseDocument);
         File baseDocumentSource = Paths.get(websiteBase.getAbsolutePath(), baseDocument).toFile();
-        // TODO
-        /*
-         * project.copy { from baseDocumentSource into buildDir }
-         */
         File stylesDir = new File(buildDir, "styles");
         stylesDir.mkdirs();
         copyAll (new File(websiteBase, "styles").toPath(), stylesDir.toPath());
@@ -157,7 +222,7 @@ public class SingleScrollDocument {
         String baseDocumentGroup = baseDocument.substring(0, baseDocument.indexOf('/'));
         File baseDocFile = new File(baseDocumentSource, baseDocumentName + "__scroll.html");
         if (!baseDocFile.exists()) {
-            System.err.println("Could not find scroll format for " + baseDocumentName);
+            logger.error("Could not find scroll format for " + baseDocumentName);
             return new HashSet<String>();
         }
         baseDoc = parseXML(new FileReader(baseDocFile));
@@ -246,7 +311,7 @@ public class SingleScrollDocument {
     
     
     public void copyComponentDocument(String documentID) throws IOException {
-        System.err.println("component Document is " + documentID);
+        logger.info("component Document is " + documentID);
         File componentDocSource = Paths.get(websiteBase.getAbsolutePath(), documentID).toFile();
         // TODO
         /*
@@ -257,7 +322,7 @@ public class SingleScrollDocument {
         String compDocumentGroup = documentID.substring(0, documentID.indexOf('/'));
         File compDocFile = new File(componentDocSource, compDocumentName + "__scroll.html");
         if (!compDocFile.exists()) {
-            System.err.println("Could not find scroll format for " + compDocumentName);
+            logger.error("Could not find scroll format for " + compDocumentName);
         }
         org.w3c.dom.Document componentDoc = parseXML(new FileReader(compDocFile));
         Node componentRoot = componentDoc.getDocumentElement();
@@ -412,7 +477,7 @@ public class SingleScrollDocument {
                 return url;
             String documentSet = url2.substring(0, pos);
             String documentSpec = url2.substring(pos+1);
-            System.err.println("group: " + documentSet + " within " + url);
+            logger.info("group: " + documentSet + " within " + url);
             if (documentSpec.startsWith("index.html")) {
                 // Reference to a primary document.  Is it one that we are copying into the scroll?
                 if (documentsInScroll.contains(documentSet)) {
@@ -438,7 +503,7 @@ public class SingleScrollDocument {
                 return url;
             String documentSet = thisDocumentGroup + "/" + url2.substring(0, pos);
             String documentSpec = url2.substring(pos+1);
-            System.err.println("group: " + documentSet + " within " + url);
+            logger.info("group: " + documentSet + " within " + url);
             if (documentSpec.startsWith("index.html")) {
                 // Reference to a primary document.  Is it one that we are copying into the scroll?
                 if (documentsInScroll.contains(documentSet)) {
