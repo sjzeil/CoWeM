@@ -7,6 +7,10 @@
 apply plugin: 'groovy' 
 apply plugin: 'ivy-publish'
 apply plugin: 'java'
+apply plugin: 'java-gradle-plugin'
+
+
+
 apply plugin: 'project-report'
 apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
@@ -14,6 +18,24 @@ apply plugin: 'pmd'
 
 group = 'edu.odu.cs.zeil'
 version = '1.10'
+
+gradlePlugin {
+    plugins {
+        CourseWebsite {
+            id="edu.odu.cs.cowem.course"
+            implementationClass = "edu.odu.cs.cowem.CourseWebsite"
+        }
+        Group {
+            id="edu.odu.cs.cowem.group"
+            implementationClass = "edu.odu.cs.cowem.Group"
+        }
+        Documents {
+            id="edu.odu.cs.cowem.documents"
+            implementationClass = "edu.odu.cs.cowem.Documents"
+        }
+    }
+}
+
 
 // Credentials are loaded from ~/.gradle/gradle.properties
 if(project.hasProperty("ivyRepoUser")){

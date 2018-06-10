@@ -49,6 +49,10 @@ class CourseWebsite implements Plugin<Project> {
                 // jcenter()
                 mavenCentral()
 
+                maven {
+                    url "https://plugins.gradle.org/m2/"
+                }
+                
                 // Use my own CS dept repo
                 ivy {
                     url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
