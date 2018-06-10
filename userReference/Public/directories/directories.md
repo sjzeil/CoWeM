@@ -377,6 +377,16 @@ directory as the "root" of a project that is spread over multiple
 directories. It looks like
 
 ```
+pluginManagement {
+    repositories {
+        ivy { // Use my own CS dept repo
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+        gradlePluginPortal()        
+        mavenCentral()
+    }
+}
+
 def includeFrom = {
     dir ->  new File(rootDir,dir).eachFileRecurse { f ->
         if ( f.name == "build.gradle" ) {
@@ -425,24 +435,9 @@ course.
 ```
 // Top-level build.gradle for a course.
 
-
-buildscript { 
-     repositories {
-         jcenter()
-         mavenCentral()
- 
-        ivy { // Use my own CS dept repo
-            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
-        }
-     }
-     dependencies {
-         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0+'
-         classpath 'edu.odu.cs.zeil:cowem-plugin:1.0+'
-     }
+plugins {
+   id 'edu.odu.cs.cowem.course' version '1.10'
 }
-
-
-apply plugin: 'edu.odu.cs.cowem.CourseWebsite'    
 
                    /*1*/
 

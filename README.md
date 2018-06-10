@@ -48,5 +48,27 @@ Learning Management Systems.
 * PDF collections of the primary documents on the web site contents can be
   constructed and deployed as part of the web site for off-line viewing. 
 
+* CoWeM now publishes under the "new" (Gradle 4.x) plugin style. This
+  changes the way that the plugin is imported into course projects.
+  
+    __settings.gradle__: Add a `pluginManagement` section at the top of the
+    `settings.gradle` file.
+    
+        pluginManagement {
+            repositories {
+                ivy { // Use my own CS dept repo
+                    url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+                }
+                gradlePluginPortal()        
+                mavenCentral()
+            }
+        }
+   
+    __build.gradle__: Remove the `buildscript` section and replace the old
+    `apply plugin` statement by
+    
+        plugins {
+            id 'edu.odu.cs.cowem.course' version '1.10'
+        }
 
 
