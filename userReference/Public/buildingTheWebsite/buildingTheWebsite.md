@@ -127,9 +127,9 @@ pdf
     PDFs can be generated in a variety of page sizes. By default, generated
     PDFs are
   
-    * A letter page (8.5 in by 11in) version
-    * A 4x3 page format for larger tablets.
-    * An 8x5 page format for tables designed for viewing "wide-screen" video. 
+    * A [letter](../../letter.pdf) page (8.5 in by 11in) version
+    * A [4x3](../../4x3.pdf) page format for larger tablets.
+    * An [8x5](../../8x5.pdf) page format for tables designed for viewing "wide-screen" video. 
 
     The generated PDFs are placed in the root directory of the website.
     
