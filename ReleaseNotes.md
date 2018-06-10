@@ -1,5 +1,10 @@
 = Release Notes
 
+== v1.10 June 9, 2018
+
+* PDF collections of the primary documents on the web site contents can be
+  constructed and deployed as part of the web site for off-line viewing. 
+  
 == v1.9 March 4 2018
 
 * Added filtered option to document sets.  Like support files, filtered files
