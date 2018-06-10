@@ -503,10 +503,21 @@
   </xsl:template>
   
   
-    <xsl:template match="includeHTML">
+  <xsl:template match="includeHTML">
     <xsl:variable name="encoded" select="document(@file)"/>
     <xsl:copy-of select="$encoded/html/body/*"/>
   </xsl:template>
+
+  <xsl:template match="p|div">
+    <xsl:copy>
+      <xsl:copy-of select='@*'/>
+      <xsl:apply-templates select="*|text()"/>
+    </xsl:copy>
+    <xsl:text>
+    </xsl:text>
+  </xsl:template>
+
+  
 
   
 <xsl:template name="linkToFormat">

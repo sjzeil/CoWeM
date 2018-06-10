@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -83,6 +84,7 @@ public class SingleScrollDocument {
     String baseDocument;
     
     Set<String> documentsInScroll;
+    List<String> documentQueue;
 
     File tempAreaAbs;
     File webcontentAbs;
@@ -116,6 +118,7 @@ public class SingleScrollDocument {
         websiteBase = theWebsite;
         documentsInScroll = new HashSet<String>();
         documentsInScroll.add(theBaseDocument);
+        documentQueue = new LinkedList<String>();
     }
 
     /**
@@ -128,7 +131,7 @@ public class SingleScrollDocument {
             copyBaseDocument();
             Set<String> copiedDocuments = new HashSet<String>();
             copiedDocuments.add(baseDocument);
-            for (String docRef : documentsInScroll) {
+            for (String docRef : documentQueue) {
                 if (!copiedDocuments.contains(docRef)) {
                     copiedDocuments.add(docRef);
                     copyComponentDocument(docRef);
@@ -248,7 +251,10 @@ public class SingleScrollDocument {
                 int firstSlashPos = referencedDocument.indexOf('/');
                 int secondSlashPos = referencedDocument.indexOf('/', firstSlashPos + 1);
                 referencedDocument = referencedDocument.substring(0, secondSlashPos);
-                documentsInScroll.add(referencedDocument);
+                if (!documentsInScroll.contains(referencedDocument)) {
+                    documentsInScroll.add(referencedDocument);
+                    documentQueue.add(referencedDocument);
+                }
                 System.out.println("Base document refers to " + referencedDocument);
             }
         }
@@ -313,10 +319,6 @@ public class SingleScrollDocument {
     public void copyComponentDocument(String documentID) throws IOException {
         logger.info("component Document is " + documentID);
         File componentDocSource = Paths.get(websiteBase.getAbsolutePath(), documentID).toFile();
-        // TODO
-        /*
-         * project.copy { from baseDocumentSource into buildDir }
-         */
         
         String compDocumentName = documentID.substring(documentID.indexOf('/')+1);
         String compDocumentGroup = documentID.substring(0, documentID.indexOf('/'));
