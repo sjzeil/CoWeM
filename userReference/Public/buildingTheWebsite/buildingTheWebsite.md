@@ -117,6 +117,24 @@ build
 The `build` target is the default. If you don't specify a target at the
 command line, `build` is run.
 
+pdf
+: Build the website by processing the document sets. If the `Directory/outline` 
+  document exists and has been generated in scroll format, it and all primary
+  documents linked from it (that also have scroll formats) are combined
+  into a single document and used to produce PDF summaries of the website
+  suitable, with some limitations, for reading off-line.
+  
+    PDFs can be generated in a variety of page sizes. By default, generated
+    PDFs are
+  
+    * A letter page (8.5 in by 11in) version
+    * A 4x3 page format for larger tablets.
+    * An 8x5 page format for tables designed for viewing "wide-screen" video. 
+
+    The generated PDFs are placed in the root directory of the website.
+    
+    PDF generation is only avilable on machines with the `npm` program for
+    retrieving Javascrip modules. 
 
 clean
 : Delete all files that can be reconstructed via the `build` target. This is

@@ -190,7 +190,7 @@ public class SingleScrollDocument {
             for (Object okey: properties.keySet()) {
                 String key = okey.toString();
                 xform.setParameter(key, properties.getProperty(key));
-                System.err.println("prop " + key + " => " 
+                logger.info("prop " + key + " => " 
                                    + properties.getProperty(key));
             }
             Source xmlIn = new DOMSource(baseDoc.getDocumentElement());
@@ -524,6 +524,8 @@ public class SingleScrollDocument {
         } else if (url.startsWith("#")) {
             String url2 = "#" + thisDocumentGroup + "__" + thisDocumentName + "__" + url.substring(1);
             return url2;
+        } else if (!url.contains("://") && (url.endsWith(".png") || url.endsWith(".gif") || url.endsWith(".jpg"))) {
+            return thisDocumentGroup + "__" + thisDocumentName + "__" + url;
         }
         return url;
     }
