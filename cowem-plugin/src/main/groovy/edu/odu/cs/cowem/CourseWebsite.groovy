@@ -217,7 +217,7 @@ class CourseWebsite implements Plugin<Project> {
             from "build/website/styles/pdfScript.js"
             into "build"
             filter(ReplaceTokens, 
-                   tokens: [scrollFile: project.rootDir.toString() + '/build/combined/outline/index.html'
+                   tokens: [scrollFile: project.rootDir.toString().replace("\\", "/") + '/build/combined/outline/index.html'
                             ])
         }
 
