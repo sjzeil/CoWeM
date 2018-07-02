@@ -6,10 +6,10 @@ console.log('Node version is: ' + process.version);
   const browser = await puppeteer.launch({headless: true});
   const page = await browser.newPage();
   var pagePath = '@scrollFile@';
-  if (pagePath.charAt(1) = ':') {
+  if (pagePath.charAt(1) == ':') {
       pagePath = '/' + pagePath.replace('\\', '/'); // Correction for Windows file URLs
   }
-	await page.goto('file://' + pagePath');
+	await page.goto('file://' + pagePath);
 	try {
 	    await page.waitFor("#mathJaxHasCompleted",
 					       {visible: true, timeout: 60000});
