@@ -92,7 +92,7 @@ public class DocURLs implements SpecialURL {
 	                        sourceDirectory, 
 	                        documentSetName);
 	                relative = relative.resolve(continuation);
-	                String newLink = relative.toString() + ".html" + anchor;
+	                String newLink = relative.toString().replace("\\","/") + ".html" + anchor;
 	                link.setAttribute(linkAttr, newLink);
 	                if (url.startsWith("doc:")) {
 	                    link.setAttribute("class", "doc");
@@ -122,7 +122,7 @@ public class DocURLs implements SpecialURL {
                             sourceDirectory, 
                             targetDocSet);
                     relative = relative.resolve(documentSpec);
-                    String newLink = relative.toString() + ".html" + anchor;
+                    String newLink = relative.toString().replace("\\","/") + ".html" + anchor;
                     link.setAttribute(linkAttr, newLink);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
@@ -141,7 +141,7 @@ public class DocURLs implements SpecialURL {
                     Path relative = project.relativePathToDocumentSet(
                             sourceDirectory, 
                             documentSetName);
-                    String newLink = relative.resolve("index.html").toString()
+                    String newLink = relative.resolve("index.html").toString().replace("\\","/")
                             + anchor;
                     link.setAttribute(linkAttr, newLink);
                     if (url.startsWith("doc:")) {

@@ -143,6 +143,7 @@ public class SingleScrollDocument {
             File outputFile = new File(buildDir, "index.html");
             Writer writer = new BufferedWriter(new FileWriter(outputFile));
             write (writer, finalDoc);
+            writer.close();
             
         } catch (IOException e) {
             logger.error("Error handling files: ", e);
