@@ -62,7 +62,11 @@ public class TestSingleScrollDocument {
 		Path buildPath = Paths.get("build/test/singlescroll");
 		buildDir = buildPath.toFile();
 		if (buildDir.exists()) {
-		    clearDirectory(buildPath);
+			try {
+		       clearDirectory(buildPath);
+			} catch (Exception e) {
+				System.err.println("Unable to clear singlescroll directory: " + e);
+			}
 		}
         buildDir.mkdirs();
 	}
