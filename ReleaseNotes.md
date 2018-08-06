@@ -1,5 +1,57 @@
 = Release Notes
 
+== v1.10 June 9, 2018
+
+* PDF collections of the primary documents on the web site contents can be
+  constructed and deployed as part of the web site for off-line viewing. 
+  
+* CoWeM now publishes under the "new" (Gradle 4.x) plugin style. This
+  changes the way that the plugin is imported into course projects.
+  
+    __settings.gradle__: Add a `pluginManagement` section at the top of the
+    `settings.gradle` file.
+    
+        pluginManagement {
+            repositories {
+                ivy { // Use my own CS dept repo
+                    url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+                }
+                gradlePluginPortal()        
+                mavenCentral()
+            }
+        }
+   
+    __build.gradle__: Remove the `buildscript` section and replace the old
+    `apply plugin` statement by
+    
+        plugins {
+            id 'edu.odu.cs.cowem.course' version '1.10'
+        }
+  
+== v1.9 March 4 2018
+
+* Added filtered option to document sets.  Like support files, filtered files
+  are copied into the website, but parameters from the course build.gradle
+  are replaced, e.g., @semester@ will be replaced by the semester value.
+  
+* Course build.gradle can name extension parameters and these will also be
+  replaced in all documents and filtered files. 
+
+== v1.8 May 29. 2017
+
+* @docModDate@ in earlier versions was replaced by the last
+  modification date of the document's source file. Now, that is the
+  fallback, but if the document is in a `git` repository, it's last
+  change (commit) date is used instead.
+
+* {{{ and }}} can now be used to surround paragraphs that should be
+  omitted from slides.
+  
+== v1.7 
+
+* Preamble can now be placed at start of outline
+
+
 == v1.6 January 16, 2017
 
 * Outline has a new output format, "calendar". This is a simple list

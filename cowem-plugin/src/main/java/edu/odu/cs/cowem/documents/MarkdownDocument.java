@@ -72,8 +72,8 @@ import edu.odu.cs.cowem.macroproc.MacroProcessor;
  */
 public class MarkdownDocument implements Document {
 	
- 
- 	/**
+
+    /**
 	 * For logging error messages.
 	 */
 	private static Logger logger = 
@@ -124,6 +124,10 @@ public class MarkdownDocument implements Document {
 	 */
 	private String line = "";
 
+	 
+    private static final String BEGIN_SLIDE_EXCLUSION = "{{{";
+    
+    private static final String END_SLIDE_EXCLUSION = "}}}";
 	
 	/**
      * Code to pre-pend to PegDown output. 
@@ -278,7 +282,7 @@ public class MarkdownDocument implements Document {
 	 */
 	public final String preprocess(final String format) {
 		final String defaultMacrosFile = "macros.md";
-		
+        
 		MacroProcessor macroProc = new MacroProcessor("%");
 		macroProc.defineMacro(new Macro("_" + format, "1"));
 		
@@ -330,6 +334,12 @@ public class MarkdownDocument implements Document {
 		documentBody.append('\n');
 		try {
 			while ((line = documentIn.readLine()) != null) {
+			    if (line.contains(BEGIN_SLIDE_EXCLUSION)) {
+			        line = line.replace(BEGIN_SLIDE_EXCLUSION, "%ifnot _slides");
+			    }
+                if (line.contains(END_SLIDE_EXCLUSION)) {
+                    line = line.replace(END_SLIDE_EXCLUSION, "%endif");
+                }
 				documentBody.append(line);
 				documentBody.append('\n');
 			}

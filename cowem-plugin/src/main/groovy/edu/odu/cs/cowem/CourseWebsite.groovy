@@ -1,5 +1,8 @@
 package edu.odu.cs.cowem
 
+import com.moowork.gradle.node.task.NodeTask;
+
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.apache.tools.ant.taskdefs.condition.Os
 
 import org.gradle.api.Plugin
@@ -12,6 +15,7 @@ import org.gradle.api.tasks.bundling.Zip
 
 import org.hidetake.gradle.ssh.plugin.SshPlugin
 
+import edu.odu.cs.cowem.documents.SingleScrollDocument
 import edu.odu.cs.cowem.documents.WebsiteProject
 
 /**
@@ -22,7 +26,8 @@ class CourseWebsite implements Plugin<Project> {
     void apply (Project project) {
         
         new org.hidetake.gradle.ssh.plugin.SshPlugin().apply(project);
-
+        project.getPluginManager().apply(com.moowork.gradle.node.NodePlugin.class);
+        
         // Add a Course object as a property of the project
         project.extensions.create ("course", Course);
         project.extensions.create ("website", WebsiteProject, project.rootDir);
@@ -44,6 +49,10 @@ class CourseWebsite implements Plugin<Project> {
                 // jcenter()
                 mavenCentral()
 
+                maven {
+                    url "https://plugins.gradle.org/m2/"
+                }
+                
                 // Use my own CS dept repo
                 ivy {
                     url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
@@ -155,6 +164,74 @@ class CourseWebsite implements Plugin<Project> {
         }
 
 
+        
+        project.task ('singleScroll', dependsOn: 'build') {
+            description 'Package the website into a single scroll.'
+            inputs.dir 'build/website'
+            // outputs.file 'build/combined/scroll-{nbasename}'
+        } .doLast {
+            Properties docProperties = new Properties()
+            docProperties.put('_' + project.rootProject.course.delivery, '1')
+            project.rootProject.course.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+            project.rootProject.course.ext.properties.each { prop, value ->
+                docProperties.put(prop, value.toString())
+            }
+
+            String primaryName = "Directory/outline"; // eventually get from Course properties
+            String primaryDoc = primaryName.substring(primaryName.indexOf('/')+1)
+            String format = "scroll";
+
+            project.delete('build/combined/' + primaryDoc)
+            SingleScrollDocument doc = new SingleScrollDocument(
+                    project.rootProject.website,
+                    docProperties,
+                    project.file('build/combined/' + primaryDoc),
+                    project.file('build/website/'),
+                    primaryName
+                    );
+            //doc.setDebugMode(true);
+            doc.generate();
+        }
+
+        project.node {  
+            version = '8.11.2' // current LTS version
+            workDir = project.file("${project.buildDir}/nodejs")
+            npmWorkDir = project.file("${project.buildDir}")
+            nodeModulesDir = project.file("${project.buildDir}")
+            download = true  // download node
+        }
+        
+        project.build.doLast {
+            project.copy {
+                from 'build/website/styles/'
+                include 'pdf-package.json'
+                into 'build/'
+                rename '.+', 'package.json'
+            }
+        }
+        project.npm_install.dependsOn('build')
+        
+        project.task ('pdfScript', type: Copy, dependsOn: 'build') {
+            from "build/website/styles/pdfScript.js"
+            into "build"
+            filter(ReplaceTokens, 
+                   tokens: [scrollFile: project.rootDir.toString().replace("\\", "/") + '/build/combined/outline/index.html'
+                            ])
+        }
+
+        project.task ('pdf', type: NodeTask, 
+                dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {
+            script = project.file('build/pdfScript.js')
+        }
+        project.pdf.doLast {
+            project.delete('build/pdfScript.js')
+        }
+        
+        
+        
+        
         
         project.task ('bb', dependsOn: 'build') {
             description 'Package the website for import into Blackboard.'

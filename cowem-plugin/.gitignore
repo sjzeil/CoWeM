@@ -1,8 +1,8 @@
 /.settings/
 /bin/
-build/
 .gradle/
 /gradle.log
 /gradle-app.setting
 .project
 .classpath
+/build/

@@ -1,4 +1,4 @@
-Title: Modifying Appearances & Behaviors
+Title: Modifying Appearances and Behaviors
 Author: Steven J Zeil
 Date: @docModDate@
 TOC: yes

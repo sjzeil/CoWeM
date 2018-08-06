@@ -1,6 +1,9 @@
 package edu.odu.cs.cowem.documents;
 
 import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,8 +52,8 @@ public class TestDocumentDating {
         
         String modDate = doc.getModificationDate(source);
 
-        assertTrue(modDate.contains("2016"));
-        assertTrue(modDate.contains("Jul"));
+        assertThat (modDate, containsString("2017"));
+        assertThat (modDate, containsString("May"));
     }
     
     @Test
@@ -70,8 +73,8 @@ public class TestDocumentDating {
         String year = "" + (now.get(Calendar.YEAR));
         String month = new SimpleDateFormat("MMM").format(now.getTime());
         
-        assertTrue(modDate.contains(year));
-        assertTrue(modDate.contains(month));
+        assertThat(modDate, containsString(year));
+        assertThat(modDate, containsString(month));
     }
 
     

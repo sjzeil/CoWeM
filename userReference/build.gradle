@@ -7,7 +7,10 @@ buildscript {
      repositories {
          jcenter()
          mavenCentral()
- 
+         maven {
+             url "https://plugins.gradle.org/m2/"
+         }
+     
          /*
          // Use my own CS dept repo
          ivy {
@@ -21,25 +24,32 @@ buildscript {
      }
      dependencies {
          classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
-         //classpath 'edu.odu.cs.zeil:cowem-plugin:1.9+'
-         classpath name: 'cowem-plugin-1.9', changing: true
+         //classpath 'edu.odu.cs.zeil:cowem-plugin:1.10+'
+         classpath name: 'cowem-plugin-1.10', changing: true
          classpath 'org.pegdown:pegdown:1.6.0+'
          classpath 'org.slf4j:slf4j-api:1.7.0+'
          classpath 'net.sf.saxon:saxon-dom:8.7+'
          classpath 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201705170830-rc1+'
+         classpath 'com.moowork.gradle:gradle-node-plugin:1.2.0'
          
      }
 }
-  
+
+/*
+plugins {
+    id "com.moowork.node" version "1.2.0"  // Mockup for what will eventually go into the plugin
+}
+*/
+
 apply plugin: edu.odu.cs.cowem.CourseWebsite
 
 
  
 
 course {
-	courseName        = 'CoWeM v1.9'
+	courseName        = 'CoWeM'
 	courseTitle       = 'Course Websites from Markdown'
-	semester          = '2017'
+	semester          = 'v1.10'
 	sem               = 'latest'
 	instructor        = 'Steven J Zeil'
 	email             = 'zeil@cs.odu.edu'
@@ -50,6 +60,42 @@ course {
     baseURL           = 'https://www.cs.odu.edu/~zeil/cowem/'
 }
 
- 
+/*
+node {  
+    version = '8.11.2' // current LTS version
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.buildDir}")
+    nodeModulesDir = file("${project.buildDir}")
+    download = true  // download node
+}
 
- 
+build.doLast {
+    project.copy {
+        from 'build/website/styles/'
+        include 'pdf-package.json'
+        into 'build/'
+        rename '.+', 'package.json'
+    }
+}
+npm_install.dependsOn('build')
+
+import org.apache.tools.ant.filters.ReplaceTokens
+task pdfScript (type: Copy, dependsOn: 'build') {
+    from "build/website/styles/pdfScript.js"
+    into "build"
+    filter(ReplaceTokens, 
+           tokens: [scrollFile: project.rootDir.toString() + '/build/combined/outline/index.html',
+                    pdfDir: project.rootDir.toString() + '/build/combined/' + course.courseName + "-",
+                    pdfFile: project.rootDir.toString() + '/build/combined/outline.pdf',
+                    testFile: project.rootDir.toString() + '/src/test/data/scroll.html',
+                    pdfFormat: 'A4'])
+}
+
+task pdf(type: NodeTask, dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {
+    script = file('build/pdfScript.js')
+}
+pdf.doLast {
+    project.delete('build/pdfScript.js')
+}
+*/
+

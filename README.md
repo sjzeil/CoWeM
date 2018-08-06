@@ -35,7 +35,7 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.8.
+* Currently in version 1.10.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
@@ -43,13 +43,32 @@ Learning Management Systems.
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
 
+# New in v1.10
 
-# New in v1.8
+* PDF collections of the primary documents on the web site contents can be
+  constructed and deployed as part of the web site for off-line viewing. 
 
-* @docModDate@ in earlier versions was replaced by the last
-  modification date of the document's source file. Now, that is the
-  fallback, but if the document is in a `git` repository, it's last
-  change (commit) date is used instead.
+* CoWeM now publishes under the "new" (Gradle 4.x) plugin style. This
+  changes the way that the plugin is imported into course projects.
+  
+    __settings.gradle__: Add a `pluginManagement` section at the top of the
+    `settings.gradle` file.
+    
+        pluginManagement {
+            repositories {
+                ivy { // Use my own CS dept repo
+                    url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+                }
+                gradlePluginPortal()        
+                mavenCentral()
+            }
+        }
+   
+    __build.gradle__: Remove the `buildscript` section and replace the old
+    `apply plugin` statement by
+    
+        plugins {
+            id 'edu.odu.cs.cowem.course' version '1.10'
+        }
 
-* {{{ and }}} can now be used to surround paragraphs that should be
-  omitted from slides.
+
