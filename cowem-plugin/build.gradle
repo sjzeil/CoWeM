@@ -17,7 +17,7 @@ apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 group = 'edu.odu.cs.zeil'
-version = '1.10'
+version = '1.11'
 
 gradlePlugin {
     plugins {

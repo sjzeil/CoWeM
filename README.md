@@ -35,13 +35,21 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.10.
+* Currently in version 1.11.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
   set of files that will "bootstrap" the fetching of CoWeM code and the
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
+
+
+# New in v1.11
+
+* `[[[` and `]]]` can now be used to surround paragraphs that should be
+  shown only in slides.   (The markers `{{{` and `}}}` to surround text to
+  be shown everywhere _except_ in slides was intrduced in v1.8.)
+
 
 # New in v1.10
 
