@@ -129,7 +129,11 @@ public class MarkdownDocument implements Document {
     
     private static final String END_SLIDE_EXCLUSION = "}}}";
 	
-	/**
+    private static final String BEGIN_SLIDE_INCLUSION = "[[[";
+    
+    private static final String END_SLIDE_INCLUSION = "]]]";
+
+    /**
      * Code to pre-pend to PegDown output. 
      */
     private static final String HTML_HEADER = "<html>\n<head>\n"
@@ -339,6 +343,12 @@ public class MarkdownDocument implements Document {
 			    }
                 if (line.contains(END_SLIDE_EXCLUSION)) {
                     line = line.replace(END_SLIDE_EXCLUSION, "%endif");
+                }
+			    if (line.contains(BEGIN_SLIDE_INCLUSION)) {
+			        line = line.replace(BEGIN_SLIDE_INCLUSION, "%if _slides");
+			    }
+                if (line.contains(END_SLIDE_INCLUSION)) {
+                    line = line.replace(END_SLIDE_INCLUSION, "%endif");
                 }
 				documentBody.append(line);
 				documentBody.append('\n');
