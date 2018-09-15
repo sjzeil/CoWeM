@@ -81,6 +81,8 @@ Image processing:
 %define <\bPicOnLeft> (file,pctwidth) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
 %define <\picOnLeft> (file,pctwidth) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: left; max-width: pctwidth%;"/>}
 %define <\centerPic> (file,pctwidth) {<div class="noFloat">&nbsp;</div><div style="text-align: center'"><img src="file.png" align="center" style="max-width: pctwidth%;"/></div>}
+%define <\picInline> (file,pctwidth) {<img src="file.png" style="max-width: pctwidth%;"/>}
+%define <\picInline> (file,pctwidth,algnmnt) {<img src="file.png" align="algnmnt" style="max-width: pctwidth%;"/>}
 %define <\icon> (file,linkURL) {<span class="linkedIcon"><a href="linkURL" target="_blank"><img src="file"/></a></span>}
 %define <\noFloat> <> {<div class="noFloat">&nbsp;</div>}
 
