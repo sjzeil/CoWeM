@@ -328,6 +328,12 @@ public class SingleScrollDocument {
             logger.error("Could not find scroll format for " + compDocumentName);
         }
         org.w3c.dom.Document componentDoc = parseXML(new FileReader(compDocFile));
+        if (componentDoc == null) {
+        	componentDoc = parseXML(
+        			"<html><body><div class='mainBody'>Could not parse "
+        			+ compDocumentName + "...skipping</div></body></html>"
+        			);
+        }
         Node componentRoot = componentDoc.getDocumentElement();
         XPath xPath = XPathFactory.newInstance().newXPath();
 
