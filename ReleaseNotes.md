@@ -1,5 +1,11 @@
 = Release Notes
 
+== v1.11 August 10, 2018
+
+* `[[[` and `]]]` can now be used to surround paragraphs that should be
+  shown only in slides.   (The markers `{{{` and `}}}` to surround text to
+  be shown everywhere _except_ in slides was intrduced in v1.8.)
+
 == v1.10 June 9, 2018
 
 * PDF collections of the primary documents on the web site contents can be

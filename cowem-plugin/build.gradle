@@ -17,7 +17,7 @@ apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 group = 'edu.odu.cs.zeil'
-version = '1.10'
+version = '1.11'
 
 gradlePlugin {
     plugins {
@@ -192,7 +192,7 @@ task reportStats (type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     main = 'edu.odu.cs.zeil.report_accumulator.Main';
     args = [theBuildNumber,
-        'http://www.cs.odu.edu/~zeil/gitlab/' + websiteDir + '/reports/',
+        'https://www.cs.odu.edu/~zeil/gitlab/' + websiteDir + '/reports/',
         'build/reports']
 }
 
@@ -201,5 +201,5 @@ task deployReports (type: Copy) {
     group 'Publishing'
     dependsOn 'reportStats'
     from 'build/reports'
-    into '/home/zeil/public_html/gitlab/' + websiteDir + '/reports'
+    into '/home/zeil/secure_html/gitlab/' + websiteDir + '/reports'
 }

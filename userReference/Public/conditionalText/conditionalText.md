@@ -14,6 +14,9 @@ abbreviated slides and a lengthier full-text version.
 
 # Special Case - Slide Markup
 
+
+## Never in Slides
+
 The markers <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt> can be used to
 surround text that will only appear in any output format **except**
 `Slides`.
@@ -108,6 +111,42 @@ There are a few limitations on the placements of these markers.
 
     }}}
 
+## Slides Only
+
+Conversely, the markers <tt>[</tt><tt>[</tt><tt>[</tt> 
+and <tt>]</tt><tt>]</tt><tt>]</tt> can 
+be used to surround text that will appear **only** in
+`Slides`.
+
+\bSidebar
+
+<tt>[</tt><tt>[</tt><tt>[</tt>
+
+    This paragraph will appear in
+
+    * slides
+    * but not in scrolls and pages
+
+
+<tt>]</tt><tt>]</tt><tt>]</tt>
+
+\eSidebar
+
+
+[[[
+
+This paragraph will appear in
+
+* slides
+* but not in scrolls and pages
+
+]]]
+
+
+(Look [here](conditionalText__slides.html#special-case-slide-markup) to see the slides.)
+
+The placement rules for these markers are the same as for the preceding
+everywhere-except-slides markers. 
 
 # The General Case
 
