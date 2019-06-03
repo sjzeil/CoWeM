@@ -268,9 +268,13 @@ public class MarkdownDocument implements Document {
      */
 	@Override
 	public final String transform(final String format) {
+		logger.info("pre-processing for " + format);
 		String preprocessed = preprocess (format);
+		logger.info("processing for " + format);
 		org.w3c.dom.Document htmlDoc = process (preprocessed);
+		logger.info("post-processing for " + format);
 		String result = postprocess (htmlDoc, format);
+		logger.info("completed " + format);
 		try {
 			documentIn.close();
 		} catch (IOException e) {
