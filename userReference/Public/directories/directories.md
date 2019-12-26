@@ -423,7 +423,7 @@ like.  The only restrictions:
 That said, most websites will have a `Directory` group and both
 _outline_ and _navigation_ document sets within that group.
   
-# build.gradle
+## build.gradle
 
 The `build.gradle` file in the top directory identifies this as a
 CoWeM project and provides a basic set of information about the
@@ -436,7 +436,7 @@ course.
 // Top-level build.gradle for a course.
 
 plugins {
-   id 'edu.odu.cs.cowem.course' version '1.10'
+   id 'edu.odu.cs.cowem.course' version '1.12'
 }
 
                    /*1*/

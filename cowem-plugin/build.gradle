@@ -12,12 +12,12 @@ apply plugin: 'java-gradle-plugin'
 
 
 apply plugin: 'project-report'
-apply plugin: 'checkstyle'
+//apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 group = 'edu.odu.cs.zeil'
-version = '1.11'
+version = '1.12'
 
 gradlePlugin {
     plugins {
@@ -134,15 +134,11 @@ jar {
 
 ////////  Website report Generation ///////////////////
 
+/*
 checkstyle {
     ignoreFailures = true
     showViolations = false
     configProperties = [ "suppressionFile" : file('config/checkstyle/checkstyle.suppressions.xml')]
-}
-
-
-pmd {
-    ruleSetFiles = files("config/pmd/pmd.xml")
 }
 
 tasks.withType(Checkstyle) {
@@ -151,13 +147,17 @@ tasks.withType(Checkstyle) {
     }
 }
 
+
+*/
+
 pmd {
+    ruleSetFiles = files("config/pmd/pmd.xml")
     ignoreFailures = true
     consoleOutput = false
 }
 
 test.ignoreFailures=true
-checkstyleTest.enabled = false
+//checkstyleTest.enabled = false
 pmdTest.enabled = false
 check.dependsOn htmlDependencyReport
 

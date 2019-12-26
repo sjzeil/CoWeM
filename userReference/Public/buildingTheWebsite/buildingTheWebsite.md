@@ -273,8 +273,10 @@ zip
     [Blackboard content collection](#importing-a-zip-package). 
 
 bb
-: Package the website as a fat Blackboard module that can be imported into
-  a Blackboard course.  Content included is
+: _Deprecated in favor of_ `scorm` _(see below)_.
+
+    Package the website as a fat Blackboard module that can
+    be imported into a Blackboard course.  Content included is
   
     * The entire website is exported to the Blackboard course 
       Content Area.
@@ -305,7 +307,7 @@ bb
 \eSidebar
 
 bbthin
-: Package the website as a that Blackboard module that can be imported into
+: Package the website as a Blackboard module that can be imported into
   a Blackboard course.  Content included is
   
     * All links from the `Directory/navigation` document set are added
@@ -317,25 +319,18 @@ bbthin
 
     Brief instructions on importing Blackboard packages is given
     [below](#importing-a-bb-or-bbthin-package).
+    
+scorm
+: Package the website as a SCORM 1.2 package that can be imported into
+  Blackboard or most other Learning Management Systems.
 
+    Brief instructions on importing a SCORM package into
+    Blackboard is given [below](#importing-a-scorm-package).
+    
+    The SCORM format does not include calendar updates
+    in Blackboard, but calendar entries can be generated
+    and imported as a `bbthin` target.
 
-### Unsupported in v1.0
-
-Possible future packaging options include:
-
-imscc
-: A fat package in the IMS Common Cartridge standard format.
-
-imsccthin
-: A thin package in the IMS Common Cartridge standard format.
- 
-canvas
-: A fat package for import into the Canvas LMS.
-
-canvasthin
-: A thin package for import into the Canvas LMS.
-
-All of these were available in an earlier protoype of CoWeM.
 
 
 ## Building a Specific Document Set Directory
@@ -418,6 +413,28 @@ You can also add any item uploaded this way into your
 Blackboard course's navigation bar by clicking the "+" at the upper left of
 the navigation bar and selecting `Course Link`.  
 
+## Importing a SCORM package
+
+1. Use the _scorm_ build target, 
+   as described above, to produce a package stored in
+   `build/packages/scorm`...`.zip`
+   
+2. Enter your Blackboard course. Select (or create) a content area, such
+   as the "Outline" area, and enter that area.
+   
+3. from the "`BuildContent`" menu, select "`Content package
+   (SCORM)`" and follow the instructions to upload your newly generated
+   `scorm`...`.zip` file.
+
+4. There is no "grading" associated with these packages. So choose the following
+   settings:
+   
+    * Make SCORM Availabble; yes
+    * Number of Attempts: Allow unlimited attempts
+    * Track Number of Views: whatever you like
+    * Grade SCORM: No Grading
+    * Grade SCOS: No 
+    
 
 ## Importing a bb or bbthin Package
 

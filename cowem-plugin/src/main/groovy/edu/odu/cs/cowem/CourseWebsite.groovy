@@ -233,6 +233,18 @@ class CourseWebsite implements Plugin<Project> {
         
         
         
+        project.task ('scorm', dependsOn: 'build') {
+            description 'Package the website as a SCORM 1.2 package for import into LMSs.'
+            inputs.dir 'build/website'
+            // outputs.file 'build/packages/bb-${project.name}.zip'
+        } .doLast {
+            new ScormPackage(project,
+                project.course, 
+                project.file('build')
+                ).generate(project.file('build/packages/scorm-' 
+                                         + project.name + '.zip'))
+        }
+
         project.task ('bb', dependsOn: 'build') {
             description 'Package the website for import into Blackboard.'
             inputs.dir 'build/website'
@@ -243,7 +255,6 @@ class CourseWebsite implements Plugin<Project> {
                 project.file('build')
                 ).generate(project.file('build/packages/bb-' + project.name + '.zip'), false)
         }
-
         
         project.task ('bbthin', dependsOn: 'build') {
             description 'Create a Blackboard package that will link back to the website content.'
