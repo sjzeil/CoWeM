@@ -5,19 +5,7 @@
 
   <exclude-pattern>.*/src/test/.*</exclude-pattern>
   <exclude-pattern>.*/src/integrationTest/.*</exclude-pattern>
-  <rule ref="rulesets/java/design.xml">
-    <!-- This ignores any explanation in the Javadoc. Bad. -->
-    <exclude name="UncommentedEmptyConstructor"/>
-    <!-- I disagree. -->
-    <exclude name="ConfusingTernary"/>
-    <!-- Complains about enums. I know what I'm doing so it's always wrong. -->
-    <exclude name="CompareObjectsWithEquals"/>
-    <!-- Maintainability is more important than a particular JVM's quirks. -->
-    <exclude name="TooFewBranchesForASwitchStatement"/>
-    <!-- Interacts poorly with Lombok and JCommander, but could be useful. -->
-    <exclude name="ImmutableField"/>
-    <exclude name="UseVarargs"/>
-  </rule>
+  <rule ref="category/java/design.xml"/>
   <rule ref="rulesets/java/basic.xml"/>
   <rule ref="rulesets/java/clone.xml"/>
   <rule ref="rulesets/java/empty.xml"/>

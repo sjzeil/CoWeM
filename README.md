@@ -12,6 +12,7 @@ for [the CS 250 pretest](https://www.cs.odu.edu/~zeil/cs250PreTest/latest/),
 [CS 350]((https://www.cs.odu.edu/~zeil/cs350/latest/)), 
 [CS 361](https://www.cs.odu.edu/~zeil/cs361/latest/),
 [CS 382](https://www.cs.odu.edu/~zeil/cs382/latest/),
+[CS 390](https://www.cs.odu.edu/~zeil/cs390/latest/),
 [CS 410](https://www.cs.odu.edu/~tkennedy/cs410/s17/), and
 [CS 411w](https://www.cs.odu.edu/~tkennedy/cs411/s17/).
 
@@ -35,7 +36,7 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.11.
+* Currently in version 1.12.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
@@ -43,6 +44,10 @@ Learning Management Systems.
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
 
+# New in v1.12
+
+* Courses can be published as a SCORM 1.2 package for easy import into
+  Blackboard and other Learning Management Systems.
 
 # New in v1.11
 

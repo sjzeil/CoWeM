@@ -643,7 +643,7 @@ public class MarkdownDocument implements Document {
 	 * part of early processing. These in include Title, Author, CSS,
 	 * Date, Copyright, and JaxenURL.
 	 *    
-	 * @param fieldName 
+	 * @param fieldName name of the metadata field
 	 * @return value of that metadata field extracted from the beginning of the
 	 *               document. 
 	 */
