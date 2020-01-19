@@ -565,14 +565,14 @@ public class TestMarkdownDocument {
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
 		assertEquals ("Title of Document", actualTitle);
 		
-		NodeList paragraphs = (NodeList)xPath.evaluate("/html/body/p",
+		NodeList paragraphs = (NodeList)xPath.evaluate("/html/body//p",
 				root, XPathConstants.NODESET);
 		assertEquals(5, paragraphs.getLength());
 		
-		String actualPar3 = (String)xPath.evaluate("/html/body/p[@id = 'p3']", root);
+		String actualPar3 = (String)xPath.evaluate("/html/body//p[@id = 'p3']", root);
 		assertEquals ("paragraph 3", actualPar3);
 		
-		NodeList pages = (NodeList)xPath.evaluate("/html/body/div[@class='page']",
+		NodeList pages = (NodeList)xPath.evaluate("/html/body//div[@class='page']",
 				root, XPathConstants.NODESET);
 		assertEquals(0, pages.getLength());
 	}

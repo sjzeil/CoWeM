@@ -594,7 +594,7 @@ public class MacroProcessor {
 			    logger.error("**Unexpected I/O error", e);
 			}
 		}
-		return results;
+		return results.replace("\r", "");
 	}
 
     /**
@@ -626,7 +626,7 @@ public class MacroProcessor {
 				    + inputFile.getAbsolutePath(), e);
 			}
 		}
-		return results;
+		return results.replace("\r", "");
 	}
 
 

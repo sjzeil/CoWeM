@@ -361,7 +361,9 @@ public class MarkdownDocument implements Document {
 			logger.error("Unexpected problem reading document: " + e);
 		}
 		
-		return macroProc.process(documentBody.toString());
+		String processed = macroProc.process(documentBody.toString());
+		processed = processed.replace("\r", "");
+		return processed;
 	}
 
 	/**

@@ -156,7 +156,7 @@ public class TestScrollFormatting {
 		assertEquals (0, pages.getLength());
 
 		Node titleBlock = (Node)xPath.evaluate(
-				"/html/body/div[@class='titleblock']", root,
+				"/html/body//div[@class='titleblock']", root,
 				XPathConstants.NODE);
 		assertNotNull(titleBlock);
 
@@ -167,7 +167,7 @@ public class TestScrollFormatting {
 		assertEquals (titleString, titleDiv.getTextContent());
 
 		NodeList pars = (NodeList)xPath.evaluate(
-				"/html/body/p", root,
+				"/html/body//p", root,
 				XPathConstants.NODESET);
 		assertTrue(pars.getLength() > 0);
 		boolean found = false;
