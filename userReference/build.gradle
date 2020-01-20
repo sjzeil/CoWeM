@@ -49,11 +49,11 @@ apply plugin: edu.odu.cs.cowem.CourseWebsite
 course {
 	courseName        = 'CoWeM'
 	courseTitle       = 'Course Websites from Markdown'
-	semester          = 'v1.12'
+	semester          = 'v1.13'
 	sem               = 'latest'
 	instructor        = 'Steven J Zeil'
 	email             = 'zeil@cs.odu.edu'
-	copyright         = '2016-2017, Old Dominion Univ.'
+	copyright         = '2016-2020, Old Dominion Univ.'
 	homeURL           = 'https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html'
 	deployDestination = '/home/zeil/secure_html/cowem/'
 	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/cowem/'
