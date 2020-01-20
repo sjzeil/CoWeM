@@ -1,5 +1,17 @@
 = Release Notes
 
+== v1.13 Jan 20, 2020
+
+* PlantUML diagrams can be embedded by giving a code block (in the
+  three back-tick form, not the indented form) with "plantuml" as the
+  programming langauge.
+
+== v1.12, Dec 28, 2019
+
+* Courses can be published as a SCORM 1.2 package for easy import into
+  Blackboard and other Learning Management Systems.
+
+
 == v1.11 August 10, 2018
 
 * `[[[` and `]]]` can now be used to surround paragraphs that should be

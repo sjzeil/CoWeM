@@ -36,7 +36,7 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.12.
+* Currently in version 1.13.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
@@ -44,44 +44,15 @@ Learning Management Systems.
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
 
+# New in v1.13
+
+* PlantUML diagrams can be embedded by giving a code block (in the
+  three back-tick form, not the indented form) with "plantuml" as the
+  programming langauge.
+
+
 # New in v1.12
 
 * Courses can be published as a SCORM 1.2 package for easy import into
   Blackboard and other Learning Management Systems.
-
-# New in v1.11
-
-* `[[[` and `]]]` can now be used to surround paragraphs that should be
-  shown only in slides.   (The markers `{{{` and `}}}` to surround text to
-  be shown everywhere _except_ in slides was intrduced in v1.8.)
-
-
-# New in v1.10
-
-* PDF collections of the primary documents on the web site contents can be
-  constructed and deployed as part of the web site for off-line viewing. 
-
-* CoWeM now publishes under the "new" (Gradle 4.x) plugin style. This
-  changes the way that the plugin is imported into course projects.
-  
-    __settings.gradle__: Add a `pluginManagement` section at the top of the
-    `settings.gradle` file.
-    
-        pluginManagement {
-            repositories {
-                ivy { // Use my own CS dept repo
-                    url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
-                }
-                gradlePluginPortal()        
-                mavenCentral()
-            }
-        }
-   
-    __build.gradle__: Remove the `buildscript` section and replace the old
-    `apply plugin` statement by
-    
-        plugins {
-            id 'edu.odu.cs.cowem.course' version '1.10'
-        }
-
 

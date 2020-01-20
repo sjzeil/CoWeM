@@ -370,6 +370,8 @@ document set.
 
 # Graphics
 
+## Positioning Graphics
+
 \bSidebar{60}
 
 ```
@@ -500,10 +502,117 @@ Or I can put them centered with nothing flowing around them.
 Or I can put them centered with nothing flowing around them.
 
 
+## Generated Graphics (PlantUML)
 
 
+\bSidebar
 
-## Code Markup
+    ```plantuml
+
+    class Book {
+        title: String
+        authors: list<Author>
+        getLocation(): Shelf
+    }
+
+    Publication <|- Book
+    Shelf o- Book
+    ```
+
+\eSidebar 
+
+
+If a code block (introduced with three back-ticks) is labeled
+with the language name "`plantuml`", then the code block will be
+replaced by a graphic representing a UML diagram as interpreted by 
+[PlantUML](https://plantuml.com).   (This mechanism is similar to
+the support for PlantUML in the GitHub dialect of Markdown.)
+
+
+```plantuml
+class Book {
+    title: String
+    authors: list<Author>
+    getLocation(): Shelf
+}
+
+Publication <|- Book
+Shelf o- Book
+```  
+
+\bSidebar
+
+    ```plantuml class=right
+    skinparam style strictuml
+    hide empty members
+
+    Publication <|-down- Book
+    Shelf o- "*" Book
+    ```  
+
+\eSidebar
+
+
+It is possible to add CSS styles to the generated image
+using the `class=` modifier. The most obvious application of
+this is to cause the image to float on the right or left.
+
+```plantuml class=right
+skinparam style strictuml
+hide empty members
+
+Publication <|-down- Book
+Shelf o- "*" Book
+```  
+
+Change the "right" to "left" to float on the other side.
+
+Change to "center" for a centered, non-floating figure.
+
+\bSidebar
+
+    ```plantuml classes='left foobar'
+    skinparam style strictuml
+    skinparam shadowing true
+    hide empty members
+
+    caption Figure 1
+
+    title
+    Class Relationships
+    endtitle
+
+    Author --> Book : writes
+    ```  
+
+\eSidebar
+
+It is actually possible to add multiple CSS class names
+(inside single-quotes).
+
+```plantuml classes='left foobar'
+skinparam style strictuml
+skinparam shadowing true
+hide empty members
+
+caption Figure 1
+
+title
+Class Relationships
+endtitle
+class Author {
+}
+
+class Book {
+}
+
+Author --> Book : writes
+```  
+
+(Although you would have to examine the generated HTML to see
+that the useless class "foobar" is attached to the image.)
+
+# Code Markup
 
 To facilitate discussing programming code, I have some special markups
 that can be inserted into C++ or Java code as comments. This way it

@@ -68,6 +68,14 @@
           src="{$stylesURL}/md-{$format}.js">
           <xsl:text> </xsl:text>
       </script>
+      <script type="text/javascript"
+          src="{$stylesURL}/rawdeflate.js">
+          <xsl:text> </xsl:text>
+      </script>
+      <script type="text/javascript"
+          src="{$stylesURL}/plantuml.js">
+          <xsl:text> </xsl:text>
+      </script>
       <xsl:choose>
         <xsl:when test="lower-case($mathSupport) = 'latex'">
            <script type="text/javascript"><xsl:text>
@@ -311,6 +319,43 @@
 			</div>
 		</xsl:if>
 	</xsl:template>
+
+
+  <xsl:template match="pre[starts-with(code/@class, 'plantuml')]">
+	  <xsl:variable name="idValue"
+            select="generate-id()"/>
+      <xsl:variable name="classesMarker">
+          <xsl:text>classes='</xsl:text>
+      </xsl:variable>
+      <xsl:variable name="singleQuote">
+          <xsl:text>'</xsl:text>
+      </xsl:variable>
+      <xsl:variable name='classNames'>
+         <xsl:choose>
+            <xsl:when test="contains(code/@class, $classesMarker)">
+                <xsl:value-of select='substring-before(substring-after(code/@class, $classesMarker), $singleQuote)'/>
+            </xsl:when>
+            <xsl:when test="contains(code/@class, 'class=')">
+                <xsl:value-of select='substring-before(substring-after(concat(code/@class, " "), "class="), " ")'/>
+            </xsl:when>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:text>
+      </xsl:text>
+      <div class="noFloat"> </div>
+      <pre style="display:none" id="pre{$idValue}">
+         <xsl:copy-of select="code"/>
+      </pre>
+      <img class="{$classNames}" src="" id="img{$idValue}"> </img>
+      <script>
+      	<xsl:text>plantuml("pre</xsl:text>
+      	<xsl:value-of select="$idValue"/>
+      	<xsl:text>", "img</xsl:text>
+      	<xsl:value-of select="$idValue"/>
+      	<xsl:text>");
+      	</xsl:text>
+      </script>
+  </xsl:template>
 
 
 

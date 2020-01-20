@@ -185,6 +185,10 @@ div.details {
    font-weight: 500;
 }
 
+img.right {float: right;}
+img.left {float: left;}
+img.center {display: block; margin-left: auto; margin-right: auto;}
+
 div.sidebar {float: right;         
              background-color: #C0E0ff;
              margin: 1ex; 
