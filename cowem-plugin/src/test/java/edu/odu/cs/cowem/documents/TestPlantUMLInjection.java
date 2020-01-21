@@ -3,38 +3,15 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import edu.odu.cs.cowem.documents.MarkdownDocument;
-import edu.odu.cs.cowem.documents.WebsiteProject;
 
 /**
  * @author zeil
@@ -67,6 +44,14 @@ public class TestPlantUMLInjection {
 			+ "```\n\n"
 			+ "A paragraph\n\n";
 
+	private String mdInput4 = "Title: Title of Document\n"
+			+ "Author: John Doe\n"
+			+ "Date: Jan 1, 2012\n\n"
+			+ "* Start a list\n\n"
+			+ "    ```plantuml classes='folde rol'\n"
+			+ "    Building 0- Room\n"
+			+ "    ```\n\n"
+			+ "* A list item\n\n";
 	
 	private Properties properties;
 	private WebsiteProject proj;
@@ -138,5 +123,20 @@ public class TestPlantUMLInjection {
 		
 	}
 	
+	/**
+	 * Test method for {@link edu.odu.cs.cowem.documents.MarkdownDocument#transform(java.lang.String, java.util.Properties)}.
+	 */
+	@Test
+	public void testImageInjectionNested() {
+		MarkdownDocument doc = new MarkdownDocument(source, proj,
+		        properties, mdInput4);
+		
+		String htmlContent = doc.transform("scroll");
+		
+		assertTrue (htmlContent.contains("<img"));
+		assertTrue (htmlContent.contains("plantuml("));
+		assertFalse (htmlContent.contains("$idValue"));
+		
+	}
 	
 }
