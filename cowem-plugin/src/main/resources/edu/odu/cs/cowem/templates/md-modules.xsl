@@ -37,9 +37,9 @@
       <xsl:copy-of select="@*"/>
       
       <script>
-          window.onload = function() {
+          window.addEventListener('load',  (event) =>  {
               modulePageLoad();
-          }
+          });
       </script>
       
       <div class="titleblock">

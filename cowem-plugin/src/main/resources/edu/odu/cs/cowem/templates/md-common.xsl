@@ -69,6 +69,10 @@
           <xsl:text> </xsl:text>
       </script>
       <script type="text/javascript"
+          src="{$stylesURL}/md-{$format}-ext.js">
+          <xsl:text> </xsl:text>
+      </script>
+      <script type="text/javascript"
           src="{$stylesURL}/rawdeflate.js">
           <xsl:text> </xsl:text>
       </script>

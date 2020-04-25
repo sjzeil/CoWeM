@@ -34,9 +34,9 @@
       <xsl:copy-of select="@*"/>
       
       <script>
-          window.onload = function() {
+          window.addEventListener('load',  (event) =>  {
               calendarPageLoad();
-          }
+          });
       </script>
       <ul>
       <xsl:apply-templates select="*//li | .//h1 | .//h2 | .//h2 | .//h4" mode="activities1"/>
@@ -171,9 +171,9 @@
       
       
       <script>
-          window.onload = function() {
+          window.addEventListener('load',  (event) =>  {
               calendarPageLoad();
-          }
+          });
       </script>
       
       <ul>

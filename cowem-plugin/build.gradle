@@ -3,14 +3,6 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-//    dependencies {
-//        classpath 'org.hidetake:gradle-ssh-plugin:2.2.0+'
-//    }
-}
 
 plugins {
     id 'groovy'
@@ -22,7 +14,7 @@ plugins {
     id 'pmd'
 }
 group = 'edu.odu.cs.zeil'
-version = '1.13'
+version = '1.14'
 
 gradlePlugin {
     plugins {
@@ -64,7 +56,7 @@ repositories {
 
     // Use my own CS dept repo
     ivy {
-        url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        url 'https://www.cs.odu.edu/~zeil/ivyrepo'
     }
 }
 

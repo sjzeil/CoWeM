@@ -1,5 +1,10 @@
 = Release Notes
 
+== v1.14 Apr 28, 2020
+
+* Javascript can be extended by placing a `md-`_formatName_`-ext.js` file in
+  the styles directory.
+
 == v1.13 Jan 20, 2020
 
 * PlantUML diagrams can be embedded by giving a code block (in the
