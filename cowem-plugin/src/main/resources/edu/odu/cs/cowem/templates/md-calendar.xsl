@@ -34,7 +34,7 @@
       <xsl:copy-of select="@*"/>
       
       <script>
-          window.addEventListener('load',  (event) =>  {
+          window.addEventListener('load',  (event) =&gt;  {
               calendarPageLoad();
           });
       </script>
