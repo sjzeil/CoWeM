@@ -32,14 +32,8 @@
   <xsl:template match="body">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      
-      <script>
-          window.addEventListener('load',  (event) =&gt;  {
-              calendarPageLoad();
-          });
-      </script>
       <ul>
-      <xsl:apply-templates select="*//li | .//h1 | .//h2 | .//h2 | .//h4" mode="activities1"/>
+        <xsl:apply-templates select="*//li | .//h1 | .//h2 | .//h2 | .//h4" mode="activities1"/>
       </ul>
     </xsl:copy>
   </xsl:template>

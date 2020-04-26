@@ -65,3 +65,9 @@ function calendarPageLoad()
 	    lastLi2 = null;
 	}
 }
+
+window.addEventListener('load',  (event) =>  {
+     calendarPageLoad();
+});
+          
+          

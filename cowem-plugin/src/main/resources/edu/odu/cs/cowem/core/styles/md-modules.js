@@ -113,3 +113,8 @@ function modulePageLoad()
 	}
     }
 }
+
+window.addEventListener('load',  (event) =>  {
+      modulePageLoad();
+});
+      
