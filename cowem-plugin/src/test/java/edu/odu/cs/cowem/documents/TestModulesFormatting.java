@@ -3,13 +3,13 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -36,8 +36,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,7 +92,7 @@ public class TestModulesFormatting {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 
@@ -111,7 +111,7 @@ public class TestModulesFormatting {
 
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -157,7 +157,7 @@ public class TestModulesFormatting {
 
 		assertTrue (htmlContent.contains("Section 1"));
 		
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
 		assertEquals ("html", root.getLocalName());
 
@@ -249,7 +249,7 @@ public class TestModulesFormatting {
 		assertTrue (htmlContent.contains("postscript text"));
 		assertFalse (htmlContent.contains("Postscript"));
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
 		
 		Element preamblePar = getElementById(basicHtml, "p1");
@@ -324,7 +324,7 @@ public class TestModulesFormatting {
 		Element item1 = getElementById(basicHtml, "li1");
 		assertNotNull (item1);
 		
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
 		Element img = (Element)xPath.evaluate(".//img", item1, XPathConstants.NODE);
 		assertNotNull (img);

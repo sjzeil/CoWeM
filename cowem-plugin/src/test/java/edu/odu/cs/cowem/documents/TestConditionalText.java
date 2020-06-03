@@ -3,9 +3,9 @@
  */
 package edu.odu.cs.cowem.documents;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -16,8 +16,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -69,7 +69,7 @@ public class TestConditionalText {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 		properties.put("Title", "Title of Document");
@@ -83,7 +83,7 @@ public class TestConditionalText {
 	
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",

@@ -1,8 +1,8 @@
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -10,8 +10,8 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import edu.odu.cs.cowem.documents.WebsiteProject;
 
@@ -25,7 +25,7 @@ public class TestWebsiteProject {
     File g2d3;
     File g2dx;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         projRoot = Paths.get("src/test/data/urlShortcuts");
         g1d1 = projRoot.resolve("Group1/DocSet1/DocSet1.md").toFile();

@@ -3,12 +3,12 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -35,8 +35,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,7 +92,7 @@ public class TestSectioningTransforms {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 
@@ -111,7 +111,7 @@ public class TestSectioningTransforms {
 
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -126,7 +126,7 @@ public class TestSectioningTransforms {
 
 	public Element getElementByName (org.w3c.dom.Document doc, String name) {
 	    Element root = doc.getDocumentElement();
-	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 	    Node n;
 	    try {
 	        n = (Node)xPath.evaluate("//*[@name='" + name + "']",
@@ -194,7 +194,7 @@ public class TestSectioningTransforms {
 		assertTrue (htmlContent.contains("Subsubtitle 2"));
 		assertTrue (htmlContent.contains("Closing text"));
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		assertEquals ("html", root.getLocalName());
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
@@ -278,7 +278,7 @@ public class TestSectioningTransforms {
         assertTrue (htmlContent.contains("Subsubtitle 2"));
         assertTrue (htmlContent.contains("Closing text"));
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
         assertEquals ("html", root.getLocalName());
         
         String actualTitle = (String)xPath.evaluate("/html/head/title", root);
@@ -362,7 +362,7 @@ public class TestSectioningTransforms {
         Element root = basicHtml.getDocumentElement();
         String htmlContent = root.getTextContent();
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
         assertEquals ("html", root.getLocalName());
 
         NodeList sections = (NodeList)xPath.evaluate(
@@ -393,7 +393,7 @@ public class TestSectioningTransforms {
         	NodeList nl = (NodeList)xPath.evaluate("//*[@id='" 
         			+ "activities" + Integer.toString(i) + "']",
         			root, XPathConstants.NODESET);
-        	assertEquals ("Checking for activities" + i, 1, nl.getLength());
+        	assertEquals (1, nl.getLength(), "Checking for activities" + i);
         }
         
         
@@ -472,11 +472,11 @@ public class TestSectioningTransforms {
         Element root = basicHtml.getDocumentElement();
         String htmlContent = root.getTextContent();
         
-        assertTrue ("checking for preamble", htmlContent.contains("preamble text"));
-        assertTrue ("checking for postscript", htmlContent.contains("Eastern Time"));
-        assertTrue ("checking for presentation", htmlContent.contains("event"));
+        assertTrue (htmlContent.contains("preamble text"), "checking for preamble");
+        assertTrue (htmlContent.contains("Eastern Time"), "checking for postscript");
+        assertTrue (htmlContent.contains("event"), "checking for presentation");
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
         assertEquals ("html", root.getLocalName());
 
         NodeList sections = (NodeList)xPath.evaluate(
@@ -493,7 +493,7 @@ public class TestSectioningTransforms {
         	NodeList nl = (NodeList)xPath.evaluate("//*[@href='" 
         			+ "item" + Integer.toString(i) + "']",
         			root, XPathConstants.NODESET);
-        	assertEquals ("Checking for item" + i, 1, nl.getLength());
+        	assertEquals (1, nl.getLength(), "Checking for item" + i);
         }
         
         

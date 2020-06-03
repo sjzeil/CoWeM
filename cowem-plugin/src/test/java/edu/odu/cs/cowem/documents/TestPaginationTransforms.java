@@ -3,7 +3,7 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,8 +30,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -87,7 +87,7 @@ public class TestPaginationTransforms {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 
@@ -106,7 +106,7 @@ public class TestPaginationTransforms {
 
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -121,7 +121,7 @@ public class TestPaginationTransforms {
 
 	public Element getElementByName (org.w3c.dom.Document doc, String name) {
 	    Element root = doc.getDocumentElement();
-	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 	    Node n;
 	    try {
 	        n = (Node)xPath.evaluate("//*[@name='" + name + "']",
@@ -181,7 +181,7 @@ public class TestPaginationTransforms {
 		assertTrue (htmlContent.contains("Subsubtitle 2"));
 		assertTrue (htmlContent.contains("Closing text"));
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		assertEquals ("html", root.getLocalName());
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
@@ -192,7 +192,8 @@ public class TestPaginationTransforms {
 			Element n = (Element)getElementById(basicHtml, ids[i]);
 			assertNotNull(n);
 			String sectionNumberAttribute = n.getAttribute("sectionNumber");
-			assertEquals ("looking at " + ids[i], shouldBeNumbered[i], sectionNumberAttribute);
+			assertEquals (shouldBeNumbered[i], sectionNumberAttribute,
+					"looking at " + ids[i]);
 		}
 	}
 
@@ -230,7 +231,7 @@ public class TestPaginationTransforms {
 	    assertTrue (htmlContent.contains("Subtitle 2"));
 	    assertTrue (htmlContent.contains("Some text"));
 
-	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 	    assertEquals ("html", root.getLocalName());
 
 	    String actualTitle = (String)xPath.evaluate("/html/head/title", root);
@@ -318,7 +319,7 @@ public class TestPaginationTransforms {
 		assertTrue (htmlContent.contains("Subsubtitle 2"));
 		assertTrue (htmlContent.contains("Closing text"));
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		assertEquals ("html", root.getLocalName());
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
@@ -387,7 +388,7 @@ public class TestPaginationTransforms {
 		assertTrue (htmlContent.contains("Subsubtitle 2"));
 		assertTrue (htmlContent.contains("Closing text"));
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		assertEquals ("html", root.getLocalName());
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
@@ -438,7 +439,7 @@ public class TestPaginationTransforms {
 	    assertTrue (htmlContent.contains("item3"));
 	    assertTrue (htmlContent.contains("Some text"));
 
-	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 	    assertEquals ("html", root.getLocalName());
 
 	    NodeList pages = root.getElementsByTagName("page");

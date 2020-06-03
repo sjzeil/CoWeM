@@ -3,7 +3,8 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,8 +31,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -86,7 +87,7 @@ public class TestSectioningNumbering {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 
@@ -105,7 +106,7 @@ public class TestSectioningNumbering {
 
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -120,7 +121,7 @@ public class TestSectioningNumbering {
 
 	public Element getElementByName (org.w3c.dom.Document doc, String name) {
 	    Element root = doc.getDocumentElement();
-	    XPath xPath = XPathFactory.newInstance().newXPath();
+	    XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 	    Node n;
 	    try {
 	        n = (Node)xPath.evaluate("//*[@name='" + name + "']",
@@ -203,8 +204,8 @@ public class TestSectioningNumbering {
         Element root = basicHtml.getDocumentElement();
         String htmlContent = root.getTextContent();
         
-        assertTrue ("checking for preamble", htmlContent.contains("preamble text"));
-        assertTrue ("checking for postscript", htmlContent.contains("Eastern Time"));
+        assertTrue (htmlContent.contains("preamble text"), "checking for preamble");
+        assertTrue (htmlContent.contains("Eastern Time"), "checking for postscript");
         //assertTrue ("checking for presentation", htmlContent.contains("Events"));
         
         // Is 1st section numbered correctly?
@@ -286,8 +287,8 @@ public class TestSectioningNumbering {
         Element root = basicHtml.getDocumentElement();
         String htmlContent = root.getTextContent();
         
-        assertTrue ("checking for preamble", htmlContent.contains("preamble text"));
-        assertTrue ("checking for postscript", htmlContent.contains("Eastern Time"));
+        assertTrue (htmlContent.contains("preamble text"), "checking for preamble");
+        assertTrue (htmlContent.contains("Eastern Time"), "checking for postscript");
         //assertTrue ("checking for presentation", htmlContent.contains("Events"));
         
         // Is 1st section numbered correctly?

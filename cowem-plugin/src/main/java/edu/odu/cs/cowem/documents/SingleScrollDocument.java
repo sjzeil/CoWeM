@@ -231,8 +231,7 @@ public class SingleScrollDocument {
         }
         baseDoc = parseXML(new FileReader(baseDocFile));
         Node baseRoot = baseDoc.getDocumentElement();
-        XPath xPath = XPathFactory.newInstance().newXPath();
-
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
         // Collect list of referenced docs
         NodeList nodes;
         try {
@@ -335,7 +334,7 @@ public class SingleScrollDocument {
         			);
         }
         Node componentRoot = componentDoc.getDocumentElement();
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
  
         // Rewrite the component document

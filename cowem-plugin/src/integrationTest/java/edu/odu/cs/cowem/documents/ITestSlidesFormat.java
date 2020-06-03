@@ -3,7 +3,7 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +19,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -69,7 +69,7 @@ public class ITestSlidesFormat {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 		
@@ -89,7 +89,7 @@ public class ITestSlidesFormat {
 	
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -117,7 +117,7 @@ public class ITestSlidesFormat {
 		DocumentBuilder b = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlContent)));
 		Element root = finalHtml.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		
 
 		Node syllabusPar = (Node)xPath.evaluate(

@@ -3,11 +3,11 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileReader;
@@ -30,8 +30,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -52,7 +52,7 @@ public class TestSingleScrollDocument {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 		properties.put("Title", "Title of Document");
@@ -96,7 +96,7 @@ public class TestSingleScrollDocument {
 
     public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -137,7 +137,7 @@ public class TestSingleScrollDocument {
         
         org.w3c.dom.Document xmlDoc = sdoc.toXML();
         Node root = xmlDoc.getDocumentElement();
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
         Node cssLinkNode = (Node)xPath.evaluate("/html/head/link[@href='styles/scroll.css']",
                 root, XPathConstants.NODE);
@@ -227,7 +227,7 @@ public class TestSingleScrollDocument {
 
         org.w3c.dom.Document xmlDoc = sdoc.toXML();
         Node root = xmlDoc.getDocumentElement();
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
         Node cssLinkNode = (Node)xPath.evaluate("/html/head/link[@href='styles/scroll.css']",
                 root, XPathConstants.NODE);
@@ -315,7 +315,7 @@ public class TestSingleScrollDocument {
         
         org.w3c.dom.Document xmlDoc = parseXML(new FileReader(documentOut));
         Node root = xmlDoc.getDocumentElement();
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
         // Check for presence of the base document and components
         Node baseNode = (Node)xPath.evaluate("/html//*[@id='Directory__outline']",

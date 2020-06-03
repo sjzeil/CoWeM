@@ -3,11 +3,11 @@
  */
 package edu.odu.cs.cowem.documents;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +24,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -96,7 +96,7 @@ public class TestMarkdownDocument {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		properties = new Properties();
 		properties.put("Title", "Title of Document");
@@ -110,7 +110,7 @@ public class TestMarkdownDocument {
 	
 	public Element getElementById (org.w3c.dom.Document doc, String id) {
 		Element root = doc.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n;
 		try {
 			n = (Node)xPath.evaluate("//*[@id='" + id + "']",
@@ -268,7 +268,7 @@ public class TestMarkdownDocument {
 		
 		org.w3c.dom.Document basicHtml = doc.process(preProcessed1);
 		Element root = basicHtml.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
 		assertEquals ("@Title@", actualTitle);
@@ -359,7 +359,7 @@ public class TestMarkdownDocument {
 		assertNotNull (spanEl);
 		assertEquals ("span", spanEl.getTagName());
 		
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node italicsNode = (Node)xPath.evaluate("/html/body/p/span/em",
 				root, XPathConstants.NODE);
 		assertNotNull (italicsNode);
@@ -422,7 +422,7 @@ public class TestMarkdownDocument {
 		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
 		Element root = basicHtml.getDocumentElement();
 		
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		Node n = (Node)xPath.evaluate("/head/body/p[1]/sub",
 					root, XPathConstants.NODE);
 		assertNotNull(n);
@@ -447,7 +447,7 @@ public class TestMarkdownDocument {
 		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
 		Element root = basicHtml.getDocumentElement();
 		
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		NodeList nl = (NodeList)xPath.evaluate("//em",
 					root, XPathConstants.NODESET);
 		assertEquals (1, nl.getLength());
@@ -484,7 +484,7 @@ public class TestMarkdownDocument {
 		org.w3c.dom.Document basicHtml = doc.process(passThrough1);
 		Element root = basicHtml.getDocumentElement();
 		
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		NodeList nl = (NodeList)xPath.evaluate("//p",
 				root, XPathConstants.NODESET);
 		assertEquals (3, nl.getLength());
@@ -514,7 +514,7 @@ public class TestMarkdownDocument {
 	        org.w3c.dom.Document basicHtml = doc.process(passThrough1);
 	        Element root = basicHtml.getDocumentElement();
 	        
-	        XPath xPath = XPathFactory.newInstance().newXPath();
+	        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 	        NodeList nl = (NodeList)xPath.evaluate("//p",
 	                root, XPathConstants.NODESET);
 	        assertEquals (3, nl.getLength());
@@ -560,7 +560,7 @@ public class TestMarkdownDocument {
 		
 		org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlResult)));
 		Element root = finalHtml.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
 		assertEquals ("Title of Document", actualTitle);
@@ -635,7 +635,7 @@ public class TestMarkdownDocument {
 		
 		org.w3c.dom.Document finalHtml = b.parse(new InputSource(new StringReader(htmlResult)));
 		Element root = finalHtml.getDocumentElement();
-		XPath xPath = XPathFactory.newInstance().newXPath();
+		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 		
 		String actualTitle = (String)xPath.evaluate("/html/head/title", root);
 		assertEquals ("Title of Document", actualTitle);
