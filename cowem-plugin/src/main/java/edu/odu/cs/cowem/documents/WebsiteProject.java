@@ -3,7 +3,12 @@
  */
 package edu.odu.cs.cowem.documents;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Map;
@@ -47,7 +52,18 @@ public class WebsiteProject implements Iterable<String> {
      */
     private Map<String, File> documentSets;
     
-    
+    /**
+     * Mapping from all known document set names to their
+     * source code file (.md or .mmd).
+     */
+    private Map<String, File> documentSources;
+
+    /**
+     * Mapping from all known document set names to their
+     * titles.
+     */
+    private Map<String, String> documentTitles;
+
     /**
      * Create a project summary object.
      * @param rootDirectory location of this project's root
@@ -55,28 +71,96 @@ public class WebsiteProject implements Iterable<String> {
     public WebsiteProject (final File rootDirectory) {
         rootDir = rootDirectory.getAbsoluteFile();
         documentSets = new TreeMap<String,File>();
+        documentSources = new TreeMap<String,File>();
+        documentTitles = new TreeMap<String,String>();
+        
         for (File group: rootDir.listFiles()) {
             if (group.isDirectory()) {
-                for (File docSet: group.listFiles()) {
-                    if (docSet.isDirectory() 
-                            && new File(docSet, GRADLE_FILE_NAME).exists()) {
-                        // This is a valid document set
-                        if (documentSets.containsKey(docSet.getName())) {
-                            logger.warn (
-                               "Ambiguous structure: two or more document sets named "
-                                    + docSet.getName());
-                        }
-                        documentSets.put(docSet.getName(), 
-                                docSet.getAbsoluteFile());
-                        //logger.warn("Remember doc set " + docSet.getName() + " at " + docSet.getAbsoluteFile());
-                    }
-                }
+                rememberDocumentSetsInThisGroup(group);
             }
         }
     }
+
+
+	private void rememberDocumentSetsInThisGroup(File group) {
+		for (File docSet: group.listFiles()) {
+		    if (docSet.isDirectory() 
+		            && new File(docSet, GRADLE_FILE_NAME).exists()) {
+		        // This is a valid document set
+		    	rememberDocumentSetComponents(docSet);
+		    }
+		}
+	}
+
+
+	private void rememberDocumentSetComponents(File docSet) {
+		String docSetName = docSet.getName();
+		warnIfDocSetNameIsDuplicated(docSetName);
+		documentSets.put(docSetName, 
+		        docSet.getAbsoluteFile());
+		//logger.warn("Remember doc set " + docSet.getName() + " at " + docSet.getAbsoluteFile());
+		File sourceFile = new File(docSet, docSetName + ".md");
+		rememberThisDocument(docSetName, sourceFile);
+		scanForSecondaryDocuments(docSet);
+	}
+
+
+	private void scanForSecondaryDocuments(File docSet) {
+		for (File componentFile: docSet.listFiles()) {
+			String fileName = componentFile.getName();
+			if (fileName.endsWith(".mmd")) {
+				// This is a secondary document.
+				warnIfDocSetNameIsDuplicated(fileName);
+				documentSets.put(fileName, docSet);
+				rememberThisDocument(fileName, componentFile);
+			}
+		}
+	}
+
+
+	private void warnIfDocSetNameIsDuplicated(String docSetName) {
+		if (documentSets.containsKey(docSetName)) {
+		    logger.warn (
+		       "Ambiguous structure: two or more document sets named "
+		            + docSetName);
+		}
+	}
+
+
+	private void rememberThisDocument(String docSetName, File sourceFile) {
+		if (sourceFile.exists()) {
+			documentSources.put(docSetName, sourceFile);
+			String title = extractTitleFrom(sourceFile);
+			if (title != null) {
+				documentTitles.put(docSetName, title);
+			}
+				
+		}
+	}
     
     
-    /**
+    private String extractTitleFrom(File sourceFile) {
+		try (BufferedReader in = new BufferedReader(new FileReader(sourceFile))) {
+			String line = in.readLine();
+			while (line != null) {
+				if (line.toLowerCase().startsWith("title:")) {
+					int k = 6;
+					while (k < line.length() && line.charAt(k) == ' ') {
+						++k;
+					}
+					String title = line.substring(k);
+					return title;
+				}
+				line = in.readLine();
+			}
+		} catch (IOException e) {
+			logger.warn ("Unexpected problem getting title from " + sourceFile, e);
+		}
+		return null;
+	}
+
+
+	/**
      * Determine the relative path from some file to the project root.
      * @param from a file that is a descendant of the project root.
      * @return the relative path from some file to the project root or null
@@ -161,6 +245,25 @@ public class WebsiteProject implements Iterable<String> {
     public final String toString() {
         return rootDir.toString() + ": " + documentSets.keySet().toString();
     }
+
+    /**
+     * Source file from which we obtain a named document.
+     * @param documentName the identifier for the document (primary or secondary)
+     * @return the .md or .mmd file containing the document source
+     */
+	public File documentSource(String documentName) {
+        return documentSources.get(documentName);
+	}
+
+
+    /**
+     * Title within a named document.
+     * @param documentName the identifier for the document (primary or secondary)
+     * @return the contents of the "Title:" metadata line or null if no such line
+     */
+	public String getDocumentTitle(String documentName) {
+		return documentTitles.get(documentName);
+	}
     
     
     

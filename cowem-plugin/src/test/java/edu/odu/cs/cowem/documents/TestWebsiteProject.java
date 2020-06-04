@@ -91,7 +91,7 @@ public class TestWebsiteProject {
         for (String docSet: proj) {
             s.add(docSet);
         }
-        assertEquals (3, s.size());
+        assertEquals (5, s.size());
         assertTrue (s.contains("DocSet1"));
         assertTrue (s.contains("DocSet2"));
         assertTrue (s.contains("DocSet3"));

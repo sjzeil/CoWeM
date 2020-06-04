@@ -60,6 +60,10 @@ public class DocURLs implements SpecialURL {
         project = project0;
     }
 
+    private class DocumentSpecification {
+    	public String documentName;
+    	public String anchor;
+    }
 
 	/**
 	 * Checks to see if a linking element (a or img) uses a special
@@ -73,68 +77,33 @@ public class DocURLs implements SpecialURL {
 	public final boolean applyTo(final Element link, final String linkAttr) {
 	    String url = link.getAttribute(linkAttr);
 	    if (url.startsWith("doc:") || url.startsWith("docex:")) {
-	        int dividerPos = url.indexOf(':');
-	        String documentSpec = url.substring(dividerPos + 1);
-	        int anchorPos = documentSpec.indexOf('#');
-	        String anchor = "";
-	        if (anchorPos >= 0) {
-	            anchor = documentSpec.substring(anchorPos);
-	            documentSpec = documentSpec.substring(0, anchorPos);
-	        }
+	    	DocumentSpecification docSpec = parseDocumentSpecification(url);
+	        String documentName = docSpec.documentName;
 	        //logger.warn("Document spec is " + documentSpec);
-	        if (documentSpec.contains("/")) {
-                int k = documentSpec.indexOf('/');
-	            String documentSetName = documentSpec.substring(0, k);
-	            String continuation = documentSpec.substring(0, k + 1);
-	            File targetFile = project.documentSetLocation(documentSetName);
-	            if (targetFile != null) {
-	                Path relative = project.relativePathToDocumentSet(
-	                        sourceDirectory, 
-	                        documentSetName);
-	                relative = relative.resolve(continuation);
-	                String newLink = relative.toString().replace("\\","/") + ".html" + anchor;
-	                link.setAttribute(linkAttr, newLink);
-	                if (url.startsWith("doc:")) {
-	                    link.setAttribute("class", "doc");
-	                }
-	                attemptTBDReplacement(link, new File(targetFile, continuation));
-	            } else {
-	                logger.warn(
-	                        "Could not find a replacement for URL shorthand: @"
-	                                + linkAttr + "=" + url);
-	            }
-            } else if (documentSpec.contains(".")) {
-                File targetFile = null;
-                String targetDocSet = null;
-                for (String documentSetName: project) {
-                    File candidateDir = project.documentSetLocation(documentSetName);
-                    File candidateFile = new File(candidateDir, documentSpec);
-                    if (candidateFile.exists()) {
-                        if (targetFile != null) {
-                            logger.warn("Ambiguous URL shortcut: " + documentSpec);
-                        }
-                        targetFile = candidateFile;
-                        targetDocSet = documentSetName;
-                    }
-                }
+	        if (documentName.contains("/")) {
+                processRelativeSpecification(link, linkAttr, url, docSpec);
+            } else if (documentName.endsWith(".mmd")) {
+                File targetFile = project.documentSource(documentName);
+                File targetDocSet = project.documentSetLocation(documentName);
                 if (targetFile != null) {
                     Path relative = project.relativePathToDocumentSet(
                             sourceDirectory, 
-                            targetDocSet);
-                    relative = relative.resolve(documentSpec);
-                    String newLink = relative.toString().replace("\\","/") + ".html" + anchor;
+                            documentName);
+                    relative = relative.resolve(documentName);
+                    String newLink = relative.toString().replace("\\","/") 
+                    		+ ".html" + docSpec.anchor;
                     link.setAttribute(linkAttr, newLink);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
                     }
-                    attemptTBDReplacement(link, targetFile);
+                    attemptTBDReplacement(link, documentName);
                 } else {
                     logger.warn(
                             "Could not find a replacement for URL shorthand: @"
                                     + linkAttr + "=" + url);
                 }
             } else {
-	            String documentSetName = documentSpec;
+	            String documentSetName = documentName;
 	            //logger.warn("Hunting for document set name " + documentSpec);
 	            File targetFile = project.documentSetLocation(documentSetName);
                 if (targetFile != null) {
@@ -142,14 +111,12 @@ public class DocURLs implements SpecialURL {
                             sourceDirectory, 
                             documentSetName);
                     String newLink = relative.resolve("index.html").toString().replace("\\","/")
-                            + anchor;
+                            + docSpec.anchor;
                     link.setAttribute(linkAttr, newLink);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
                     }
-                    File sourceFile = new File(targetFile, 
-                            targetFile.getName() + ".md");
-                    attemptTBDReplacement(link, sourceFile);
+                    attemptTBDReplacement(link, documentSetName);
                 } else {
                     logger.warn(
                             "Could not find a replacement for URL shorthand: @"
@@ -159,6 +126,47 @@ public class DocURLs implements SpecialURL {
 	    }
 	    return false;
 	}
+
+
+	private void processRelativeSpecification(final Element link, final String linkAttr, String url,
+			DocumentSpecification docSpec) {
+		String documentName = docSpec.documentName;
+		int k = documentName.indexOf('/');
+		String documentSetName = documentName.substring(0, k);
+		String continuation = documentName.substring(0, k + 1);
+		File targetFile = project.documentSetLocation(documentSetName);
+		if (targetFile != null) {
+		    Path relative = project.relativePathToDocumentSet(
+		            sourceDirectory, 
+		            documentSetName);
+		    relative = relative.resolve(continuation);
+		    String newLink = relative.toString().replace("\\","/") + ".html" 
+		        + docSpec.anchor;
+		    link.setAttribute(linkAttr, newLink);
+		    if (url.startsWith("doc:")) {
+		        link.setAttribute("class", "doc");
+		    }
+		    attemptTBDReplacement(link, continuation);
+		} else {
+		    logger.warn(
+		            "Could not find a replacement for URL shorthand: @"
+		                    + linkAttr + "=" + url);
+		}
+	}
+
+
+	private DocumentSpecification parseDocumentSpecification(String documentSpecStr) {
+		DocumentSpecification docSpec = new DocumentSpecification();
+		int dividerPos = documentSpecStr.indexOf(':');
+		docSpec.documentName = documentSpecStr.substring(dividerPos + 1);
+		int anchorPos = docSpec.documentName.indexOf('#');
+		docSpec.anchor = "";
+		if (anchorPos >= 0) {
+			docSpec.anchor = docSpec.documentName.substring(anchorPos);
+			docSpec.documentName = docSpec.documentName.substring(0, anchorPos);
+		}
+		return docSpec;
+	}
      	    
      	    
     /**
@@ -167,23 +175,19 @@ public class DocURLs implements SpecialURL {
      * from the source document.
      * 
      * @param element link element to examine
-     * @param sourceFile  Markdown source document 
+     * @param documentName  name of document 
      */
     private void attemptTBDReplacement(final Element element, 
-            final File sourceFile) {
+            final String documentName) {
+    	String title = project.getDocumentTitle(documentName);
         String textContent = element.getTextContent().trim();
-        if ("TBD".equals(textContent) && sourceFile.canRead()) {
-            MarkdownDocument sourceDoc = new MarkdownDocument(sourceFile,
-                    project, new Properties());
-            String title = (String) sourceDoc.getMetadata("Title");
-            if (title != null && title.length() > 0) {
-                while (element.hasChildNodes()) {
-                    element.removeChild(element.getFirstChild());
-                }
-                Node newTitle = element.getOwnerDocument()
-                        .createTextNode(title);
-                element.appendChild(newTitle);
-            }
+        if ("TBD".equals(textContent) && title != null && title.length() > 0) {
+        	while (element.hasChildNodes()) {
+        		element.removeChild(element.getFirstChild());
+        	}
+        	Node newTitle = element.getOwnerDocument()
+        			.createTextNode(title);
+        	element.appendChild(newTitle);
         }
     }
   	    
