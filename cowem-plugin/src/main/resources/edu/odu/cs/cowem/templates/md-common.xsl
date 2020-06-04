@@ -80,6 +80,10 @@
           src="{$stylesURL}/plantuml.js">
           <xsl:text> </xsl:text>
       </script>
+      <script type="text/javascript"
+          src="{$stylesURL}/mermaid.min.js">
+          <xsl:text> </xsl:text>
+      </script>
       <xsl:choose>
         <xsl:when test="lower-case($mathSupport) = 'latex'">
            <script type="text/javascript"><xsl:text>
@@ -361,6 +365,30 @@
       </script>
   </xsl:template>
 
+  <xsl:template match="pre[starts-with(code/@class, 'mermaid')]">
+      <xsl:variable name="classesMarker">
+          <xsl:text>classes='</xsl:text>
+      </xsl:variable>
+      <xsl:variable name="singleQuote">
+          <xsl:text>'</xsl:text>
+      </xsl:variable>
+      <xsl:variable name='classNames'>
+         <xsl:choose>
+            <xsl:when test="contains(code/@class, $classesMarker)">
+                <xsl:value-of select='substring-before(substring-after(code/@class, $classesMarker), $singleQuote)'/>
+            </xsl:when>
+            <xsl:when test="contains(code/@class, 'class=')">
+                <xsl:value-of select='substring-before(substring-after(concat(code/@class, " "), "class="), " ")'/>
+            </xsl:when>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:text>
+      </xsl:text>
+      <div class="noFloat"> </div>
+      <span class="{$classNames}">
+  		<code class="mermaid"><xsl:copy-of select="code/node()"/></code>
+      </span>
+  </xsl:template>
 
 
   <xsl:template match="code[local-name(..) = 'pre']">

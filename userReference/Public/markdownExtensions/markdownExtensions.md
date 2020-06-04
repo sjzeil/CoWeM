@@ -502,8 +502,9 @@ Or I can put them centered with nothing flowing around them.
 Or I can put them centered with nothing flowing around them.
 
 
-## Generated Graphics (PlantUML)
+## Generated Graphics (PlantUML & Mermaid)
 
+### PlantUML
 
 \bSidebar
 
@@ -611,6 +612,77 @@ Author --> Book : writes
 
 (Although you would have to examine the generated HTML to see
 that the useless class "foobar" is attached to the image.)
+
+
+### Mermaid
+
+Support is also available for Mermaid, another Markdown-friendly
+graphics processor.
+
+\bSidebar
+
+    ```mermaid
+    graph TD
+      need[Need a graphic]
+      inUML{Is it UML?}
+      need --> inUML
+      thenPart[I prefer PlantUML]
+      inUML --yes--> thenPart
+      elsePart[Use Mermaid]
+      inUML --no--> elsePart
+      joined([done])
+      thenPart --> joined
+      elsePart --> joined
+    ```
+
+\eSidebar 
+
+
+If a code block (introduced with three back-ticks) is labeled
+with the language name "`mermaid`", then the code block will be
+replaced by a graphic representing a diagram as interpreted by 
+[Mermaid]().   
+
+```mermaid
+graph TD
+  need[Need a graphic]
+  inUML{Is it UML?}
+  need --> inUML
+  thenPart[I prefer PlantUML]
+  inUML --yes--> thenPart
+  elsePart[Use Mermaid]
+  inUML --no--> elsePart
+  joined([done])
+  thenPart --> joined
+  elsePart --> joined
+```
+
+\bSidebar
+
+    ```mermaid class=right
+    stateDiagram
+	    [*] --> Test
+	    Test --> [*]: working
+        Test --> Debug: broken
+        Debug --> Fix
+        Fix --> Test
+    ```
+
+\eSidebar
+
+
+As with the PlantUML diagrams, class info can be attached to alter the formatting.
+
+```mermaid class=right
+stateDiagram
+	[*] --> Test
+	Test --> [*]: working
+    Test --> Debug: broken
+    Debug --> Fix
+    Fix --> Test
+```
+
+
 
 # Code Markup
 
