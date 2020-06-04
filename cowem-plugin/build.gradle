@@ -14,7 +14,7 @@ plugins {
     id 'pmd'
 }
 group = 'edu.odu.cs.zeil'
-version = '1.14'
+version = '1.15'
 
 gradlePlugin {
     plugins {

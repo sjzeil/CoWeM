@@ -36,13 +36,21 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.14.
+* Currently in version 1.15.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
   set of files that will "bootstrap" the fetching of CoWeM code and the
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
+
+# New in v1.15
+
+* [Mermaid diagrams](https://mermaid-js.github.io/mermaid/#/) can be
+  embedded by giving a code block (in the three back-tick form, not
+  the indented form) with "mermaid" as the programming langauge.
+* Improved prformance when processing intra-website `doc:` links.
+* Updated code to Java 11 & Gradle 1.6.5
 
 # New in v1.14
 

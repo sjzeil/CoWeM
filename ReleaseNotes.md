@@ -1,5 +1,14 @@
 = Release Notes
 
+== v1.15 June 4, 2020
+
+* [Mermaid diagrams](https://mermaid-js.github.io/mermaid/#/) can be
+  embedded by giving a code block (in the three back-tick form, not
+  the indented form) with "mermaid" as the programming langauge.
+* Improved performance when processing intra-website `doc:` links. Shoudl speed outline
+  page processing considerably.
+* Updated code to Java 11 & Gradle 1.6.5
+
 == v1.14 Apr 28, 2020
 
 * Javascript can be extended by placing a `md-`_formatName_`-ext.js` file in
