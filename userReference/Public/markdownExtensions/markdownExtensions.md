@@ -641,7 +641,7 @@ graphics processor.
 If a code block (introduced with three back-ticks) is labeled
 with the language name "`mermaid`", then the code block will be
 replaced by a graphic representing a diagram as interpreted by 
-[Mermaid]().   
+[Mermaid](https://mermaid-js.github.io/mermaid/#/).   
 
 ```mermaid
 graph TD
