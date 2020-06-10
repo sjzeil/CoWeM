@@ -82,6 +82,28 @@ public class DocURLs implements SpecialURL {
 	        //logger.warn("Document spec is " + documentSpec);
 	        if (documentName.contains("/")) {
                 processRelativeSpecification(link, linkAttr, url, docSpec);
+	        } else if (documentName.contains(":")) {
+	        	// External site reference
+	        	int k = documentName.indexOf(':');
+	        	String siteName = documentName.substring(0, k);
+	        	documentName = documentName.substring(k+1);
+	        	String anchor = docSpec.anchor;
+	        	if (anchor.startsWith("#")) {
+	        		anchor = anchor.substring(1);
+	        	}
+	        	String siteURL = project.getExternalSite(siteName);
+	        	if (siteURL != null) {
+	        		if (!siteURL.endsWith("/")) {
+	        			siteURL = siteURL + "/";
+	        		}
+	        		siteURL = siteURL + "index.html?doc=" + documentName
+	        				+ "&anchor=" + anchor;
+	        		link.setAttribute(linkAttr, siteURL);
+	        	} else {
+	        		logger.warn(
+                            "Could not find external site for URL shorthand: @"
+                                    + linkAttr + "=" + url);
+	        	}
             } else if (documentName.endsWith(".mmd")) {
                 File targetFile = project.documentSource(documentName);
                 File targetDocSet = project.documentSetLocation(documentName);

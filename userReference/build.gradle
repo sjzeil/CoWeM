@@ -49,53 +49,17 @@ apply plugin: edu.odu.cs.cowem.CourseWebsite
 course {
 	courseName        = 'CoWeM'
 	courseTitle       = 'Course Websites from Markdown'
-	semester          = 'v1.13'
+	semester          = 'v1.17 draft'
 	sem               = 'latest'
 	instructor        = 'Steven J Zeil'
 	email             = 'zeil@cs.odu.edu'
 	copyright         = '2016-2020, Old Dominion Univ.'
 	homeURL           = 'https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html'
 	deployDestination = '/home/zeil/secure_html/cowem/'
-	sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/cowem/'
+	sshDeployURL      = 'zeil@linux.cs.odu.edu:/home/zeil/secure_html/cowem/'
     baseURL           = 'https://www.cs.odu.edu/~zeil/cowem/'
+	
+	importing ('manual', 'https://www.cs.odu.edu/~zeil/cowem/')
 }
 
-/*
-node {  
-    version = '8.11.2' // current LTS version
-    workDir = file("${project.buildDir}/nodejs")
-    npmWorkDir = file("${project.buildDir}")
-    nodeModulesDir = file("${project.buildDir}")
-    download = true  // download node
-}
-
-build.doLast {
-    project.copy {
-        from 'build/website/styles/'
-        include 'pdf-package.json'
-        into 'build/'
-        rename '.+', 'package.json'
-    }
-}
-npm_install.dependsOn('build')
-
-import org.apache.tools.ant.filters.ReplaceTokens
-task pdfScript (type: Copy, dependsOn: 'build') {
-    from "build/website/styles/pdfScript.js"
-    into "build"
-    filter(ReplaceTokens, 
-           tokens: [scrollFile: project.rootDir.toString() + '/build/combined/outline/index.html',
-                    pdfDir: project.rootDir.toString() + '/build/combined/' + course.courseName + "-",
-                    pdfFile: project.rootDir.toString() + '/build/combined/outline.pdf',
-                    testFile: project.rootDir.toString() + '/src/test/data/scroll.html',
-                    pdfFormat: 'A4'])
-}
-
-task pdf(type: NodeTask, dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {
-    script = file('build/pdfScript.js')
-}
-pdf.doLast {
-    project.delete('build/pdfScript.js')
-}
-*/
 

@@ -134,7 +134,17 @@ class Course {
      * If null, deployByRsync will use sshDeployKey
      */
     String rsyncDeployKey = null;
+	
+		
+	HashMap<String, String> imports = new HashMap<String, String>();
+	
+	void importing (String name, String url) {
+		imports.put(name, url);
+	} 
 
+	String getImportedURL(String name) {
+		return imports.get(name);
+	}
     
     /**
      * Allow application of a closure to a Course.

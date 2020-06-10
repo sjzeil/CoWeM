@@ -63,6 +63,13 @@ public class WebsiteProject implements Iterable<String> {
      * titles.
      */
     private Map<String, String> documentTitles;
+    
+    /**
+     * Map from imported site names to their URLs 
+     */
+    private Map<String, String> importedSites; 
+    
+    
 
     /**
      * Create a project summary object.
@@ -265,8 +272,53 @@ public class WebsiteProject implements Iterable<String> {
 		return documentTitles.get(documentName);
 	}
     
-    
-    
+    /**
+     * Gets a mapping from document names to relative URLs in a JSON array
+     * format.
+     * 
+     * @return mapping of known documents to URLs relative to website root
+     */
+    String getDocumentMap() {
+    	StringBuffer result = new StringBuffer();
+    	result.append("{ \"mapping\" : \n  [");
+    	boolean firstTime = true;
+    	for (String docName: documentSources.keySet()) {
+    		if (!firstTime) {
+    			result.append(",");
+    		} else {
+    			firstTime = false;
+    		}
+    		result.append("\n    {\n      \"doc\" : \"");
+    		result.append(docName);
+    		result.append("\",\n      \"url\" : \"");
+    		String docPath = documentSources.get(docName).toString();
+    		docPath = docPath.replace('\\', '/');
+    		String[] pathParts = docPath.split("/");
+    		String file = pathParts[pathParts.length-1];
+    		String docSet = pathParts[pathParts.length-2];
+    		String docGroup = pathParts[pathParts.length-3];
+    		if (file.endsWith(".mmd")) {
+    			file = file + ".html";
+    		} else {
+    			file = "index.html";
+    		}
+    		docPath = docGroup + "/" + docSet + "/" + file;
+    		result.append(docPath);
+    		result.append("\"\n    },");
+    	}
+    	result.append("\n  ]\n}\n");
+    	return result.toString();
+    }
+
+
+	public void setImports(Map<String,String> importedSites) {
+		this.importedSites = importedSites;
+	}
+
+
+	public String getExternalSite(String siteName) {
+		return importedSites.get(siteName);
+	}
     
  
 }

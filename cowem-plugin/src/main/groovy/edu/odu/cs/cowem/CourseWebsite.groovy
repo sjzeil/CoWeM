@@ -100,29 +100,45 @@ class CourseWebsite implements Plugin<Project> {
                 from 'styles'
                 into 'build/website/styles'
         }
+		
+		
+		project.task ('setup_save_document_map',
+            dependsOn: 'setup_copy_website_defaults'
+        ) { 
+		  doLast {
+			println ('at end of style overrides')
+			def json = project.website.getDocumentMap();
+			File jsonFile = new File("build/website/styles/documentMap.json");
+			jsonFile.write (json);
+			project.website.setImports(project.course.imports);
+		  }
+        }
 
         project.task ('setup_copy_index_overrides',
             dependsOn: 'setup_copy_styles_overrides'
         ) {
-            if (project.file('index.html').exists()) {
-                project.copy  {
-                    from 'index.html'
-                    into 'build/website/'
-                }
-            } else {
-                project.copy {
-                    from 'build/website/styles/'
-                    include 'homeRedirect.html'
-                    into 'build/website/'
-                    rename '.+', 'index.html'
-                }
-            }
+			doLast {
+				if (project.file('index.html').exists()) {
+					project.copy  {
+						from 'index.html'
+						into 'build/website/'
+					}
+				} else {
+					project.copy {
+						from 'build/website/styles/'
+						include 'homeRedirect.html'
+						into 'build/website/'
+						rename '.+', 'index.html'
+					}
+				}
+			}
         }
 
         project.task ('setup_website',
             dependsOn: ['setup_copy_index_overrides', 
                         'setup_copy_graphics_overrides',
-                        'setup_copy_styles_overrides'])
+                        'setup_copy_styles_overrides',
+						'setup_save_document_map'])
 
 
         project.task ("setup") {

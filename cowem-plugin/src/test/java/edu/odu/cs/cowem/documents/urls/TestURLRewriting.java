@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,7 +20,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import edu.odu.cs.cowem.documents.WebsiteProject;
-import edu.odu.cs.cowem.documents.urls.URLRewriting;
 
 /**
  * @author zeil
@@ -164,6 +163,39 @@ public class TestURLRewriting {
 
 	
 	
+	   @Test
+	    public void testImportedSiteDocWithAnchor() 
+	            throws XPathExpressionException, TransformerException, 
+	            ParserConfigurationException, SAXException, IOException {
+
+	        String[] htmlInput = {
+	                "<html>",
+	                "<head>",
+	                "<title>A Title</title>",
+	                "</head>",
+	                "<body>",
+	                "<p>Some text leading to ",
+	                "<a id='a1' href='doc:Imported:DocSet1#anAnchor'/>",
+	                "</p>",
+	                "</body>",
+	                "</html>"   
+	        };
+
+		    HashMap<String,String> imports = new HashMap<>();
+		    imports.put("Imported", "http://importedSite");
+		    proj.setImports(imports);
+
+	        org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
+	        
+	        URLRewriting rewriter = new URLRewriting(documentDir, proj, BB_URL);
+	        rewriter.rewrite(basicHtml);
+	        
+	        
+	        Element link1 = getElementById(basicHtml, "a1");
+	        assertNotNull (link1);
+	        String href = link1.getAttribute("href");
+	        assertEquals ("http://importedSite/index.html?doc=DocSet1&anchor=anAnchor", href);
+	    }
 	
 	
 	

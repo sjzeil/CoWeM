@@ -41,6 +41,44 @@ For example, `[TBD]`<tt>(doc:directories)</tt> would actually appear as the link
 [TBD](doc:directories)
 
 
+## Linking to External CoWeM Sites
+
+It is possible to link to external CoWeM sites with an extension of the `doc:` URL scheme. 
+
+Ann number of external sites can be imported by adding commands of the form
+`importing(`_name_,_url_`)` to the course description in the root `build.gradle` file. For example, 
+
+```
+// Top-level build.gradle for a course.
+
+plugins {
+   id 'edu.odu.cs.cowem.course' version '1.16'
+}
+
+
+course {
+    courseName        = 'CS 350'     
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'             
+    instructor        = 'Steven J Zeil'   
+    email             = 'zeil@cs.odu.edu' 
+    copyright         = '2016, Old Dominion Univ.'  
+    homeURL           = '../../Directory/outline/index.html' 
+    
+    /*+*/importing('faq', 'https://www.cs.odu.edu/~zeil/FAQs')/*-*/
+}
+
+
+```
+
+This indicates that we want to link to documents within the site at the
+indicated URL, referring to that site as "faq" for sort.  We can then
+refer to a document by its name on that website, prefixing the name with "faq:".
+
+For example, we could link to [the document  "`installingACompiler`"](doc:faq:installingACompiler) as `doc:faq:installingACompiler` or to a section inside that document as `doc:faq:installingACompiler#installing-a-c-compiler-on-microsoft-windows`.
+
+
 ## graphics: and styles: shortcuts
 
 If the URL in a link is written as `graphics:`<i>fileName</i>, it is treated as a

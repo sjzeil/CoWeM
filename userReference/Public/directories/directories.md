@@ -436,7 +436,7 @@ course.
 // Top-level build.gradle for a course.
 
 plugins {
-   id 'edu.odu.cs.cowem.course' version '1.12'
+   id 'edu.odu.cs.cowem.course' version '1.16'
 }
 
                    /*1*/

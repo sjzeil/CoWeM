@@ -4,12 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.tools.ant.filters.TokenFilter.ContainsString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -100,6 +104,16 @@ public class TestWebsiteProject {
     @Test
     public void testGetRootDir() {
         assertEquals (projRoot.toFile().getAbsoluteFile(), proj.getRootDir());
+    }
+    
+    
+    @Test
+    public void testDocumentMap() {
+    	String mapping = proj.getDocumentMap();
+    	assertThat (mapping, containsString("\"doc\" : \"DocSet1\""));
+    	assertThat (mapping, containsString("\"url\" : \"Group1/DocSet1/index.html\""));
+    	assertThat (mapping, containsString("\"doc\" : \"secondaryDoc1.mmd\""));
+    	assertThat (mapping, containsString("\"url\" : \"Group1/DocSet2/secondaryDoc1.mmd.html\""));
     }
 
 }
