@@ -304,7 +304,7 @@ public class WebsiteProject implements Iterable<String> {
     		}
     		docPath = docGroup + "/" + docSet + "/" + file;
     		result.append(docPath);
-    		result.append("\"\n    },");
+    		result.append("\"\n    }");
     	}
     	result.append("\n  ]\n}\n");
     	return result.toString();
