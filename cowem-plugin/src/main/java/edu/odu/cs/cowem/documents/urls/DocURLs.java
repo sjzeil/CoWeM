@@ -99,6 +99,7 @@ public class DocURLs implements SpecialURL {
 	        		siteURL = siteURL + "index.html?doc=" + documentName
 	        				+ "&anchor=" + anchor;
 	        		link.setAttribute(linkAttr, siteURL);
+	        		link.setAttribute("target", "_blank");
 	        	} else {
 	        		logger.warn(
                             "Could not find external site for URL shorthand: @"
