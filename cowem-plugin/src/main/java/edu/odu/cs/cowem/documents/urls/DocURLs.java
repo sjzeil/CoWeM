@@ -2,6 +2,7 @@ package edu.odu.cs.cowem.documents.urls;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -99,7 +100,7 @@ public class DocURLs implements SpecialURL {
 	        		siteURL = siteURL + "index.html?doc=" + documentName
 	        				+ "&anchor=" + anchor;
 	        		link.setAttribute(linkAttr, siteURL);
-	        		link.setAttribute("target", "_blank");
+	        		link.setAttribute("target", siteName);
 	        	} else {
 	        		logger.warn(
                             "Could not find external site for URL shorthand: @"
@@ -116,6 +117,9 @@ public class DocURLs implements SpecialURL {
                     String newLink = relative.toString().replace("\\","/") 
                     		+ ".html" + docSpec.anchor;
                     link.setAttribute(linkAttr, newLink);
+                    String groupName = getGroupName(targetDocSet);
+                    String targetAttr = project.getCourseName() + "_" + groupName;
+                    link.setAttribute("target", targetAttr);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
                     }
@@ -136,6 +140,9 @@ public class DocURLs implements SpecialURL {
                     String newLink = relative.resolve("index.html").toString().replace("\\","/")
                             + docSpec.anchor;
                     link.setAttribute(linkAttr, newLink);
+                    String groupName = getGroupName(targetFile);
+                    String targetAttr = project.getCourseName() + "_" + groupName;
+                    link.setAttribute("target", targetAttr);
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
                     }
@@ -148,6 +155,11 @@ public class DocURLs implements SpecialURL {
 	        }
 	    }
 	    return false;
+	}
+
+
+	private String getGroupName(File sourceDirectory) {
+		return sourceDirectory.getParentFile().getName();
 	}
 
 

@@ -53,6 +53,7 @@ public class TestURLRewriting {
 	@BeforeEach
 	public void setUp() throws Exception {
 	    proj = new WebsiteProject(documentBase);
+	    proj.setCourseName("cs000");
 	}
 
 
@@ -688,6 +689,49 @@ public class TestURLRewriting {
     }
 
 
+	@Test
+	public void testDocTargeting() 
+	        throws XPathExpressionException, TransformerException, 
+	        ParserConfigurationException, SAXException, IOException {
+
+		String[] htmlInput = {
+				"<html>",
+				"<head>",
+				"<title>A Title</title>",
+				"</head>",
+				"<body>",
+				"<p>Some text leading to ",
+				"<a id='a1' href='doc:DocSet1'/>",
+				" and to ",
+                "<a id='a2' href='doc:secondaryDoc3.mmd'>a secondary document</a>",
+		        "</p>",
+				"</body>",
+				"</html>"	
+		};
+
+
+		org.w3c.dom.Document basicHtml = parseHTML (htmlInput); 
+		
+		URLRewriting rewriter = new URLRewriting(documentDir, proj, BB_URL);
+		rewriter.rewrite(basicHtml);
+		
+		
+		Element link1 = getElementById(basicHtml, "a1");
+		assertNotNull (link1);
+		String href = link1.getAttribute("href");
+		assertEquals (THE_BASE_URL + "Group1/DocSet1/index.html", href);
+		
+		String target = link1.getAttribute("target");
+		assertEquals (target, "cs000_Group1", href);
+
+        Element link2 = getElementById(basicHtml, "a2");
+        assertNotNull (link2);
+        href = link2.getAttribute("href");
+        assertEquals (THE_BASE_URL + "Group2/DocSet3/secondaryDoc3.mmd.html", href);
+
+		target = link2.getAttribute("target");
+		assertEquals ("cs000_Group2", target, href);
+}
 
 
 }

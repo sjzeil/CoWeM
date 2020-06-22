@@ -106,11 +106,11 @@ class CourseWebsite implements Plugin<Project> {
             dependsOn: 'setup_copy_website_defaults'
         ) { 
 		  doLast {
-			println ('at end of style overrides')
 			def json = project.website.getDocumentMap();
 			File jsonFile = new File("build/website/styles/documentMap.json");
 			jsonFile.write (json);
 			project.website.setImports(project.course.imports);
+			project.website.setCourseName(project.course.courseName);
 		  }
         }
 

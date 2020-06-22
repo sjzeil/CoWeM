@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,6 +43,11 @@ public class WebsiteProject implements Iterable<String> {
     private static final String GRADLE_FILE_NAME = "build.gradle";
 
 
+    /**
+     * Short name of the the course, converted to a URL-safe string.
+     */
+    private String courseName;
+    
     /**
      * Root directory of the project.
      */
@@ -80,6 +87,7 @@ public class WebsiteProject implements Iterable<String> {
         documentSets = new TreeMap<String,File>();
         documentSources = new TreeMap<String,File>();
         documentTitles = new TreeMap<String,String>();
+        courseName = "unknown";
         
         for (File group: rootDir.listFiles()) {
             if (group.isDirectory()) {
@@ -320,5 +328,26 @@ public class WebsiteProject implements Iterable<String> {
 		return importedSites.get(siteName);
 	}
     
- 
+	/**
+	 * Save a short name for the course, after replacing any non-URL-safe
+	 * characters.
+	 * 
+	 * @param cname a short name for this course.
+	 */
+	public void setCourseName (String cname) {
+		try {
+			courseName = URLEncoder.encode(cname, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			courseName="unknown";
+		}
+	}
+	
+	/**
+	 * A short name for this course.
+	 * 
+	 * @return the course name
+	 */
+	public String getCourseName() {
+		return courseName;
+	}
 }

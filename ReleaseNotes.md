@@ -4,6 +4,7 @@
 
 * Added ability to use doc: URL shorcuts to reference documents in other CoWeM-generated
   websites.
+* Cross-group document links (doc: shortcuts) now open in a separate tab/window.
 
 == v1.15 June 4, 2020
 

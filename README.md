@@ -48,6 +48,7 @@ Learning Management Systems.
 
 * Added ability to use doc: URL shorcuts to reference documents in other CoWeM-generated
   websites.
+* Cross-group document links (doc: shortcuts) now open in a separate tab/window.
 
 # New in v1.15
 
