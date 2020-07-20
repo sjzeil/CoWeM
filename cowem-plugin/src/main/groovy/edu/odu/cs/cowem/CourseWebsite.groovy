@@ -207,7 +207,6 @@ class CourseWebsite implements Plugin<Project> {
                     project.file('build/website/'),
                     primaryName
                     );
-            //doc.setDebugMode(true);
             doc.generate();
         }
 

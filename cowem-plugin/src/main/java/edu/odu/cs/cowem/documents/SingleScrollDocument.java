@@ -126,9 +126,11 @@ public class SingleScrollDocument {
      * 
      */
     public void generate() {
+    	logger.info("starting SingleScrollDocument generate");
         buildDir.mkdirs();
         try {
             copyBaseDocument();
+            logger.warn("copied base document");
             Set<String> copiedDocuments = new HashSet<String>();
             copiedDocuments.add(baseDocument);
             for (String docRef : documentQueue) {
@@ -138,8 +140,9 @@ public class SingleScrollDocument {
                 }
             }
             
-            org.w3c.dom.Document finalDoc = transformEntireScroll();
+        	org.w3c.dom.Document finalDoc = transformEntireScroll();
             
+        	logger.info("writing transformed doc to " + buildDir.toString() + "/index/html");
             File outputFile = new File(buildDir, "index.html");
             Writer writer = new BufferedWriter(new FileWriter(outputFile));
             write (writer, finalDoc);
@@ -230,9 +233,14 @@ public class SingleScrollDocument {
             return new HashSet<String>();
         }
         baseDoc = parseXML(new FileReader(baseDocFile));
+        logger.info("parsed base document from " + baseDocFile.toString());
         Node baseRoot = baseDoc.getDocumentElement();
-        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
+        logger.info("about to use Saxon");
+    	net.sf.saxon.xpath.XPathFactoryImpl xpf = new net.sf.saxon.xpath.XPathFactoryImpl();
+    	logger.info("ran the Saxon factory");
+        XPath xPath =  xpf.newXPath();
         // Collect list of referenced docs
+        logger.info("collecting referenced docs");
         NodeList nodes;
         try {
             nodes = (NodeList) xPath.evaluate("/html/body//a[@class='doc']", baseRoot, XPathConstants.NODESET);
