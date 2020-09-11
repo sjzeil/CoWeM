@@ -1,5 +1,10 @@
 = Release Notes
 
+== v1.17 Sept 11, 2020
+
+* Fixed bug in handling of certain code blocks that caused slides to be empty
+  after code block.
+
 == v1.16 June 9, 2020
 
 * Added ability to use doc: URL shorcuts to reference documents in other CoWeM-generated

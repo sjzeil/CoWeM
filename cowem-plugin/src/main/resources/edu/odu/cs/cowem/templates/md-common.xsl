@@ -350,7 +350,7 @@
       </xsl:variable>
       <xsl:text>
       </xsl:text>
-      <div class="noFloat"> </div>
+      <div class="noFloat">&#xA0;</div>
       <pre style="display:none" id="pre{$idValue}">
          <xsl:copy-of select="code"/>
       </pre>

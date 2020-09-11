@@ -36,13 +36,17 @@ Learning Management Systems.
 
 * [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
 
-* Currently in version 1.16.
+* Currently in version 1.17.
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
   set of files that will "bootstrap" the fetching of CoWeM code and the
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
+
+# New in v1.17
+
+* Bug fixes affecting slides
 
 # New in v1.16
 

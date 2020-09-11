@@ -15,7 +15,7 @@ plugins {
     id "com.github.node-gradle.node" version "2.2.4"
 }
 group = 'edu.odu.cs.zeil'
-version = '1.16'
+version = '1.17'
 
 gradlePlugin {
     plugins {
