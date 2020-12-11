@@ -107,7 +107,7 @@ class CourseWebsite implements Plugin<Project> {
         ) { 
 		  doLast {
 			def json = project.website.getDocumentMap();
-			File jsonFile = new File("build/website/styles/documentMap.json");
+			File jsonFile = project.file("build/website/styles/documentMap.json");
 			jsonFile.write (json);
 			project.website.setImports(project.course.imports);
 			project.website.setCourseName(project.course.courseName);
@@ -211,7 +211,7 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         project.node {  
-            version = '8.11.2' // current LTS version
+            version = '12.19.0' // current LTS version
             workDir = project.file("${project.buildDir}/nodejs")
             npmWorkDir = project.file("${project.buildDir}")
             nodeModulesDir = project.file("${project.buildDir}")
