@@ -3,7 +3,7 @@ const formats = require("./website/styles/pdfFormats.js").formats;
 
 console.log('Node version is: ' + process.version);
 (async () => {
-  const browser = await puppeteer.launch({headless: true});
+	const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox']});
   const page = await browser.newPage();
   var pagePath = '@scrollFile@';
   if (pagePath.charAt(1) == ':') {

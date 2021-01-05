@@ -55,7 +55,7 @@ class CourseWebsite implements Plugin<Project> {
                 
                 // Use my own CS dept repo
                 ivy {
-                    url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+                    url 'https://www.cs.odu.edu/~zeil/ivyrepo'
                 }
             }
         }
@@ -211,7 +211,7 @@ class CourseWebsite implements Plugin<Project> {
         }
 
         project.node {  
-            version = '12.19.0' // current LTS version
+            version = '14.15.4' // current LTS version
             workDir = project.file("${project.buildDir}/nodejs")
             npmWorkDir = project.file("${project.buildDir}")
             nodeModulesDir = project.file("${project.buildDir}")

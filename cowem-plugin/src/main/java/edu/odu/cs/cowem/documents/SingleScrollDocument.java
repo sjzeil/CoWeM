@@ -140,6 +140,7 @@ public class SingleScrollDocument {
                 }
             }
             
+        	logger.info("starting transformEntireScroll");
         	org.w3c.dom.Document finalDoc = transformEntireScroll();
             
         	logger.info("writing transformed doc to " + buildDir.toString() + "/index/html");
@@ -236,7 +237,14 @@ public class SingleScrollDocument {
         logger.info("parsed base document from " + baseDocFile.toString());
         Node baseRoot = baseDoc.getDocumentElement();
         logger.info("about to use Saxon");
-    	net.sf.saxon.xpath.XPathFactoryImpl xpf = new net.sf.saxon.xpath.XPathFactoryImpl();
+    	// net.sf.saxon.xpath.XPathFactoryImpl xpf = null;
+		javax.xml.xpath.XPathFactory xpf = null;
+		try {
+			// xpf = new net.sf.saxon.xpath.XPathFactoryImpl();
+			xpf = javax.xml.xpath.XPathFactory.newInstance();
+		} catch (Exception ex) {
+			logger.error ("Error: net.sf.saxon.xpath.XPathFactoryImpl() reports: ", ex);
+		}
     	logger.info("ran the Saxon factory");
         XPath xPath =  xpf.newXPath();
         // Collect list of referenced docs
@@ -334,6 +342,7 @@ public class SingleScrollDocument {
         if (!compDocFile.exists()) {
             logger.error("Could not find scroll format for " + compDocumentName);
         }
+        logger.info(documentID + ": parse XML");
         org.w3c.dom.Document componentDoc = parseXML(new FileReader(compDocFile));
         if (componentDoc == null) {
         	componentDoc = parseXML(
@@ -342,13 +351,22 @@ public class SingleScrollDocument {
         			);
         }
         Node componentRoot = componentDoc.getDocumentElement();
-        XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
+        logger.info(documentID + ": set up xpath");
+		XPath xPath = null;
+		try {
+			XPathFactory factory = XPathFactory.newInstance();
+			logger.info ("got factory " + factory.toString());
+			xPath = factory.newXPath();
+		} catch (Exception ex) {
+			logger.error ("Error setting up xpath: ", ex);
+		}
 
  
         // Rewrite the component document
 
         // 1. Find the main content area
        
+        logger.info(documentID + "  1. Find the main content area");
         Node content = null;
         try {
             content = (org.w3c.dom.Node) xPath.evaluate("/html/body/div[@class='mainBody']", componentRoot, 
@@ -363,6 +381,7 @@ public class SingleScrollDocument {
         
 
         // 2. Rewrite links
+        logger.info(documentID + "  2. Rewrite links");
         try {
             replaceURLs((NodeList)
                     xPath.evaluate("/html/head/link[@type='text/css']", componentRoot, XPathConstants.NODESET),
@@ -376,7 +395,8 @@ public class SingleScrollDocument {
         } catch (XPathExpressionException e) {
             logger.error("Unable to process xpath", e);
         }
-        // 2. Rewrite IDs
+        // 3. Rewrite IDs
+        logger.info(documentID + "  3. Rewrite IDs");
         try {
             replaceIDs((NodeList)
                     xPath.evaluate("/html/body//*[@id != '']", componentRoot, XPathConstants.NODESET),
@@ -388,10 +408,12 @@ public class SingleScrollDocument {
         eContent.setAttribute("id", compDocumentGroup + "__" + compDocumentName);
 
         
-        // 3. Copy non-html files
+        // 4. Copy non-html files
+        logger.info(documentID + "  4. Copy non-HTML files");
         copyAuxiliaryFiles (componentDocSource, buildDir, compDocumentGroup, compDocumentName);
         
-        // 4. Add component to main document.
+        // 5. Add component to main document.
+        logger.info(documentID + "  5. Add component to main document");
         try {
             Node baseRoot = baseDoc.getDocumentElement();
             Node body = (org.w3c.dom.Node) xPath.evaluate("/html/body", baseRoot, XPathConstants.NODE);

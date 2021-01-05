@@ -1,5 +1,16 @@
 = Release Notes
 
+== v1.19 Jan 6, 2021
+
+* Bug fix affecting repostitories searched for 3rd party libraries
+* Bug fix breaking PDF generation ("no usuable sandbox" error from Puppeteer
+
+== v1.18 Dec 11, 2020
+
+* Bug fix affecting operation in Windows
+* Force Java compatibility to Java 11
+
+
 == v1.17 Sept 11, 2020
 
 * Fixed bug in handling of certain code blocks that caused slides to be empty
