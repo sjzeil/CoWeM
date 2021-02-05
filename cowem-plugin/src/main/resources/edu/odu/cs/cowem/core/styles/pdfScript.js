@@ -15,7 +15,7 @@ console.log('Node version is: ' + process.version);
 	        await page.waitFor("#mathJaxHasCompleted",
 					           {visible: true, timeout: 180000});
 		} catch (err) {
-			console.log ("Error eaiting for mathJax signal\n" + err);
+			console.log ("Error waiting for mathJax signal\n" + err);
 		}
         for (formatNum in formats) {
            formatSpec = formats[formatNum];
