@@ -1,8 +1,9 @@
 # CoWeM: Course Websites from Markdown
 
-This is a system for for building course websites, including lecture notes, 
+This is a static site generator for for building course websites, including lecture notes, 
 slides & organizational pages, from Markdown documents. 
-CoWeM has been used to support both traditional face-to-face and web courses, 
+CoWeM has been used in the [Old Dominion University CS Department](https://www.cs.odu.edu/)
+to support both traditional face-to-face and web courses, 
 including the course sites
 for [the CS 250 pretest](https://www.cs.odu.edu/~zeil/cs250PreTest/latest/), 
 [CS 252](https://www.cs.odu.edu/~zeil/cs252/latest/),
@@ -31,6 +32,8 @@ export package suitable for importing into Blackboard or other
 Learning Management Systems.
 
 # Project Status
+
+> The project is currently being moved from a Departmental GitLab to hosting on GitHub.
 
 * [Users' Reference Manual](https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html)
 
