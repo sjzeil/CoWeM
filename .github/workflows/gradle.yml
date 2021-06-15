@@ -5,7 +5,7 @@ name: CI - build and test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, sjzeil-CI-setup ]
   pull_request:
     branches: [ main ]
 
@@ -23,5 +23,14 @@ jobs:
         distribution: 'adopt'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build the plugin
+      working-directory: ./cowem-plugin
+      run: ../gradlew build
+    - name: Build the reference manual
+      working-directory: ./userReference
+      run: ../gradlew build
+    - name: make docs available
+      run: |
+        mkdir docs
+        cp -rf cowem-plugin/build/reports docs/
+        mv userReference/build/website docs/
