@@ -6,8 +6,6 @@ name: CI - build and test
 on:
   push:
     branches: [ main, sjzeil-CI-setup ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -34,3 +32,5 @@ jobs:
         mkdir docs
         cp -rf cowem-plugin/build/reports docs/
         mv userReference/build/website docs/
+        cp README.md docs/index.md
+        
