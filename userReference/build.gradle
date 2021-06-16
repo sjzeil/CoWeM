@@ -3,47 +3,14 @@
  * Steven J Zeil, Old Dominion Univ.
  */
 
-buildscript { 
-     repositories {
-         jcenter()
-         mavenCentral()
-         maven {
-             url "https://plugins.gradle.org/m2/"
-         }
-     
-         /*
-         // Use my own CS dept repo
-         ivy {
-             // url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
-         }
-         */
-         flatDir {
-            dirs project.file('../cowem-plugin/build/libs')
-         }
-         
-     }
-     dependencies {
-         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
-         //classpath 'edu.odu.cs.zeil:cowem-plugin:1.10+'
-         classpath name: 'cowem-plugin-1.19', changing: true
-         classpath 'org.pegdown:pegdown:1.6.0+'
-         classpath 'org.slf4j:slf4j-api:1.7.0+'
-         classpath 'net.sf.saxon:saxon-dom:8.7+'
-         classpath 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201705170830-rc1+'
-         classpath 'com.moowork.gradle:gradle-node-plugin:1.2.0'
-         
-     }
-}
 
-/*
+
 plugins {
-    id "com.moowork.node" version "1.2.0"  // Mockup for what will eventually go into the plugin
+    id 'edu.odu.cs.cowem.course' version '1.19.0'
 }
-*/
-
-apply plugin: edu.odu.cs.cowem.CourseWebsite
 
 
+apply plugin: 'edu.odu.cs.cwm.CourseWebsite'
  
 
 course {
