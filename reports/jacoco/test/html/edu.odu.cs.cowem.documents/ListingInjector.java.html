@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ListingInjector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents</a> &gt; <span class="el_source">ListingInjector.java</span></div><h1>ListingInjector.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem.documents;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Scans for longlisting elements and injects the code
+ * from a file as a CDATA field.
+ *  
+ * @author Zeil
+ */
+public class ListingInjector implements TextSubstitutions {
+    
+    /**
+     * Regular expression used to detect cwm tags.
+     */
+    private Pattern listingPattern;
+    
+    
+    /**
+     * Directory from which source code was being obtained.
+     */
+    private File sourceDirectory;
+
+    
+    
+    
+    /**
+     * For logging error messages.
+     */
+<span class="fc" id="L42">    private static Logger logger = </span>
+<span class="fc" id="L43">            LoggerFactory.getLogger(ListingInjector.class);</span>
+
+    /**
+     * Create a cleaner.
+     * 
+     * @param sourceDir; directory from which document source was loaded.
+     */
+<span class="fc" id="L50">    public ListingInjector(File sourceDir) {</span>
+<span class="fc" id="L51">        listingPattern = Pattern.compile</span>
+<span class="fc" id="L52">             (&quot;[&lt;]longlisting ([^&gt;]*)[&gt;]([^&lt;]*)[&lt;]/longlisting([^&gt;]*)[&gt;]&quot;);</span>
+<span class="fc" id="L53">        sourceDirectory = sourceDir;</span>
+<span class="fc" id="L54">    }</span>
+    
+    
+    /**
+     * Apply substitutions.
+     * 
+     * @param target  original string
+     * @return original after applying substitutions.
+     */
+    @Override
+    public final String apply(final String target) {
+        
+<span class="fc" id="L66">        final String fileAttrStart = &quot;file=&quot;;</span>
+<span class="fc" id="L67">        final int initialBufferCapacity = 1024;</span>
+<span class="fc" id="L68">        StringBuilder buffer = new StringBuilder(initialBufferCapacity);</span>
+<span class="fc" id="L69">        Matcher matcher = listingPattern.matcher(target);</span>
+<span class="fc" id="L70">        int start = 0;</span>
+        
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L73">            int elementStart = matcher.start();</span>
+<span class="fc" id="L74">            int elementStop = matcher.end();</span>
+<span class="fc" id="L75">            String attributes = matcher.group(1);</span>
+
+<span class="fc" id="L77">            String[] attributePairs = attributes.split(&quot;  *&quot;);</span>
+            
+<span class="fc" id="L79">            buffer.append(target.substring(start, elementStart));</span>
+            
+<span class="fc" id="L81">            String fileName = &quot;&quot;;</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            for (String pair: attributePairs) {</span>
+                                
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                if (pair.startsWith(fileAttrStart)) {</span>
+<span class="fc" id="L85">                    fileName = pair.substring(fileAttrStart.length() + 1,  </span>
+<span class="fc" id="L86">                            pair.length() - 1);</span>
+<span class="fc" id="L87">                    break;</span>
+                }
+            }
+            
+<span class="fc" id="L91">            buffer.append(&quot;&lt;longlisting &quot;);</span>
+<span class="fc" id="L92">            buffer.append(attributes);</span>
+<span class="fc" id="L93">            buffer.append(&quot;&gt;&lt;![CDATA[&quot;);</span>
+            
+            
+<span class="fc" id="L96">            try (BufferedReader fileIn </span>
+                    = new BufferedReader(new FileReader(
+                            new File(sourceDirectory, fileName)))) {
+<span class="fc" id="L99">                String line = fileIn.readLine();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                while (line != null) {</span>
+<span class="fc" id="L101">                    buffer.append(line);</span>
+<span class="fc" id="L102">                    buffer.append('\n');</span>
+<span class="fc" id="L103">                    line = fileIn.readLine();</span>
+                }
+<span class="nc" id="L105">            } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L106">                String msg = &quot;Could not open file &quot; + fileName;</span>
+<span class="nc" id="L107">                buffer.append (msg);</span>
+<span class="nc" id="L108">                logger.warn(msg);</span>
+<span class="nc" id="L109">            } catch (IOException e) {</span>
+<span class="nc" id="L110">                String msg = &quot;Problem reading file &quot; + fileName;</span>
+<span class="nc" id="L111">                buffer.append (msg);</span>
+<span class="nc" id="L112">                logger.warn(msg, e);</span>
+<span class="pc" id="L113">            }</span>
+<span class="fc" id="L114">            buffer.append(&quot;]]&gt;&lt;/longlisting&gt;\n&quot;);</span>
+            
+<span class="fc" id="L116">            start = elementStop;</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">        buffer.append(target.substring(start));</span>
+        
+<span class="fc" id="L120">        return buffer.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Documents.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem</a> &gt; <span class="el_source">Documents.groovy</span></div><h1>Documents.groovy</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem
+
+
+import org.gradle.api.Plugin
+
+import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.bundling.Zip
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+import java.nio.file.Path
+import java.nio.file.Paths
+import edu.odu.cs.cowem.Course
+import edu.odu.cs.cowem.DocumentSet
+import edu.odu.cs.cowem.documents.ListingDocument
+import edu.odu.cs.cowem.documents.MarkdownDocument
+import edu.odu.cs.cowem.documents.WebsiteProject
+
+/**
+ * A plugin for describing a documentset within a course website.
+ * 
+ * A document set resides in a single directory. It includes 
+ *   1) a primary document (in Markdown), which can be translated into
+ *      a variety of HTML-based formats, 
+ *   2) an arbitrary number of secondary documents (also in Markdown),
+ *      each of which will be translated into an HTML page,
+ *   3) an arbitrary number of source code listings, each of which will
+ *      be rendered as an HTML page with a link to the unmodified source code,
+ *      and
+ *   4) an arbitrary number of support files, such as graphics, css files, 
+ *      etc., that will be copied to the website without modification. 
+ */
+class Documents implements Plugin&lt;Project&gt; {
+
+	void apply (Project project) {
+
+<span class="nc" id="L41">		project.configurations {</span>
+<span class="nc" id="L42">			build</span>
+		}
+
+
+
+
+		// Add a DocumentSet object as a property of the project
+<span class="nc bnc" id="L49" title="All 4 branches missed.">        if (!project.hasProperty('documents')) {</span>
+<span class="nc" id="L50">		    project.extensions.create ('documents', DocumentSet, project)</span>
+        }
+
+<span class="nc" id="L53">		def templatesArea = project.file('../../build/cowem/templates/')</span>
+<span class="nc" id="L54">		def websiteArea = project.file('../../build/website/'</span>
+<span class="nc" id="L55">				+ project.parent.name + &quot;/&quot; + project.name + '/')</span>
+
+<span class="nc" id="L57">		project.task (type: Copy,</span>
+<span class="nc" id="L58">		dependsOn: project.rootProject.tasks['setup'],</span>
+		'doc_setup') {
+<span class="nc" id="L60">			from {return project.documents.supportDocuments</span>
+<span class="nc" id="L61">					+ project.documents.listingDocuments}</span>
+<span class="nc" id="L62">			into websiteArea</span>
+		}
+<span class="nc" id="L64">		project.task (type: Copy,</span>
+<span class="nc" id="L65">		        dependsOn: project.rootProject.tasks['setup'],</span>
+		        'filtered_setup') {
+<span class="nc" id="L67">		            from {return project.documents.filteredDocuments}</span>
+<span class="nc" id="L68">		            into websiteArea</span>
+<span class="nc" id="L69">		            filter (ReplaceTokens,  </span>
+<span class="nc" id="L70">		                    tokens:  {  </span>
+<span class="nc" id="L71">		                      Map&lt;String,String&gt; propFilters = new HashMap&lt;String,String&gt;(); </span>
+<span class="nc" id="L72">		                      project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L73">	                            propFilters.put(prop, value.toString())</span>
+		                      }
+<span class="nc" id="L75">		                      project.rootProject.course.ext.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L76">                              propFilters.put(prop, value.toString())</span>
+                            }
+<span class="nc" id="L78">		                      propFilters;</span>
+		                    }()
+		                   )
+		        }
+		
+<span class="nc" id="L83">		project.task ('doc_mainDoc',</span>
+<span class="nc" id="L84">            dependsOn: ['doc_setup', 'filtered_setup', project.configurations.build]) {</span>
+            //println (&quot;mainDoc: &quot; + project.documents.primaryDocument
+			//	+ &quot; =&gt; &quot; + project.documents.primaryTargets.join(','))
+<span class="nc" id="L87">		    inputs.file project.documents.primaryDocument</span>
+<span class="nc" id="L88">			outputs.dir project.documents.indexTarget.parentFile</span>
+		}
+
+<span class="nc" id="L91">		project.doc_mainDoc .doLast {</span>
+<span class="nc" id="L92">			Properties docProperties = new Properties()</span>
+<span class="nc" id="L93">			docProperties.put('_' + project.rootProject.course.delivery, '1')</span>
+<span class="nc" id="L94">			project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L95">				docProperties.put(prop, value.toString())</span>
+			}
+<span class="nc" id="L97">			project.rootProject.course.ext.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L98">                docProperties.put(prop, value.toString())</span>
+			}
+<span class="nc" id="L100">			project.documents.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L101">				docProperties.put(prop, value.toString())</span>
+			}
+<span class="nc" id="L103">			String primaryName = project.documents.primaryDocument.name;</span>
+<span class="nc" id="L104">			int k = primaryName.lastIndexOf('.');</span>
+<span class="nc bnc" id="L105" title="All 16 branches missed.">			if (k &gt;= 0) {</span>
+<span class="nc" id="L106">				primaryName = primaryName.substring(0, k);</span>
+<span class="nc" id="L107">			}</span>
+<span class="nc bnc" id="L108" title="All 4 branches missed.">			if (!websiteArea.exists()) {</span>
+<span class="nc" id="L109">				websiteArea.mkdirs();</span>
+			}
+<span class="nc bnc" id="L111" title="All 2 branches missed.">			for (String format: project.documents.formats) {</span>
+				
+                MarkdownDocument doc =
+<span class="nc" id="L114">                    new MarkdownDocument(project.documents.primaryDocument,</span>
+                        project.rootProject.website,
+                        docProperties);
+                //doc.setDebugMode(true);
+<span class="nc" id="L118">				String result = doc.transform(format)</span>
+                
+<span class="nc" id="L120">				File resultFile = project.file(websiteArea.toString() + '/'</span>
+<span class="nc" id="L121">						+ primaryName + &quot;__&quot; + format + &quot;.html&quot;)</span>
+<span class="nc" id="L122">                resultFile.getParentFile().mkdirs()</span>
+<span class="nc" id="L123">				resultFile.withWriter('UTF-8') {</span>
+<span class="nc" id="L124">					it.writeLine(result)</span>
+				}
+<span class="nc" id="L126">			}</span>
+<span class="nc" id="L127">			File indexSource = project.documents.indexTarget;</span>
+<span class="nc" id="L128">			File indexDest = new File(websiteArea, 'index.html')</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">			if (indexSource.exists()) {</span>
+<span class="nc" id="L130">			    project.copy {</span>
+<span class="nc" id="L131">				    from indexSource</span>
+<span class="nc" id="L132">				    into websiteArea</span>
+<span class="nc" id="L133">					rename {'index.html'}</span>
+			    }
+<span class="nc" id="L135">			} else {</span>
+<span class="nc" id="L136">                logger.warn (indexSource.toString() + &quot; was not built.&quot;)</span>
+<span class="nc" id="L137">			}</span>
+		}
+
+
+<span class="nc" id="L141">		project.task ('doc_secondaryDocs', dependsOn: project.doc_setup) {</span>
+<span class="nc" id="L142">            inputs.files project.documents.secondaryDocuments</span>
+<span class="nc" id="L143">            outputs.dir project.documents.indexTarget.parentFile</span>
+		} .doLast {
+<span class="nc" id="L145">            Properties docProperties = new Properties()</span>
+<span class="nc" id="L146">            docProperties.put('_' + project.rootProject.course.delivery, '1')</span>
+<span class="nc" id="L147">            project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L148">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L150">            project.rootProject.course.ext.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L151">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L153">            project.documents.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L154">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L156">            String primaryName = project.documents.primaryDocument.name;</span>
+<span class="nc" id="L157">            int k = primaryName.lastIndexOf('.');</span>
+<span class="nc bnc" id="L158" title="All 16 branches missed.">            if (k &gt;= 0) {</span>
+<span class="nc" id="L159">                primaryName = primaryName.substring(0, k);</span>
+<span class="nc" id="L160">            }</span>
+<span class="nc bnc" id="L161" title="All 4 branches missed.">            if (!websiteArea.exists()) {</span>
+<span class="nc" id="L162">                websiteArea.mkdirs();</span>
+            }
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            for (File secondarySource: project.documents.secondaryDocuments) {</span>
+                MarkdownDocument doc =
+<span class="nc" id="L166">                    new MarkdownDocument(secondarySource,</span>
+                        project.rootProject.website,
+                        docProperties);
+                //doc.setDebugMode(true);
+<span class="nc" id="L170">                String result = doc.transform(&quot;scroll&quot;)</span>
+
+<span class="nc" id="L172">                Path rootProjDir = project.rootDir.toPath()</span>
+<span class="nc" id="L173">                Path p1 = rootProjDir.relativize(secondarySource.toPath())</span>
+<span class="nc" id="L174">                Path websiteDirP = project.file('../../build/website').toPath()</span>
+<span class="nc" id="L175">                Path resultFileP = websiteDirP.resolve(p1)</span>
+<span class="nc" id="L176">                File websiteParent = resultFileP.toFile().getParentFile()</span>
+<span class="nc" id="L177">                websiteParent.mkdirs()</span>
+<span class="nc" id="L178">				File resultFile = new File(websiteParent, secondarySource.getName() + &quot;.html&quot;)</span>
+<span class="nc" id="L179">                resultFile.getParentFile().mkdirs()</span>
+<span class="nc" id="L180">                resultFile.withWriter('UTF-8') {</span>
+<span class="nc" id="L181">                    it.writeLine(result)</span>
+                }
+<span class="nc" id="L183">            }</span>
+		}
+
+<span class="nc" id="L186">		project.task ('doc_Listings', dependsOn: project.doc_setup) {</span>
+<span class="nc" id="L187">            inputs.files project.documents.listingDocuments</span>
+<span class="nc" id="L188">            outputs.dir project.documents.indexTarget.parentFile</span>
+		} .doLast {
+<span class="nc" id="L190">            Properties docProperties = new Properties()</span>
+<span class="nc" id="L191">            docProperties.put('_' + project.rootProject.course.delivery, '1')</span>
+<span class="nc" id="L192">            project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L193">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L195">            project.rootProject.course.ext.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L196">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L198">            project.documents.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L199">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L201">            String primaryName = project.documents.primaryDocument.name;</span>
+<span class="nc" id="L202">            int k = primaryName.lastIndexOf('.');</span>
+<span class="nc bnc" id="L203" title="All 16 branches missed.">            if (k &gt;= 0) {</span>
+<span class="nc" id="L204">                primaryName = primaryName.substring(0, k);</span>
+<span class="nc" id="L205">            }</span>
+<span class="nc bnc" id="L206" title="All 4 branches missed.">            if (!websiteArea.exists()) {</span>
+<span class="nc" id="L207">                websiteArea.mkdirs();</span>
+            }
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            for (File listingSource: project.documents.listingDocuments) {</span>
+                ListingDocument doc =
+<span class="nc" id="L211">                    new ListingDocument(listingSource,</span>
+                        project.rootProject.website,
+                        docProperties);
+<span class="nc" id="L214">                String result = doc.transform(&quot;scroll&quot;)</span>
+                
+<span class="nc" id="L216">                Path rootProjDir = project.rootDir.toPath()</span>
+<span class="nc" id="L217">                Path p1 = rootProjDir.relativize(listingSource.toPath())</span>
+<span class="nc" id="L218">                Path websiteDirP = project.file('../../build/website').toPath()</span>
+<span class="nc" id="L219">                Path resultFileP = websiteDirP.resolve(p1)</span>
+<span class="nc" id="L220">                File websiteParent = resultFileP.toFile().getParentFile()</span>
+<span class="nc" id="L221">                websiteParent.mkdirs()</span>
+<span class="nc" id="L222">				File resultFile = new File(websiteParent, listingSource.getName() + &quot;.html&quot;)</span>
+<span class="nc" id="L223">                resultFile.withWriter('UTF-8') {</span>
+<span class="nc" id="L224">                    it.writeLine(result)</span>
+                }
+<span class="nc" id="L226">            }</span>
+        }
+
+
+<span class="nc" id="L230">		project.task ('build',</span>
+<span class="nc" id="L231">            dependsOn: [project.doc_mainDoc,</span>
+			            project.doc_secondaryDocs,
+			            project.doc_Listings]
+		  ) {
+<span class="nc" id="L235">			description 'Prepare document set output'</span>
+<span class="nc" id="L236">			group 'Build'</span>
+<span class="nc" id="L237">			dependsOn ':setup'</span>
+		}
+
+
+<span class="nc" id="L241">		project.rootProject.tasks['build'].dependsOn(project.build)</span>
+
+        
+        
+<span class="nc" id="L245">        project.task ('deployDoc', type: Copy, dependsOn: 'build') {</span>
+<span class="nc" id="L246">            description 'Copy this document set to a local deployDestination directory.'</span>
+<span class="nc" id="L247">            group 'Deployment'</span>
+<span class="nc" id="L248">            from websiteArea</span>
+<span class="nc" id="L249">            into { return project.course.deployDestination +</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">                ((project.course.deployDestination.endsWith('/'))? '' : '/')  +</span>
+<span class="nc" id="L251">                     project.parent.name + '/' + project.name; }</span>
+<span class="nc" id="L252">            dirMode 0775</span>
+<span class="nc" id="L253">            includeEmptyDirs true</span>
+        }
+
+        
+<span class="nc" id="L257">        project.task ('doczip', type: Zip, dependsOn: 'build') {</span>
+            // description 'Prepare a zip file of the website.'
+<span class="nc" id="L259">            group 'Packaging'</span>
+            //onlyIf {true}
+            
+<span class="nc" id="L262">            from &quot;../../build/website&quot;</span>
+<span class="nc" id="L263">            include &quot;${project.parent.name}/${project.name}/**&quot;</span>
+            
+<span class="nc" id="L265">            destinationDir = project.file('../../build/packages')</span>
+<span class="nc" id="L266">            archiveName &quot;website-${project.name}.zip&quot;</span>
+<span class="nc" id="L267">            dirMode 0775</span>
+<span class="nc" id="L268">            fileMode 0664</span>
+<span class="nc" id="L269">            includeEmptyDirs true</span>
+        }
+    
+
+<span class="nc" id="L273">        project.task ('deployDocBySsh', dependsOn: 'doczip') {</span>
+<span class="nc" id="L274">            description 'Copy course website to a remote machine.'</span>
+<span class="nc" id="L275">            group 'Deployment'</span>
+<span class="nc" id="L276">            inputs.file 'build/packages/website.zip'</span>
+        } .doLast {
+<span class="nc" id="L278">            int k0 = project.course.sshDeployURL.indexOf('@')</span>
+<span class="nc" id="L279">            int k1 = project.course.sshDeployURL.indexOf(':')</span>
+<span class="nc bnc" id="L280" title="All 6 branches missed.">            def hostName = project.course.sshDeployURL.substring(k0+1,k1)</span>
+<span class="nc" id="L281">            project.remotes.remotehost.host = hostName</span>
+<span class="nc" id="L282">            def userName = project.course.sshDeployURL.substring(0, k0)</span>
+<span class="nc" id="L283">            project.remotes.remotehost.user = userName</span>
+<span class="nc bnc" id="L284" title="All 6 branches missed.">            def remotePath = project.course.sshDeployURL.substring(k1+1)</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">            if (project.course.sshDeployKey != null) {</span>
+                project.remotes.remotehost.identity =
+<span class="nc" id="L287">                        project.file(project.course.sshDeployKey)</span>
+            }
+
+<span class="nc" id="L290">            project.ssh.run {</span>
+<span class="nc" id="L291">                settings {</span>
+<span class="nc" id="L292">                    dryRun = false</span>
+                }
+<span class="nc" id="L294">                session (project.remotes.remotehost) {</span>
+<span class="nc" id="L295">                    put from: project.file(&quot;../../build/packages/website-${project.name}.zip&quot;),</span>
+                    into: remotePath
+<span class="nc" id="L297">                    execute &quot;unzip -u -q -o ${remotePath}/website-${project.name}.zip -d ${remotePath}&quot;</span>
+<span class="nc" id="L298">                    execute &quot;/bin/rm -f ${remotePath}/website-${project.name}.zip&quot;</span>
+                }
+<span class="nc" id="L300">                println &quot;Sent to &quot; + project.course.sshDeployURL</span>
+            }
+        }
+
+
+
+<span class="nc" id="L306">        project.task ('deployDocByRsync', dependsOn: 'build') {</span>
+            // Deloy by rsync requires an external installation of rsync and ssh.
+<span class="nc" id="L308">            description 'Copy course website to a remote machine by rsync'</span>
+<span class="nc" id="L309">            group 'Deployment'</span>
+<span class="nc" id="L310">            inputs.dir 'build/website'</span>
+        } .doLast {
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            if (project.course.rsyncDeployURL == null) {</span>
+<span class="nc" id="L313">                project.course.rsyncDeployURL = project.course.sshDeployURL</span>
+<span class="nc bnc" id="L314" title="All 2 branches missed.">                if (project.course.rsyncDeployKey == null) {</span>
+<span class="nc" id="L315">                    project.course.rsyncDeployKey = project.course.sshDeployKey</span>
+                }
+            }
+
+<span class="nc bnc" id="L319" title="All 4 branches missed.">            if (!project.course.rsyncDeployURL.endsWith('/')) {</span>
+<span class="nc" id="L320">                project.course.rsyncDeployURL = project.course.rsyncDeployURL + '/'</span>
+            }
+<span class="nc" id="L322">            def sourceDir = &quot;../../build/website/${project.parent.name}/${project.name}/&quot;</span>
+
+<span class="nc" id="L324">            String sshCmd = &quot;ssh&quot;;</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">            if (project.course.rsyncDeployKey != null) {</span>
+<span class="nc" id="L326">                sshCmd = &quot;ssh -i ${project.rootProject.file(project.course.rsyncDeployKey)}&quot;</span>
+            }
+<span class="nc" id="L328">            def cmd = [</span>
+                'rsync',
+                '-auzv',
+<span class="nc" id="L331">                '-e' + sshCmd,</span>
+                sourceDir,
+<span class="nc" id="L333">                project.course.rsyncDeployURL + </span>
+                    &quot;${project.parent.name}/${project.name}/&quot;
+                ]
+
+<span class="nc" id="L337">            println (&quot;Issuing rsync command\n&quot; + cmd.iterator().join(&quot; &quot;))</span>
+<span class="nc" id="L338">            project.exec {</span>
+<span class="nc" id="L339">                commandLine = cmd</span>
+<span class="nc bnc" id="L340" title="All 2 branches missed.">                if (project.course.rsyncDeployKey != null) {</span>
+<span class="nc" id="L341">                    environment ('SSH_AGENT_PID', '')</span>
+<span class="nc" id="L342">                    environment ('SSH_AUTH_SOCK', '')</span>
+<span class="nc" id="L343">                }</span>
+            }
+        }
+
+
+
+<span class="nc" id="L349">		project.task('listProperties') .doLast {</span>
+<span class="nc" id="L350">			println &quot;All docSet properties:\n&quot; + project.documents.properties.collect{it}.join('\n')</span>
+<span class="nc" id="L351">			println &quot;\n secondaryDocuments:\t&quot; + project.documents.secondaryDocuments.collect{it}.join(' ')</span>
+<span class="nc" id="L352">			println &quot; listingDocuments:\t&quot; + project.documents.listingDocuments.collect{it}.join(' ')</span>
+<span class="nc" id="L353">			println &quot; supportDocuments:\t&quot; + project.documents.supportDocuments.collect{it}.join(' ')</span>
+		}
+
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

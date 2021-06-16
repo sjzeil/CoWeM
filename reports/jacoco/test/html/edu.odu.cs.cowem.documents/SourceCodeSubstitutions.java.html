@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SourceCodeSubstitutions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents</a> &gt; <span class="el_source">SourceCodeSubstitutions.java</span></div><h1>SourceCodeSubstitutions.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem.documents;
+
+/**
+ * A collection of text substitutions, used primarily for
+ * mark up of source code with highlighting and callouts.
+ * 
+ * @author zeil
+ *
+ */
+public class SourceCodeSubstitutions implements TextSubstitutions {
+    
+    /**
+     * HTML code to close a span.
+     */
+    private static final String CLOSE_SPAN = &quot;&lt;/span&gt;&quot;;
+
+    
+    /**
+     * Special substitutions defined for this website processing. These deal
+     * mainly with highlighting and inserting callouts into code listings.
+     */
+<span class="fc" id="L25">    private static final String[] SUBSTITUTION_VALUES = {</span>
+            &quot;/*...*/&quot;, &quot;&amp;#x22ee;&quot;,
+            &quot;/*1*/&quot;, &quot;&amp;#x2780;&quot;,
+            &quot;/*2*/&quot;, &quot;&amp;#x2781;&quot;,
+            &quot;/*3*/&quot;, &quot;&amp;#x2782;&quot;,
+            &quot;/*4*/&quot;, &quot;&amp;#x2783;&quot;,
+            &quot;/*5*/&quot;, &quot;&amp;#x2784;&quot;,
+            &quot;/*6*/&quot;, &quot;&amp;#x2785;&quot;,
+            &quot;/*7*/&quot;, &quot;&amp;#x2786;&quot;,
+            &quot;/*8*/&quot;, &quot;&amp;#x2787;&quot;,
+            &quot;/*9*/&quot;, &quot;&amp;#x2788;&quot;,
+            &quot;/*+*/&quot;, &quot;&lt;span class='hli'&gt;&quot;,
+            &quot;/*-*/&quot;, CLOSE_SPAN,
+            &quot;/*+1*/&quot;, &quot;&lt;span class='hli'&gt;&quot;,
+            &quot;/*-1*/&quot;, CLOSE_SPAN,
+            &quot;/*+2*/&quot;, &quot;&lt;span class='hlii'&gt;&quot;,
+            &quot;/*-2*/&quot;, CLOSE_SPAN,
+            &quot;/*+3*/&quot;, &quot;&lt;span class='hliii'&gt;&quot;,
+            &quot;/*-3*/&quot;, CLOSE_SPAN,
+            &quot;/*+4*/&quot;, &quot;&lt;span class='hliv'&gt;&quot;,
+            &quot;/*-4*/&quot;, CLOSE_SPAN,
+            &quot;/*+i*/&quot;, &quot;&lt;i&gt;&quot;,
+            &quot;/*-i*/&quot;, &quot;&lt;/i&gt;&quot;,
+            &quot;/*+=*/&quot;, &quot;&lt;span class='strike'&gt;&quot;,
+            &quot;/*-=*/&quot;, CLOSE_SPAN,
+            &quot;\\%&quot;, &quot;%&quot;,
+            &quot;[_&quot;, &quot;&lt;span class='userinput'&gt;&quot;,
+            &quot;_]&quot;, CLOSE_SPAN
+    };
+
+    /**
+     * Create a substitution set.
+     */
+<span class="fc" id="L58">    public SourceCodeSubstitutions() {</span>
+<span class="fc" id="L59">    }</span>
+    
+    
+    /**
+     * Apply substitutions.
+     * 
+     * @param toString  original string
+     * @return original after applying substitutions.
+     */
+    @Override
+    public final String apply(final String toString) {
+<span class="fc" id="L70">        String result = toString;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        for (int i = 0; i &lt; SUBSTITUTION_VALUES.length; i += 2) {</span>
+<span class="fc" id="L72">            String target = SUBSTITUTION_VALUES[i];</span>
+<span class="fc" id="L73">            String value = SUBSTITUTION_VALUES[i + 1];</span>
+<span class="fc" id="L74">            result = result.replace(target, value);</span>
+        }
+<span class="fc" id="L76">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

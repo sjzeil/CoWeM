@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommonEntitySubstitutions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents</a> &gt; <span class="el_source">CommonEntitySubstitutions.java</span></div><h1>CommonEntitySubstitutions.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem.documents;
+
+/**
+ * A collection of text substitutions to repalce sommon HTML
+ * entities by their Unicode numeric equivalents.
+ * 
+ * @author zeil
+ *
+ */
+public class CommonEntitySubstitutions implements TextSubstitutions {
+
+    /**
+     * PegDown inserts various common HTML entities into its output.
+     * These are an inconvenience during XSLT processing, however, as they
+     * are not defined in general XML processing. This table is used to
+     * replace these common symbolic entuities by their Unicode numeric
+     * codes. 
+     */
+<span class="fc" id="L22">    private static final String[] COMMON_ENTITIES = {</span>
+            &quot;cent&quot;,     &quot;#162&quot;,  
+            &quot;pound&quot;, &quot;#163&quot;,
+            &quot;sect&quot;, &quot;#167&quot;,
+            &quot;copy&quot;, &quot;#169&quot;,
+            &quot;laquo&quot;, &quot;#171&quot;,
+            &quot;raquo&quot;, &quot;#187&quot;,
+            &quot;reg&quot;, &quot;#174&quot;,
+            &quot;deg&quot;, &quot;#176&quot;,
+            &quot;plusmn&quot;, &quot;#177&quot;,
+            &quot;para&quot;, &quot;#182&quot;,
+            &quot;middot&quot;, &quot;#183&quot;,
+            &quot;frac12&quot;, &quot;#188&quot;,
+            &quot;ndash&quot;, &quot;#8211&quot;,
+            &quot;mdash&quot;, &quot;#8212&quot;,
+            &quot;lsquo&quot;, &quot;#8216&quot;,
+            &quot;rsquo&quot;, &quot;#8217&quot;,
+            &quot;sbquo&quot;, &quot;#8218&quot;,
+            &quot;ldquo&quot;, &quot;#8220&quot;, 
+            &quot;rdquo&quot;, &quot;#8221&quot;,
+            &quot;bdquo&quot;, &quot;#8222&quot;,
+            &quot;dagger&quot;, &quot;#8224&quot;,
+            &quot;Dagger&quot;, &quot;#8225&quot;,
+            &quot;bull&quot;, &quot;#8226&quot;,
+            &quot;hellip&quot;, &quot;#8230&quot;,
+            &quot;prime&quot;, &quot;#8242&quot;,
+            &quot;Prime&quot;, &quot;#8243&quot;,
+            &quot;euro&quot;, &quot;#8364&quot;,
+            &quot;trade&quot;, &quot;#8482&quot;,
+            &quot;asymp&quot;, &quot;#8776&quot;,
+            &quot;ne&quot;, &quot;#8800&quot;,
+            &quot;le&quot;, &quot;#8804&quot;,
+            &quot;ge&quot;, &quot;#8805&quot;,
+            &quot;nbsp&quot;, &quot;#160&quot;
+    };
+
+
+    /**
+     * Create a substitution set.
+     */
+<span class="fc" id="L62">    public CommonEntitySubstitutions() {</span>
+<span class="fc" id="L63">    }</span>
+
+
+    /**
+     * Apply substitutions.
+     * 
+     * @param toString  original string
+     * @return original after applying substitutions.
+     */
+    @Override
+    public final String apply(final String toString) {
+<span class="fc" id="L74">        String result = toString;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (int i = 0; i &lt; COMMON_ENTITIES.length; i += 2) {</span>
+<span class="fc" id="L76">            String target = &quot;&amp;&quot; + COMMON_ENTITIES[i] + &quot;;&quot;;</span>
+<span class="fc" id="L77">            String value = &quot;&amp;&quot; + COMMON_ENTITIES[i + 1] + &quot;;&quot;;</span>
+<span class="fc" id="L78">            result = result.replace(target, value);</span>
+        }
+<span class="fc" id="L80">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

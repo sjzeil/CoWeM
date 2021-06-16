@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+    version="6.23.0" timestamp="2021-06-16T14:34:08.882">
+<file name="/home/zeil/git/Course_Website_Management/cowem-plugin/src/integrationTest/java/edu/odu/cs/cowem/documents/ITestDirectoryFormat.java">
+<violation beginline="39" endline="39" begincolumn="26" endcolumn="41" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" variable="courseProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="51" endline="51" begincolumn="26" endcolumn="46" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" variable="documentSetProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="63" endline="63" begincolumn="28" endcolumn="37" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" variable="properties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="64" endline="64" begincolumn="32" endcolumn="35" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" variable="proj" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="65" endline="65" begincolumn="22" endcolumn="27" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" variable="source" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="95" endline="101" begincolumn="25" endcolumn="66" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" method="getElementById" variable="n" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'n' (lines '95'-'101').
+</violation>
+<violation beginline="156" endline="161" begincolumn="33" endcolumn="44" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestDirectoryFormat" method="testSimpleDoc" variable="found" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'found' (lines '156'-'161').
+</violation>
+</file>
+<file name="/home/zeil/git/Course_Website_Management/cowem-plugin/src/integrationTest/java/edu/odu/cs/cowem/documents/ITestModuleFormat.java">
+<violation beginline="37" endline="37" begincolumn="26" endcolumn="41" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" variable="courseProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="49" endline="49" begincolumn="26" endcolumn="46" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" variable="documentSetProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="58" endline="58" begincolumn="22" endcolumn="32" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" variable="schedule_md" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="111" endline="111" begincolumn="28" endcolumn="37" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" variable="properties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="112" endline="112" begincolumn="28" endcolumn="31" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" variable="proj" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="113" endline="113" begincolumn="18" endcolumn="23" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" variable="source" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="142" endline="148" begincolumn="25" endcolumn="66" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="getElementById" variable="n" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'n' (lines '142'-'148').
+</violation>
+<violation beginline="224" endline="224" begincolumn="17" endcolumn="40" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="testIconInsertion" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;./ancestor::li//img[1]&quot; appears 4 times in this file; the first occurrence is on line 224
+</violation>
+<violation beginline="318" endline="376" begincolumn="15" endcolumn="48" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" variable="subsectionsExpected" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'subsectionsExpected' (lines '318'-'376').
+</violation>
+<violation beginline="329" endline="329" begincolumn="71" endcolumn="76" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot; in &quot; appears 4 times in this file; the first occurrence is on line 329
+</violation>
+<violation beginline="329" endline="329" begincolumn="44" endcolumn="58" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;Did not find &quot; appears 4 times in this file; the first occurrence is on line 329
+</violation>
+<violation beginline="332" endline="376" begincolumn="18" endcolumn="39" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" variable="subsections" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'subsections' (lines '332'-'376').
+</violation>
+<violation beginline="335" endline="359" begincolumn="9" endcolumn="13" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" variable="m" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'm' (lines '335'-'359').
+</violation>
+<violation beginline="355" endline="376" begincolumn="15" endcolumn="54" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" variable="subsubsectionsExpected" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'subsubsectionsExpected' (lines '355'-'376').
+</violation>
+<violation beginline="356" endline="376" begincolumn="18" endcolumn="39" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" variable="subsubsections" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'subsubsections' (lines '356'-'376').
+</violation>
+<violation beginline="359" endline="376" begincolumn="9" endcolumn="13" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestModuleFormat" method="test333Outline" variable="m" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'm' (lines '359'-'376').
+</violation>
+</file>
+<file name="/home/zeil/git/Course_Website_Management/cowem-plugin/src/integrationTest/java/edu/odu/cs/cowem/documents/ITestScrollFormat.java">
+<violation beginline="42" endline="42" begincolumn="26" endcolumn="41" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" variable="courseProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="54" endline="54" begincolumn="26" endcolumn="46" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" variable="documentSetProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="66" endline="66" begincolumn="28" endcolumn="37" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" variable="properties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="67" endline="67" begincolumn="28" endcolumn="31" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" variable="proj" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="68" endline="68" begincolumn="18" endcolumn="23" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" variable="source" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="97" endline="103" begincolumn="25" endcolumn="66" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" method="getElementById" variable="n" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'n' (lines '97'-'103').
+</violation>
+<violation beginline="119" endline="119" begincolumn="33" endcolumn="41" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" method="testSimpleDoc" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;A short&quot; appears 7 times in this file; the first occurrence is on line 119
+</violation>
+<violation beginline="120" endline="120" begincolumn="33" endcolumn="44" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" method="testSimpleDoc" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;paragraph.&quot; appears 5 times in this file; the first occurrence is on line 120
+</violation>
+<violation beginline="141" endline="141" begincolumn="31" endcolumn="49" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" method="testSimpleDoc" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;Title of Document&quot; appears 4 times in this file; the first occurrence is on line 141
+</violation>
+<violation beginline="161" endline="166" begincolumn="33" endcolumn="44" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" method="testSimpleDoc" variable="found" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'found' (lines '161'-'166').
+</violation>
+<violation beginline="260" endline="265" begincolumn="25" endcolumn="36" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestScrollFormat" method="testSectionTitles" variable="found" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DD'-anomaly for variable 'found' (lines '260'-'265').
+</violation>
+</file>
+<file name="/home/zeil/git/Course_Website_Management/cowem-plugin/src/integrationTest/java/edu/odu/cs/cowem/documents/ITestSlidesFormat.java">
+<violation beginline="40" endline="40" begincolumn="26" endcolumn="41" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" variable="courseProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="52" endline="52" begincolumn="26" endcolumn="46" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" variable="documentSetProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="64" endline="64" begincolumn="28" endcolumn="37" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" variable="properties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="65" endline="65" begincolumn="28" endcolumn="31" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" variable="proj" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="66" endline="66" begincolumn="18" endcolumn="23" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" variable="source" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="95" endline="101" begincolumn="25" endcolumn="66" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" method="getElementById" variable="n" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'n' (lines '95'-'101').
+</violation>
+<violation beginline="128" endline="128" begincolumn="17" endcolumn="48" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestSlidesFormat" method="testSimpleDoc" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;./ancestor::div[@class='page']&quot; appears 5 times in this file; the first occurrence is on line 128
+</violation>
+</file>
+<file name="/home/zeil/git/Course_Website_Management/cowem-plugin/src/integrationTest/java/edu/odu/cs/cowem/documents/ITestTopicsFormat.java">
+<violation beginline="40" endline="40" begincolumn="26" endcolumn="41" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" variable="courseProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="52" endline="52" begincolumn="26" endcolumn="46" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" variable="documentSetProperties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="61" endline="61" begincolumn="22" endcolumn="32" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" variable="schedule_md" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="116" endline="116" begincolumn="28" endcolumn="37" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" variable="properties" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="117" endline="117" begincolumn="28" endcolumn="31" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" variable="proj" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="118" endline="118" begincolumn="18" endcolumn="23" rule="BeanMembersShouldSerialize" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" variable="source" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#beanmembersshouldserialize" priority="3">
+Found non-transient, non-static member. Please mark as transient or provide accessors.
+</violation>
+<violation beginline="147" endline="153" begincolumn="25" endcolumn="66" rule="DataflowAnomalyAnalysis" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" method="getElementById" variable="n" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#dataflowanomalyanalysis" priority="5">
+Found 'DU'-anomaly for variable 'n' (lines '147'-'153').
+</violation>
+<violation beginline="164" endline="164" begincolumn="65" endcolumn="80" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" method="testSimpleDoc" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;line.separator&quot; appears 4 times in this file; the first occurrence is on line 164
+</violation>
+<violation beginline="218" endline="218" begincolumn="17" endcolumn="35" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" method="testColumnPositions" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;./ancestor::td[1]&quot; appears 4 times in this file; the first occurrence is on line 218
+</violation>
+<violation beginline="291" endline="291" begincolumn="17" endcolumn="39" rule="AvoidDuplicateLiterals" ruleset="Error Prone" package="edu.odu.cs.cowem.documents" class="ITestTopicsFormat" method="testIconInsertion" externalInfoUrl="https://pmd.github.io/pmd-6.23.0/pmd_rules_java_errorprone.html#avoidduplicateliterals" priority="3">
+The String literal &quot;./ancestor::p//img[1]&quot; appears 4 times in this file; the first occurrence is on line 291
+</violation>
+</file>
+<configerror rule="LoosePackageCoupling" msg="No packages or classes specified"/>
+</pmd>

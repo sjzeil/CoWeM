@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BBPackage.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem</a> &gt; <span class="el_source">BBPackage.groovy</span></div><h1>BBPackage.groovy</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem;
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Sync
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream;
+import java.io.StringReader
+import java.io.StringWriter;
+import java.net.MalformedURLException
+import java.nio.file.Files
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipOutputStream
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import edu.odu.cs.cowem.documents.MarkdownDocument
+import edu.odu.cs.cowem.documents.Utils;
+
+
+/**
+ * Prepares a package suitable for importation into Blackbaord.
+ * This is an extension of the IMS CC standard.
+ * 
+ * @author zeil
+ *
+ */
+class BBPackage {
+
+    private static Logger logger =
+<span class="nc" id="L64">    LoggerFactory.getLogger(BBPackage.class);</span>
+
+
+
+    Project project;
+
+    Course course;
+
+    File buildDir;
+
+
+    File tempAreaAbs;
+    File webcontentAbs;
+    String webcontentRel;
+
+    /**
+     * Initialize the package builder
+     * @param theProject    the website project 
+     * @param theCourse     the course website descriptor
+     * @param theBuildDirectory  the project build directory
+     */
+    BBPackage (Project theProject, Course theCourse,
+    File theBuildDirectory)
+    {
+<span class="nc" id="L88">        project = theProject</span>
+<span class="nc" id="L89">        course = theCourse</span>
+<span class="nc" id="L90">        buildDir = theBuildDirectory</span>
+    }
+
+    /**
+     * Generate the package suitable for import
+     * @param destination  where to store the resulting package
+     * @param thin if true, package will contain a modules outline and
+     *     calendar entries but the outline will link to an external website
+     *     for actual content. If false, the full content is included in the
+     *     package. 
+     */
+    void generate (File destination, boolean thin)
+    {
+<span class="nc" id="L103">        destination.getParentFile().mkdirs()</span>
+<span class="nc" id="L104">        tempAreaAbs = new File(new File(buildDir, &quot;temp&quot;), &quot;bb&quot;)</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (tempAreaAbs.exists()) {</span>
+<span class="nc" id="L106">            tempAreaAbs.deleteDir()  // Groovy extension to java.io.File</span>
+        }
+<span class="nc" id="L108">        tempAreaAbs.mkdirs()</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">        copyFiles (thin)</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">        buildManifest (thin)</span>
+<span class="nc bnc" id="L111" title="All 4 branches missed.">        addHiddenFiles ()</span>
+<span class="nc" id="L112">        zipItAllUp (destination)</span>
+    }
+
+
+
+    void copyFiles (boolean isThin)
+    {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (isThin) {</span>
+<span class="nc" id="L120">            webcontentRel = 'webcontent'</span>
+<span class="nc" id="L121">            webcontentAbs = new File(tempAreaAbs, webcontentRel)</span>
+<span class="nc" id="L122">            webcontentAbs.mkdirs()</span>
+<span class="nc" id="L123">            File placeHolder = new File(webcontentAbs, 'placeHolder.txt')</span>
+<span class="nc" id="L124">            placeHolder.withWriter('UTF-8') {</span>
+<span class="nc" id="L125">                it.writeLine('foo')</span>
+            }
+<span class="nc" id="L127">        } else {</span>
+<span class="nc" id="L128">            DateTimeFormatter format = DateTimeFormatter.ofPattern(</span>
+                &quot;yyyy-MM-dd'T'HH-mm-ss&quot;)
+<span class="nc" id="L130">            webcontentRel = 'webcontent-' + </span>
+<span class="nc" id="L131">                LocalDateTime.now().format(format)</span>
+<span class="nc" id="L132">            webcontentAbs = tempAreaAbs.toPath().resolve(</span>
+<span class="nc" id="L133">                    'csfiles/home_dir/' + webcontentRel).toFile()</span>
+<span class="nc" id="L134">            webcontentAbs.mkdirs()</span>
+<span class="nc" id="L135">            def websiteFiles = project.fileTree(</span>
+                    dir: 'build/website/', include: '**/*')
+
+<span class="nc" id="L138">            project.copy {</span>
+<span class="nc" id="L139">                from websiteFiles</span>
+<span class="nc" id="L140">                into webcontentAbs</span>
+            }
+<span class="nc" id="L142">        }</span>
+    }
+
+    void buildManifest (boolean isThin)
+    {
+<span class="nc" id="L147">        Properties docProperties = new Properties()</span>
+<span class="nc" id="L148">        docProperties.put('_' + project.rootProject.course.delivery, '1')</span>
+<span class="nc" id="L149">        project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L150">            docProperties.put(prop, value.toString())</span>
+        }
+
+<span class="nc" id="L153">        String primaryName = 'outline';</span>
+<span class="nc" id="L154">        docProperties.put (&quot;_bb&quot;, &quot;1&quot;)</span>
+        MarkdownDocument doc =
+<span class="nc" id="L156">                new MarkdownDocument(project.file('Directory/outline/outline.md'),</span>
+                project.rootProject.website, docProperties);
+<span class="nc" id="L158">        doc.setDebugMode(true);</span>
+<span class="nc" id="L159">        String result = doc.transform(&quot;modules&quot;)</span>
+
+<span class="nc" id="L161">        int bodyPos = result.indexOf(&quot;&lt;body&quot;)</span>
+<span class="nc" id="L162">        int lastTagPos = result.indexOf(&quot;&lt;/html&quot;)</span>
+<span class="nc" id="L163">        result = result.substring(bodyPos, lastTagPos)</span>
+
+<span class="nc" id="L165">        StringBuilder outlineDoc = new StringBuilder(&quot;&lt;imscc&gt;\n&quot;)</span>
+
+<span class="nc" id="L167">        outlineDoc.append(&quot;&lt;courseName&gt;&quot;);</span>
+<span class="nc" id="L168">        outlineDoc.append(project.rootProject.course.courseName)</span>
+<span class="nc" id="L169">        outlineDoc.append(&quot;&lt;/courseName&gt;\n&quot;);</span>
+
+<span class="nc" id="L171">        outlineDoc.append(&quot;&lt;outline&gt;\n&quot;)</span>
+<span class="nc" id="L172">        outlineDoc.append(result)</span>
+<span class="nc" id="L173">        outlineDoc.append(&quot;\n&lt;/outline&gt;\n&lt;navigation&gt;\n&quot;)</span>
+
+        MarkdownDocument navDoc =
+<span class="nc" id="L176">                new MarkdownDocument(project.file('Directory/navigation/navigation.md'),</span>
+                project.rootProject.website,
+                docProperties);
+
+<span class="nc" id="L180">        navDoc.setDebugMode(true);</span>
+<span class="nc" id="L181">        String navResult = navDoc.transform(&quot;navigation&quot;)</span>
+<span class="nc" id="L182">        int start = navResult.indexOf(&quot;&lt;body&quot;);</span>
+<span class="nc" id="L183">        start = navResult.indexOf('&gt;', start);</span>
+<span class="nc bnc" id="L184" title="All 6 branches missed.">        navResult = navResult.substring(start+1);</span>
+<span class="nc" id="L185">        int stop = navResult.indexOf(&quot;&lt;/body&quot;);</span>
+<span class="nc" id="L186">        navResult = navResult.substring(0, stop);</span>
+
+<span class="nc" id="L188">        outlineDoc.append (navResult)</span>
+<span class="nc" id="L189">        outlineDoc.append(&quot;\n&lt;/navigation&gt;\n&quot;)</span>
+
+<span class="nc" id="L191">        outlineDoc.append(&quot;\n&lt;files&gt;\n&quot;)</span>
+<span class="nc bnc" id="L192" title="All 12 branches missed.">        if (!isThin) {</span>
+<span class="nc" id="L193">            listFiles (outlineDoc)</span>
+<span class="nc" id="L194">        }</span>
+<span class="nc" id="L195">        outlineDoc.append(&quot;\n&lt;/files&gt;\n&quot;)</span>
+<span class="nc" id="L196">        outlineDoc.append(&quot;\n&lt;/imscc&gt;\n&quot;)</span>
+
+<span class="nc" id="L198">        transformManifest (outlineDoc.toString(), isThin)</span>
+
+
+
+    }
+
+
+    org.w3c.dom.Document parseXML (String xml)
+    {
+<span class="nc" id="L207">        org.w3c.dom.Document result = null;</span>
+        try {
+            DocumentBuilder b =
+<span class="nc" id="L210">                    DocumentBuilderFactory.newInstance().newDocumentBuilder();</span>
+<span class="nc" id="L211">            result = b.parse(new InputSource(new StringReader(xml)));</span>
+<span class="nc" id="L212">        } catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L213">            logger.error (&quot;Could not set up XML parser: &quot; + e);</span>
+<span class="nc" id="L214">        } catch (SAXParseException e) {</span>
+<span class="nc" id="L215">            logger.error(&quot;Parsing error from outline: &quot;</span>
+                    + e);
+<span class="nc bnc" id="L217" title="All 2 branches missed.">            if (e.toString().contains(&quot;lineNumber:&quot;)) {</span>
+<span class="nc" id="L218">                Pattern p = Pattern.compile(</span>
+                        &quot;lineNumber: (\\d+); columnNumber: (\\d+);&quot;);
+<span class="nc" id="L220">                Matcher m  = p.matcher(e.toString());</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                if (m.find()) {</span>
+<span class="nc" id="L222">                    String lNum = m.group(1);</span>
+<span class="nc" id="L223">                    int ln = Integer.parseInt(lNum);</span>
+<span class="nc" id="L224">                    String cNum = m.group(2);</span>
+<span class="nc" id="L225">                    int cn = Integer.parseInt(cNum);</span>
+<span class="nc bnc" id="L226" title="All 6 branches missed.">                    String context = Utils.extractContext(xml, ln-1, cn-1);</span>
+<span class="nc" id="L227">                    logger.error(&quot;Generated output was:\n&quot; + context);</span>
+<span class="nc" id="L228">                } else {</span>
+<span class="nc" id="L229">                    logger.error(&quot;Text was:\n&quot; + xml);</span>
+                }
+<span class="nc" id="L231">            } else {</span>
+<span class="nc" id="L232">                logger.error(&quot;Text was:\n&quot; + xml);</span>
+            }
+<span class="nc" id="L234">        } catch (SAXException e) {</span>
+<span class="nc" id="L235">            logger.error(&quot;Unable to parse outline: &quot;, e);</span>
+<span class="nc" id="L236">            logger.error(&quot;Text was:\n&quot; + xml);</span>
+<span class="nc" id="L237">        } catch (IOException e) {</span>
+<span class="nc" id="L238">            logger.error(&quot;Unable to parse outline: &quot;, e);</span>
+<span class="nc" id="L239">            logger.error(&quot;Text was:\n&quot; + xml);</span>
+<span class="nc" id="L240">        }</span>
+<span class="nc" id="L241">        return result;</span>
+    }
+
+
+    void transformManifest (String outlineXML, boolean isThin)
+    {
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        String transformName = (isThin) ? &quot;bbthinManifest.xsl&quot;: &quot;bbManifest.xsl&quot;</span>
+
+<span class="nc bnc" id="L249" title="All 4 branches missed.">        org.w3c.dom.Document outlineDoc = parseXML(outlineXML);</span>
+        
+<span class="nc" id="L251">        final String xsltLocation  = &quot;/edu/odu/cs/cowem/templates/&quot;;</span>
+        final InputStream outlineConversionSheet =
+<span class="nc" id="L253">                MarkdownDocument.class.getResourceAsStream(xsltLocation + transformName);</span>
+
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        if (outlineConversionSheet == null) {</span>
+<span class="nc" id="L256">            logger.error(&quot;Could not load stylesheet: &quot; + transformName);</span>
+<span class="nc" id="L257">            return;</span>
+        }
+
+        final InputStream oCSheet =
+<span class="nc" id="L261">                MarkdownDocument.class.getResourceAsStream(xsltLocation + transformName);</span>
+        
+
+<span class="nc" id="L264">        System.setProperty(&quot;javax.xml.transform.TransformerFactory&quot;,</span>
+                &quot;net.sf.saxon.TransformerFactoryImpl&quot;);
+<span class="nc" id="L266">        TransformerFactory transFact = TransformerFactory.newInstance();</span>
+
+<span class="nc" id="L268">        DocumentBuilder dBuilder = null;</span>
+        try {
+            DocumentBuilderFactory dbFactory =
+<span class="nc" id="L271">                    DocumentBuilderFactory.newInstance();</span>
+<span class="nc" id="L272">            dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="nc" id="L273">        } catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L274">            logger.error (&quot;Problem creating new XML document &quot;, e);</span>
+<span class="nc" id="L275">            return;</span>
+<span class="nc" id="L276">        }</span>
+
+        // Transform basic HTML into the selected format
+<span class="nc" id="L279">        Properties projProperties = new Properties()</span>
+<span class="nc" id="L280">        projProperties.put('_' + project.rootProject.course.delivery, '1')</span>
+<span class="nc" id="L281">        project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L282">            projProperties.put(prop, value.toString())</span>
+        }
+
+<span class="nc" id="L285">        String manifestContent = &quot;&quot;;</span>
+        try {
+<span class="nc" id="L287">            Source xslSource = new StreamSource(outlineConversionSheet);</span>
+<span class="nc" id="L288">            xslSource.setSystemId(&quot;http://www.cs.odu.edu/~zeil&quot;);</span>
+<span class="nc" id="L289">            Templates template = transFact.newTemplates(xslSource);</span>
+<span class="nc" id="L290">            Transformer xform = template.newTransformer();</span>
+<span class="nc" id="L291">            xform.setParameter(&quot;workDir&quot;, tempAreaAbs.toString());</span>
+<span class="nc" id="L292">            xform.setParameter(&quot;webcontentURL&quot;, webcontentRel);</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            for (Object okey: projProperties.keySet()) {</span>
+<span class="nc" id="L294">                String key = okey.toString();</span>
+<span class="nc" id="L295">                String value = projProperties.getProperty(key).toString();</span>
+<span class="nc" id="L296">                xform.setParameter(key, value);</span>
+<span class="nc" id="L297">            }</span>
+<span class="nc" id="L298">            Source xmlIn = new DOMSource(outlineDoc.getDocumentElement());</span>
+
+<span class="nc" id="L300">            StringWriter xmlString = new StringWriter();</span>
+<span class="nc" id="L301">            StreamResult xmlOut = new StreamResult(xmlString);</span>
+
+<span class="nc" id="L303">            xform.transform(xmlIn, xmlOut);</span>
+<span class="nc" id="L304">            manifestContent = xmlString.toString()</span>
+<span class="nc" id="L305">        } catch (TransformerConfigurationException e) {</span>
+<span class="nc" id="L306">            logger.error (&quot;Problem parsing XSLT2 stylesheet &quot;</span>
+                    + outlineConversionSheet, e);
+<span class="nc" id="L308">            return;</span>
+<span class="nc" id="L309">        } catch (TransformerException e) {</span>
+<span class="nc" id="L310">            logger.error (&quot;Problem applying stylesheet &quot;</span>
+                    + outlineConversionSheet, e);
+<span class="nc" id="L312">            return;</span>
+<span class="nc" id="L313">        }</span>
+
+<span class="nc" id="L315">        File resultFile = new File(tempAreaAbs, &quot;imsmanifest.xml&quot;)</span>
+<span class="nc" id="L316">        resultFile.getParentFile().mkdirs()</span>
+<span class="nc" id="L317">        resultFile.withWriter('UTF-8') {</span>
+<span class="nc" id="L318">            it.writeLine(manifestContent)</span>
+        }
+
+    }
+
+
+    void listFiles (StringBuilder buf)
+    {
+        // ToDo
+<span class="nc" id="L327">    }</span>
+
+    void addHiddenFiles()
+    {
+        // Currently handled as a side effect of the bb*manifest.xsl
+<span class="nc" id="L332">    }</span>
+
+    void zipItAllUp (File destination)
+    {
+<span class="nc" id="L336">        File bbDir = project.file(&quot;build/temp/bb&quot;)</span>
+<span class="nc" id="L337">        Path bbBase = bbDir.toPath();</span>
+<span class="nc" id="L338">        ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(destination));</span>
+<span class="nc" id="L339">        zout.close();</span>
+<span class="nc" id="L340">        Path zipfile = destination.toPath();</span>
+<span class="nc" id="L341">        Queue&lt;File&gt; q = new LinkedList&lt;File&gt;();</span>
+<span class="nc" id="L342">        q.push(bbDir);</span>
+<span class="nc" id="L343">        FileSystem zipfs = FileSystems.newFileSystem(zipfile, null);</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">        if (zipfs == null) {</span>
+<span class="nc" id="L345">            logger.error (&quot;Could not create zip file system at &quot; + zipfile)</span>
+        }
+<span class="nc bnc" id="L347" title="All 4 branches missed.">        while (!q.isEmpty()) {</span>
+<span class="nc" id="L348">            File dir = q.remove()</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">            for (File child : dir.listFiles()) {</span>
+<span class="nc" id="L350">                Path relChild = bbBase.relativize(child.toPath());</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">                if (child.isDirectory()) {</span>
+<span class="nc" id="L352">                    q.add(child);</span>
+<span class="nc" id="L353">                    Path directory = zipfs.getPath(&quot;/&quot;, relChild.toString())</span>
+<span class="nc" id="L354">                    Files.createDirectories(directory)</span>
+<span class="nc" id="L355">                } else {</span>
+<span class="nc" id="L356">                    Path childLoc = zipfs.getPath(&quot;/&quot;, relChild.toString())</span>
+<span class="nc" id="L357">                    Files.copy(child.toPath(), childLoc)</span>
+                }
+<span class="nc" id="L359">            }</span>
+<span class="nc" id="L360">        }</span>
+<span class="nc" id="L361">        zipfs.close()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

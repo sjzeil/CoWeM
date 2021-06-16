@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DocumentSet.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem</a> &gt; <span class="el_source">DocumentSet.groovy</span></div><h1>DocumentSet.groovy</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem
+
+import org.gradle.api.file.FileCollection
+import org.gradle.api.Project
+
+import java.nio.file.*
+
+
+/**
+ * Describes a collection of documents that will appear in a single directory of the website.
+ * Each document set has a primary document and zero or more secondary documents.
+ * The primary document may be rendered in multiple formats, one of which becomes the
+ * index.html format for the directory. All secondary documents are
+ * rendered in a single format (the basic &quot;scroll&quot; format). 
+ */
+class DocumentSet {
+
+    /**
+     * Name of the primary document. 
+     * Defaults to the directory name + &quot;.md&quot;. 
+     */
+    File primaryDocument;
+
+    /**
+     * Sets the name of the primary document.
+     */
+    void primary (String name) {
+<span class="nc" id="L28">        primaryDocument = _inProject.file(name)</span>
+    }
+
+
+    /**
+     * List of outputs from the primary target
+     */
+    File[] getPrimaryTargets() {
+<span class="nc" id="L36">        File projectBaseDir = _inProject.file(&quot;../../&quot;);</span>
+<span class="nc" id="L37">        File projectWebsiteDir = _inProject.file(&quot;../../build/website/&quot;);</span>
+        
+        Path toDestinationDirFromBase =
+<span class="nc" id="L40">                projectBaseDir.toPath().relativize(primaryDocument.parentFile.toPath());</span>
+<span class="nc" id="L41">        Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);</span>
+        
+<span class="nc" id="L43">        File[] result = new File[1 + formats.size()];</span>
+<span class="nc bnc" id="L44" title="All 6 branches missed.">        result[0] = new File(toOutputDir.toFile(), &quot;index.html&quot;);</span>
+        
+<span class="nc" id="L46">            String nameBase = primaryDocument.getName();</span>
+<span class="nc" id="L47">            int k = nameBase.lastIndexOf('.');</span>
+<span class="nc bnc" id="L48" title="All 16 branches missed.">            if (k &gt;= 0) {</span>
+<span class="nc" id="L49">                nameBase = nameBase.substring (0, k);</span>
+<span class="nc" id="L50">            }</span>
+<span class="nc" id="L51">        int i = 1;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        for (String format: formats) {</span>
+<span class="nc" id="L53">           String targetFile = nameBase + &quot;__&quot; + format + &quot;.html&quot;</span>
+<span class="nc" id="L54">           result[i] = new File(toOutputDir.toFile(), targetFile)</span>
+<span class="nc" id="L55">           ++i</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">        return result</span>
+    }
+
+    /**
+     * Name of the format that will be selected for the
+     * 'index.html' of the website directory.
+     */
+    String indexFormat = &quot;&quot;;
+
+    /**
+     * Sets the name of the index format.
+     */
+    void setIndex (String name) {
+<span class="nc" id="L70">        indexFormat = name</span>
+    }
+
+    String getIndex() {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (indexFormat.length() &gt; 0) {</span>
+<span class="nc" id="L75">            return indexFormat</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        } else if (formats.size() &gt; 0) {</span>
+<span class="nc" id="L77">            return formats[0]</span>
+<span class="nc" id="L78">        } else {</span>
+<span class="nc" id="L79">            return 'scroll';</span>
+<span class="nc" id="L80">        }</span>
+    }
+
+    /**
+     * File to be used as source of index.html
+     */
+    File getIndexTarget() {
+<span class="nc" id="L87">        File projectBaseDir = _inProject.file(&quot;../../&quot;);</span>
+<span class="nc" id="L88">        File projectWebsiteDir = _inProject.file(&quot;../../build/website/&quot;);</span>
+        
+        Path toDestinationDirFromBase =
+<span class="nc" id="L91">                projectBaseDir.toPath().relativize(primaryDocument.parentFile.toPath());</span>
+<span class="nc" id="L92">        Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);</span>
+        
+<span class="nc" id="L94">        String nameBase = primaryDocument.getName();</span>
+<span class="nc" id="L95">        int k = nameBase.lastIndexOf('.');</span>
+<span class="nc bnc" id="L96" title="All 16 branches missed.">        if (k &gt;= 0) {</span>
+<span class="nc" id="L97">            nameBase = nameBase.substring (0, k);</span>
+<span class="nc" id="L98">        }</span>
+<span class="nc bnc" id="L99" title="All 4 branches missed.">        String targetFile = nameBase + &quot;__&quot; + getIndex() + &quot;.html&quot;</span>
+<span class="nc" id="L100">        File result = new File(toOutputDir.toFile(), targetFile)</span>
+<span class="nc" id="L101">        return result</span>
+    }
+
+
+    /**
+     * List of formats in which the the primary document will
+     * be generated. Possibilities are:  scroll, pages, slides,
+     *   slidy (deprecated), epub, directory, navigation, modules,
+     *   topics, calendar. 
+     */
+<span class="nc" id="L111">    ArrayList&lt;String&gt; formats = ['scroll']</span>
+
+    /**
+     * The secondary documents in this set. These will be converted to
+     * 'scroll' format.  Defaults to *.mmd, *.md (excluding the primary)
+     */
+    FileCollection secondaryDocuments
+
+    /**
+     * Add a set of files to the current list of secondary documents.
+     */
+    void docs (Object... files) {
+<span class="nc" id="L123">        FileCollection additions = _inProject.files(files)</span>
+<span class="nc" id="L124">        secondaryDocuments = secondaryDocuments.plus (additions)</span>
+    }
+
+    /**
+     * Clear the current list of secondary documents.
+     */
+    void clearDocs () {
+<span class="nc" id="L131">        secondaryDocuments = []</span>
+    }
+
+    /**
+     * The set of files tht will be produced by processing the
+     * secondary documents.
+     */
+    File[] getSecondaryTargets() {
+<span class="nc" id="L139">        File projectBaseDir = _inProject.file(&quot;../../&quot;);</span>
+<span class="nc" id="L140">        File projectWebsiteDir = _inProject.file(&quot;../../build/website/&quot;);</span>
+<span class="nc" id="L141">        File[] result = new File[secondaryDocuments.size()];</span>
+<span class="nc" id="L142">        int k = 0;</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        for (File secondaryFile: secondaryDocuments) {</span>
+            Path toDestinationDirFromBase =
+<span class="nc" id="L145">                projectBaseDir.toPath().relativize(secondaryFile.getParentFile().toPath());</span>
+<span class="nc" id="L146">            Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);</span>
+            
+<span class="nc" id="L148">            String outputFileName = secondaryFile.name + &quot;.html&quot;;</span>
+        
+<span class="nc" id="L150">            File outputFile = new File (toOutputDir.toFile(), outputFileName);</span>
+<span class="nc" id="L151">            result[k] = outputFile;</span>
+<span class="nc" id="L152">            ++k;</span>
+<span class="nc" id="L153">        }</span>
+<span class="nc" id="L154">        return result;</span>
+    }
+
+    /**
+     * The listing documents in this set. These will be converted to
+     * 'scroll' format.  Defaults to *.h, *.cpp, *.java, and *.listing
+     * files in the project directory, but not subdirectories. 
+     */
+    FileCollection listingDocuments
+
+    /**
+     * Add a set of files to the current list of listing documents.
+     */
+    void listings (Object... files) {
+<span class="nc" id="L168">        FileCollection additions = _inProject.files(files)</span>
+<span class="nc" id="L169">        listingDocuments = listingDocuments.plus (additions)</span>
+    }
+
+    /**
+     * Clear the current list of listing documents.
+     */
+    void clearListings () {
+<span class="nc" id="L176">        listingDocuments = []</span>
+    }
+
+    /**
+     * The set of files tht will be produced by processing the
+     * listing documents.
+     */
+    File[] getListingTargets() {
+<span class="nc" id="L184">        File projectBaseDir = _inProject.file(&quot;../../&quot;);</span>
+<span class="nc" id="L185">        File projectWebsiteDir = _inProject.file(&quot;../../build/website/&quot;);</span>
+<span class="nc" id="L186">        File[] result = new File[listingDocuments.size()];</span>
+<span class="nc" id="L187">        int k = 0;</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        for (File listingFile: listingDocuments) {</span>
+            Path toDestinationDirFromBase =
+<span class="nc" id="L190">                projectBaseDir.toPath().relativize(listingFile.getParentFile().toPath());</span>
+<span class="nc" id="L191">            Path toOutputDir = projectWebsiteDir.toPath().resolve(toDestinationDirFromBase);</span>
+            
+<span class="nc" id="L193">            String outputFileName = listingFile.name + &quot;.html&quot;;</span>
+        
+<span class="nc" id="L195">            File outputFile = new File (toOutputDir.toFile(), outputFileName);</span>
+<span class="nc" id="L196">            result[k] = outputFile;</span>
+<span class="nc" id="L197">            ++k;</span>
+<span class="nc" id="L198">        }</span>
+<span class="nc" id="L199">        return result;</span>
+    }
+
+    
+    /**
+     * The support documents in this set. These will be copied to
+     * the corresponding directory of the website without modification.
+     * Defaults to *.html, *.css, *.js, *.png, *.gif, *.jpg, *.h, *.cpp,
+     *   *.java, and *.listing (ignoring subdirectories)
+     */
+    FileCollection supportDocuments
+
+    /**
+     * Add a set of files to the current list of support documents.
+     */
+    void support (Object... files) {
+<span class="nc" id="L215">        FileCollection additions = _inProject.files(files)</span>
+<span class="nc" id="L216">        supportDocuments = supportDocuments.plus (additions)</span>
+    }
+
+    /**
+     * Clear the current list of support documents.
+     */
+    void clearSupport () {
+<span class="nc" id="L223">        supportDocuments = []</span>
+    }
+
+
+
+    /**
+     * The filtered support documents in this set. These will be copied to
+     * the corresponding directory of the website replacing any tokens of
+	 * the form @properyName@ by the corresponding course property.
+     * Defaults to an empty list.
+     */
+    FileCollection filteredDocuments
+
+    /**
+     * Add a set of files to the current list of filtered documents.
+     */
+    void filtered (Object... files) {
+<span class="nc" id="L240">        FileCollection additions = _inProject.files(files)</span>
+<span class="nc" id="L241">        filteredDocuments = filteredDocuments.plus (additions)</span>
+    }
+
+    /**
+     * Clear the current list of filtered support documents.
+     */
+    void clearFiltered () {
+<span class="nc" id="L248">        filteredDocuments = filetree('non-existent')</span>
+    }
+
+
+    /**
+     * What support is provided for typesetting Mathematics?
+     * Math support is provided via MathJax.
+     * 
+     * Valid values are:
+     *    latex: Detect and render LaTeX mathematics
+     *    ascii: Detect and render AsciiMath mathematics
+     *    none : Do not use MathJax
+     */
+    String mathSupport = &quot;latex&quot;;
+
+    void math(String mode) {
+<span class="nc" id="L264">        mathSupport = mode</span>
+    }
+
+
+    Project _inProject
+
+    DocumentSet (Project project) {
+<span class="nc" id="L271">        _inProject = project</span>
+<span class="nc" id="L272">        primaryDocument = _inProject.file(project.name + '.md')</span>
+<span class="nc" id="L273">        secondaryDocuments = project.fileTree('.').include('*.mmd').</span>
+<span class="nc" id="L274">                include('*.md').exclude(project.name + '.md');</span>
+<span class="nc" id="L275">        listingDocuments = project.fileTree('.').include('*.h').</span>
+                include('*.cpp').include('*.java').include('*.listing');
+<span class="nc" id="L277">        supportDocuments = project.fileTree('.').include('*.h').</span>
+                include('*.cpp').include('*.java').include('*.listing').
+                include('*.html').include('*.css').include('*.js').
+                include('*.png').include('*.jpg').include('*.gif');
+<span class="nc" id="L281">        filteredDocuments = project.files()</span>
+
+<span class="nc" id="L283">        _inProject.logger.debug(_inProject.name + &quot;: created DocumentSet&quot;);</span>
+
+    }
+
+
+
+    /**
+     * Allow application of a closure to a DocumentSet.
+     */ 
+    Course call (Closure closure) {
+<span class="nc" id="L293">        closure.delegate = this</span>
+<span class="nc" id="L294">        closure.call()</span>
+<span class="nc" id="L295">        return this</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

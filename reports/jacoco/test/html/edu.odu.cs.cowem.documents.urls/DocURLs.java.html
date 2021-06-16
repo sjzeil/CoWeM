@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DocURLs.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents.urls</a> &gt; <span class="el_source">DocURLs.java</span></div><h1>DocURLs.java</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem.documents.urls;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import edu.odu.cs.cowem.documents.MarkdownDocument;
+import edu.odu.cs.cowem.documents.WebsiteProject;
+
+/**
+ * Implements URL rewriting in course documents.
+ * 
+ *  doc:foo  where foo contains no '/' or '.' characters and matches a
+ *           document set name in a group DIR
+ *           baseURL/DIR/foo/index.html
+ *  doc:foo  where foo contains one or more '/' or '.' characters and
+ *           matches a file (presumably a secondary document or listing)
+ *           in a group DIR,
+ *           baseURL/DIR/foo.html
+ *  docex:foo  same as doc:foo, except during epub package generation when such
+ *           links are ignored when choosing files to include in the e-book
+ *           (useful for excluding &quot;private&quot; documents such as assignments)
+ *  
+ * @author zeil
+ *
+ */
+public class DocURLs implements SpecialURL {
+    
+    
+    /**
+     * For logging error messages.
+     */
+<span class="fc" id="L39">    private static Logger logger </span>
+<span class="fc" id="L40">       = LoggerFactory.getLogger(DocURLs.class);</span>
+    
+
+    /**
+     * Context in which to determine relative URLs/paths.
+     */
+    private WebsiteProject project;
+    
+    /**
+     * directory containing the document source.
+     */
+    private File sourceDirectory;
+
+    /**
+     * Create a URL rewriter.
+     * 
+     * @param sourceDirectory0 directory containing the document source
+     * @param project0 context info on document set locations 
+     */
+<span class="fc" id="L59">    public DocURLs(final File sourceDirectory0, final WebsiteProject project0) {</span>
+<span class="fc" id="L60">        sourceDirectory = sourceDirectory0;</span>
+<span class="fc" id="L61">        project = project0;</span>
+<span class="fc" id="L62">    }</span>
+
+<span class="fc" id="L64">    private class DocumentSpecification {</span>
+    	public String documentName;
+    	public String anchor;
+    }
+
+	/**
+	 * Checks to see if a linking element (a or img) uses a special
+	 * protocol label and, if so, attempts to rewrite the element.
+	 * 
+     * @param link an element containing a URL
+     * @param linkAttr name of the attribute containing the URL 
+     * @return true if the element has been rewritten.
+	 */
+	@Override
+	public final boolean applyTo(final Element link, final String linkAttr) {
+<span class="fc" id="L79">	    String url = link.getAttribute(linkAttr);</span>
+<span class="fc bfc" id="L80" title="All 4 branches covered.">	    if (url.startsWith(&quot;doc:&quot;) || url.startsWith(&quot;docex:&quot;)) {</span>
+<span class="fc" id="L81">	    	DocumentSpecification docSpec = parseDocumentSpecification(url);</span>
+<span class="fc" id="L82">	        String documentName = docSpec.documentName;</span>
+	        //logger.warn(&quot;Document spec is &quot; + documentSpec);
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">	        if (documentName.contains(&quot;/&quot;)) {</span>
+<span class="nc" id="L85">                processRelativeSpecification(link, linkAttr, url, docSpec);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">	        } else if (documentName.contains(&quot;:&quot;)) {</span>
+	        	// External site reference
+<span class="fc" id="L88">	        	int k = documentName.indexOf(':');</span>
+<span class="fc" id="L89">	        	String siteName = documentName.substring(0, k);</span>
+<span class="fc" id="L90">	        	documentName = documentName.substring(k+1);</span>
+<span class="fc" id="L91">	        	String anchor = docSpec.anchor;</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">	        	if (anchor.startsWith(&quot;#&quot;)) {</span>
+<span class="fc" id="L93">	        		anchor = anchor.substring(1);</span>
+	        	}
+<span class="fc" id="L95">	        	String siteURL = project.getExternalSite(siteName);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">	        	if (siteURL != null) {</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">	        		if (!siteURL.endsWith(&quot;/&quot;)) {</span>
+<span class="fc" id="L98">	        			siteURL = siteURL + &quot;/&quot;;</span>
+	        		}
+<span class="fc" id="L100">	        		siteURL = siteURL + &quot;index.html?doc=&quot; + documentName</span>
+	        				+ &quot;&amp;anchor=&quot; + anchor;
+<span class="fc" id="L102">	        		link.setAttribute(linkAttr, siteURL);</span>
+<span class="fc" id="L103">	        		link.setAttribute(&quot;target&quot;, siteName);</span>
+	        	} else {
+<span class="nc" id="L105">	        		logger.warn(</span>
+                            &quot;Could not find external site for URL shorthand: @&quot;
+                                    + linkAttr + &quot;=&quot; + url);
+	        	}
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            } else if (documentName.endsWith(&quot;.mmd&quot;)) {</span>
+<span class="fc" id="L110">                File targetFile = project.documentSource(documentName);</span>
+<span class="fc" id="L111">                File targetDocSet = project.documentSetLocation(documentName);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                if (targetFile != null) {</span>
+<span class="fc" id="L113">                    Path relative = project.relativePathToDocumentSet(</span>
+                            sourceDirectory, 
+                            documentName);
+<span class="fc" id="L116">                    relative = relative.resolve(documentName);</span>
+<span class="fc" id="L117">                    String newLink = relative.toString().replace(&quot;\\&quot;,&quot;/&quot;) </span>
+                    		+ &quot;.html&quot; + docSpec.anchor;
+<span class="fc" id="L119">                    link.setAttribute(linkAttr, newLink);</span>
+<span class="fc" id="L120">                    String groupName = getGroupName(targetDocSet);</span>
+<span class="fc" id="L121">                    String targetAttr = project.getCourseName() + &quot;_&quot; + groupName;</span>
+<span class="fc" id="L122">                    link.setAttribute(&quot;target&quot;, targetAttr);</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                    if (url.startsWith(&quot;doc:&quot;)) {</span>
+<span class="fc" id="L124">                        link.setAttribute(&quot;class&quot;, &quot;doc&quot;);</span>
+                    }
+<span class="fc" id="L126">                    attemptTBDReplacement(link, documentName);</span>
+<span class="fc" id="L127">                } else {</span>
+<span class="fc" id="L128">                    logger.warn(</span>
+                            &quot;Could not find a replacement for URL shorthand: @&quot;
+                                    + linkAttr + &quot;=&quot; + url);
+                }
+<span class="fc" id="L132">            } else {</span>
+<span class="fc" id="L133">	            String documentSetName = documentName;</span>
+	            //logger.warn(&quot;Hunting for document set name &quot; + documentSpec);
+<span class="fc" id="L135">	            File targetFile = project.documentSetLocation(documentSetName);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">                if (targetFile != null) {</span>
+<span class="fc" id="L137">                    Path relative = project.relativePathToDocumentSet(</span>
+                            sourceDirectory, 
+                            documentSetName);
+<span class="fc" id="L140">                    String newLink = relative.resolve(&quot;index.html&quot;).toString().replace(&quot;\\&quot;,&quot;/&quot;)</span>
+                            + docSpec.anchor;
+<span class="fc" id="L142">                    link.setAttribute(linkAttr, newLink);</span>
+<span class="fc" id="L143">                    String groupName = getGroupName(targetFile);</span>
+<span class="fc" id="L144">                    String targetAttr = project.getCourseName() + &quot;_&quot; + groupName;</span>
+<span class="fc" id="L145">                    link.setAttribute(&quot;target&quot;, targetAttr);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                    if (url.startsWith(&quot;doc:&quot;)) {</span>
+<span class="fc" id="L147">                        link.setAttribute(&quot;class&quot;, &quot;doc&quot;);</span>
+                    }
+<span class="fc" id="L149">                    attemptTBDReplacement(link, documentSetName);</span>
+<span class="fc" id="L150">                } else {</span>
+<span class="fc" id="L151">                    logger.warn(</span>
+                            &quot;Could not find a replacement for URL shorthand: @&quot;
+                                    + linkAttr + &quot;=&quot; + url);
+                }
+	        }
+	    }
+<span class="fc" id="L157">	    return false;</span>
+	}
+
+
+	private String getGroupName(File sourceDirectory) {
+<span class="fc" id="L162">		return sourceDirectory.getParentFile().getName();</span>
+	}
+
+
+	private void processRelativeSpecification(final Element link, final String linkAttr, String url,
+			DocumentSpecification docSpec) {
+<span class="nc" id="L168">		String documentName = docSpec.documentName;</span>
+<span class="nc" id="L169">		int k = documentName.indexOf('/');</span>
+<span class="nc" id="L170">		String documentSetName = documentName.substring(0, k);</span>
+<span class="nc" id="L171">		String continuation = documentName.substring(0, k + 1);</span>
+<span class="nc" id="L172">		File targetFile = project.documentSetLocation(documentSetName);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">		if (targetFile != null) {</span>
+<span class="nc" id="L174">		    Path relative = project.relativePathToDocumentSet(</span>
+		            sourceDirectory, 
+		            documentSetName);
+<span class="nc" id="L177">		    relative = relative.resolve(continuation);</span>
+<span class="nc" id="L178">		    String newLink = relative.toString().replace(&quot;\\&quot;,&quot;/&quot;) + &quot;.html&quot; </span>
+		        + docSpec.anchor;
+<span class="nc" id="L180">		    link.setAttribute(linkAttr, newLink);</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">		    if (url.startsWith(&quot;doc:&quot;)) {</span>
+<span class="nc" id="L182">		        link.setAttribute(&quot;class&quot;, &quot;doc&quot;);</span>
+		    }
+<span class="nc" id="L184">		    attemptTBDReplacement(link, continuation);</span>
+<span class="nc" id="L185">		} else {</span>
+<span class="nc" id="L186">		    logger.warn(</span>
+		            &quot;Could not find a replacement for URL shorthand: @&quot;
+		                    + linkAttr + &quot;=&quot; + url);
+		}
+<span class="nc" id="L190">	}</span>
+
+
+	private DocumentSpecification parseDocumentSpecification(String documentSpecStr) {
+<span class="fc" id="L194">		DocumentSpecification docSpec = new DocumentSpecification();</span>
+<span class="fc" id="L195">		int dividerPos = documentSpecStr.indexOf(':');</span>
+<span class="fc" id="L196">		docSpec.documentName = documentSpecStr.substring(dividerPos + 1);</span>
+<span class="fc" id="L197">		int anchorPos = docSpec.documentName.indexOf('#');</span>
+<span class="fc" id="L198">		docSpec.anchor = &quot;&quot;;</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">		if (anchorPos &gt;= 0) {</span>
+<span class="fc" id="L200">			docSpec.anchor = docSpec.documentName.substring(anchorPos);</span>
+<span class="fc" id="L201">			docSpec.documentName = docSpec.documentName.substring(0, anchorPos);</span>
+		}
+<span class="fc" id="L203">		return docSpec;</span>
+	}
+     	    
+     	    
+    /**
+     * Checks to see if the entire text of an element is &quot;TBD&quot;.
+     * If so, attempts to replace that text by the Title metadata field
+     * from the source document.
+     * 
+     * @param element link element to examine
+     * @param documentName  name of document 
+     */
+    private void attemptTBDReplacement(final Element element, 
+            final String documentName) {
+<span class="fc" id="L217">    	String title = project.getDocumentTitle(documentName);</span>
+<span class="fc" id="L218">        String textContent = element.getTextContent().trim();</span>
+<span class="pc bpc" id="L219" title="1 of 6 branches missed.">        if (&quot;TBD&quot;.equals(textContent) &amp;&amp; title != null &amp;&amp; title.length() &gt; 0) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        	while (element.hasChildNodes()) {</span>
+<span class="fc" id="L221">        		element.removeChild(element.getFirstChild());</span>
+        	}
+<span class="fc" id="L223">        	Node newTitle = element.getOwnerDocument()</span>
+<span class="fc" id="L224">        			.createTextNode(title);</span>
+<span class="fc" id="L225">        	element.appendChild(newTitle);</span>
+        }
+<span class="fc" id="L227">    }</span>
+  	    
+     	    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

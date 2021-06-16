@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScormPackage.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem</a> &gt; <span class="el_source">ScormPackage.groovy</span></div><h1>ScormPackage.groovy</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem;
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.file.FileTree
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Sync
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream;
+import java.io.StringReader
+import java.io.StringWriter;
+import java.lang.reflect.Array
+import java.net.MalformedURLException
+import java.nio.file.Files
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipOutputStream
+
+import edu.odu.cs.cowem.documents.MarkdownDocument
+import edu.odu.cs.cowem.documents.Utils;
+
+
+/**
+ * Prepares a SCORM 1.2 package suitable for importation into Blackbaord
+ * and many other Learning Management Systems.
+ * 
+ * @author zeil
+ *
+ */
+class ScormPackage {
+
+    private static Logger logger =
+<span class="nc" id="L48">    LoggerFactory.getLogger(ScormPackage.class);</span>
+
+
+
+    Project project;
+
+    Course course;
+
+    File buildDir;
+
+
+    File tempAreaAbs;
+    File webcontentAbs;
+    String webcontentRel;
+
+    /**
+     * Initialize the package builder
+     * @param theProject    the website project 
+     * @param theCourse     the course website descriptor
+     * @param theBuildDirectory  the project build directory
+     */
+    ScormPackage (Project theProject, Course theCourse,
+    File theBuildDirectory)
+    {
+<span class="nc" id="L72">        project = theProject</span>
+<span class="nc" id="L73">        course = theCourse</span>
+<span class="nc" id="L74">        buildDir = theBuildDirectory</span>
+    }
+
+    /**
+     * Generate the package suitable for import
+     * @param destination  where to store the resulting package
+     * @param thin if true, package will contain a modules outline and
+     *     calendar entries but the outline will link to an external website
+     *     for actual content. If false, the full content is included in the
+     *     package. 
+     */
+    void generate (File destination)
+    {
+<span class="nc" id="L87">        destination.getParentFile().mkdirs()</span>
+<span class="nc" id="L88">        tempAreaAbs = new File(new File(buildDir, &quot;temp&quot;), &quot;scorm&quot;)</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (tempAreaAbs.exists()) {</span>
+<span class="nc" id="L90">            tempAreaAbs.deleteDir()  // Groovy extension to java.io.File</span>
+        }
+<span class="nc" id="L92">        tempAreaAbs.mkdirs()</span>
+<span class="nc bnc" id="L93" title="All 4 branches missed.">        def manifestFiles = copyFiles ()</span>
+<span class="nc" id="L94">        buildManifest (manifestFiles)</span>
+<span class="nc" id="L95">        zipItAllUp (destination)</span>
+    }
+
+
+
+    FileTree copyFiles ()
+    {
+<span class="nc" id="L102">		webcontentAbs = tempAreaAbs</span>
+<span class="nc" id="L103">		webcontentAbs.mkdirs()</span>
+<span class="nc" id="L104">		def websiteFiles = project.fileTree(</span>
+				dir: 'build/website/', include: '**/*')
+
+<span class="nc" id="L107">		project.copy {</span>
+<span class="nc" id="L108">			from websiteFiles</span>
+<span class="nc" id="L109">			into webcontentAbs</span>
+		}
+<span class="nc" id="L111">		project.delete (new File(webcontentAbs, 'index.html'))</span>
+		
+<span class="nc" id="L113">		project.copy {</span>
+<span class="nc" id="L114">			into webcontentAbs</span>
+<span class="nc" id="L115">			from ({ project.zipTree(project.buildscript.configurations.classpath.find {</span>
+<span class="nc" id="L116">					it.name.startsWith(&quot;cowem-plugin&quot;) }</span>
+				) }) {
+<span class="nc" id="L118">				include 'edu/odu/cs/cowem/core/scorm/**'</span>
+			}
+		}
+
+<span class="nc" id="L122">		return websiteFiles</span>
+	}
+
+    void buildManifest (FileTree websiteFiles)
+    {
+<span class="nc" id="L127">		def manifest = new BufferedWriter(</span>
+<span class="nc" id="L128">			new FileWriter(new File(tempAreaAbs, 'imsmanifest.xml'))</span>
+			)
+<span class="nc" id="L130">		def manifestPrefix = [</span>
+			'&lt;?xml version=&quot;1.0&quot; standalone=&quot;no&quot; ?&gt;',
+			'&lt;manifest identifier=&quot;com.scorm.golfsamples.contentpackaging.singlesco.12&quot; version=&quot;1&quot;',
+            '   xmlns=&quot;http://www.imsproject.org/xsd/imscp_rootv1p1p2&quot;',
+            '   xmlns:adlcp=&quot;http://www.adlnet.org/xsd/adlcp_rootv1p2&quot;',
+            '   xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;',
+            '   xsi:schemaLocation=&quot;http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd',
+            '                http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd',
+            '                http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd&quot;&gt;',
+            '  &lt;metadata&gt;',
+			'     &lt;schema&gt;ADL SCORM&lt;/schema&gt;',
+            '     &lt;schemaversion&gt;1.2&lt;/schemaversion&gt;',
+            '  &lt;/metadata&gt;',
+ 	        '  &lt;organizations default=&quot;default_org&quot;&gt;',
+		    '     &lt;organization identifier=&quot;default_org&quot;&gt;']
+<span class="nc bnc" id="L145" title="All 2 branches missed.">		for(String line: manifestPrefix) {</span>
+<span class="nc" id="L146">			manifest.println (line);</span>
+<span class="nc" id="L147">		}</span>
+<span class="nc" id="L148">		manifest.println ('&lt;title&gt;' + course.courseName + '&lt;/title&gt;')</span>
+<span class="nc" id="L149">		manifest.println ('&lt;item identifier=&quot;item_1&quot; identifierref=&quot;resource_1&quot;&gt;')</span>
+<span class="nc" id="L150">		manifest.println ('  &lt;title&gt;' + course.courseName + '&lt;/title&gt;')</span>
+<span class="nc" id="L151">		manifest.println('&lt;/item&gt;')</span>
+<span class="nc" id="L152">		manifest.println('&lt;/organization&gt;')</span>
+<span class="nc" id="L153">		manifest.println('&lt;/organizations&gt;')</span>
+<span class="nc" id="L154">		manifest.println('&lt;resources&gt;')</span>
+<span class="nc" id="L155">		manifest.println(' &lt;resource identifier=&quot;resource_1&quot; type=&quot;webcontent&quot; adlcp:scormtype=&quot;sco&quot; href=&quot;Directory/outline/index.html&quot;&gt;')</span>
+		
+<span class="nc" id="L157">		def websiteBase = project.file('build/website')</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">		for (File f: websiteFiles.getFiles()) {</span>
+<span class="nc bnc" id="L159" title="All 4 branches missed.">			if (!f.isDirectory()) {</span>
+<span class="nc" id="L160">				Path p = f.toPath()</span>
+<span class="nc" id="L161">				Path relPath = websiteBase.toPath().relativize(p)</span>
+<span class="nc" id="L162">				String relPathStr = relPath.toString().replace('\\', '/')</span>
+<span class="nc bnc" id="L163" title="All 4 branches missed.">				if (!relPathStr.equals('index.html')) {</span>
+<span class="nc" id="L164">					manifest.println('&lt;file href=&quot;' + relPathStr + '&quot;/&gt;')</span>
+			    }
+			}
+<span class="nc" id="L167">		}</span>
+<span class="nc" id="L168">		manifest.println(&quot;&lt;/resource&gt;\n&lt;/resources&gt;\n&lt;/manifest&gt;\n&quot;)</span>
+<span class="nc" id="L169">		manifest.close()</span>
+    }
+
+
+
+    void zipItAllUp (File destination)
+    {
+<span class="nc" id="L176">        File bbDir = project.file(&quot;build/temp/scorm&quot;)</span>
+<span class="nc" id="L177">        Path bbBase = bbDir.toPath();</span>
+<span class="nc" id="L178">        ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(destination));</span>
+<span class="nc" id="L179">        zout.close();</span>
+<span class="nc" id="L180">        Path zipfile = destination.toPath();</span>
+<span class="nc" id="L181">        Queue&lt;File&gt; q = new LinkedList&lt;File&gt;();</span>
+<span class="nc" id="L182">        q.push(bbDir);</span>
+<span class="nc" id="L183">        FileSystem zipfs = FileSystems.newFileSystem(zipfile, null);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (zipfs == null) {</span>
+<span class="nc" id="L185">            logger.error (&quot;Could not create zip file system at &quot; + zipfile)</span>
+        }
+<span class="nc bnc" id="L187" title="All 4 branches missed.">        while (!q.isEmpty()) {</span>
+<span class="nc" id="L188">            File dir = q.remove()</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            for (File child : dir.listFiles()) {</span>
+<span class="nc" id="L190">                Path relChild = bbBase.relativize(child.toPath());</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                if (child.isDirectory()) {</span>
+<span class="nc" id="L192">                    q.add(child);</span>
+<span class="nc" id="L193">                    Path directory = zipfs.getPath(&quot;/&quot;, relChild.toString())</span>
+<span class="nc" id="L194">                    Files.createDirectories(directory)</span>
+<span class="nc" id="L195">                } else {</span>
+<span class="nc" id="L196">                    Path childLoc = zipfs.getPath(&quot;/&quot;, relChild.toString())</span>
+<span class="nc" id="L197">                    Files.copy(child.toPath(), childLoc)</span>
+                }
+<span class="nc" id="L199">            }</span>
+<span class="nc" id="L200">        }</span>
+<span class="nc" id="L201">        zipfs.close()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseWebsite.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem</a> &gt; <span class="el_source">CourseWebsite.groovy</span></div><h1>CourseWebsite.groovy</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem
+
+import com.moowork.gradle.node.task.NodeTask;
+
+import org.apache.tools.ant.filters.ReplaceTokens
+import org.apache.tools.ant.taskdefs.condition.Os
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.bundling.Zip
+
+import org.hidetake.gradle.ssh.plugin.SshPlugin
+
+import edu.odu.cs.cowem.documents.SingleScrollDocument
+import edu.odu.cs.cowem.documents.WebsiteProject
+
+/**
+ * A plugin for describing a course website.
+ */
+class CourseWebsite implements Plugin&lt;Project&gt; {
+
+    void apply (Project project) {
+        
+<span class="nc" id="L28">        new org.hidetake.gradle.ssh.plugin.SshPlugin().apply(project);</span>
+<span class="nc" id="L29">        project.getPluginManager().apply(com.moowork.gradle.node.NodePlugin.class);</span>
+        
+        // Add a Course object as a property of the project
+<span class="nc" id="L32">        project.extensions.create (&quot;course&quot;, Course);</span>
+<span class="nc" id="L33">        project.extensions.create (&quot;website&quot;, WebsiteProject, project.rootDir);</span>
+
+<span class="nc" id="L35">        project.remotes {</span>
+<span class="nc" id="L36">            remotehost {</span>
+                // Values will be filled in from course settings
+<span class="nc" id="L38">                host = 'placeholder'</span>
+<span class="nc" id="L39">                user = 'placeHolder'</span>
+<span class="nc" id="L40">                agent = true</span>
+            }
+        }
+
+<span class="nc" id="L44">        project.allprojects {</span>
+
+<span class="nc" id="L46">            defaultTasks 'build'</span>
+
+<span class="nc" id="L48">            repositories {</span>
+                // jcenter()
+<span class="nc" id="L50">                mavenCentral()</span>
+
+<span class="nc" id="L52">                maven {</span>
+<span class="nc" id="L53">                    url &quot;https://plugins.gradle.org/m2/&quot;</span>
+                }
+                
+                // Use my own CS dept repo
+<span class="nc" id="L57">                ivy {</span>
+<span class="nc" id="L58">                    url 'https://www.cs.odu.edu/~zeil/ivyrepo'</span>
+                }
+            }
+        }
+<span class="nc" id="L62">        project.configurations {</span>
+<span class="nc" id="L63">            build</span>
+<span class="nc" id="L64">            deploy</span>
+        }
+
+
+
+<span class="nc" id="L69">        project.task('setup_cowem', type: Copy) {</span>
+            //dependsOn project.configurations.setup
+<span class="nc" id="L71">            into project.file('build/temp/cowem')</span>
+<span class="nc" id="L72">            from ({ project.zipTree(project.buildscript.configurations.classpath.find {</span>
+<span class="nc" id="L73">                    it.name.startsWith(&quot;cowem-plugin&quot;) }</span>
+                ) }) {
+<span class="nc" id="L75">                include 'edu/odu/cs/cowem/core/graphics/**'</span>
+<span class="nc" id="L76">                include 'edu/odu/cs/cowem/core/styles/**'</span>
+            }
+        }
+
+
+<span class="nc" id="L81">        project.task ('setup_copy_website_defaults',</span>
+            type: Copy, dependsOn: 'setup_cowem'
+        ) {
+<span class="nc" id="L84">            from 'build/temp/cowem/edu/odu/cs/cowem/core'</span>
+<span class="nc" id="L85">            into 'build/website'</span>
+<span class="nc" id="L86">            include 'graphics/**'</span>
+<span class="nc" id="L87">            include 'styles/**'</span>
+        }
+
+<span class="nc" id="L90">        project.task ('setup_copy_graphics_overrides',</span>
+            type: Copy, dependsOn: 'setup_copy_website_defaults'
+        ) {
+<span class="nc" id="L93">                from 'graphics'</span>
+<span class="nc" id="L94">                into 'build/website/graphics'</span>
+        }
+        
+<span class="nc" id="L97">        project.task ('setup_copy_styles_overrides',</span>
+            type: Copy, dependsOn: 'setup_copy_website_defaults'
+        ) {
+<span class="nc" id="L100">                from 'styles'</span>
+<span class="nc" id="L101">                into 'build/website/styles'</span>
+        }
+		
+		
+<span class="nc" id="L105">		project.task ('setup_save_document_map',</span>
+            dependsOn: 'setup_copy_website_defaults'
+        ) { 
+<span class="nc" id="L108">		  doLast {</span>
+<span class="nc" id="L109">			def json = project.website.getDocumentMap();</span>
+<span class="nc" id="L110">			File jsonFile = project.file(&quot;build/website/styles/documentMap.json&quot;);</span>
+<span class="nc" id="L111">			jsonFile.write (json);</span>
+<span class="nc" id="L112">			project.website.setImports(project.course.imports);</span>
+<span class="nc" id="L113">			project.website.setCourseName(project.course.courseName);</span>
+		  }
+        }
+
+<span class="nc" id="L117">        project.task ('setup_copy_index_overrides',</span>
+            dependsOn: 'setup_copy_styles_overrides'
+        ) {
+<span class="nc" id="L120">			doLast {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">				if (project.file('index.html').exists()) {</span>
+<span class="nc" id="L122">					project.copy  {</span>
+<span class="nc" id="L123">						from 'index.html'</span>
+<span class="nc" id="L124">						into 'build/website/'</span>
+					}
+<span class="nc" id="L126">				} else {</span>
+<span class="nc" id="L127">					project.copy {</span>
+<span class="nc" id="L128">						from 'build/website/styles/'</span>
+<span class="nc" id="L129">						include 'homeRedirect.html'</span>
+<span class="nc" id="L130">						into 'build/website/'</span>
+<span class="nc" id="L131">						rename '.+', 'index.html'</span>
+					}
+<span class="nc" id="L133">				}</span>
+			}
+        }
+
+<span class="nc" id="L137">        project.task ('setup_website',</span>
+<span class="nc" id="L138">            dependsOn: ['setup_copy_index_overrides', </span>
+                        'setup_copy_graphics_overrides',
+                        'setup_copy_styles_overrides',
+						'setup_save_document_map'])
+
+
+<span class="nc" id="L144">        project.task (&quot;setup&quot;) {</span>
+            // description 'Prepare output and support directories'
+<span class="nc" id="L146">            dependsOn project.setup_cowem, project.setup_website</span>
+        }
+
+
+<span class="nc" id="L150">        project.task ('build', dependsOn: 'setup') {</span>
+<span class="nc" id="L151">            description 'Process documents and course outline to prepare the basic course website.'</span>
+<span class="nc" id="L152">            group 'Build'</span>
+        }
+        
+        
+<span class="nc" id="L156">        project.task ('clean', type: Delete)</span>
+        {
+<span class="nc" id="L158">            description 'Clean the project (delete the build directory)'</span>
+<span class="nc" id="L159">            delete 'build'</span>
+            //followSymlinks = false
+        }
+
+
+
+<span class="nc" id="L165">        project.task ('packages', dependsOn: 'build')  {</span>
+<span class="nc" id="L166">            description 'prepare optional course cartridges'</span>
+<span class="nc" id="L167">            group 'Packaging'</span>
+        }
+
+<span class="nc" id="L170">        project.task ('zip', type: Zip, dependsOn: 'build') {</span>
+<span class="nc" id="L171">            description 'Prepare a zip file of the website.'</span>
+<span class="nc" id="L172">            group 'Packaging'</span>
+<span class="nc" id="L173">            from 'build/website'</span>
+            //into '.'
+<span class="nc" id="L175">            destinationDir = project.file('build/packages')</span>
+<span class="nc" id="L176">            archiveName 'website.zip'</span>
+<span class="nc" id="L177">            dirMode 0775</span>
+<span class="nc" id="L178">            fileMode 0664</span>
+<span class="nc" id="L179">            includeEmptyDirs true</span>
+        }
+
+
+        
+<span class="nc" id="L184">        project.task ('singleScroll', dependsOn: 'build') {</span>
+<span class="nc" id="L185">            description 'Package the website into a single scroll.'</span>
+<span class="nc" id="L186">            inputs.dir 'build/website'</span>
+            // outputs.file 'build/combined/scroll-{nbasename}'
+        } .doLast {
+<span class="nc" id="L189">            Properties docProperties = new Properties()</span>
+<span class="nc" id="L190">            docProperties.put('_' + project.rootProject.course.delivery, '1')</span>
+<span class="nc" id="L191">            project.rootProject.course.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L192">                docProperties.put(prop, value.toString())</span>
+            }
+<span class="nc" id="L194">            project.rootProject.course.ext.properties.each { prop, value -&gt;</span>
+<span class="nc" id="L195">                docProperties.put(prop, value.toString())</span>
+            }
+
+<span class="nc" id="L198">            String primaryName = &quot;Directory/outline&quot;; // eventually get from Course properties</span>
+<span class="nc" id="L199">            String primaryDoc = primaryName.substring(primaryName.indexOf('/')+1)</span>
+<span class="nc" id="L200">            String format = &quot;scroll&quot;;</span>
+
+<span class="nc" id="L202">            project.delete('build/combined/' + primaryDoc)</span>
+<span class="nc" id="L203">            SingleScrollDocument doc = new SingleScrollDocument(</span>
+                    project.rootProject.website,
+                    docProperties,
+<span class="nc" id="L206">                    project.file('build/combined/' + primaryDoc),</span>
+<span class="nc" id="L207">                    project.file('build/website/'),</span>
+                    primaryName
+                    );
+<span class="nc" id="L210">            doc.generate();</span>
+        }
+
+<span class="nc" id="L213">        project.node {  </span>
+<span class="nc" id="L214">            version = '14.15.4' // current LTS version</span>
+<span class="nc" id="L215">            workDir = project.file(&quot;${project.buildDir}/nodejs&quot;)</span>
+<span class="nc" id="L216">            npmWorkDir = project.file(&quot;${project.buildDir}&quot;)</span>
+<span class="nc" id="L217">            nodeModulesDir = project.file(&quot;${project.buildDir}&quot;)</span>
+<span class="nc" id="L218">            download = true  // download node</span>
+        }
+        
+<span class="nc" id="L221">        project.build.doLast {</span>
+<span class="nc" id="L222">            project.copy {</span>
+<span class="nc" id="L223">                from 'build/website/styles/'</span>
+<span class="nc" id="L224">                include 'pdf-package.json'</span>
+<span class="nc" id="L225">                into 'build/'</span>
+<span class="nc" id="L226">                rename '.+', 'package.json'</span>
+            }
+        }
+<span class="nc" id="L229">        project.npm_install.dependsOn('build')</span>
+        
+<span class="nc" id="L231">        project.task ('pdfScript', type: Copy, dependsOn: 'build') {</span>
+<span class="nc" id="L232">            from &quot;build/website/styles/pdfScript.js&quot;</span>
+<span class="nc" id="L233">            into &quot;build&quot;</span>
+<span class="nc" id="L234">            filter(ReplaceTokens, </span>
+<span class="nc" id="L235">                   tokens: [scrollFile: project.rootDir.toString().replace(&quot;\\&quot;, &quot;/&quot;) + '/build/combined/outline/index.html'</span>
+                            ])
+        }
+
+<span class="nc" id="L239">        project.task ('pdf', type: NodeTask, </span>
+<span class="nc" id="L240">                dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {</span>
+<span class="nc" id="L241">            script = project.file('build/pdfScript.js')</span>
+        }
+<span class="nc" id="L243">        project.pdf.doLast {</span>
+<span class="nc" id="L244">            project.delete('build/pdfScript.js')</span>
+        }
+        
+        
+        
+        
+        
+<span class="nc" id="L251">        project.task ('scorm', dependsOn: 'build') {</span>
+<span class="nc" id="L252">            description 'Package the website as a SCORM 1.2 package for import into LMSs.'</span>
+<span class="nc" id="L253">            inputs.dir 'build/website'</span>
+            // outputs.file 'build/packages/bb-${project.name}.zip'
+        } .doLast {
+<span class="nc" id="L256">            new ScormPackage(project,</span>
+                project.course, 
+<span class="nc" id="L258">                project.file('build')</span>
+<span class="nc" id="L259">                ).generate(project.file('build/packages/scorm-' </span>
+<span class="nc" id="L260">                                         + project.name + '.zip'))</span>
+        }
+
+<span class="nc" id="L263">        project.task ('bb', dependsOn: 'build') {</span>
+<span class="nc" id="L264">            description 'Package the website for import into Blackboard.'</span>
+<span class="nc" id="L265">            inputs.dir 'build/website'</span>
+            // outputs.file 'build/packages/bb-${project.name}.zip'
+        } .doLast {
+<span class="nc" id="L268">            new BBPackage(project,</span>
+                project.course, 
+<span class="nc" id="L270">                project.file('build')</span>
+<span class="nc" id="L271">                ).generate(project.file('build/packages/bb-' + project.name + '.zip'), false)</span>
+        }
+        
+<span class="nc" id="L274">        project.task ('bbthin', dependsOn: 'build') {</span>
+<span class="nc" id="L275">            description 'Create a Blackboard package that will link back to the website content.'</span>
+<span class="nc" id="L276">            inputs.files (project.fileTree('Directory').include('**/*.md'))</span>
+<span class="nc" id="L277">            outputs.file 'build/packages/bbthin-${project.name}.zip'</span>
+        } .doLast {
+<span class="nc" id="L279">            new BBPackage(project,</span>
+                project.course,
+<span class="nc" id="L281">                project.file('build')</span>
+<span class="nc" id="L282">                ).generate(project.file('build/packages/bbthin-' + project.name + '.zip'), true)</span>
+        }
+
+        
+<span class="nc" id="L286">        project.task ('deploy', type: Copy, dependsOn: 'build') {</span>
+<span class="nc" id="L287">            description 'Copy course website to a local deployDestination directory.'</span>
+<span class="nc" id="L288">            group 'Deployment'</span>
+<span class="nc" id="L289">            from 'build/website'</span>
+<span class="nc" id="L290">            into { return project.course.deployDestination; }</span>
+<span class="nc" id="L291">            dirMode 0775</span>
+<span class="nc" id="L292">            includeEmptyDirs true</span>
+        }
+
+<span class="nc" id="L295">        project.task ('deployBySsh', dependsOn: 'zip') {</span>
+<span class="nc" id="L296">            description 'Copy course website to a remote machine.'</span>
+<span class="nc" id="L297">            group 'Deployment'</span>
+<span class="nc" id="L298">            inputs.file 'build/packages/website.zip'</span>
+        } .doLast {
+<span class="nc" id="L300">            int k0 = project.course.sshDeployURL.indexOf('@')</span>
+<span class="nc" id="L301">            int k1 = project.course.sshDeployURL.indexOf(':')</span>
+<span class="nc bnc" id="L302" title="All 6 branches missed.">            def hostName = project.course.sshDeployURL.substring(k0+1,k1)</span>
+<span class="nc" id="L303">            project.remotes.remotehost.host = hostName</span>
+<span class="nc" id="L304">            def userName = project.course.sshDeployURL.substring(0, k0)</span>
+<span class="nc" id="L305">            project.remotes.remotehost.user = userName</span>
+<span class="nc bnc" id="L306" title="All 6 branches missed.">            def remotePath = project.course.sshDeployURL.substring(k1+1)</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">            if (project.course.sshDeployKey != null) {</span>
+<span class="nc" id="L308">                File keyFile = project.file(project.course.sshDeployKey)</span>
+<span class="nc" id="L309">                keyFile.setReadable(false,false)</span>
+<span class="nc" id="L310">                keyFile.setWritable(false,false)</span>
+<span class="nc" id="L311">                keyFile.setExecutable(false,false)</span>
+<span class="nc" id="L312">                keyFile.setReadable(true, true)</span>
+<span class="nc" id="L313">                keyFile.setWritable(true, true)</span>
+                project.remotes.remotehost.identity =
+<span class="nc" id="L315">                        project.file(project.course.sshDeployKey)</span>
+            }
+
+<span class="nc" id="L318">            project.ssh.run {</span>
+<span class="nc" id="L319">                settings {</span>
+<span class="nc" id="L320">                    dryRun = false</span>
+                }
+<span class="nc" id="L322">                session (project.remotes.remotehost) {</span>
+<span class="nc" id="L323">                    put from: project.file('build/packages/website.zip'),</span>
+                    into: remotePath
+<span class="nc" id="L325">                    execute &quot;unzip -u -q -o ${remotePath}/website.zip -d ${remotePath}&quot;</span>
+<span class="nc" id="L326">                    execute &quot;/bin/rm -f ${remotePath}/website.zip&quot;</span>
+                }
+<span class="nc" id="L328">                println &quot;Sent to &quot; + project.course.sshDeployURL</span>
+            }
+        }
+
+
+
+<span class="nc" id="L334">        project.task ('deployByRsync', dependsOn: 'build') {</span>
+            // Deloy by rsync requires an external installation of rsync and ssh.
+<span class="nc" id="L336">            description 'Copy course website to a remote machine by rsync'</span>
+<span class="nc" id="L337">            group 'Deployment'</span>
+<span class="nc" id="L338">            inputs.dir 'build/website'</span>
+        } .doLast {
+<span class="nc bnc" id="L340" title="All 2 branches missed.">            if (project.course.rsyncDeployURL == null) {</span>
+<span class="nc" id="L341">                project.course.rsyncDeployURL = project.course.sshDeployURL</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">                if (project.course.rsyncDeployKey == null) {</span>
+<span class="nc" id="L343">                    project.course.rsyncDeployKey = project.course.sshDeployKey</span>
+                }
+            }
+<span class="nc bnc" id="L346" title="All 4 branches missed.">            if (!project.course.rsyncDeployURL.endsWith('/')) {</span>
+<span class="nc" id="L347">                project.course.rsyncDeployURL = project.course.rsyncDeployURL + '/'</span>
+            }
+
+<span class="nc" id="L350">            def sourceDir = 'build/website/'</span>
+
+<span class="nc" id="L352">            String sshCmd = &quot;ssh&quot;;</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">            if (project.course.rsyncDeployKey != null) {</span>
+<span class="nc" id="L354">                File keyFile = project.file(project.course.rsyncDeployKey)</span>
+<span class="nc" id="L355">                println &quot;keyFile is &quot; + keyFile.toString() + &quot;: setting permissions&quot; </span>
+<span class="nc" id="L356">                keyFile.setReadable(false,false)</span>
+<span class="nc" id="L357">                keyFile.setWritable(false,false)</span>
+<span class="nc" id="L358">                keyFile.setExecutable(false,false)</span>
+<span class="nc" id="L359">                keyFile.setReadable(true, true)</span>
+<span class="nc" id="L360">                keyFile.setWritable(true, true)</span>
+<span class="nc" id="L361">                sshCmd = &quot;ssh -i ${project.course.rsyncDeployKey}&quot;</span>
+            }
+<span class="nc" id="L363">            def cmd = [</span>
+                    'rsync',
+                    '-auzv',
+<span class="nc" id="L366">                    '-e' + sshCmd,</span>
+                    sourceDir,
+                    project.course.rsyncDeployURL
+                    ]
+
+<span class="nc" id="L371">            println (&quot;Issuing rsync command\n&quot; + cmd.iterator().join(&quot; &quot;))</span>
+<span class="nc" id="L372">            project.exec {</span>
+<span class="nc" id="L373">                commandLine cmd</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">                if (project.course.rsyncDeployKey != null) {</span>
+<span class="nc" id="L375">                    environment ('SSH_AGENT_PID', '')</span>
+<span class="nc" id="L376">                    environment ('SSH_AUTH_SOCK', '')</span>
+<span class="nc" id="L377">                }</span>
+            }
+        }
+
+
+<span class="nc" id="L382">        project.task ('publish', dependsOn: 'build') {</span>
+
+        }
+
+
+<span class="nc" id="L387">        project.task('listProperties') .doLast {</span>
+<span class="nc" id="L388">            println &quot;All course properties:\n&quot; + project.course.properties.collect{it}.join('\n')</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

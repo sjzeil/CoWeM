@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>URLRewriting.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents.urls</a> &gt; <span class="el_source">URLRewriting.java</span></div><h1>URLRewriting.java</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem.documents.urls;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import edu.odu.cs.cowem.documents.WebsiteProject;
+
+/**
+ * Implements URL rewriting in course documents. URL rewriting is
+ * used to provide stable shorthands for various URLS that will
+ * resolve properly even if document sets are moved, and to provide
+ * special rewriting of fields such as dates that may need to be flagged
+ * for special processing.  
+ *  
+ * @author zeil
+ *
+ */
+public class URLRewriting {
+    
+    
+    /**
+     * List of handlers for various kinds of special link URLs.
+     */
+    private List&lt;SpecialURL&gt; rewriters;
+    
+
+
+    /**
+     * Create a URL rewriter.
+     * 
+     * @param sourceDirectory directory containing document source
+     * @param project project context, used to determine relative URLs
+     * @param bbURL  URL of a Blackboard course
+     */
+    public URLRewriting(final File sourceDirectory, 
+<span class="fc" id="L40">            final WebsiteProject project, final String bbURL) {</span>
+        
+<span class="fc" id="L42">        String baseURL = project.relativePathToRoot(sourceDirectory).toString();</span>
+        
+<span class="fc" id="L44">        rewriters = new ArrayList&lt;&gt;();</span>
+        
+<span class="fc" id="L46">        rewriters.add(new GraphicsURLs(baseURL));</span>
+<span class="fc" id="L47">        rewriters.add(new StylesURLs(baseURL));</span>
+<span class="fc" id="L48">        rewriters.add(new DocURLs(sourceDirectory, project));</span>
+<span class="fc" id="L49">        rewriters.add(new BlackboardURLs(bbURL));</span>
+<span class="fc" id="L50">        rewriters.add(new DateURLs());</span>
+<span class="fc" id="L51">        rewriters.add(new DueDateURLs());</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * Rewrite href attributes of &quot;a&quot; elements and src attributes of &quot;img&quot; 
+     * and script elements that match the patterns listed above. Attributes 
+     * not matching any such pattern are left unchanged.
+     *  
+     * @param htmlDoc the DOM of an HTML document.
+     */
+    public final void rewrite(final org.w3c.dom.Document htmlDoc) {
+<span class="fc" id="L62">       NodeList allAElements = htmlDoc.getElementsByTagName(&quot;a&quot;);</span>
+<span class="fc" id="L63">       rewrite (allAElements, &quot;href&quot;);</span>
+<span class="fc" id="L64">       NodeList allImgElements = htmlDoc.getElementsByTagName(&quot;img&quot;);</span>
+<span class="fc" id="L65">       rewrite (allImgElements, &quot;src&quot;);</span>
+<span class="fc" id="L66">       NodeList allScriptElements = htmlDoc.getElementsByTagName(&quot;script&quot;);</span>
+<span class="fc" id="L67">       rewrite (allScriptElements, &quot;src&quot;);</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Search a list of elements for link attributes written in one of
+     * the special forms listed above, rewriting that attribute when
+     * found.  &quot;doc:&quot;-style links also get a &quot;class='doc'&quot; attribute
+     * added to facilitate later epub packaging.
+     *   
+     * @param elements  elements to be examined and, possibly, rewritten
+     * @param linkAttribute name of the attribute containing a link URL
+     */
+    private void rewrite(final NodeList elements, final String linkAttribute) {
+<span class="fc" id="L80">        ArrayList&lt;Element&gt; elem = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        for (int i = 0; i &lt; elements.getLength(); ++i) {</span>
+<span class="fc" id="L82">            elem.add((Element) elements.item(i));</span>
+        }
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        for (Element e: elem) {</span>
+<span class="fc" id="L85">            rewrite (e, linkAttribute);</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Examine an element for a link attribute written in one of
+     * the special forms listed above, rewriting that attribute if
+     * found.  &quot;doc:&quot;-style links also get a &quot;class='doc'&quot; attribute
+     * added to facilitate later epub packaging.
+     *   
+     * @param element  element to be examined and, possibly, rewritten
+     * @param linkAttribute name of the attribute containing a link URL
+     */
+
+    private void rewrite(final Element element, final String linkAttribute) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (SpecialURL rewriter: rewriters) {</span>
+<span class="fc" id="L101">            boolean done = rewriter.applyTo(element, linkAttribute);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            if (done) {</span>
+<span class="fc" id="L103">                break;</span>
+            }
+<span class="fc" id="L105">        }</span>
+<span class="fc" id="L106">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MacroProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.macroproc</a> &gt; <span class="el_source">MacroProcessor.java</span></div><h1>MacroProcessor.java</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem.macroproc;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Transforms a text file via application of macros.  Supported commands are
+ * 
+ * #ifdef macroName    or  #if macroName    or %ifnot macroname
+ * #else
+ * #endif
+ * 
+ * #include (filename)
+ * 
+ * The above are all analogous to the familiar C/C++ pre-processor 
+ * 
+ * #define (macroName) (argslist) (macrobody)
+ * 
+ * defines a macro with the given name, a possibly empty, comma-separated
+ * arguments list, and a body. In this command (and in the #include, above),
+ * the ( ) may be any matching pair of: (), [],  {}, or &amp;lt;&amp;gt;.
+ * The macro body may span multiple lines and the line feeds are considered
+ * part of the body.
+ * 
+ * Examples of macro definitions:
+ *   #define (authorName) () (Steven Zeil)
+ *   #define (slide) (title) {
+ *   \begin{slide}{title}
+ *   }
+ *   #define (picture)(file,sizepct) {&amp;lt;img src=&quot;file&quot;
+ *            style=&quot;max-width: sizepct%&quot;/&amp;gt;}
+ * 
+ * @author zeil
+ *
+ */
+public class MacroProcessor {
+
+	/**
+	 * Character used to introduce a basic macro command.
+	 */
+<span class="fc" id="L57">	private String commandPrefix = &quot;#&quot;;</span>
+	
+	/**
+	 * The macros defined in this processor.
+	 */
+	private List&lt;Macro&gt; macros;
+	
+	/**
+	 * Names of all defined macros.
+	 */
+	private Set&lt;String&gt; macroNames;
+	
+	/**
+	 * Partially processed text.
+	 */
+	@SuppressWarnings(&quot;PMD.AvoidStringBufferField&quot;)
+	private StringBuffer accumulated;
+
+
+	/**
+	 * Stack of states during document processing.
+	 */
+	private List&lt;InputState&gt; stack;
+	
+	
+	/**
+     * For logging error messages.
+     */
+<span class="fc" id="L85">    private static Logger logger </span>
+<span class="fc" id="L86">       = LoggerFactory.getLogger(MacroProcessor.class);</span>
+
+
+    /**
+     * Describes a stackable state during macro processing.
+     * 
+     * @author zeil
+     */
+    private class InputState {
+        // CHECKSTYLE IGNORE VisibilityModifierCheck FOR NEXT 20 LINES
+        /**
+         * Indicates a character that opened a macro parameter list
+         * or macro body that needs to be matched to close that construct.
+         */
+        public char matching;
+        
+        /**
+         * Is copying of text to output suppresed due to a failed #if test? 
+         */
+        public boolean suppressed;
+        
+        /**
+         * Holds a macro that we are currnetly paring.
+         */
+        public Macro incompleteMacro;
+
+        /**
+         * Create a state.
+         * @param matching0 matching character
+         * @param suppr true to suppress copying of text to output
+         */
+<span class="fc" id="L117">        InputState (final char matching0, final boolean suppr) {</span>
+<span class="fc" id="L118">            matching = matching0;</span>
+<span class="fc" id="L119">            suppressed = suppr;</span>
+<span class="fc" id="L120">            incompleteMacro = null;</span>
+<span class="fc" id="L121">        }</span>
+
+    }
+
+    
+    
+    /**
+	 * Defines a new macro processor with no currently defined macros,
+	 * using # as the command prefix.
+	 */
+<span class="fc" id="L131">	public MacroProcessor () {</span>
+<span class="fc" id="L132">		macros = new ArrayList&lt;Macro&gt;();</span>
+<span class="fc" id="L133">		macroNames = new HashSet&lt;String&gt;();</span>
+<span class="fc" id="L134">		stack = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L135">		stack.add(new InputState(' ', false));</span>
+<span class="fc" id="L136">		accumulated = new StringBuffer();</span>
+<span class="fc" id="L137">	}</span>
+
+	/**
+	 * Defines a new macro processor with no currently defined macros.
+	 * @param commandPrefix0  character to use as the command prefix
+	 */
+<span class="fc" id="L143">	public MacroProcessor (final String commandPrefix0) {</span>
+<span class="fc" id="L144">		macros = new ArrayList&lt;Macro&gt;();</span>
+<span class="fc" id="L145">		macroNames = new HashSet&lt;String&gt;();</span>
+<span class="fc" id="L146">		this.commandPrefix = commandPrefix0;</span>
+<span class="fc" id="L147">		stack = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L148">		stack.add(new InputState(' ', false));</span>
+<span class="fc" id="L149">		accumulated = new StringBuffer();</span>
+<span class="fc" id="L150">	}</span>
+
+	/**
+	 * Add a new macro to the processor state.
+	 * @param macro macro
+	 */
+	public final void defineMacro (final Macro macro) {
+		//System.err.println (&quot;Defining &quot; + macro);
+<span class="fc" id="L158">		macros.add(macro);</span>
+<span class="fc" id="L159">		macroNames.add(macro.getName());</span>
+<span class="fc" id="L160">	}</span>
+
+	/**
+	 * Process a single line of input, including commands and macro expansions.
+	 * 
+	 * @param line input line
+	 * @return processed input or null if line generates no input
+	 */
+	private String processLine (final String line) {
+<span class="fc" id="L169">		InputState topState = stack.get(stack.size() - 1);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">		if (topState.matching != ' ') {</span>
+<span class="fc" id="L171">			int pos = line.indexOf(topState.matching);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">			if (pos &lt; 0) {</span>
+<span class="fc" id="L173">				topState.incompleteMacro.setBody(</span>
+<span class="fc" id="L174">				        topState.incompleteMacro.getBody() + &quot;\n&quot; + line);</span>
+<span class="fc" id="L175">				return null;</span>
+			} else {
+<span class="fc" id="L177">				topState.incompleteMacro.setBody(</span>
+<span class="fc" id="L178">				        topState.incompleteMacro.getBody() </span>
+<span class="fc" id="L179">                + &quot;\n&quot; + line.substring(0, pos));</span>
+<span class="fc" id="L180">				stack.remove(stack.size() - 1);</span>
+<span class="fc" id="L181">				return null;</span>
+			}
+		}
+
+<span class="fc" id="L185">		int pos = 0;</span>
+<span class="fc bfc" id="L186" title="All 4 branches covered.">		while (pos &lt; line.length() &amp;&amp; line.charAt(pos) == ' ') {</span>
+<span class="fc" id="L187">			++pos;</span>
+		}
+<span class="fc" id="L189">		String trimmedString = line.substring(pos);</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">		if (trimmedString.startsWith(commandPrefix)) {</span>
+<span class="fc" id="L191">			String accumulation = accumulated.toString();</span>
+<span class="fc" id="L192">			String result = null;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">			if (accumulation.length() &gt; 0) { </span>
+<span class="fc" id="L194">				result = processMacros(accumulation);</span>
+			}
+<span class="fc" id="L196">			accumulated = new StringBuffer();</span>
+
+<span class="fc bfc" id="L198" title="All 2 branches covered.">			if (trimmedString.startsWith(commandPrefix + &quot;include&quot;)) {</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">				if (result == null) {</span>
+<span class="nc" id="L200">					result = &quot;&quot;;</span>
+				}
+<span class="fc" id="L202">				return result + processInclude(trimmedString);</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">			} else if (trimmedString.startsWith(commandPrefix + &quot;ifdef&quot;)) {</span>
+<span class="fc" id="L204">				processIfDef (trimmedString, &quot;ifdef&quot;);</span>
+<span class="fc" id="L205">				return result;</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">            } else if (trimmedString.startsWith(commandPrefix + &quot;ifnot&quot;)) {</span>
+<span class="fc" id="L207">                processIfNot (trimmedString, &quot;ifnot&quot;);</span>
+<span class="fc" id="L208">                return result;</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">			} else if (trimmedString.startsWith(commandPrefix + &quot;if&quot;)) {</span>
+<span class="fc" id="L210">				processIfDef (trimmedString, &quot;if&quot;);</span>
+<span class="fc" id="L211">				return result;</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">			} else if (trimmedString.startsWith(commandPrefix + &quot;else&quot;)) {</span>
+<span class="fc" id="L213">				processElse ();</span>
+<span class="fc" id="L214">				return result;</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">			} else if (trimmedString.startsWith(commandPrefix + &quot;endif&quot;)) {</span>
+<span class="fc" id="L216">				processEndif ();</span>
+<span class="fc" id="L217">				return result;</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">			} else if (trimmedString.startsWith(commandPrefix + &quot;define&quot;)) {</span>
+<span class="fc" id="L219">				processDefine (trimmedString);</span>
+<span class="fc" id="L220">				return result;</span>
+			} else {
+<span class="fc" id="L222">				accumulated.append(accumulation);</span>
+<span class="fc" id="L223">				accumulated.append(line);</span>
+<span class="fc" id="L224">				accumulated.append(System.lineSeparator());</span>
+			}
+<span class="fc bfc" id="L226" title="All 2 branches covered.">		} else if (!topState.suppressed) {</span>
+<span class="fc" id="L227">			accumulated.append(line);</span>
+<span class="fc" id="L228">			accumulated.append(System.lineSeparator());</span>
+		}
+<span class="fc" id="L230">		return null;</span>
+		/*
+        if (!topState.suppressed){
+            return processMacros (line);
+        } else {
+            return null;
+        }
+		 */
+	}
+
+	/**
+	 * Flush accumulated output to the output, clearing the accumulated buffer.
+	 * @return String to be flushed
+	 */
+	private String flush() {
+<span class="fc" id="L245">		String accumulation = accumulated.toString();</span>
+<span class="fc" id="L246">		accumulated = new StringBuffer();</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">		if (accumulation.length() &gt; 0) {</span>
+<span class="fc" id="L248">			return processMacros(accumulation);</span>
+		} else {
+<span class="fc" id="L250">			return &quot;&quot;;</span>
+		}
+	}
+
+
+	/**
+	 * Process any macros found in a line of text.
+	 * @param line Input text
+	 * @return output from macro processing.
+	 */
+	private String processMacros(final String line) {
+<span class="fc" id="L261">		String result = line;</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">		for (Macro m: macros) {</span>
+<span class="fc" id="L263">			result = m.apply(result);</span>
+<span class="fc" id="L264">		}</span>
+<span class="fc" id="L265">		return result;</span>
+	}
+
+	/**
+	 * Parse and process a #define command.
+	 * @param defineCommandStart the opening phrase of the command
+	 */
+	private void processDefine(final String defineCommandStart) {
+<span class="fc" id="L273">		InputState topState = stack.get(stack.size() - 1);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">		if (!topState.suppressed) {</span>
+<span class="fc" id="L275">			int start = commandPrefix.length() + &quot;define&quot;.length();</span>
+<span class="fc" id="L276">			ParseResult pr = parseEnclosure(defineCommandStart, start);</span>
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">			if (pr == null) {</span>
+<span class="nc" id="L278">				return;</span>
+			}
+<span class="fc" id="L280">			String name = pr.getSelectedString();</span>
+<span class="fc" id="L281">			pr = parseEnclosure(defineCommandStart, </span>
+<span class="fc" id="L282">			        pr.getStoppingPosition() + 1);</span>
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">			if (pr == null) {</span>
+<span class="nc" id="L284">				return;</span>
+			}
+			// CHECKSTYLE IGNORE AvoidInlineConditionals FOR NEXT 2 LINES
+<span class="fc bfc" id="L287" title="All 2 branches covered.">			String[] args = (pr.getSelectedString().length() &gt; 0) </span>
+<span class="fc" id="L288">			        ? pr.getSelectedString().split(&quot;,&quot;) : new String[0];</span>
+<span class="fc" id="L289">			start = pr.getStoppingPosition() + 1;</span>
+<span class="fc" id="L290">			pr = parseEnclosure(defineCommandStart, start);</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">			if (pr != null) {</span>
+<span class="fc" id="L292">				Macro m = new Macro(name, Arrays.asList(args),</span>
+<span class="fc" id="L293">				        pr.getSelectedString());</span>
+<span class="fc" id="L294">				defineMacro(m);</span>
+<span class="fc" id="L295">			} else {</span>
+<span class="fc" id="L296">				InputState state = new InputState(' ', true);</span>
+<span class="fc" id="L297">				char opener = ' ';</span>
+<span class="fc bfc" id="L298" title="All 4 branches covered.">				while (start &lt; defineCommandStart.length() &amp;&amp; opener == ' ') {</span>
+<span class="fc" id="L299">					char c = defineCommandStart.charAt(start);</span>
+<span class="pc bpc" id="L300" title="2 of 8 branches missed.">					if (c == '(' || c == '[' || c == '{' || c == '&lt;') {</span>
+<span class="fc" id="L301">						opener = c;</span>
+					}
+<span class="fc" id="L303">					++start;</span>
+<span class="fc" id="L304">				}</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">				if (start &gt; defineCommandStart.length()) {</span>
+<span class="nc" id="L306">					return;</span>
+				}
+<span class="fc" id="L308">				char closer = ' ';</span>
+<span class="pc bpc" id="L309" title="3 of 5 branches missed.">				switch (opener) {</span>
+<span class="nc" id="L310">				case '(': closer = ')'; break;</span>
+<span class="nc" id="L311">				case '[': closer = ']'; break;</span>
+<span class="fc" id="L312">				case '{': closer = '}'; break;</span>
+<span class="fc" id="L313">				case '&lt;': closer = '&gt;'; break;</span>
+				default:
+				}
+<span class="fc" id="L316">				Macro m = new Macro (name, Arrays.asList(args), </span>
+<span class="fc" id="L317">				        defineCommandStart.substring(start));</span>
+<span class="fc" id="L318">				defineMacro(m);</span>
+<span class="fc" id="L319">				state.matching = closer;</span>
+<span class="fc" id="L320">				state.incompleteMacro = m;</span>
+<span class="fc" id="L321">				stack.add(state);</span>
+			}
+
+		}
+<span class="fc" id="L325">	}</span>
+
+	/**
+	 * Parse and process an #endif command.
+	 */
+	private void processEndif() {
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">		if (stack.size() &gt; 1) {</span>
+<span class="fc" id="L332">			stack.remove(stack.size() - 1);</span>
+		}
+<span class="fc" id="L334">	}</span>
+
+	/**
+	 * Parse and process an #else command.
+	 */
+	private void processElse() {
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">		if (stack.size() &gt; 1) {</span>
+<span class="fc" id="L341">			InputState topState = stack.get(stack.size() - 1);</span>
+<span class="fc" id="L342">			InputState priorState = stack.get(stack.size() - 2);</span>
+<span class="fc" id="L343">			stack.remove(stack.size() - 1);</span>
+<span class="pc bpc" id="L344" title="1 of 4 branches missed.">			stack.add (new InputState(' ', </span>
+			        priorState.suppressed || !topState.suppressed));
+		}
+<span class="fc" id="L347">	}</span>
+
+    /**
+     * Parse and process an #ifdef command.
+     * @param ifDefCommand  Lexeme of the command.
+     * @param ifdefLexeme Lexeme of the opening word of the command/
+     */
+	private void processIfDef(final String ifDefCommand, 
+	                          final String ifdefLexeme) {
+<span class="fc" id="L356">		InputState topState = stack.get(stack.size() - 1);</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">		if (topState.suppressed) {</span>
+			// Doesn't matter if the condition is true or not
+<span class="fc" id="L359">			stack.add (new InputState(' ', true));</span>
+		} else {
+<span class="fc" id="L361">			int start = commandPrefix.length() + ifdefLexeme.length();</span>
+<span class="pc bpc" id="L362" title="1 of 2 branches missed.">			while (start &lt; ifDefCommand.length() </span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">			        &amp;&amp; ifDefCommand.charAt(start) == ' ') {</span>
+<span class="fc" id="L364">				++start;</span>
+			}
+<span class="fc" id="L366">			int stop = start;</span>
+<span class="fc bfc" id="L367" title="All 2 branches covered.">			while (stop &lt; ifDefCommand.length() </span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">			        &amp;&amp; ifDefCommand.charAt(stop) != ' ') {</span>
+<span class="fc" id="L369">				++stop;</span>
+			}
+<span class="pc bpc" id="L371" title="2 of 4 branches missed.">			if (start &gt;= ifDefCommand.length() || stop == start) {</span>
+<span class="nc" id="L372">				stack.add (new InputState(' ', true));</span>
+			} else {
+<span class="fc" id="L374">				String macroName = ifDefCommand.substring(start, stop);</span>
+<span class="fc" id="L375">				stack.add (new InputState(' ', </span>
+<span class="fc bfc" id="L376" title="All 2 branches covered.">				        !macroNames.contains(macroName)));</span>
+			}
+		}
+<span class="fc" id="L379">	}</span>
+
+    /**
+     * Parse and process an #ifnot command.
+     * @param ifNotCommand  Lexeme of the command.
+     * @param ifnotLexeme Lexeme of the opening word of the command/
+     */
+    private void processIfNot(final String ifNotCommand, 
+                              final String ifnotLexeme) {
+<span class="fc" id="L388">        InputState topState = stack.get(stack.size() - 1);</span>
+<span class="pc bpc" id="L389" title="1 of 2 branches missed.">        if (topState.suppressed) {</span>
+            // Doesn't matter if the condition is true or not
+<span class="nc" id="L391">            stack.add (new InputState(' ', true));</span>
+        } else {
+<span class="fc" id="L393">            int start = commandPrefix.length() + ifnotLexeme.length();</span>
+<span class="pc bpc" id="L394" title="1 of 2 branches missed.">            while (start &lt; ifNotCommand.length() </span>
+<span class="fc bfc" id="L395" title="All 2 branches covered.">                    &amp;&amp; ifNotCommand.charAt(start) == ' ') {</span>
+<span class="fc" id="L396">                ++start;</span>
+            }
+<span class="fc" id="L398">            int stop = start;</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">            while (stop &lt; ifNotCommand.length() </span>
+<span class="pc bpc" id="L400" title="1 of 2 branches missed.">                    &amp;&amp; ifNotCommand.charAt(stop) != ' ') {</span>
+<span class="fc" id="L401">                ++stop;</span>
+            }
+<span class="pc bpc" id="L403" title="2 of 4 branches missed.">            if (start &gt;= ifNotCommand.length() || stop == start) {</span>
+<span class="nc" id="L404">                stack.add (new InputState(' ', true));</span>
+            } else {
+<span class="fc" id="L406">                String macroName = ifNotCommand.substring(start, stop);</span>
+<span class="fc" id="L407">                stack.add (new InputState(' ', </span>
+<span class="fc" id="L408">                        macroNames.contains(macroName)));</span>
+            }
+        }
+<span class="fc" id="L411">    }</span>
+
+    
+    /**
+     * Parse and process an #include command.
+     * @param includeCommand  Lexeme of the command.
+     * @return String to be inserted in place of the command
+     */
+	private String processInclude(final String includeCommand) {
+<span class="fc" id="L420">		InputState topState = stack.get(stack.size() - 1);</span>
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">		if (!topState.suppressed) {</span>
+<span class="fc" id="L422">			List&lt;InputState&gt; savedStack = stack;</span>
+<span class="fc" id="L423">			stack = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L424">			stack.add(new InputState(' ', false));</span>
+			String fileName;
+			try {
+<span class="fc" id="L427">				fileName = parseEnclosure(includeCommand, </span>
+<span class="fc" id="L428">					commandPrefix.length() </span>
+<span class="fc" id="L429">					  + &quot;include&quot;.length()).getSelectedString();</span>
+<span class="nc" id="L430">			} catch (Exception e) {</span>
+<span class="nc" id="L431">				return &quot;**Error &quot; + includeCommand </span>
+						+ &quot;\n: &quot; + commandPrefix + &quot;\n**&quot;;
+<span class="fc" id="L433">			}</span>
+<span class="fc" id="L434">			File input = new File(fileName);</span>
+<span class="pc bpc" id="L435" title="1 of 2 branches missed.">			if (input.exists()) {</span>
+<span class="fc" id="L436">				String result = process(input);</span>
+<span class="fc" id="L437">				stack = savedStack;</span>
+<span class="fc" id="L438">				return result;</span>
+			} else {
+<span class="nc" id="L440">				return &quot;\n\n** Missing file: &quot; + fileName + &quot; **\n\n&quot;;</span>
+			}
+		} else {
+<span class="nc" id="L443">			return null;</span>
+		}
+	}
+
+	/**
+	 * A description of an attempted command parse.
+	 * 
+	 * @author zeil
+	 *
+	 */
+	public class ParseResult {
+	    
+	    /**
+	     * A parsed construct.
+	     */
+		private String selectedString;
+		
+		/**
+		 * Position at which the recognized construct ended.
+		 */
+		private int stoppingPosition;
+
+		/**
+		 * Create a parse result.
+		 * @param sel the selected string
+		 * @param stop the stopping position
+		 */
+<span class="fc" id="L470">		public ParseResult (final String sel, final int stop) {</span>
+<span class="fc" id="L471">			selectedString = sel;</span>
+<span class="fc" id="L472">			stoppingPosition = stop;</span>
+<span class="fc" id="L473">		}</span>
+
+        /**
+         * @return the selectedString
+         */
+        final String getSelectedString() {
+<span class="fc" id="L479">            return selectedString;</span>
+        }
+
+        /**
+         * @param selectedString0 the selectedString to set
+         */
+        final void setSelectedString(final String selectedString0) {
+<span class="nc" id="L486">            this.selectedString = selectedString0;</span>
+<span class="nc" id="L487">        }</span>
+
+        /**
+         * @return the stoppingPosition
+         */
+        final int getStoppingPosition() {
+<span class="fc" id="L493">            return stoppingPosition;</span>
+        }
+
+        /**
+         * @param stoppingPosition0 the stoppingPosition to set
+         */
+        final void setStoppingPosition(final int stoppingPosition0) {
+<span class="nc" id="L500">            this.stoppingPosition = stoppingPosition0;</span>
+<span class="nc" id="L501">        }</span>
+	}
+	
+	
+	/**
+	 * Scan forward to next non-black character. Should be one of: ([{&lt;.
+	 * Extract the string between that and the appropriate closing character.
+	 * 
+	 * @param commandString command that is being parsed
+	 * @param startingAt position within string to start parsing
+	 * @return enclosed string or null if one cannot be found
+	 */
+	private ParseResult parseEnclosure(final String commandString, 
+	                                   final int startingAt) {
+<span class="fc" id="L515">		int start = startingAt;</span>
+<span class="fc" id="L516">		char opener = ' ';</span>
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">		while (start &lt; commandString.length() </span>
+<span class="fc bfc" id="L518" title="All 2 branches covered.">		        &amp;&amp; commandString.charAt(start) == ' ') {</span>
+<span class="fc" id="L519">			++start;</span>
+		}
+<span class="pc bpc" id="L521" title="1 of 2 branches missed.">		if (start &lt; commandString.length()) {</span>
+<span class="fc" id="L522">			opener = commandString.charAt(start);</span>
+		}
+<span class="fc" id="L524">		char closer = ' ';</span>
+<span class="pc bpc" id="L525" title="1 of 5 branches missed.">		switch (opener) {</span>
+<span class="fc" id="L526">		case '(': closer = ')'; break;</span>
+<span class="fc" id="L527">		case '{': closer = '}'; break;</span>
+<span class="fc" id="L528">		case '[': closer = ']'; break;</span>
+<span class="fc" id="L529">		case '&lt;': closer = '&gt;'; break;</span>
+		default:
+		}
+<span class="pc bpc" id="L532" title="1 of 2 branches missed.">		if (closer == ' ') {</span>
+<span class="nc" id="L533">			return null;</span>
+		}
+<span class="fc" id="L535">		int stop = start;</span>
+<span class="fc bfc" id="L536" title="All 2 branches covered.">		while (stop &lt; commandString.length() </span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">		        &amp;&amp; commandString.charAt(stop) != closer) {</span>
+<span class="fc" id="L538">			++stop;</span>
+		}
+<span class="fc bfc" id="L540" title="All 2 branches covered.">		if (stop &lt; commandString.length()) {</span>
+<span class="fc" id="L541">			return new ParseResult(commandString.substring(start + 1, stop), </span>
+			                       stop);
+		} else {
+<span class="fc" id="L544">			return null;</span>
+		}
+	}
+
+	/**
+	 * Process a block of text obtained from a reader. Processing can both
+	 * alter the text (macro substitution) and affect the state of the
+	 * processor by defining new macros.
+	 * @param input  source of text to be processed
+	 * @return processed text
+	 * @throws IOException on failure of reader
+	 */
+	public final String process (final BufferedReader input)
+	        throws IOException {
+<span class="fc" id="L558">		StringBuffer results = new StringBuffer();</span>
+<span class="fc" id="L559">		String line = input.readLine();</span>
+<span class="fc bfc" id="L560" title="All 2 branches covered.">		while (line != null) {</span>
+<span class="fc" id="L561">			String processed = processLine(line);</span>
+<span class="fc bfc" id="L562" title="All 2 branches covered.">			if (processed != null) {</span>
+<span class="fc" id="L563">				results.append(processed);</span>
+<span class="fc" id="L564">				results.append(System.lineSeparator());</span>
+			}
+<span class="fc" id="L566">			line = input.readLine();</span>
+<span class="fc" id="L567">		}</span>
+<span class="fc" id="L568">		results.append(flush());</span>
+<span class="fc" id="L569">		return results.toString();</span>
+	}
+
+	/**
+	 * Process a block of text. Processing can both
+     * alter the text (macro substitution) and affect the state of the
+     * processor by defining new macros.
+     * 
+	 * @param inputString text to process
+	 * @return processed text
+	 */
+	public final String process (final String inputString) {
+<span class="fc" id="L581">		String results = &quot;&quot;;</span>
+<span class="fc" id="L582">		BufferedReader input = null;</span>
+		try {
+<span class="fc" id="L584">			input = new BufferedReader(new StringReader (inputString));</span>
+<span class="fc" id="L585">			results = process (input);</span>
+<span class="nc" id="L586">		} catch (IOException e) {</span>
+<span class="nc" id="L587">		    logger.error(&quot;**Unexpected I/O error in &quot; + inputString, e);</span>
+		} finally {
+			try {
+<span class="pc bpc" id="L590" title="1 of 2 branches missed.">				if (input != null) {</span>
+<span class="fc" id="L591">					input.close();</span>
+				}
+<span class="nc" id="L593">			} catch (IOException e) {</span>
+<span class="nc" id="L594">			    logger.error(&quot;**Unexpected I/O error&quot;, e);</span>
+<span class="fc" id="L595">			}</span>
+		}
+<span class="fc" id="L597">		return results.replace(&quot;\r&quot;, &quot;&quot;);</span>
+	}
+
+    /**
+     * Process a block of text obtained from a file. Processing can both
+     * alter the text (macro substitution) and affect the state of the
+     * processor by defining new macros.
+     * 
+     * @param inputFile text to process
+     * @return processed text
+     */
+	public final String process (final File inputFile) {
+<span class="fc" id="L609">		String results = &quot;&quot;;</span>
+<span class="fc" id="L610">		BufferedReader input = null;</span>
+		try {
+<span class="fc" id="L612">			input = new BufferedReader(new FileReader (inputFile));</span>
+<span class="fc" id="L613">			results = process (input);</span>
+<span class="nc" id="L614">		} catch (FileNotFoundException e) {</span>
+<span class="nc" id="L615">			logger.error (&quot;**Could not open &quot; + inputFile.getAbsolutePath(), e);</span>
+<span class="nc" id="L616">		} catch (IOException e) {</span>
+<span class="nc" id="L617">			logger.error (&quot;**Unexpected I/O error in &quot; </span>
+<span class="nc" id="L618">		         + inputFile.getAbsolutePath(), e);</span>
+		} finally {
+			try {
+<span class="pc bpc" id="L621" title="1 of 2 branches missed.">				if (input != null) {</span>
+<span class="fc" id="L622">					input.close();</span>
+				}
+<span class="nc" id="L624">			} catch (IOException e) {</span>
+<span class="nc" id="L625">				logger.error (&quot;**Unexpected I/O error in &quot; </span>
+<span class="nc" id="L626">				    + inputFile.getAbsolutePath(), e);</span>
+<span class="fc" id="L627">			}</span>
+		}
+<span class="fc" id="L629">		return results.replace(&quot;\r&quot;, &quot;&quot;);</span>
+	}
+
+
+	/**
+	 * Driver for macro processor.  Accepts args:
+	 *   -c?       changes the macro prefix string (default is '#')
+	 *   -Dmacro   defines a macro name
+	 *   -iFile    processes File, ignoring output but keeping any 
+	 *               macro definitions
+	 *   -oFile    directs output to the indicated file
+	 *   fileName  input file name
+	 * @param args Command line parameters as described above
+	 * @throws IOException on input failure
+	 */
+	public static void main(final String[] args) throws IOException {
+<span class="nc" id="L645">		String inputFileName = null;</span>
+<span class="nc" id="L646">		String outputFileName = null;</span>
+<span class="nc" id="L647">		MacroProcessor processor = new MacroProcessor();</span>
+<span class="nc bnc" id="L648" title="All 2 branches missed.">		for (int i = 0; i &lt; args.length; ++i) {</span>
+<span class="nc bnc" id="L649" title="All 2 branches missed.">			if (args[i].startsWith(&quot;-c&quot;)) {</span>
+<span class="nc" id="L650">				String prefix = args[i].substring(2);</span>
+<span class="nc" id="L651">				processor = new MacroProcessor(prefix);</span>
+<span class="nc bnc" id="L652" title="All 2 branches missed.">			} else if (args[i].startsWith(&quot;-D&quot;)) {</span>
+<span class="nc" id="L653">				String macroName = args[i].substring(2);</span>
+<span class="nc" id="L654">				processor.defineMacro(new Macro(macroName, &quot;&quot;));</span>
+<span class="nc bnc" id="L655" title="All 2 branches missed.">			} else if (args[i].startsWith(&quot;-o&quot;)) {</span>
+<span class="nc" id="L656">				String fileName = args[i].substring(2);</span>
+<span class="nc" id="L657">				outputFileName = fileName;</span>
+<span class="nc bnc" id="L658" title="All 2 branches missed.">			} else if (args[i].startsWith(&quot;-i&quot;)) {</span>
+<span class="nc" id="L659">				String fileName = args[i].substring(2);</span>
+<span class="nc" id="L660">				File input = new File(fileName);</span>
+<span class="nc" id="L661">				processor.process(input);</span>
+<span class="nc" id="L662">			} else {</span>
+<span class="nc" id="L663">				inputFileName = args[i];</span>
+			}
+		}
+
+		BufferedReader mainInput;
+<span class="nc bnc" id="L668" title="All 2 branches missed.">		if (inputFileName != null) {</span>
+<span class="nc" id="L669">			mainInput = new BufferedReader(new FileReader(inputFileName));</span>
+		} else {
+<span class="nc" id="L671">			mainInput = new BufferedReader(new InputStreamReader(System.in));</span>
+		}
+		BufferedWriter mainOutput;    
+<span class="nc bnc" id="L674" title="All 2 branches missed.">		if (outputFileName != null) {</span>
+<span class="nc" id="L675">			mainOutput = new BufferedWriter(new FileWriter(outputFileName));</span>
+		} else {
+<span class="nc" id="L677">			mainOutput = new BufferedWriter(</span>
+					new OutputStreamWriter(System.out));
+		}
+<span class="nc" id="L680">		transformText (mainInput, mainOutput, processor);</span>
+<span class="nc bnc" id="L681" title="All 2 branches missed.">		if (outputFileName != null) {</span>
+<span class="nc" id="L682">			mainOutput.close();</span>
+		}
+<span class="nc bnc" id="L684" title="All 2 branches missed.">		if (inputFileName != null) {</span>
+<span class="nc" id="L685">			mainInput.close();</span>
+		}
+<span class="nc" id="L687">	}</span>
+
+	/**
+	 * Transforms text using a macro processor.
+	 * @param input  input text source
+	 * @param output output text destination
+	 * @param processor the macro processor to use
+	 * @throws IOException on input failure
+	 */
+	private static void transformText(final BufferedReader input,
+			final BufferedWriter output, final MacroProcessor processor)
+					throws IOException {
+<span class="nc" id="L699">		String line = input.readLine();</span>
+<span class="nc bnc" id="L700" title="All 2 branches missed.">		while (line != null) {</span>
+<span class="nc" id="L701">			String processed = processor.processLine(line);</span>
+<span class="nc bnc" id="L702" title="All 2 branches missed.">			if (processed != null) {</span>
+<span class="nc" id="L703">				output.write(processed);</span>
+<span class="nc" id="L704">				output.write(System.lineSeparator());</span>
+			}
+<span class="nc" id="L706">			line = input.readLine();</span>
+<span class="nc" id="L707">		}</span>
+<span class="nc" id="L708">		output.write(processor.flush());</span>
+<span class="nc" id="L709">		output.write(System.lineSeparator());</span>
+<span class="nc" id="L710">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BlackboardURLs.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents.urls</a> &gt; <span class="el_source">BlackboardURLs.java</span></div><h1>BlackboardURLs.java</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem.documents.urls;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+
+/**
+ * Implements URL rewriting in course documents.
+ * 
+ *  bb:foo   A link to an internal page of a Blackboard course (requires
+ *           a legitimate URL for bbURL in the constructor below)
+ *  
+ * @author zeil
+ *
+ */
+public class BlackboardURLs implements SpecialURL {
+    
+ 
+    /**
+     * URL to course area on Blackboard.
+     */
+    private String bbURL;
+    
+    
+    /**
+     * For logging error messages.
+     */
+<span class="fc" id="L28">    private static Logger logger </span>
+<span class="fc" id="L29">       = LoggerFactory.getLogger(BlackboardURLs.class);</span>
+
+
+    /**
+     * Create a URL rewriter.
+     * 
+     * @param bbURL0 url to course on Blackboard
+     */
+<span class="fc" id="L37">    public BlackboardURLs(final String bbURL0) {</span>
+<span class="fc" id="L38">        bbURL = bbURL0;</span>
+<span class="fc" id="L39">    }</span>
+
+
+
+	/**
+	 * Checks to see if a linking element (a or img) uses a special
+	 * protocol label and, if so, attempts to rewrite the element.
+	 * 
+	 * @param link an element containing a URL
+	 * @param linkAttr name of the attribute containing the URL 
+	 * @return true if the element has been rewritten.
+	 */
+	@Override
+	public final boolean applyTo(final Element link, final String linkAttr) {
+<span class="fc" id="L53">	    String url = link.getAttribute(linkAttr);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">	    if (url.startsWith(&quot;bb:&quot;)) {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">	        if (&quot;&quot;.equals(bbURL)) {</span>
+<span class="nc" id="L56">	            logger.warn(&quot;Could not resolve URL shorthand &quot; + link</span>
+	                    + &quot;\n  because base Blackboard URL has not been&quot;
+	                    + &quot; specified as part of website properties.&quot;);
+<span class="nc" id="L59">	            return false;</span>
+	        } else {
+<span class="nc" id="L61">	            int dividerPos = url.indexOf(':');</span>
+<span class="nc" id="L62">	            String documentSpec = url.substring(dividerPos + 1);</span>
+<span class="nc" id="L63">	            String urlSpec = &quot;url=&quot;;</span>
+<span class="nc" id="L64">	            String urlStart = </span>
+<span class="nc" id="L65">	                    bbURL.substring(0, bbURL.indexOf(urlSpec)) </span>
+	                    + urlSpec;
+<span class="nc" id="L67">	            String webAppsSpec = &quot;/webapps&quot;;</span>
+<span class="nc" id="L68">	            int k = documentSpec.indexOf(webAppsSpec);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">	            if (k &lt; 0) {</span>
+<span class="nc" id="L70">	                logger.warn (&quot;Could not resolve URL shorthand &quot; + link);</span>
+<span class="nc" id="L71">	                return false;</span>
+	            }
+<span class="nc" id="L73">	            documentSpec = documentSpec.substring(k);</span>
+<span class="nc" id="L74">	            documentSpec = documentSpec.replaceAll(&quot;/&quot;, &quot;%2f&quot;);</span>
+<span class="nc" id="L75">	            documentSpec = documentSpec.replaceAll(&quot;=&quot;, &quot;%36&quot;);</span>
+<span class="nc" id="L76">	            documentSpec = documentSpec.replaceAll(&quot;&amp;&quot;, &quot;%26&quot;);</span>
+<span class="nc" id="L77">	            documentSpec = documentSpec.replaceAll(&quot;[?]&quot;, &quot;%3f&quot;);</span>
+<span class="nc" id="L78">	            String newLink = urlStart + documentSpec;</span>
+<span class="nc" id="L79">	            link.setAttribute(linkAttr, newLink);</span>
+<span class="nc" id="L80">	            return true;</span>
+	        }
+	    }
+<span class="fc" id="L83">	    return false;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Macro.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.macroproc</a> &gt; <span class="el_source">Macro.java</span></div><h1>Macro.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem.macroproc;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A text substitution macro
+ * 
+ * Macros can be called as name or name(arg1, arg2, ...)
+ * 
+ * The ( ) in a macro call can be replaced by [ ] or { } or &amp;lt; &amp;gt; 
+ *  
+ * Macro calls are replaced by the macro body, with substitution for the
+ * macro parameters. A macro substitution also swallows a single blank
+ * preceding the macro name if the macro name starts with an alphanumeric
+ * character and if the call is not at the beginning of the string)
+ * and a single blank following the macro call if the
+ * macro call has no ( ), [ ], { }, or &amp;lt; &amp;gt;.
+ * 
+ * @author zeil
+ *
+ */
+public class Macro {
+	
+    /**
+     * Name of this macro.
+     */
+	private String name;
+	
+	/**
+	 * List of parameter names for this macro.
+	 */
+	private List&lt;String&gt; formalParams;
+	
+	/**
+	 * The body (substitution part) of this macro.
+	 */
+	private String body;
+	
+	/**
+	 * Create a new macro.
+	 * @param name0  name of the macro - can be any string of visible characters
+	 * @param params list of formal parameter names. Names should be limited
+	 *               to alphanumerics and - _
+	 * @param body0  body in which to replace params as a replacement for
+	 *                the macro call
+	 */
+	public Macro (final String name0,  final List&lt;String&gt; params,  
+<span class="fc" id="L52">	              final String body0) {</span>
+<span class="fc" id="L53">		this.name = name0;</span>
+<span class="fc" id="L54">		this.formalParams = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L55">		this.formalParams.addAll(params);</span>
+<span class="fc" id="L56">		this.body = body0;</span>
+<span class="fc" id="L57">	}</span>
+
+	/**
+	 * Create a new macro with zero parameters.
+	 * @param name0  name of the macro - can be any string of visible characters
+	 * @param body0  body to use as a replacement for the macro call
+	 */
+<span class="fc" id="L64">	public Macro (final String name0,  final String body0) {</span>
+<span class="fc" id="L65">		this.name = name0;</span>
+<span class="fc" id="L66">		this.formalParams = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L67">		this.body = body0;</span>
+		
+<span class="fc" id="L69">	}</span>
+	
+	/**
+	 * Apply the macro to a string .
+	 * @param target0 string to be processed via this macro. 
+	 * @return target0 with macro substitutions, unchanged if macro call
+	 *           could not be matched
+	 */
+	public final String apply (final String target0) {
+<span class="fc" id="L78">	    String target = target0;</span>
+<span class="fc" id="L79">		int start = 0;</span>
+<span class="pc bpc" id="L80" title="1 of 4 branches missed.">		while (start &gt;= 0 &amp;&amp; start &lt; target.length()) {</span>
+<span class="fc" id="L81">			int pos = target.indexOf(name, start);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">			if (pos &lt; 0) {</span>
+<span class="fc" id="L83">				break;</span>
+			}
+<span class="fc" id="L85">			char firstCharInName = name.charAt(0);</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">			if (pos &gt; start &amp;&amp; Character.isLetterOrDigit(firstCharInName) </span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">					&amp;&amp; target.charAt(pos - 1) != ' ') {</span>
+<span class="fc" id="L88">				start = pos + 1;</span>
+<span class="fc" id="L89">				continue;</span>
+			}
+
+<span class="fc" id="L92">			char opener = ' ';</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">			if (pos + name.length() &lt; target.length()) {</span>
+<span class="fc" id="L94">				opener = target.charAt(pos + name.length());</span>
+			}
+<span class="fc" id="L96">			char closer = ' ';</span>
+<span class="fc bfc" id="L97" title="All 5 branches covered.">			switch (opener) {</span>
+<span class="fc" id="L98">			case '(' : closer = ')'; break;</span>
+<span class="fc" id="L99">			case '[' : closer = ']'; break;</span>
+<span class="fc" id="L100">			case '{' : closer = '}'; break;</span>
+<span class="fc" id="L101">			case '&lt;' : closer = '&gt;'; break;</span>
+			default:
+			}
+			// If closer == ' ', we must be looking at a zero-parmaeter
+			// macro.
+<span class="fc bfc" id="L106" title="All 4 branches covered.">			if (closer == ' ' &amp;&amp; formalParams.size() &gt; 0) {</span>
+				// Not a valid macro call
+<span class="fc" id="L108">				start = pos + 1;</span>
+<span class="fc" id="L109">				continue;</span>
+			}
+			String[] actualParams;
+<span class="fc" id="L112">			int callStart = 0;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">			if (pos == start) {</span>
+<span class="fc" id="L114">				callStart = start;</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            } else if (Character.isLetterOrDigit(firstCharInName)) {</span>
+<span class="fc" id="L116">				callStart = pos - 1;</span>
+			} else {
+<span class="fc" id="L118">				callStart = pos;</span>
+			}
+<span class="fc" id="L120">			String preMatch = target.substring(0, Math.max(0, callStart));</span>
+			String postMatch;
+<span class="fc bfc" id="L122" title="All 2 branches covered.">			if (closer == ' ') {</span>
+<span class="fc" id="L123">				actualParams = new String[0];</span>
+<span class="fc" id="L124">				postMatch = target.substring(Math.min(pos + name.length(),</span>
+<span class="fc" id="L125">				                             target.length()));</span>
+			} else {
+<span class="fc" id="L127">				int closePos = target.indexOf(closer, pos + name.length() + 1);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">				if (closePos &lt; 0) {</span>
+<span class="nc" id="L129">					start = pos + 1;</span>
+<span class="nc" id="L130">					continue;</span>
+				}
+<span class="fc" id="L132">				postMatch = target.substring(closePos + 1);</span>
+<span class="fc" id="L133">				String args = target.substring(pos + name.length() + 1,</span>
+				                               closePos);
+<span class="fc bfc" id="L135" title="All 2 branches covered.">				if (formalParams.size() &gt; 1) {</span>
+<span class="fc" id="L136">				    final int splitLimit = 20;</span>
+<span class="fc" id="L137">					actualParams = args.split(&quot;,&quot;, splitLimit);</span>
+<span class="fc" id="L138">				} else {</span>
+<span class="fc" id="L139">					actualParams = new String[1];</span>
+<span class="fc" id="L140">					actualParams[0] = args;</span>
+				}
+			}
+<span class="pc bpc" id="L143" title="1 of 4 branches missed.">			if (formalParams.size() == 0 &amp;&amp; actualParams.length &gt; 1) {</span>
+<span class="nc" id="L144">                start = pos + 1;</span>
+<span class="nc" id="L145">                continue;			    </span>
+			}
+<span class="fc bfc" id="L147" title="All 4 branches covered.">            if (formalParams.size() == 0 &amp;&amp; actualParams.length == 1</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">                    &amp;&amp; !actualParams[0].equals(&quot;&quot;)) {</span>
+<span class="nc" id="L149">                start = pos + 1;</span>
+<span class="nc" id="L150">                continue;               </span>
+            }
+<span class="fc bfc" id="L152" title="All 2 branches covered.">			if (formalParams.size() &gt; 0 </span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">			        &amp;&amp; actualParams.length != formalParams.size()) {</span>
+<span class="fc" id="L154">				start = pos + 1;</span>
+<span class="fc" id="L155">				continue;</span>
+			}
+<span class="fc" id="L157">			String replacement = applySubstitutions(actualParams);</span>
+<span class="fc" id="L158">			target = preMatch + replacement + postMatch;</span>
+<span class="fc" id="L159">			start = preMatch.length() + replacement.length();</span>
+<span class="fc" id="L160">		}</span>
+<span class="fc" id="L161">		return target;</span>
+	}
+
+	/**
+	 * Generate a version of the macro body with substitutions for all formal
+	 * parameters.
+	 * 
+	 * @param actualParams list of values to substitute for the corresponding
+	 *                     formal parameters.
+	 * @return  Macro body with substitutions.
+	 */
+	private String applySubstitutions(final String[] actualParams) {
+<span class="fc" id="L173">		String replacement = body;</span>
+<span class="fc" id="L174">		int start = 0;</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">		while (start &lt; replacement.length()) {</span>
+<span class="fc" id="L176">			int pos = replacement.length();</span>
+<span class="fc" id="L177">			int matched = -1;</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">			for (int i = 0; i &lt; formalParams.size(); ++i) {</span>
+<span class="fc" id="L179">				String formal = formalParams.get(i);</span>
+<span class="fc" id="L180">				int k = replacement.indexOf(formal, start);</span>
+<span class="fc bfc" id="L181" title="All 4 branches covered.">				if (k &gt;= 0 &amp;&amp; k &lt; pos) {</span>
+<span class="fc" id="L182">					pos = k;</span>
+<span class="fc" id="L183">					matched = i;</span>
+				}
+			}
+<span class="fc bfc" id="L186" title="All 2 branches covered.">			if (matched &lt; 0) {</span>
+<span class="fc" id="L187">			    break;</span>
+			}
+<span class="fc" id="L189">			replacement = replacement.substring(0, pos)</span>
+					+ actualParams[matched]
+<span class="fc" id="L191">					+ replacement.substring(pos </span>
+<span class="fc" id="L192">					        + formalParams.get(matched).length());</span>
+<span class="fc" id="L193">			start = pos + actualParams[matched].length() + 1;</span>
+<span class="fc" id="L194">		}</span>
+<span class="fc" id="L195">		return replacement;</span>
+	}
+	
+	/**
+	 * Render the macro as a string.
+	 * @return a readable version of the macro
+	 */
+	public final String toString() {
+<span class="nc" id="L203">		return name + &quot;{&quot; + formalParams + &quot;}=&gt;&quot; + body;</span>
+	}
+
+    /**
+     * @return the name
+     */
+    public final String getName() {
+<span class="fc" id="L210">        return name;</span>
+    }
+
+    /**
+     * @param name0 the name to set
+     */
+    public final void setName(final String name0) {
+<span class="nc" id="L217">        this.name = name0;</span>
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * @return the formalParams
+     */
+    public final List&lt;String&gt; getFormalParams() {
+<span class="nc" id="L224">        return formalParams;</span>
+    }
+
+    /**
+     * @param formalParams0 the formalParams to set
+     */
+    public final void setFormalParams(final List&lt;String&gt; formalParams0) {
+<span class="nc" id="L231">        this.formalParams = new ArrayList&lt;String&gt;(formalParams0);</span>
+<span class="nc" id="L232">    }</span>
+
+    /**
+     * @return the body
+     */
+    public final String getBody() {
+<span class="fc" id="L238">        return body;</span>
+    }
+
+    /**
+     * @param body0 the body to set
+     */
+    public final void setBody(final String body0) {
+<span class="fc" id="L245">        this.body = body0;</span>
+<span class="fc" id="L246">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

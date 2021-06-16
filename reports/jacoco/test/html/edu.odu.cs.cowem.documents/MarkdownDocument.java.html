@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MarkdownDocument.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents</a> &gt; <span class="el_source">MarkdownDocument.java</span></div><h1>MarkdownDocument.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem.documents;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.util.io.DisabledOutputStream;
+import org.pegdown.PegDownProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import edu.odu.cs.cowem.documents.urls.URLRewriting;
+import edu.odu.cs.cowem.macroproc.Macro;
+import edu.odu.cs.cowem.macroproc.MacroProcessor;
+
+/**
+ * A Document written in Markdown that can be transformed to
+ * HTML in 3 steps:
+ * 1) pre-processing, 2) markdown to html conversion, and 3) post-processing.
+ * 
+ * @author zeil
+ *
+ */
+public class MarkdownDocument implements Document {
+	
+
+    /**
+	 * For logging error messages.
+	 */
+<span class="fc" id="L79">	private static Logger logger = </span>
+<span class="fc" id="L80">	        LoggerFactory.getLogger(MarkdownDocument.class);</span>
+	
+	/**
+     * The number of directory levels separating this document from the website
+     * base.  This is used to enable the generation of relative URLs to styles,
+     * graphics, and other document directories.
+     */
+    private int directoryDepth;
+    
+    /**
+     * Context info for this document. Indicates the project's root and all
+     * available document sets.
+     */
+    private WebsiteProject project;
+    
+	/**
+	 * Source for text of the document. 
+	 */
+	private BufferedReader documentIn;
+	
+	/**
+	 * Directory from which source code was being obtained.
+	 */
+	private File sourceDirectory;
+	
+	/**
+	 * Text to be used instead of actually reading from asource file.
+	 */
+	private String forcedText;
+	
+	/**
+	 * Metadata extracted from lines at the beginning of the document in
+	 * the form: FieldName: value.
+	 */
+	private Properties metadata;
+	
+    /**
+     * Properties to be used when processing this document.
+     */
+    private Properties properties;
+
+    
+    /**
+	 * Last line of text read from documentIn.
+	 */
+<span class="fc" id="L125">	private String line = &quot;&quot;;</span>
+
+	 
+    private static final String BEGIN_SLIDE_EXCLUSION = &quot;{{{&quot;;
+    
+    private static final String END_SLIDE_EXCLUSION = &quot;}}}&quot;;
+	
+    private static final String BEGIN_SLIDE_INCLUSION = &quot;[[[&quot;;
+    
+    private static final String END_SLIDE_INCLUSION = &quot;]]]&quot;;
+
+    /**
+     * Code to pre-pend to PegDown output. 
+     */
+    private static final String HTML_HEADER = &quot;&lt;html&gt;\n&lt;head&gt;\n&quot;
+            + &quot;&lt;title&gt;@Title@&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n&quot;;
+    
+    /**
+     * Code to append to PegDown output.
+     */
+    private static final String HTML_TRAILER = &quot;&lt;/body&gt;\n&lt;/html&gt;\n&quot;;
+
+    /**
+     * If &quot;yes&quot;, adds indentation to XML outputs for easier debugging. 
+     */
+<span class="fc" id="L150">    private String debugMode = &quot;no&quot;;</span>
+	
+	
+    /**
+     * Create a document from the given file.
+     * @param input Markdown document text
+     * @param project0 website project context,
+     * @param properties0 Properties to be used in processing this document.
+     */
+	public MarkdownDocument(final File input, 
+	        final WebsiteProject project0,
+<span class="fc" id="L161">	        final Properties properties0) {</span>
+<span class="fc" id="L162">	    project = project0;</span>
+<span class="fc" id="L163">	    forcedText = null;</span>
+		try {
+<span class="fc" id="L165">			documentIn = new BufferedReader (new FileReader (input));</span>
+<span class="nc" id="L166">		} catch (FileNotFoundException e) {</span>
+<span class="nc" id="L167">			logger.warn(&quot;Unable to read from &quot; + input + &quot;: &quot; + e);</span>
+<span class="fc" id="L168">		}</span>
+<span class="fc" id="L169">		metadata = null;</span>
+<span class="fc" id="L170">		directoryDepth = 0;</span>
+<span class="fc" id="L171">		File dir = input.getParentFile();</span>
+<span class="pc bpc" id="L172" title="1 of 4 branches missed.">		while ((dir != null) &amp;&amp; !(new File(dir, &quot;settings.gradle&quot;).exists())) {</span>
+<span class="fc" id="L173">		    ++directoryDepth;</span>
+<span class="fc" id="L174">		    dir = dir.getParentFile();</span>
+		}
+<span class="fc" id="L176">		String baseName = input.getName();</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">		if (baseName.contains(&quot;.&quot;)) {</span>
+<span class="fc" id="L178">		    baseName = baseName.substring(0, baseName.lastIndexOf('.'));</span>
+		}
+<span class="fc" id="L180">	    sourceDirectory = input.getParentFile();</span>
+<span class="fc" id="L181">		initProperties (properties0, baseName);</span>
+<span class="fc" id="L182">		properties.setProperty(&quot;docModDate&quot;, getModificationDate(input));</span>
+<span class="fc" id="L183">	}</span>
+
+	
+
+    /**
+     * Create a document from the given string.  &quot;Pretend&quot; that the input
+     * string was actually read from a file.
+     *  
+     * @param fakeInputFile A path to a file that we will &quot;pretend&quot; is where
+     *           the input string was obtained
+     * @param project0 project website context
+     * @param properties0 Properties to be used in processing this document.
+     * @param input Markdown document text
+     */
+    public MarkdownDocument(
+            final File fakeInputFile,
+            final WebsiteProject project0,
+            final Properties properties0, final String input
+<span class="fc" id="L201">             ) {</span>
+<span class="fc" id="L202">        project = project0;</span>
+<span class="fc" id="L203">        forcedText = input;</span>
+<span class="fc" id="L204">        documentIn = new BufferedReader (new StringReader(forcedText));</span>
+<span class="fc" id="L205">        metadata = null;</span>
+<span class="fc" id="L206">        directoryDepth = 0;</span>
+        try {
+<span class="fc" id="L208">            File dir = fakeInputFile.getParentFile();</span>
+<span class="pc bpc" id="L209" title="2 of 4 branches missed.">            while ((dir != null) &amp;&amp; (directoryDepth &lt; 8) </span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">                    &amp;&amp; !(Files.isSameFile(dir.toPath(), </span>
+<span class="fc" id="L211">                            project.getRootDir().toPath()))) {</span>
+<span class="fc" id="L212">                ++directoryDepth;</span>
+<span class="fc" id="L213">                dir = dir.getParentFile();</span>
+            }
+<span class="nc" id="L215">        } catch (IOException e) {</span>
+<span class="nc" id="L216">            directoryDepth = 2;</span>
+<span class="fc" id="L217">        }</span>
+<span class="fc" id="L218">        String baseName = fakeInputFile.getName();</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if (baseName.contains(&quot;.&quot;)) {</span>
+<span class="fc" id="L220">            baseName = baseName.substring(0, baseName.lastIndexOf('.'));</span>
+        }
+<span class="fc" id="L222">        sourceDirectory = fakeInputFile.getParentFile();</span>
+<span class="fc" id="L223">        initProperties (properties0, baseName);</span>
+<span class="fc" id="L224">    }</span>
+    
+
+
+	
+	
+	
+    /**
+     * Copy a set of properties into the data member, augmenting
+     * with internally computed properties: baseURL, directoryDepth,
+     * and primaryDocument.
+     * 
+     * @param properties0 Properties to be used in processing this document.
+     * @param primaryDocumentName base name of the primary document file,
+     *                            empty if this is not a primary document.
+     */
+    private void initProperties(final Properties properties0, 
+                                final String primaryDocumentName) {
+<span class="fc" id="L242">        properties = new Properties();</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        for (Object okey: properties0.keySet()) {</span>
+<span class="fc" id="L244">            String key = okey.toString();</span>
+<span class="fc" id="L245">            String value = properties0.getProperty(key);</span>
+<span class="fc" id="L246">            properties.put(key, value);</span>
+<span class="fc" id="L247">        }</span>
+<span class="fc" id="L248">        properties.put(PropertyNames.PRIMARY_DOCUMENT_PROPERTY,</span>
+                primaryDocumentName);
+<span class="fc" id="L250">        properties.put(PropertyNames.DIRECTORY_DEPTH_PROPERTY, </span>
+<span class="fc" id="L251">                Integer.toString(directoryDepth));</span>
+<span class="fc" id="L252">        StringBuffer base = new StringBuffer();</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        for (int i = 0; i &lt; directoryDepth; ++i) {</span>
+<span class="fc" id="L254">            base.append(&quot;../&quot;);</span>
+        }
+<span class="fc" id="L256">        properties.put(PropertyNames.BASE_URL_PROPERTY,</span>
+<span class="fc" id="L257">                base.toString());</span>
+<span class="fc" id="L258">        properties.put(PropertyNames.DOCUMENT_SET_PATH_PROPERTY,</span>
+<span class="fc" id="L259">                sourceDirectory.getAbsolutePath());</span>
+<span class="fc" id="L260">    }</span>
+
+    /**
+     * Transform this document into a string suitable for writing into
+     * an HTML file.
+     *  
+     * @param format   Specifies a style/format for the generated HTML. 
+     * @return String containing HTML of page for web site.
+     */
+	@Override
+	public final String transform(final String format) {
+<span class="fc" id="L271">		logger.info(&quot;pre-processing for &quot; + format);</span>
+<span class="fc" id="L272">		String preprocessed = preprocess (format);</span>
+<span class="fc" id="L273">		logger.info(&quot;processing for &quot; + format);</span>
+<span class="fc" id="L274">		org.w3c.dom.Document htmlDoc = process (preprocessed);</span>
+<span class="fc" id="L275">		logger.info(&quot;post-processing for &quot; + format);</span>
+<span class="fc" id="L276">		String result = postprocess (htmlDoc, format);</span>
+<span class="fc" id="L277">		logger.info(&quot;completed &quot; + format);</span>
+		try {
+<span class="fc" id="L279">			documentIn.close();</span>
+<span class="nc" id="L280">		} catch (IOException e) {</span>
+<span class="nc" id="L281">			logger.warn(&quot;Error closing input&quot;, e);</span>
+<span class="fc" id="L282">		}</span>
+<span class="fc" id="L283">		return result;</span>
+	}
+
+	/**
+	 * Prepare for processing: Apply macros and extract metadata.
+	 * @param format  HTML format to be applied
+	 * @return  A Markdown document string ready for conversion to HTML.
+	 */
+	public final String preprocess(final String format) {
+<span class="fc" id="L292">		final String defaultMacrosFile = &quot;macros.md&quot;;</span>
+        
+<span class="fc" id="L294">		MacroProcessor macroProc = new MacroProcessor(&quot;%&quot;);</span>
+<span class="fc" id="L295">		macroProc.defineMacro(new Macro(&quot;_&quot; + format, &quot;1&quot;));</span>
+		
+<span class="fc" id="L297">		final String xsltLocation  = &quot;/edu/odu/cs/cowem/templates/&quot;;</span>
+<span class="fc" id="L298">		final InputStream macrosInStream = getClass().getResourceAsStream(</span>
+				xsltLocation + defaultMacrosFile);
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">		if (macrosInStream == null) {</span>
+<span class="nc" id="L301">		    logger.error(&quot;Unable to load &quot; </span>
+		       + xsltLocation + defaultMacrosFile + &quot; from CoWeM library.&quot;);
+		}
+		try {
+<span class="fc" id="L305">			BufferedReader macrosIn = new BufferedReader(</span>
+					new InputStreamReader(macrosInStream, &quot;UTF-8&quot;));
+<span class="fc" id="L307">			macroProc.process(macrosIn);</span>
+<span class="nc" id="L308">		} catch (UnsupportedEncodingException e) {</span>
+<span class="nc" id="L309">			logger.error(&quot;Unexpected error loading default macros.&quot;, e);</span>
+<span class="nc" id="L310">		} catch (IOException e) {</span>
+<span class="nc" id="L311">			logger.error(&quot;Unexpected error reading default macros.&quot;, e);</span>
+<span class="pc" id="L312">		}</span>
+		
+<span class="fc" id="L314">		extractMetdataIfNecessary();</span>
+		
+		// Add any files listed in Macro: lines to the macro processor.
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">		if (metadata.containsKey(&quot;Macros&quot;)) {</span>
+<span class="nc" id="L318">			String macroFilesList = metadata.getProperty(&quot;Macros&quot;);</span>
+<span class="nc" id="L319">			String[] macroFiles = macroFilesList.split(&quot;\t&quot;);</span>
+<span class="nc bnc" id="L320" title="All 2 branches missed.">			for (String macroFileName: macroFiles) {</span>
+<span class="nc" id="L321">				Path macroFile = Paths.get(macroFileName);</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">				if (!macroFile.isAbsolute()) {</span>
+<span class="nc" id="L323">				    macroFile = sourceDirectory.toPath().resolve(macroFileName);</span>
+				}
+<span class="nc bnc" id="L325" title="All 2 branches missed.">				if (macroFile.toFile().exists()) {</span>
+<span class="nc" id="L326">					macroProc.process(macroFile.toFile());</span>
+				} else {
+<span class="nc" id="L328">					logger.warn(&quot;Could not find macro file &quot; + macroFileName);</span>
+				}
+			}
+		}
+		// Add any properties that begin with &quot;_&quot; as macros
+<span class="fc bfc" id="L333" title="All 2 branches covered.">		for (Object fieldNameObj: properties.keySet()) {</span>
+<span class="fc" id="L334">			String fieldName = (String) fieldNameObj;</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">			if (fieldName.startsWith(&quot;_&quot;)) {</span>
+<span class="fc" id="L336">				macroProc.defineMacro(</span>
+<span class="fc" id="L337">				    new Macro(fieldName, properties.getProperty(fieldName)));</span>
+			}
+<span class="fc" id="L339">		}</span>
+		
+<span class="fc" id="L341">		StringBuffer documentBody = new StringBuffer(line);</span>
+<span class="fc" id="L342">		documentBody.append('\n');</span>
+		try {
+<span class="fc bfc" id="L344" title="All 2 branches covered.">			while ((line = documentIn.readLine()) != null) {</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">			    if (line.contains(BEGIN_SLIDE_EXCLUSION)) {</span>
+<span class="fc" id="L346">			        line = line.replace(BEGIN_SLIDE_EXCLUSION, &quot;%ifnot _slides&quot;);</span>
+			    }
+<span class="fc bfc" id="L348" title="All 2 branches covered.">                if (line.contains(END_SLIDE_EXCLUSION)) {</span>
+<span class="fc" id="L349">                    line = line.replace(END_SLIDE_EXCLUSION, &quot;%endif&quot;);</span>
+                }
+<span class="pc bpc" id="L351" title="1 of 2 branches missed.">			    if (line.contains(BEGIN_SLIDE_INCLUSION)) {</span>
+<span class="nc" id="L352">			        line = line.replace(BEGIN_SLIDE_INCLUSION, &quot;%if _slides&quot;);</span>
+			    }
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">                if (line.contains(END_SLIDE_INCLUSION)) {</span>
+<span class="nc" id="L355">                    line = line.replace(END_SLIDE_INCLUSION, &quot;%endif&quot;);</span>
+                }
+<span class="fc" id="L357">				documentBody.append(line);</span>
+<span class="fc" id="L358">				documentBody.append('\n');</span>
+			}
+<span class="nc" id="L360">		} catch (IOException e) {</span>
+<span class="nc" id="L361">			logger.error(&quot;Unexpected problem reading document: &quot; + e);</span>
+<span class="fc" id="L362">		}</span>
+		
+<span class="fc" id="L364">		String processed = macroProc.process(documentBody.toString());</span>
+<span class="fc" id="L365">		processed = processed.replace(&quot;\r&quot;, &quot;&quot;);</span>
+<span class="fc" id="L366">		return processed;</span>
+	}
+
+	/**
+	 * Read through the opening lines of the document, extracting metadata from
+	 * lines matching the pattern: Fieldname: value.
+	 * 
+	 */
+	private void extractMetdataIfNecessary() {
+<span class="fc bfc" id="L375" title="All 2 branches covered.">		if (metadata == null) {</span>
+<span class="fc" id="L376">			metadata = new Properties();</span>
+<span class="fc" id="L377">			Pattern metadataLine = Pattern.compile(&quot;[^ :]+: .*&quot;);</span>
+			try {
+			    while (true) {
+<span class="fc" id="L380">			        line = documentIn.readLine();</span>
+<span class="pc bpc" id="L381" title="1 of 4 branches missed.">			        if (line == null || !metadataLine.matcher(line).matches()) {</span>
+<span class="fc" id="L382">			            break;</span>
+			        }
+<span class="fc" id="L384">					int pos = line.indexOf(':');</span>
+<span class="fc" id="L385">					String fieldName = line.substring(0, pos);</span>
+<span class="fc" id="L386">					++pos;</span>
+<span class="pc bpc" id="L387" title="1 of 4 branches missed.">					while (pos &lt; line.length() &amp;&amp; line.charAt(pos) == ' ') {</span>
+<span class="fc" id="L388">						++pos;</span>
+					}
+<span class="fc" id="L390">					String fieldValue = line.substring(pos);</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">					if (fieldIsCumulative(fieldName)) {</span>
+<span class="fc bfc" id="L392" title="All 2 branches covered.">						if (!metadata.containsKey(fieldName)) {</span>
+<span class="fc" id="L393">							metadata.put(fieldName, fieldValue);</span>
+						} else {
+<span class="fc" id="L395">							metadata.put(fieldName,</span>
+<span class="fc" id="L396">							    metadata.getProperty(fieldName) </span>
+							    + &quot;\t&quot; + fieldValue);
+						}
+					} else {
+<span class="fc" id="L400">						metadata.put(fieldName, fieldValue);</span>
+					}
+<span class="fc" id="L402">				}</span>
+<span class="nc" id="L403">			} catch (IOException e) {</span>
+<span class="nc" id="L404">				logger.error(</span>
+				    &quot;Unexpected problem reading metadata from document&quot;,  e);
+<span class="fc" id="L406">			}</span>
+			
+		}
+<span class="fc" id="L409">	}</span>
+
+	/**
+	 * A few metadata fields may be specified multiple times to build up a
+	 * list of values.
+	 * At the moment, these fields are: Macros, &amp; CSS
+	 * 
+	 * @param fieldName a metadata field name
+	 * @return true iff the field can be specified multiple times.
+	 */
+	private boolean fieldIsCumulative(final String fieldName) {
+<span class="pc bpc" id="L420" title="1 of 4 branches missed.">		return &quot;Macros&quot;.equals(fieldName) || &quot;CSS&quot;.equals(fieldName);</span>
+	}
+
+	
+	/**
+	 * Convert Markdown text to an HTML structure.
+	 *  
+	 * @param markDownText document text in Markdown
+	 * @return  DOM tree of generated HTML
+	 */
+	public final org.w3c.dom.Document process(final String markDownText) {
+<span class="fc" id="L431">		int pdOptions = org.pegdown.Extensions.ALL;</span>
+<span class="fc" id="L432">		pdOptions -=  org.pegdown.Extensions.HARDWRAPS;</span>
+<span class="fc" id="L433">		pdOptions -=  org.pegdown.Extensions.TASKLISTITEMS;</span>
+<span class="fc" id="L434">		PegDownProcessor pdProc = new PegDownProcessor(pdOptions);</span>
+<span class="fc" id="L435">		String pdResults = pdProc.markdownToHtml(markDownText);</span>
+<span class="fc" id="L436">		String htmlText = HTML_HEADER + pdResults + HTML_TRAILER;</span>
+<span class="fc" id="L437">		htmlText = new CommonEntitySubstitutions().apply(htmlText);</span>
+		//logger.warn(&quot;pre-cwm clean:\n&quot; + htmlText);
+<span class="fc" id="L439">		htmlText = new CWMcleaner().apply(htmlText);</span>
+<span class="fc" id="L440">		htmlText = new ListingInjector(sourceDirectory).apply(htmlText);</span>
+		        
+<span class="fc" id="L442">		org.w3c.dom.Document basicHtml = null;</span>
+		try {
+			DocumentBuilder b 
+<span class="fc" id="L445">			= DocumentBuilderFactory.newInstance().newDocumentBuilder();</span>
+<span class="fc" id="L446">			basicHtml = b.parse(new InputSource(new StringReader(htmlText)));</span>
+<span class="nc" id="L447">		} catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L448">			logger.error (&quot;Could not set up XML parser: &quot; + e);</span>
+<span class="nc" id="L449">		} catch (SAXParseException e) {</span>
+<span class="nc" id="L450">			logger.error(&quot;Parsing error from Markdown processor: &quot;</span>
+					+ e);
+<span class="nc bnc" id="L452" title="All 2 branches missed.">			if (e.toString().contains(&quot;lineNumber:&quot;)) {</span>
+<span class="nc" id="L453">				Pattern p = Pattern.compile(</span>
+						&quot;lineNumber: (\\d+); columnNumber: (\\d+);&quot;);
+<span class="nc" id="L455">				Matcher m  = p.matcher(e.toString());</span>
+<span class="nc bnc" id="L456" title="All 2 branches missed.">				if (m.find()) {</span>
+<span class="nc" id="L457">					String lNum = m.group(1);</span>
+<span class="nc" id="L458">					int ln = Integer.parseInt(lNum);</span>
+<span class="nc" id="L459">					String cNum = m.group(2);</span>
+<span class="nc" id="L460">					int cn = Integer.parseInt(cNum);</span>
+<span class="nc" id="L461">					String context = Utils.extractContext(htmlText, ln-1, cn-1);</span>
+<span class="nc" id="L462">					logger.error(&quot;Generated output was:\n&quot; + context);</span>
+<span class="nc" id="L463">				} else {</span>
+<span class="nc" id="L464">					logger.error(&quot;Text was:\n&quot; + htmlText);					</span>
+				}
+<span class="nc" id="L466">			} else {</span>
+<span class="nc" id="L467">				logger.error(&quot;Text was:\n&quot; + htmlText);</span>
+			}
+<span class="nc" id="L469">		} catch (SAXException e) {</span>
+<span class="nc" id="L470">			logger.error(&quot;Unable to parse output from Markdown processor: &quot;, e);</span>
+<span class="nc" id="L471">			logger.error(&quot;Text was:\n&quot; + htmlText);</span>
+<span class="nc" id="L472">		} catch (IOException e) {</span>
+<span class="nc" id="L473">			logger.error(&quot;Unable to parse output from Markdown processor: &quot;, e);</span>
+<span class="nc" id="L474">			logger.error(&quot;Text was:\n&quot; + htmlText);</span>
+<span class="pc" id="L475">		}</span>
+<span class="fc" id="L476">		return basicHtml;</span>
+	}
+
+
+
+
+    /**
+	 * Transform HTML to desired output format and apply late substitutions
+	 * of properties and other special strings.
+	 *   
+	 * @param htmlDoc  the basic XML/HTML structure for the document.
+	 * @param format   the desired format - used to select a stylesheet for
+	 *                    the basic transformations.
+	 * @return transformed HTML string
+	 */
+	public final String postprocess(final org.w3c.dom.Document htmlDoc, 
+	        final String format) {
+		
+<span class="fc" id="L494">		final String xsltLocation  = &quot;/edu/odu/cs/cowem/templates/&quot;;</span>
+<span class="fc" id="L495">		final InputStream formatConversionSheet = </span>
+<span class="fc" id="L496">		    MarkdownDocument.class.getResourceAsStream(</span>
+				xsltLocation + &quot;md-&quot; + format + &quot;.xsl&quot;);
+
+<span class="fc" id="L499">		String htmlText =</span>
+		        &quot;&lt;html&gt;&lt;body&gt;Document generation failed.&lt;/body&gt;&lt;/html&gt;\n&quot;;
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">		if (formatConversionSheet == null) {</span>
+<span class="nc" id="L502">			logger.error(&quot;Unsupported output format: &quot; + format);</span>
+<span class="nc" id="L503">			return htmlText;</span>
+		}
+
+
+<span class="fc" id="L507">		extractMetdataIfNecessary();</span>
+
+<span class="fc" id="L509">		System.setProperty(&quot;javax.xml.transform.TransformerFactory&quot;, </span>
+				&quot;net.sf.saxon.TransformerFactoryImpl&quot;); 
+<span class="fc" id="L511">		TransformerFactory transFact = TransformerFactory.newInstance();</span>
+<span class="fc" id="L512">		transFact.setURIResolver((href, base) -&gt; {</span>
+			//System.err.println(&quot;resolving URI to: &quot; + xsltLocation + href);
+<span class="fc" id="L514">		    final InputStream s = this.getClass()</span>
+<span class="fc" id="L515">		            .getResourceAsStream(xsltLocation + href);</span>
+<span class="fc" id="L516">		    return new StreamSource(s);</span>
+		});
+		
+<span class="fc" id="L519">		DocumentBuilder dBuilder = null;</span>
+		try {
+			DocumentBuilderFactory dbFactory = 
+<span class="fc" id="L522">			        DocumentBuilderFactory.newInstance();</span>
+<span class="fc" id="L523">			dBuilder = dbFactory.newDocumentBuilder();</span>
+<span class="nc" id="L524">		} catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L525">			logger.error (&quot;Problem creating new XML document &quot;, e); </span>
+<span class="nc" id="L526">			return htmlText;		</span>
+<span class="fc" id="L527">		}</span>
+		
+		
+		// Transform basic HTML into the selected format
+		
+<span class="fc" id="L532">		org.w3c.dom.Document formattedDoc = null;		</span>
+		try {
+<span class="fc" id="L534">			Source xslSource = new StreamSource(formatConversionSheet);</span>
+<span class="fc" id="L535">			xslSource.setSystemId(&quot;http://www.cs.odu.edu/~zeil&quot;);</span>
+<span class="fc" id="L536">			formattedDoc = dBuilder.newDocument();</span>
+<span class="fc" id="L537">			Templates template = transFact.newTemplates(xslSource);</span>
+<span class="fc" id="L538">			Transformer xform = template.newTransformer();</span>
+<span class="fc" id="L539">			xform.setParameter(&quot;format&quot;, format);</span>
+<span class="fc bfc" id="L540" title="All 2 branches covered.">			for (Object okey: properties.keySet()) {</span>
+<span class="fc" id="L541">				String key = okey.toString();</span>
+<span class="fc" id="L542">				xform.setParameter(key, properties.getProperty(key));</span>
+				//System.err.println(&quot;prop &quot; + key + &quot; =&gt; &quot; 
+				//                   + properties.getProperty(key));
+<span class="fc" id="L545">			}</span>
+<span class="fc bfc" id="L546" title="All 2 branches covered.">			for (Object okey: metadata.keySet()) {</span>
+<span class="fc" id="L547">				String key = okey.toString();</span>
+<span class="fc" id="L548">				xform.setParameter(&quot;&quot; + key, metadata.getProperty(key));</span>
+				//System.err.println(&quot;prop &quot; + &quot;&quot; + key + &quot; =&gt; &quot; 
+				//                           + metadata.getProperty(key));
+<span class="fc" id="L551">			}</span>
+<span class="fc" id="L552">			Source xmlIn = new DOMSource(htmlDoc.getDocumentElement());</span>
+<span class="fc" id="L553">			DOMResult htmlOut = new DOMResult(formattedDoc);</span>
+<span class="fc" id="L554">			xform.transform(xmlIn, htmlOut);</span>
+<span class="fc" id="L555">			logger.trace(&quot;format transformation completed&quot;);</span>
+<span class="nc" id="L556">		} catch (TransformerConfigurationException e) {</span>
+<span class="nc" id="L557">			logger.error (&quot;Problem parsing XSLT2 stylesheet &quot; </span>
+					+ formatConversionSheet, e);
+<span class="nc" id="L559">			return htmlText;</span>
+<span class="nc" id="L560">		} catch (TransformerException e) {</span>
+<span class="nc" id="L561">			logger.error (&quot;Problem applying stylesheet &quot; </span>
+					+ formatConversionSheet, e);
+<span class="nc" id="L563">			return htmlText;			</span>
+<span class="fc" id="L564">		}</span>
+
+		// URL transformation
+<span class="fc" id="L567">		transformURLs (formattedDoc);</span>
+		
+		// Generate result text
+		try {
+			Transformer transformer = 
+<span class="fc" id="L572">			        TransformerFactory.newInstance().newTransformer();</span>
+<span class="fc" id="L573">			transformer.setOutputProperty(OutputKeys.INDENT, debugMode); </span>
+<span class="fc" id="L574">			transformer.setOutputProperty(OutputKeys.METHOD, &quot;xml&quot;);</span>
+<span class="fc" id="L575">			Source source = new DOMSource(formattedDoc.getDocumentElement());</span>
+<span class="fc" id="L576">			StringWriter htmlString = new StringWriter();</span>
+<span class="fc" id="L577">			StreamResult htmlOut = new StreamResult(htmlString);</span>
+<span class="fc" id="L578">			transformer.transform(source, htmlOut);</span>
+<span class="fc" id="L579">			htmlText = htmlString.toString();</span>
+<span class="nc" id="L580">		} catch (TransformerConfigurationException e) {</span>
+<span class="nc" id="L581">			logger.error (&quot;Problem creating empty stylesheet &quot; </span>
+					+ &quot;: &quot; + e);
+<span class="nc" id="L583">		} catch (TransformerException e) {</span>
+<span class="nc" id="L584">			logger.error (&quot;Problem serializing formatted document &quot; </span>
+					+ e);
+<span class="pc" id="L586">		}</span>
+		
+		// Apply property and other final substitutions.
+		//logger.warn(&quot;Sectioned text is\n&quot; + htmlText);
+<span class="fc" id="L590">		String result = performTextSubstitutions(htmlText);</span>
+		
+<span class="fc" id="L592">		return result;</span>
+	}
+	
+	
+	/**
+	 * Replace URL shortcuts by a legal URL form.  Shortcuts recognized are:
+	 * 
+	 *  targetDoc:foo  ../../Public/foo/index.html    (deprecated)
+     *  public::foo  ../../Public/foo/index.html
+	 *  protected:foo  ../../Protected/foo/index.html
+	 *  asst:foo  ../../Protected/Assts/foo.mmd.html
+	 *  
+	 *  Possibly in the future:
+	 *  bblink:foo   A link to an internal page of a Blackboard course
+	 *  bbassess:foo A link to a test/quiz/survey in a Blackboard course
+	 *  
+	 *  @param htmlDoc XML document to be rewritten
+	 */
+	private void transformURLs (final org.w3c.dom.Document htmlDoc) {
+<span class="fc" id="L611">	    String baseURL = </span>
+<span class="fc" id="L612">	            properties.getProperty(PropertyNames.BASE_URL_PROPERTY, &quot;&quot;);</span>
+<span class="fc" id="L613">        String bbURL = </span>
+<span class="fc" id="L614">                properties.getProperty(PropertyNames.BB_URL_PROPERTY, &quot;&quot;);</span>
+<span class="fc" id="L615">	    new URLRewriting(sourceDirectory, project, bbURL).rewrite (htmlDoc);</span>
+<span class="fc" id="L616">	}</span>
+
+	/**
+	 * Substitutes metadata, property, and special values 
+	 * occurring in the HTML text. 
+	 * 
+	 * @param htmlText  text in which to perform the substitutions
+	 * @return  htmlText with all substitutions performed.
+	 */
+	private String performTextSubstitutions(final String htmlText) {
+<span class="fc" id="L626">	    String result = new PropertySubstitutions(metadata).apply(htmlText);</span>
+<span class="fc" id="L627">	    result = new PropertySubstitutions(properties).apply(result);</span>
+<span class="fc" id="L628">	    result = new SourceCodeSubstitutions().apply(result);</span>
+<span class="fc" id="L629">	    return result;</span>
+	}
+
+	
+	
+	
+	
+	/**
+	 * Extracts a desired metadata field from the document. Metadata fields are
+	 * found at the start of a document in the form
+	 *    FieldName: value of field
+	 * 
+	 * Metadata fields become part of the property set that is
+	 * replaced in the document text as part of the post-processing,
+	 * in which &quot;@FieldName@&quot; is replaced by the value of
+	 * that property.  Some metadata field names are inserted as
+	 * part of early processing. These in include Title, Author, CSS,
+	 * Date, Copyright, and JaxenURL.
+	 *    
+	 * @param fieldName name of the metadata field
+	 * @return value of that metadata field extracted from the beginning of the
+	 *               document. 
+	 */
+	public final Object getMetadata(final String fieldName) {
+<span class="fc" id="L653">		extractMetdataIfNecessary();</span>
+<span class="fc" id="L654">		return metadata.getProperty(fieldName);</span>
+	}
+
+	/**
+	 * Turn indentation in generated XML on and off.
+	 * Must be off in production to avoid distorting code listings.
+	 *  
+	 * @param mode true iff debugging
+	 */
+	public final void setDebugMode (final boolean mode) {
+<span class="pc bpc" id="L664" title="1 of 2 branches missed.">	    if (mode) {</span>
+<span class="fc" id="L665">	        debugMode = &quot;yes&quot;;</span>
+	    } else {
+<span class="nc" id="L667">	        debugMode = &quot;no&quot;;</span>
+	    }
+<span class="fc" id="L669">	}</span>
+
+
+	/**
+	 * Estimate the date on which this document was last modified.
+	 * 
+	 * 1. If the file is within a Git repository and unchanged, use
+	 *    the date of the last commit.
+	 * 2. If the file is not within a Git repository or is changed,
+	 *    use the modification date of the file.
+	 * @param input file to be checked
+	 * @return  Data of last modification
+	 */
+	public String getModificationDate(File input) {
+<span class="fc" id="L683">	    File repoDir = findGitRepository(input);</span>
+<span class="fc" id="L684">	    Path existingFile = input.toPath().toAbsolutePath();</span>
+<span class="fc" id="L685">	    long lastUpdatedOn = 0; </span>
+<span class="pc bpc" id="L686" title="1 of 2 branches missed.">	    if (repoDir != null) {</span>
+	        try (
+<span class="fc" id="L688">	                Repository repo = new FileRepositoryBuilder()</span>
+<span class="fc" id="L689">	                .setGitDir(repoDir)</span>
+<span class="fc" id="L690">	                .build()) {</span>
+<span class="fc" id="L691">	            try (Git git = new Git(repo)) {</span>
+<span class="nc" id="L692">	                Iterable&lt;RevCommit&gt; log = git.log().call();</span>
+<span class="nc bnc" id="L693" title="All 2 branches missed.">	                for (RevCommit commit : log) {</span>
+<span class="nc" id="L694">	                    long commitTime = 1000L * commit.getCommitTime();</span>
+<span class="nc bnc" id="L695" title="All 2 branches missed.">	                    if (commitTime &gt; lastUpdatedOn) {</span>
+<span class="nc bnc" id="L696" title="All 2 branches missed.">	                        if (commitContains(commit, existingFile, repo)) {</span>
+<span class="nc" id="L697">	                            lastUpdatedOn = commitTime;</span>
+	                        }
+	                    }
+<span class="nc" id="L700">	                }</span>
+	            }
+<span class="fc" id="L702">	        } catch (Exception e) {</span>
+	            // Do nothing: fall through to use file modification date;
+<span class="nc" id="L704">	        }</span>
+	    }
+<span class="pc bpc" id="L706" title="1 of 2 branches missed.">	    if (lastUpdatedOn &lt;= 0) {</span>
+	        // Fall back to using the file modification date.
+<span class="fc" id="L708">	        lastUpdatedOn = input.lastModified();</span>
+	    }
+<span class="fc" id="L710">	    Calendar dateChanged = new GregorianCalendar();</span>
+<span class="fc" id="L711">        dateChanged.setTimeInMillis(lastUpdatedOn);</span>
+<span class="fc" id="L712">        SimpleDateFormat formatter = new SimpleDateFormat(&quot;MMM d, yyyy&quot;);  </span>
+<span class="fc" id="L713">        String result = formatter.format(dateChanged.getTime());</span>
+<span class="fc" id="L714">        logger.trace(&quot;mod date is &quot; + result);</span>
+<span class="fc" id="L715">        return result;</span>
+	}
+
+    private File findGitRepository(File input) {
+<span class="fc" id="L719">        final String repoName = &quot;.git&quot;;</span>
+<span class="fc" id="L720">        File thisDir = input.getParentFile();</span>
+<span class="fc" id="L721">        File repoDir = new File(thisDir, repoName);</span>
+<span class="fc" id="L722">        boolean found = false;</span>
+<span class="pc bpc" id="L723" title="1 of 2 branches missed.">        while (!(found = repoDir.isDirectory())) {</span>
+<span class="fc" id="L724">            thisDir = thisDir.getParentFile();</span>
+<span class="fc bfc" id="L725" title="All 2 branches covered.">            if (thisDir == null) {</span>
+<span class="fc" id="L726">                found = true;</span>
+<span class="fc" id="L727">                break;</span>
+            }
+<span class="fc" id="L729">            repoDir = new File(thisDir, repoName);</span>
+        }
+<span class="pc bpc" id="L731" title="1 of 2 branches missed.">        if (found) {</span>
+<span class="fc" id="L732">            logger.trace(&quot;found repo at &quot; + repoDir);</span>
+<span class="fc" id="L733">            return repoDir;</span>
+        } else {
+<span class="nc" id="L735">            return null;</span>
+        }
+    }
+
+
+
+    private boolean commitContains(RevCommit commit, 
+            Path existingFile, 
+            Repository repo) 
+    {
+<span class="nc bnc" id="L745" title="All 2 branches missed.">        if (commit.getParentCount() == 0) {</span>
+            // No parent. (First commit?)
+<span class="nc" id="L747">            RevTree tree = commit.getTree(); </span>
+<span class="nc" id="L748">            try (TreeWalk treeWalk = new TreeWalk(repo)) {</span>
+<span class="nc" id="L749">                treeWalk.addTree(tree);</span>
+<span class="nc" id="L750">                treeWalk.setRecursive(true);</span>
+<span class="nc bnc" id="L751" title="All 2 branches missed.">                while (treeWalk.next()) {</span>
+<span class="nc" id="L752">                    String pathStr = treeWalk.getPathString();</span>
+<span class="nc bnc" id="L753" title="All 2 branches missed.">                    if (existingFile.toString().endsWith(pathStr)) {</span>
+<span class="nc" id="L754">                        return true;</span>
+                    }
+<span class="nc" id="L756">                }</span>
+<span class="nc" id="L757">            } catch (IOException e) {</span>
+<span class="nc" id="L758">                return false;</span>
+<span class="nc" id="L759">            } </span>
+<span class="nc" id="L760">            return false;</span>
+        } else {
+<span class="nc" id="L762">            try (RevWalk rw = new RevWalk(repo)) {</span>
+<span class="nc" id="L763">                RevCommit parent = rw.parseCommit(commit.getParent(0).getId());</span>
+<span class="nc" id="L764">                try (DiffFormatter df = </span>
+                        new DiffFormatter(DisabledOutputStream.INSTANCE)) {
+<span class="nc" id="L766">                    df.setRepository(repo);</span>
+<span class="nc" id="L767">                    df.setDiffComparator(RawTextComparator.DEFAULT);</span>
+<span class="nc" id="L768">                    df.setDetectRenames(true);</span>
+<span class="nc" id="L769">                    List&lt;DiffEntry&gt; diffs = df.scan(parent.getTree(), commit.getTree());</span>
+<span class="nc bnc" id="L770" title="All 2 branches missed.">                    for (DiffEntry diff : diffs) {</span>
+<span class="nc" id="L771">                        String pathStr = diff.getNewPath();</span>
+<span class="nc bnc" id="L772" title="All 2 branches missed.">                        if (existingFile.toString().endsWith(pathStr)) {</span>
+                            //logger.warn(&quot;Match at &quot; + new SimpleDateFormat(&quot;MMM d, yyyy&quot;).format(1000L*commit.getCommitTime()));
+<span class="nc" id="L774">                            return true;</span>
+                        }
+<span class="nc" id="L776">                    }</span>
+<span class="nc" id="L777">                }</span>
+<span class="nc" id="L778">            } catch (IOException e) {</span>
+<span class="nc" id="L779">                return false;</span>
+<span class="nc" id="L780">            }</span>
+<span class="nc" id="L781">            return false;</span>
+        }
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

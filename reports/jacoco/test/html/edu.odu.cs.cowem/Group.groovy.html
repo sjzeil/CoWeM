@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Group.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem</a> &gt; <span class="el_source">Group.groovy</span></div><h1>Group.groovy</h1><pre class="source lang-java linenums">package edu.odu.cs.cowem
+
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
+
+
+import edu.odu.cs.cowem.DocumentSet
+
+/**
+ * A plugin for describing a group of document sets that can
+ * share commons defaults &amp; policies. 
+ * 
+ */
+class Group implements Plugin&lt;Project&gt; {
+
+    Group() {
+    }
+    
+	void apply (Project project) {
+        
+<span class="nc" id="L23">		project.subprojects {</span>
+            // Add a DocumentSet object as a property of the project
+<span class="nc bnc" id="L25" title="All 4 branches missed.">            if (!it.hasProperty('documents')) {</span>
+                //println (&quot;Adding documents config to &quot; + it.name)
+<span class="nc" id="L27">                it.extensions.create ('documents', DocumentSet, it)</span>
+<span class="nc" id="L28">            }</span>
+        }
+        
+<span class="nc" id="L31">        project.task (&quot;setup&quot;, type: Copy) {</span>
+<span class="nc" id="L32">            from project.projectDir</span>
+<span class="nc" id="L33">            into new File(project.rootDir, 'build/website/' + project.name)</span>
+<span class="nc" id="L34">            include ('*.*')</span>
+<span class="nc" id="L35">            exclude ('build.gradle')</span>
+        } .doLast {
+<span class="nc" id="L37">            File groupIndex = new File(project.rootDir, 'build/website/' </span>
+<span class="nc" id="L38">                + project.name + '/' + 'index.html')</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">            if (!groupIndex.exists()) {</span>
+<span class="nc" id="L40">                groupIndex.withWriter('UTF-8') {</span>
+<span class="nc" id="L41">                    it.writeLine('&lt;html&gt;&lt;body&gt;' + project.name + '&lt;/body&gt;&lt;/html&gt;')</span>
+                }
+<span class="nc" id="L43">            }</span>
+        }
+        
+<span class="nc" id="L46">        project.task (&quot;build&quot;, dependsOn: 'setup')</span>
+        
+<span class="nc" id="L48">        project.rootProject.tasks['build'].dependsOn(project.setup)</span>
+
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

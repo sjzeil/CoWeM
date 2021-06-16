@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebsiteProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cowem-plugin</a> &gt; <a href="index.source.html" class="el_package">edu.odu.cs.cowem.documents</a> &gt; <span class="el_source">WebsiteProject.java</span></div><h1>WebsiteProject.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package edu.odu.cs.cowem.documents;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Directory layout of a website project. Allows easy access
+ * to groups, document sets, and the generation of relative
+ * paths among them.
+ *  
+ * @author zeil
+ *
+ */
+public class WebsiteProject implements Iterable&lt;String&gt; {
+  
+    
+    /**
+     * For logging error messages.
+     */
+<span class="fc" id="L36">    private static Logger logger </span>
+<span class="fc" id="L37">       = LoggerFactory.getLogger(WebsiteProject.class);</span>
+    
+
+    /**
+     * Name used for Gradle files in document set directories.
+     */
+    private static final String GRADLE_FILE_NAME = &quot;build.gradle&quot;;
+
+
+    /**
+     * Short name of the the course, converted to a URL-safe string.
+     */
+    private String courseName;
+    
+    /**
+     * Root directory of the project.
+     */
+    private File rootDir;
+    
+    /**
+     * Mapping from all known document set names to their
+     * containing directories.
+     */
+    private Map&lt;String, File&gt; documentSets;
+    
+    /**
+     * Mapping from all known document set names to their
+     * source code file (.md or .mmd).
+     */
+    private Map&lt;String, File&gt; documentSources;
+
+    /**
+     * Mapping from all known document set names to their
+     * titles.
+     */
+    private Map&lt;String, String&gt; documentTitles;
+    
+    /**
+     * Map from imported site names to their URLs 
+     */
+    private Map&lt;String, String&gt; importedSites; 
+    
+    
+
+    /**
+     * Create a project summary object.
+     * @param rootDirectory location of this project's root
+     */
+<span class="fc" id="L85">    public WebsiteProject (final File rootDirectory) {</span>
+<span class="fc" id="L86">        rootDir = rootDirectory.getAbsoluteFile();</span>
+<span class="fc" id="L87">        documentSets = new TreeMap&lt;String,File&gt;();</span>
+<span class="fc" id="L88">        documentSources = new TreeMap&lt;String,File&gt;();</span>
+<span class="fc" id="L89">        documentTitles = new TreeMap&lt;String,String&gt;();</span>
+<span class="fc" id="L90">        courseName = &quot;unknown&quot;;</span>
+        
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (File group: rootDir.listFiles()) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (group.isDirectory()) {</span>
+<span class="fc" id="L94">                rememberDocumentSetsInThisGroup(group);</span>
+            }
+        }
+<span class="fc" id="L97">    }</span>
+
+
+	private void rememberDocumentSetsInThisGroup(File group) {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		for (File docSet: group.listFiles()) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		    if (docSet.isDirectory() </span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		            &amp;&amp; new File(docSet, GRADLE_FILE_NAME).exists()) {</span>
+		        // This is a valid document set
+<span class="fc" id="L105">		    	rememberDocumentSetComponents(docSet);</span>
+		    }
+		}
+<span class="fc" id="L108">	}</span>
+
+
+	private void rememberDocumentSetComponents(File docSet) {
+<span class="fc" id="L112">		String docSetName = docSet.getName();</span>
+<span class="fc" id="L113">		warnIfDocSetNameIsDuplicated(docSetName);</span>
+<span class="fc" id="L114">		documentSets.put(docSetName, </span>
+<span class="fc" id="L115">		        docSet.getAbsoluteFile());</span>
+		//logger.warn(&quot;Remember doc set &quot; + docSet.getName() + &quot; at &quot; + docSet.getAbsoluteFile());
+<span class="fc" id="L117">		File sourceFile = new File(docSet, docSetName + &quot;.md&quot;);</span>
+<span class="fc" id="L118">		rememberThisDocument(docSetName, sourceFile);</span>
+<span class="fc" id="L119">		scanForSecondaryDocuments(docSet);</span>
+<span class="fc" id="L120">	}</span>
+
+
+	private void scanForSecondaryDocuments(File docSet) {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">		for (File componentFile: docSet.listFiles()) {</span>
+<span class="fc" id="L125">			String fileName = componentFile.getName();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">			if (fileName.endsWith(&quot;.mmd&quot;)) {</span>
+				// This is a secondary document.
+<span class="fc" id="L128">				warnIfDocSetNameIsDuplicated(fileName);</span>
+<span class="fc" id="L129">				documentSets.put(fileName, docSet);</span>
+<span class="fc" id="L130">				rememberThisDocument(fileName, componentFile);</span>
+			}
+		}
+<span class="fc" id="L133">	}</span>
+
+
+	private void warnIfDocSetNameIsDuplicated(String docSetName) {
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">		if (documentSets.containsKey(docSetName)) {</span>
+<span class="nc" id="L138">		    logger.warn (</span>
+		       &quot;Ambiguous structure: two or more document sets named &quot;
+		            + docSetName);
+		}
+<span class="fc" id="L142">	}</span>
+
+
+	private void rememberThisDocument(String docSetName, File sourceFile) {
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		if (sourceFile.exists()) {</span>
+<span class="fc" id="L147">			documentSources.put(docSetName, sourceFile);</span>
+<span class="fc" id="L148">			String title = extractTitleFrom(sourceFile);</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">			if (title != null) {</span>
+<span class="fc" id="L150">				documentTitles.put(docSetName, title);</span>
+			}
+				
+		}
+<span class="fc" id="L154">	}</span>
+    
+    
+    private String extractTitleFrom(File sourceFile) {
+<span class="fc" id="L158">		try (BufferedReader in = new BufferedReader(new FileReader(sourceFile))) {</span>
+<span class="fc" id="L159">			String line = in.readLine();</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">			while (line != null) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">				if (line.toLowerCase().startsWith(&quot;title:&quot;)) {</span>
+<span class="fc" id="L162">					int k = 6;</span>
+<span class="pc bpc" id="L163" title="1 of 4 branches missed.">					while (k &lt; line.length() &amp;&amp; line.charAt(k) == ' ') {</span>
+<span class="fc" id="L164">						++k;</span>
+					}
+<span class="fc" id="L166">					String title = line.substring(k);</span>
+<span class="fc" id="L167">					return title;</span>
+				}
+<span class="fc" id="L169">				line = in.readLine();</span>
+			}
+<span class="pc" id="L171">		} catch (IOException e) {</span>
+<span class="nc" id="L172">			logger.warn (&quot;Unexpected problem getting title from &quot; + sourceFile, e);</span>
+<span class="fc" id="L173">		}</span>
+<span class="fc" id="L174">		return null;</span>
+	}
+
+
+	/**
+     * Determine the relative path from some file to the project root.
+     * @param from a file that is a descendant of the project root.
+     * @return the relative path from some file to the project root or null
+     *            if no such relation can be determined.
+     */
+    public final Path relativePathToRoot (final File from) {
+<span class="fc" id="L185">        File aFrom = from.getAbsoluteFile();</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (!aFrom.isDirectory()) {</span>
+<span class="fc" id="L187">            aFrom = aFrom.getParentFile();</span>
+        }
+<span class="fc" id="L189">        Path p = aFrom.toPath().relativize(rootDir.toPath());</span>
+<span class="fc" id="L190">        return p;</span>
+    }
+    
+    /**
+     * Compute a relative path from a file to the directory containing
+     * some document set.
+     * @param from  a file that is descended from the project root.
+     * @param documentSet any document set
+     * @return the relative path, or null if no such path can be determined
+     *    (the file is not descended from the project root or the document
+     *      set does not exist). 
+     */
+    public final Path relativePathToDocumentSet (final File from, 
+            final String documentSet) {
+<span class="fc" id="L204">        File docSet = documentSetLocation(documentSet);</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if (docSet == null) {</span>
+<span class="nc" id="L206">            return null;</span>
+        }
+<span class="fc" id="L208">        Path p1 = relativePathToRoot(from);</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (p1 == null) {</span>
+<span class="nc" id="L210">            return null;</span>
+        }
+<span class="fc" id="L212">        Path p2 = rootDir.toPath().relativize(docSet.toPath());</span>
+<span class="fc" id="L213">        Path p3 = p1.resolve(p2);</span>
+<span class="fc" id="L214">        return p3;</span>
+        
+    }
+    
+    /**
+     * The location of a document set.
+     * @param documentSet The name of a document set.
+     * @return the location or null if the document set does not exit
+     */
+    public final File documentSetLocation  (final String documentSet) {
+<span class="fc" id="L224">        return documentSets.get(documentSet);</span>
+    }
+
+    /**
+     * The name of the group to which a document set belongs.
+     * @param documentSet name of a document set
+     * @return the group name or null if the document set does not exist.
+     */
+    public final String documentSetGroup (final String documentSet) {
+<span class="fc" id="L233">        File loc =  documentSets.get(documentSet);</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        if (loc == null) {</span>
+<span class="fc" id="L235">            return null;</span>
+        }
+<span class="fc" id="L237">        return loc.getParentFile().getName();</span>
+    }
+
+    /**
+     * Iterate through all document sets.
+     * @return iterator over the document set names.
+     */
+    public final Iterator&lt;String&gt; iterator() {
+<span class="fc" id="L245">        return documentSets.keySet().iterator();</span>
+    }
+    
+    /**
+     * Get the root directory.
+     * @return the root directory.
+     */
+    public final File getRootDir() {
+<span class="fc" id="L253">        return rootDir;</span>
+    }
+    
+    /**
+     * Printable summary of project.
+     * @return summary 
+     */
+    public final String toString() {
+<span class="nc" id="L261">        return rootDir.toString() + &quot;: &quot; + documentSets.keySet().toString();</span>
+    }
+
+    /**
+     * Source file from which we obtain a named document.
+     * @param documentName the identifier for the document (primary or secondary)
+     * @return the .md or .mmd file containing the document source
+     */
+	public File documentSource(String documentName) {
+<span class="fc" id="L270">        return documentSources.get(documentName);</span>
+	}
+
+
+    /**
+     * Title within a named document.
+     * @param documentName the identifier for the document (primary or secondary)
+     * @return the contents of the &quot;Title:&quot; metadata line or null if no such line
+     */
+	public String getDocumentTitle(String documentName) {
+<span class="fc" id="L280">		return documentTitles.get(documentName);</span>
+	}
+    
+    /**
+     * Gets a mapping from document names to relative URLs in a JSON array
+     * format.
+     * 
+     * @return mapping of known documents to URLs relative to website root
+     */
+    String getDocumentMap() {
+<span class="fc" id="L290">    	StringBuffer result = new StringBuffer();</span>
+<span class="fc" id="L291">    	result.append(&quot;{ \&quot;mapping\&quot; : \n  [&quot;);</span>
+<span class="fc" id="L292">    	boolean firstTime = true;</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">    	for (String docName: documentSources.keySet()) {</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">    		if (!firstTime) {</span>
+<span class="fc" id="L295">    			result.append(&quot;,&quot;);</span>
+    		} else {
+<span class="fc" id="L297">    			firstTime = false;</span>
+    		}
+<span class="fc" id="L299">    		result.append(&quot;\n    {\n      \&quot;doc\&quot; : \&quot;&quot;);</span>
+<span class="fc" id="L300">    		result.append(docName);</span>
+<span class="fc" id="L301">    		result.append(&quot;\&quot;,\n      \&quot;url\&quot; : \&quot;&quot;);</span>
+<span class="fc" id="L302">    		String docPath = documentSources.get(docName).toString();</span>
+<span class="fc" id="L303">    		docPath = docPath.replace('\\', '/');</span>
+<span class="fc" id="L304">    		String[] pathParts = docPath.split(&quot;/&quot;);</span>
+<span class="fc" id="L305">    		String file = pathParts[pathParts.length-1];</span>
+<span class="fc" id="L306">    		String docSet = pathParts[pathParts.length-2];</span>
+<span class="fc" id="L307">    		String docGroup = pathParts[pathParts.length-3];</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">    		if (file.endsWith(&quot;.mmd&quot;)) {</span>
+<span class="fc" id="L309">    			file = file + &quot;.html&quot;;</span>
+    		} else {
+<span class="fc" id="L311">    			file = &quot;index.html&quot;;</span>
+    		}
+<span class="fc" id="L313">    		docPath = docGroup + &quot;/&quot; + docSet + &quot;/&quot; + file;</span>
+<span class="fc" id="L314">    		result.append(docPath);</span>
+<span class="fc" id="L315">    		result.append(&quot;\&quot;\n    }&quot;);</span>
+<span class="fc" id="L316">    	}</span>
+<span class="fc" id="L317">    	result.append(&quot;\n  ]\n}\n&quot;);</span>
+<span class="fc" id="L318">    	return result.toString();</span>
+    }
+
+
+	public void setImports(Map&lt;String,String&gt; importedSites) {
+<span class="fc" id="L323">		this.importedSites = importedSites;</span>
+<span class="fc" id="L324">	}</span>
+
+
+	public String getExternalSite(String siteName) {
+<span class="fc" id="L328">		return importedSites.get(siteName);</span>
+	}
+    
+	/**
+	 * Save a short name for the course, after replacing any non-URL-safe
+	 * characters.
+	 * 
+	 * @param cname a short name for this course.
+	 */
+	public void setCourseName (String cname) {
+		try {
+<span class="fc" id="L339">			courseName = URLEncoder.encode(cname, &quot;UTF-8&quot;);</span>
+<span class="nc" id="L340">		} catch (UnsupportedEncodingException e) {</span>
+<span class="nc" id="L341">			courseName=&quot;unknown&quot;;</span>
+<span class="fc" id="L342">		}</span>
+<span class="fc" id="L343">	}</span>
+	
+	/**
+	 * A short name for this course.
+	 * 
+	 * @return the course name
+	 */
+	public String getCourseName() {
+<span class="fc" id="L351">		return courseName;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
