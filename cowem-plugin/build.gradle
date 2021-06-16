@@ -6,7 +6,7 @@
 
 plugins {
     id 'groovy'
-    // id 'maven-publish'
+    id 'maven-publish'
     id 'java'
     id 'java-gradle-plugin'
     id 'project-report'
@@ -15,8 +15,9 @@ plugins {
     id "com.github.node-gradle.node" version "2.2.4"
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
-group = 'edu.odu.cs.zeil'
-version = '1.19.0'
+
+group 'edu.odu.cs.zeil'
+version '1.19.0'
 
 sourceCompatibility = "1.11"
 targetCompatibility = "1.11"
@@ -43,7 +44,6 @@ gradlePlugin {
 
 
 repositories {
-    jcenter()
     mavenCentral()
     maven {
         url "https://plugins.gradle.org/m2/"
@@ -59,6 +59,26 @@ repositories {
 */
 }
 
+
+publishing {
+    repositories {
+        // The target repository
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/sjzeil/CoWeM"
+            credentials {
+                // The credentials (described in the next section)
+                username = project.findProperty("gpr.user")
+                password = project.findProperty("gpr.key")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
 /*
 publishing {
     publications {
@@ -116,7 +136,14 @@ tasks.withType(Test) {
 
 check.dependsOn integrationTest
 
-
+/*
+configurations {
+    instrumentedJars {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+}
+*/
 
 jar {
     manifest {
@@ -125,6 +152,14 @@ jar {
     }
     // from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
+
+/*
+artifacts {
+    pluginJars(jar.outputFile) {
+        builtBy(jar)
+    }
+}
+*/
 
 
 ////////  Website report Generation ///////////////////

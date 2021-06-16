@@ -17,21 +17,31 @@ buildscript {
              // url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
          }
          */
+         maven {
+            name = 'ajoberstar-backup'
+            url = 'https://ajoberstar.org/bintray-backup/'
+        }
+
+         maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/sjzeil/CoWeM"
+        }
+
          flatDir {
             dirs project.file('../cowem-plugin/build/libs')
          }
-         
+
      }
      dependencies {
          classpath 'org.hidetake:gradle-ssh-plugin:2.3.0'
-         //classpath 'edu.odu.cs.zeil:cowem-plugin:1.10+'
-         classpath name: 'cowem-plugin-1.19.0', changing: true
+         classpath 'edu.odu.cs.zeil:cowem-plugin:1.19.0+'
+         //classpath name: 'cowem-plugin-1.19.0', changing: true
          classpath 'org.pegdown:pegdown:1.6.0+'
          classpath 'org.slf4j:slf4j-api:1.7.0+'
          classpath 'net.sf.saxon:saxon-dom:8.7+'
          classpath 'org.eclipse.jgit:org.eclipse.jgit:4.8.0.201705170830-rc1+'
          classpath 'com.moowork.gradle:gradle-node-plugin:1.2.0'
-         
+         //classpath 'org.ajoberstar.git-publish:3.0.0'
      }
 }
 
@@ -42,6 +52,7 @@ plugins {
 */
 
 apply plugin: edu.odu.cs.cowem.CourseWebsite
+//apply plugin: org.ajoberstar.git-publish
 
 
  
