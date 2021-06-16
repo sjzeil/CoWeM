@@ -1,5 +1,24 @@
 // CoWeM
 // Reference Manual & Sample Course
+
+pluginManagement {
+	repositories {
+		mavenLocal()
+
+		mavenCentral()
+
+		maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+
+         flatDir {
+            dirs '../cowem-plugin/build/libs'
+         }
+
+	}
+}
+
+
 rootProject.name = 'cowem-userReference'  
 
 

@@ -48,64 +48,17 @@ repositories {
     maven {
         url "https://plugins.gradle.org/m2/"
     }
-
-/*
-    maven {
-        name = "GitHubPackages"
-        url = "https://maven.pkg.github.com/sjzeil/CoWeM"
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
-    }
-*/
 }
 
 
 publishing {
-    repositories {
-        // The target repository
-        maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/sjzeil/CoWeM"
-            credentials {
-                // The credentials (described in the next section)
-                username = project.findProperty("gpr.user")
-                password = project.findProperty("gpr.key")
-            }
-        }
-    }
     publications {
-        gpr(MavenPublication) {
+        mavenJava(MavenPublication) {
             from(components.java)
         }
     }
 }
-/*
-publishing {
-    publications {
-        ivyJava(IvyPublication) {
-            organisation 'edu.odu.cs.zeil'
-            module 'cowem-plugin'
-            revision project.version
-            descriptor.status = 'integration'   // milestone, release
-            descriptor.branch = 'v1'
 
-            from components.java
-        }
-    }
-
-    repositories {
-        ivy {
-            name 'ivyRepo'
-            url 'sftp://atria.cs.odu.edu:22/home/zeil/secure_html/ivyrepo'
-            // Readable via https://www.cs.odu.edu/~zeil/ivyrepo
-            credentials {
-                username project.ivyRepoUser
-                password project.ivyRepoPass
-            }
-        }
-    }
-}
-*/
 
 dependencies {
     implementation gradleApi()
@@ -113,7 +66,7 @@ dependencies {
     implementation 'org.hidetake:gradle-ssh-plugin:2.10.1+'
     implementation 'org.pegdown:pegdown:1.6.0+'
     implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'net.sf.saxon:Saxon-HE:10.1'
+    implementation 'net.sf.saxon:Saxon-HE:10.5'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.6.0.201912101111-r+'
 	implementation "com.github.node-gradle:gradle-node-plugin:2.2.4"
 	
@@ -151,6 +104,10 @@ jar {
             'Implementation-Version': '0.1'
     }
     // from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+
+task install (dependsOn: ['jar', 'publishToMavenLocal']) {
 }
 
 /*
