@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Course Documents from MarkDown</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Documents%20from%20MarkDown"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Course Documents from MarkDown</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jan 8, 2018</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#markdown-basic-text">1 Markdown: Basic Text</a></div><div class="toc-h1"><a href="#links-and-graphics">2 Links and Graphics</a></div><div class="toc-h1"><a href="#section-headings">3 Section Headings</a></div><div class="toc-h2"><a href="#a-subsection-heading">3.1 A Subsection Heading</a></div><div class="toc-h1"><a href="#mathematics">4 Mathematics</a></div><div class="toc-h1"><a href="#syntax-highlighting-of-source-code">5 Syntax Highlighting of Source Code</a></div><div class="toc-h1"><a href="#metadata">6 Metadata</a></div></div><p><em>Markdown</em> is a popular language for easy production of electronic documents. For course development, I find that it serves well as a way to prepare high-quality documents quickly that can be easily maintained and modified. </p>
+    <ul>
+  <li>I don’t like typing in HTML directly.</li>
+  <li>Editing in Word and saving as HTML results in grungy HTML that is  hard to modify and unstable if any post-processing (e.g., XSL) is  desired.</li>
+  <li>Markdown can easily be used to produce many different output  formats.</li>
+  <li>Markdown processing is fast (which is why it is replacing LaTeX as  my input format of choice for casual documents).</li>
+  <li>Word, PowerPoint, and other binary file formats do not lend themselves  well either to any post-processing nor to tracking using conventional  version control system.</li>
+</ul><p>There are actually many different dialects of Markdown. CoWeM uses <a href="https://github.com/sirthias/pegdown">PegDown</a>, because it is available as portable library that can be run on virtually any system. For reference purposes, PegDown is probably closest to <a href="http://fletcherpenney.net/multimarkdown/">MultiMarkdown</a>, which has a convenient <a href="https://rawgit.com/fletcher/human-markdown-reference/master/index.html">syntax cheat sheet</a>.</p>
+    <a id="markdownbasictext"/><h1 id="markdown-basic-text">1 Markdown: Basic Text</h1><p>I won’t attempt a full listing of Markdown features as those can be found in the documents already discussed above</p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>But the essence of Markdown is that it appears as "natural" ASCII text
+in its source format, with relatively obvious markings.
+
+For example, paragraphs are separated simply by leaving a blank line
+between them.
+
+* And bulleted lists are indicated by paragraphs beginning
+  with * or  -.
+    * We can have sublists
+* And so on.
+
+    Four spaces of indentation creates a
+	paragraph within a list item.
+
+* And then we con continue with the list.
+
+
+Numbered lists are similarly natural.
+
+1. One thing ...
+2. ...follows another.
+1. But if you don't actually like keeping count, or if
+   you later rearrange your list items, the actual
+   output will be numbered appropriately.
+</code></pre>
+</div><p>But the essence of Markdown is that it appears as “natural” ASCII text in its source format, with relatively obvious markings.</p>
+    <p>For example, paragraphs are separated simply by leaving a blank line between them.</p>
+    <ul>
+  <li>And bulleted lists are indicated by paragraphs beginning  with * or -.
+    <ul>
+      <li>We can have sublists</li>
+    </ul>
+  </li>
+  <li>And so on.
+    <p>Four spaces of indentation creates a paragraph within a list item.</p>
+    
+  </li>
+  <li>
+  <p>And then we can continue with the list.</p>
+    </li>
+</ul><p>Numbered lists are similarly natural.</p>
+    <ol>
+  <li>One thing …</li>
+  <li>…follows another.</li>
+  <li>But if you don’t actually like keeping count, or if  you later rearrange your list items, the actual  output will be numbered appropriately.</li>
+</ol><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code><br/>Text can be marked with asterisks to indicate *emphasis* or **strong
+emphasis**. You can also use underscores to indicate _emphasis_ or
+__strong emphasis__.  Use a pair of tildes to ~~strike out~~ text.
+
+</code></pre>
+</div><p>Text can be marked with asterisks to indicate <em>emphasis</em> or <strong>strong emphasis</strong>. You can also use underscores to indicate <em>emphasis</em> or <strong>strong emphasis</strong>. Use a pair of tildes to <del>strike out</del> text.</p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>Quotations are typed using the normal 
+keyboard 'apostrophes'
+or "quotation marks".  The Markdown
+engine will typeset these using the
+distinct left- and right-leaning
+versions but you don't want to
+type them `this way'. It
+``does not work''. 
+</code></pre>
+</div><p>Quotations are typed using the normal keyboard ‘apostrophes’ or “quotation marks”. The Markdown engine will typeset these using the distinct left- and right-leaning versions but you don’t want to type them `this way’. It ``does not work’’. </p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>Use backwards apostrophes to mark text as `pre-formatted code`.  
+
+You can set entire paragraphs as code by placing them between two
+lines containing three
+back-apostrophes.
+
+</code></pre>
+<pre>```</pre>
+<pre><code>for (int i = 0; i &lt; 100; ++i)
+   cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; a[i] &lt;&lt; endl; 
+</code></pre>
+<pre>```</pre>
+<pre><code>You can achieve the same result by simply indenting the lines by 4 or
+more spaces.
+
+    for (int i = 0; i &lt; 100; ++i)
+       cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; a[i] &lt;&lt; endl; 
+
+
+(Notice the general pattern of treating 4 spaces of
+ indentation as significant. Anything less is considered accidental and
+  ignored.)
+
+</code></pre>
+</div><p>Use backwards apostrophes to mark text as <code>pre-formatted code</code>. </p>
+    <p>You can set entire paragraphs as code by placing them between two lines containing three back-apostrophes.</p>
+    <pre><code>for (int i = 0; i &lt; 100; ++i)
+   cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; a[i] &lt;&lt; endl; 
+</code></pre><p>You can achieve the same result by simply indenting the lines by 4 or more spaces.</p>
+    <pre><code>for (int i = 0; i &lt; 100; ++i)
+   cout &lt;&lt; i &lt;&lt; ": " &lt;&lt; a[i] &lt;&lt; endl; 
+</code></pre><p>(Notice the general pattern of treating 4 spaces of indentation as significant. Anything less is considered accidental and  ignored.)</p>
+    <blockquote>
+  <p><strong>Note on C++ &amp; Java code</strong>: There is a glitch in the Markdown processor caused by a conflict between the code typesetting conventions and the ability to insert HTML elements directly into the Markdown source. Code like this:</p>
+    
+  <pre><code>   vector&lt;int&gt; v;
+</code></pre>
+  <p>will not be typeset properly if the backward apostrophes technique is used. The <code>&lt;int&gt;</code> will be interpreted as a (bad) HTML tag and passed directly through into the HTML output documents.</p>
+    
+  <ul>
+    <li>And because there is no balancing <code>&lt;/int&gt;</code> tag, this eventually  results in an error during document processing.</li>
+  </ul>
+  <p>You <strong>can</strong>, however, typeset that code using the 4-space indentation markup instead of three backwards apostrophes.</p>
+    
+  <p>Consequently the indentation style is heavily recommended for C++ and Java code.</p>
+    
+</blockquote><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code><br/>&gt; Create block quotes by indenting text with a &gt; character
+&gt; at the start of the line.
+
+
+</code></pre>
+</div><blockquote>
+  <p>Create block quotes by indenting text with a &gt; character at the start of the line.</p>
+    
+</blockquote><a id="linksandgraphics"/><h1 id="links-and-graphics">2 Links and Graphics</h1><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>You can have [links](http://www.cs.odu.edu/~zeil).
+
+You can add graphics:
+![lab icon](lab.png "lab")
+
+The Markdown processor allows inline HTML to be
+entered directly when you want something that is
+awkward or impossible to do in Markdown. So you can
+also insert graphics by simply typing an `img`
+element &lt;img src="lab.png"/&gt;, which may allow you
+easier access to styling options.  
+</code></pre>
+</div><p>You can have <a href="http://www.cs.odu.edu/~zeil">links</a>.</p>
+    <p>You can add graphics: <img alt="lab icon" src="lab.png" title="lab"/></p>
+    <p>The Markdown processor allows inline HTML to be entered directly when you want something that is awkward or impossible to do in Markdown. So you can also insert graphics by simply typing an <code>img</code> element <img src="lab.png"/>, which may allow you easier access to styling options. </p>
+    <a id="sectionheadings"/><h1 id="section-headings">3 Section Headings</h1><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code># Section Headings
+
+There are  a couple of ways to introduce section headings. I tend to
+use the technique of placing #, ##, ###, etc., at the start of
+a paragraph. For example:
+
+
+## A Subsection Heading
+
+
+</code></pre>
+</div><p>There are a couple of ways to introduce section headings. I tend to use the technique of placing #, ##, ###, etc., at the start of a paragraph. For example:</p>
+    <a id="asubsectionheading"/><h2 id="a-subsection-heading">3.1 A Subsection Heading</h2><h1 id="mathematics">4 Mathematics</h1><p>Markdown is compatible with some of the nicer Javascript-based tools for dealing with mathematics and with programming code.</p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>With the aid of [MathJax](http://www.mathjax.org/), you can enter
+mathmatics in LaTeX notation, both for displayed
+
+\\[ \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\]
+
+and for inline \\( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \\)
+mathematics. $a^b_c$ also works. To put a "real" dollar
+sign into your text,
+put a backslash in front: my \$.02 worth. 
+
+</code></pre>
+</div><p>With the aid of <a href="http://www.mathjax.org/">MathJax</a>, you can enter mathmatics in LaTeX notation, both for displayed</p>
+    <p>\[ \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \]</p>
+    <p>and for inline \( \sum_{i=0}^{n} i = \frac{n(n-1)}{2} \) mathematics. $a^b_c$ also works. To put a “real” dollar sign into your text, put a backslash in front: my \$.02 worth.</p>
+    <p>The rendering of LaTeX mathematics can be turned off as a document set option. It is also possible to switch to <a href="http://asciimath.org/">AsciiMath</a> instead of LaTeX.</p>
+    <p>Take note of the double-backslashes used to surround the mathematics regions. The normal convention in LaTeX would be to use <span>\</span>(…<span>\</span>) and <span>\</span>[…<span>\</span>]. But the Markdown processor treats backslashes oddly:</p>
+    <ul>
+  <li>If followed by a space or letter, a backslash is just a backslash.</li>
+  <li>If followed by a punctuation character, a backslash must be doubled.</li>
+</ul><p>This affects not only the <span>\</span>(…<span>\</span>) and <span>\</span>[…<span>\</span>], but also selected uses of \ within LaTeX, most notable the use of set brackets { } and the \\ used to signal a line break in tables, arrays, or multi-line equations.</p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>\\[ \begin{align}
+s &amp; = \\{ i | i \in \cal{N} \; \wedge \; i \bmod 2 = 0 \\} \\\\
+  &amp; = \\{ 2i | i \in \cal{N} \\}
+\end{align} \\]
+
+
+</code></pre>
+</div><p>\[ \begin{align} s &amp; = \{ i | i \in \cal{N} \; \wedge \; i \bmod 2 = 0 \} \\  &amp; = \{ 2i | i \in \cal{N} \} \end{align} \]</p>
+    <a id="syntaxhighlightingofsourcecode"/><h1 id="syntax-highlighting-of-source-code">5 Syntax Highlighting of Source Code</h1><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>Using [HighlightJS](http://highlightjs.org/),
+syntax highlighting is automatically
+be added to code:
+</code></pre>
+<pre>```c++</pre>
+<pre><code>class Book {
+ public:
+  std::string title;
+  int numAuthors;
+  std::string isbn;
+  Publisher publisher;
+
+  static const int maxAuthors = 12;
+  Author* authors;  // array of Authors
+};
+</code></pre>
+<pre>```</pre>
+</div><p>Using <a href="http://highlightjs.org/">HighlightJS</a>, syntax highlighting is automatically be added to code:</p>
+    <pre><code class="c++">class Book {
+ public:
+  std::string title;
+  int numAuthors;
+  std::string isbn;
+  Publisher publisher;
+
+  static const int maxAuthors = 12;
+  Author* authors;  // array of Authors
+};
+</code></pre><p>The Markdown convention is to put the programming language name after the opening three back-apostrophes. As it happens, HighlightJS auto-detects the programming language being used, so you can put anything there that you like.</p>
+    <h1 id="metadata">6 Metadata</h1><p>A Markdown document can begin with one or more lines of <em>metadata</em> which provide data about the document. Typically these affect the document headers and appearance.</p>
+    <p>Each metadata field or item appears as a single line of text, beginning with a field name, then a colon, then the value of the field.</p>
+    <p>An empty line separates the metadata from the start of the Markdown text proper. For example, the <a href="markdown.md">Markdown source of this document</a> begins with</p>
+    <pre><code>Title: Course Documents from MarkDown
+Author: Steven J Zeil
+Date: Jan 8, 2018
+TOC: yes
+
+_Markdown_ is a popular language for easy production of electronic
+&#x22ee;
+</code></pre><p>The metadata fields supported in CoWeM are</p>
+    <dl>
+  <dt>Title</dt>
+  <dd>Provides a title for the document. This appears in the header and  as the <code>&lt;title&gt;</code> of any generated HTML.</dd>
+  <dt>Author</dt>
+  <dd>Name of the author. This appears in the header.</dd>
+  <dt>Date</dt>
+  <dd>Appears in the header as “Last modified: …”. The special value <span><tt> @</tt></span><code>docModDate@</code> is replaced by the
+    <ul>
+      <li>The last change checked into the repository if the course  document is part of a <code>git</code> repository, or</li>
+      <li>the last modification date of the Markdown source  file, if that file is not within a <code>git</code> repository.</li>
+    </ul>
+  </dd>
+  <dt>TOC</dt>
+  <dd>“yes” or “true” indicates that a table of contents should be generated at  the start of the document.</dd>
+  <dt>CSS</dt>
+  <dd>Followed by a URL, links to a CSS file to adjust the document’s appearance.  This field may be specified multiple times to add more than one CSS file.</dd>
+  <dt>Macros</dt>
+  <dd>Followed by a file path, adds that file to the set of <a class="doc" href="../../Public/macros/index.html" target="CoWeM_Public">macros</a>  used to process the document. This field may be specified multiple times to  add more than one macro set.</dd>
+</dl><p>You can actually add other metadata fields, but the above are the only ones that affect document processing at present.</p>
+    <p>All metadata fields can be inserted into your document text, however, by surrounding the field name with ‘@’ characters.</p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<p><code>For example,</code><span><tt> @</tt></span><code>Author@ last modified this</code> <code>document on</code><span><tt> @</tt></span><code>Date@.</code></p>
+    
+</div><p>For example, Steven J Zeil last modified this document on Jan 8, 2018.</p>
+    </div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Documents%20from%20MarkDown"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

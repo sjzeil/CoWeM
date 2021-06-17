@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>URL Shortcuts</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20URL%20Shortcuts"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">URL Shortcuts</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jun 9, 2020</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#special-urls-for-navigation">1 Special URLs for Navigation</a></div><div class="toc-h2"><a href="#doc-shortcuts">1.1 doc: shortcuts</a></div><div class="toc-h2"><a href="#tbd-links">1.2 TBD links</a></div><div class="toc-h2"><a href="#linking-to-external-cowem-sites">1.3 Linking to External CoWeM Sites</a></div><div class="toc-h2"><a href="#graphics-and-styles-shortcuts">1.4 graphics: and styles: shortcuts</a></div><div class="toc-h1"><a href="#special-urls-for-dates">2 Special URLs for Dates</a></div><div class="toc-h2"><a href="#date-">2.1 date:</a></div><div class="toc-h2"><a href="#due-">2.2 due:</a></div><div class="toc-h2"><a href="#enddate-">2.3 enddate:</a></div></div><p>Markdown treats text in square brackets followed by a URL in parenthese as a link: <code>[example]``(http://www.cs.odu.edu/~zeil/)</code>.</p>
+    <p>CoWeM uses special forms of URL in Markdown links to provide for easier inter-document linking and to flag certain formatted data fields for special processing.</p>
+    <a id="specialurlsfornavigation"/><h1 id="special-urls-for-navigation">1 Special URLs for Navigation</h1><a id="docshortcuts"/><h2 id="doc-shortcuts">1.1 doc: shortcuts</h2><p>If the URL in a link is written as <code>doc:</code>_documentName_, it is treated as a shortcut to another document within the website.</p>
+    <ul>
+  <li>
+  <p>If <em>documentName</em> contains no periods ‘.’, then it is assumed to be the name of a document set and  the link is made to the <code>index.html</code> file generated from the primary document of that document set.  (The <code>index.html</code> file is, by default, the first <em>format</em> requested for that document.)</p>
+    </li>
+  <li>
+  <p>If <em>documentName</em> contains one or more periods ‘.’, then it is assumed to be the name of a file  containing a secondary document. All document sets are searched for a matching secondary document  and a link is generated to the web page generated from that document.</p>
+    </li>
+</ul><p>A warning is issued while the website is being built if a <code>doc:</code> URL shortcut does not match any document or if it ambiguously matches more than one.</p>
+    <p>You can see multiple examples of <code>doc:</code> shortcuts in the examples in <a class="doc" href="../../Public/theOutline/index.html" target="CoWeM_Public">Preparing a Course Outline</a>. You can add <code>#</code> specifiers to the end to link to particular sections of a document. For example <code>doc:urlShortCuts#tbd-links</code> would link directly to the <a class="doc" href="../../Public/urlShortcuts/index.html#tbd-links" target="CoWeM_Public">next section of this document</a>.</p>
+    <a id="tbdlinks"/><h2 id="tbd-links">1.2 TBD links</h2><p>In conjunction with <code>doc:</code> shortcuts, if the entire text of the link is “TBD” (for “to Be Determined”), the generated link will actually contain the title of the linked document as specified in that document’s metadata.</p>
+    <p>For example, <code>[TBD]</code><tt>(doc:directories)</tt> would actually appear as the link: <a class="doc" href="../../Public/directories/index.html" target="CoWeM_Public">Directories and Files</a></p>
+    <a id="linkingtoexternalcowemsites"/><h2 id="linking-to-external-cowem-sites">1.3 Linking to External CoWeM Sites</h2><p>It is possible to link to external CoWeM sites with an extension of the <code>doc:</code> URL scheme. </p>
+    <p>Ann number of external sites can be imported by adding commands of the form <code>importing(</code>_name_,_url_<code>)</code> to the course description in the root <code>build.gradle</code> file. For example, </p>
+    <pre><code>// Top-level build.gradle for a course.
+
+plugins {
+   id 'edu.odu.cs.cowem.course' version '1.16'
+}
+
+
+course {
+    courseName        = 'CS 350'     
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'             
+    instructor        = 'Steven J Zeil'   
+    email             = 'zeil@cs.odu.edu' 
+    copyright         = '2016, Old Dominion Univ.'  
+    homeURL           = '../../Directory/outline/index.html' 
+    
+    <span class='hli'>importing('faq', 'https://www.cs.odu.edu/~zeil/FAQs')</span>
+}
+
+
+</code></pre><p>This indicates that we want to link to documents within the site at the indicated URL, referring to that site as “faq” for sort. We can then refer to a document by its name on that website, prefixing the name with “faq:”.</p>
+    <p>For example, we could link to <a href="doc:faq:installingACompiler">the document “<code>installingACompiler</code>”</a> as <code>doc:faq:installingACompiler</code> or to a section inside that document as <code>doc:faq:installingACompiler#installing-a-c-compiler-on-microsoft-windows</code>.</p>
+    <a id="graphicsandstylesshortcuts"/><h2 id="graphics-and-styles-shortcuts">1.4 graphics: and styles: shortcuts</h2><p>If the URL in a link is written as <code>graphics:</code><i>fileName</i>, it is treated as a shortcut to that file within the website’s main <code>graphics/</code> directory. For example, I could insert the “home” navigation icon as <code>&lt;img src='graphics:home.png'/&gt;</code>: <img src="../../graphics/home.png"/></p>
+    <p>Similarly, a <code>styles:</code><i>fileName</i> URL is resolved as a link to the website’s main <code>styles/</code> directory. </p>
+    <a id="specialurlsfordates"/><h1 id="special-urls-for-dates">2 Special URLs for Dates</h1><p>A handful of special URLs are used to flag dates and times in the course outline for special processing. These can be used anywhere, but their main purpose is to flag activity items in the course outline for export into calendars.</p>
+    <a id="date"/><h2 id="date-">2.1 date:</h2><p>A link with the URL <code>date:</code> declares a date or date-time combination. The text of the link should specify a date in ISO 8601 format: <em>YYYY-MM-DDThh:mm:ss</em></p>
+    <p>The seconds may be omitted from the end of the time. The entire time (starting with the separating character ‘T’) may be omitted if only the date is desired.</p>
+    <p>These will be reformatted into more readable forms. Examples:</p>
+    <dl>
+  <dt><code>[2016-01-02T07:30]</code><tt>(date:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-02 07:31:00 EST" startsAt="2016-01-02 07:30:00 EST">01/02/2016, 7:30AM EST</span></dd>
+  <dt><code>[2016-01-03]</code><tt>(date:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-03 23:59:59 EST" startsAt="2016-01-03 00:00:00 EST">01/03/2016</span></dd>
+</dl><a id="due"/><h2 id="due-">2.2 due:</h2><p>This is like <code>date:</code>, but has slightly different handling when imported into calendars. A <code>date:</code> with no time component is assumed to refer to the start of the day. A <code>due:</code> with no time component is assumed to refer to the end of the day. </p>
+    <dl>
+  <dt><code>[2016-01-02T07:30]</code><tt>(due:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-02 07:31:00 EST" startsAt="2016-01-02 07:30:00 EST">01/02/2016, 7:30AM EST</span></dd>
+  <dt><code>[2016-01-03]</code><tt>(due:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-03 23:59:59 EST" startsAt="2016-01-03 00:00:00 EST">01/03/2016</span></dd>
+</dl><a id="enddate"/><h2 id="enddate-">2.3 enddate:</h2><p>A <code>date:</code> link can be immediately followed by a link with an <code>enddate:</code> URL to specify a range of dates and times.</p>
+    <dl>
+  <dt><code>[2016-01-02T07:30]</code><tt>(date:)</tt> <code>[2016-01-05T08:50]</code><tt>(enddate:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-05 08:50:00 EST" startsAt="2016-01-02 07:30:00 EST">01/02/2016, 7:30AM EST - 01/05/2016, 8:50AM EST</span> </dd>
+  <dt><code>[2016-01-02]</code><tt>(date:)</tt> <code>[2016-01-05]</code><tt>(enddate:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-05 23:59:59 EST" startsAt="2016-01-02 00:00:00 EST">01/02/2016 - 01/05/2016</span> </dd>
+  <dt><code>[2016-01-02T07:30]</code><tt>(date:)</tt> <code>[2016-01-02T08:50]</code><tt>(enddate:)</tt>
+  </dt>
+  <dd>is reformatted as <span class="date" endsAt="2016-01-02 08:50:00 EST" startsAt="2016-01-02 07:30:00 EST">01/02/2016, 7:30AM EST - 8:50AM</span> </dd>
+</dl><blockquote>
+  <p>No support is provided in CoWeM v1.0 for time zones. That may be added in  later versions.</p>
+    
+</blockquote></div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20URL%20Shortcuts"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

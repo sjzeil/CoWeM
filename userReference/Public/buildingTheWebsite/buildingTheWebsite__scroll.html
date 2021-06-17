@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Building the Website</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Building%20the%20Website"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Building the Website</h1><h2 class="author">Steven Zeil</h2><div class="date">Last modified: Dec 26, 2019</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#running-gradle">1 Running Gradle</a></div><div class="toc-h2"><a href="#windows">1.1 Windows</a></div><div class="toc-h2"><a href="#linux">1.2 Linux</a></div><div class="toc-h2"><a href="#the-gui-mode">1.3 The GUI Mode</a></div><div class="toc-h1"><a href="#the-gradle-build-targets">2 The Gradle Build Targets</a></div><div class="toc-h2"><a href="#building-the-website">2.1 Building the Website</a></div><div class="toc-h2"><a href="#deploying-the-website">2.2 Deploying the Website</a></div><div class="toc-h2"><a href="#packaging-the-website">2.3 Packaging the Website</a></div><div class="toc-h2"><a href="#building-a-specific-document-set-directory">2.4 Building a Specific Document Set Directory</a></div><div class="toc-h1"><a href="#importing-cowem-packages-into-blackboard">3 Importing CoWeM Packages into Blackboard</a></div><div class="toc-h2"><a href="#importing-a-zip-package">3.1 Importing a Zip Package</a></div><div class="toc-h2"><a href="#importing-a-scorm-package">3.2 Importing a SCORM package</a></div><div class="toc-h2"><a href="#importing-a-bb-or-bbthin-package">3.3 Importing a bb or bbthin Package</a></div></div><p>CoWeM uses <a href="https://gradle.org">Gradle</a> to automate the process of building the website.</p>
+    <p>Gradle is a build manager for software projects. Although a websiote may not involvr programming in the usual sense, it can certainly be regarded as a software system. If ypur only experience with with build managers has been the ones built in to a programming IDE or the venerable Unix <code>make</code> utility, you may be surprised at the range of features provided by Gradle. Of particular relevance to CoWeM:</p>
+    <ul>
+  <li>
+  <p>Gradle allows the steps involved in a build, such as copying and and manipulation of files, to be described and performed in in a portable (not dependent on a specific operating system) manner.</p>
+    </li>
+  <li>
+  <p>Gradle can fetch and incorporate software packages needed for the build from over the internet,  and can check periodically for updates to those packages.</p>
+    </li>
+  <li>
+  <p>The ability to fetch needed software packages extends to Gradle itself, so by including a few small  files in each copy of a CoWeM course, the Gradle build system can be bootstrapped on to any Linux,  Windows, or OS/X machine with a reasonably up-to-date Java environment (JRE).</p>
+    </li>
+  <li>
+    <p>Gradle can be extended, teaching it new processes for different kinds of projects, via a <em>plugin</em> system.</p>
+    
+    <ul>
+      <li>CoWeM is, in fact, implemented as a package of related Gradle plugins.</li>
+    </ul>
+  </li>
+</ul><a id="runninggradle"/><h1 id="running-gradle">1 Running Gradle</h1><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>course root/
+|- settings.gradle
+|- build.gradle
+|- gradlew
+|- gradlew.bat
+|- gradlew-gui.bat
+|- gradle/
+|- &#x22ee;
+</code></pre>
+</div><p>The files <code>gradlew</code> , <code>gradlew.bat</code>, and <code>gradlew-gui.bat</code> are scripts that are used to launch the gradle build manager to request building the website. The <code>.bat</code> files are for Windows. The simple <code>gradlew</code> file is used for both Linux and OS/X. </p>
+    <p>The first time that you run one of these on a given machine, it will download the actual Gradle build manager and install it in your personal account area (Look for a <code>.gradle</code> directory in your user home directory.) It will then proceed to download the latest version of CoWeM and of the various software libraries used by CoWeM. This software is stored in a cache (within the afore-mentioned <code>.gradle</code>directory). Items in the cache expire periodically (typically after 24 hours), so that Gradle will check at intervals to see if any of that software has been updated.</p>
+    <p>Gradle can be run in a command-line mode or a GUI mode. </p>
+    <h2 id="windows">1.1 Windows</h2><p>To run in command-line mode, open a <code>cmd</code> window, <code>cd</code> to your course root directory, and run</p>
+    <p><code>gradlew</code> <em>target</em></p>
+    <p>The possible <em>targets</em> are discussed in the next section.</p>
+    <p>To run in GUI mode, do the same and run</p>
+    <p><code>gradlew-gui</code></p>
+    <p>or simply view the course root root directory in the Windows File Explorer and double-click the <code>gradle-gui.bat</code> file.</p>
+    <h2 id="linux">1.2 Linux</h2><p>To run in command-line mode, open a terminal window, <code>cd</code> to your course root directory, and run</p>
+    <p><code>./gradlew</code> <em>target</em></p>
+    <p>The possible <em>targets</em> are discussed in the next section.</p>
+    <p>To run in GUI mode, do the same and run</p>
+    <p><code>./gradlew --gui &amp;</code></p>
+    <a id="theguimode"/><h2 id="the-gui-mode">1.3 The GUI Mode</h2><p><div class="noFloat"> </div>
+    <img src="gradle-gui.png" style="float: right; max-width:  66%;"/></p>
+    <p>In GUI mode, Gradle displays a list of possible build targets (in the top panel), which will include those discussed in the next section plus a variety of “generic” Gradle targets.</p>
+    <p>You can click on any of them to select it, then click the small green “run” button at the top of the upper panel to execute that target. </p>
+    <a id="thegradlebuildtargets"/><h1 id="the-gradle-build-targets">2 The Gradle Build Targets</h1><p>The following are the targets that can be supplied to Gradle at the command line or selected from the GUI. </p>
+    <a id="buildingthewebsite"/><h2 id="building-the-website">2.1 Building the Website</h2><dl>
+  <dt>build</dt>
+  <dd>Build the website by processing the document sets. The resulting website  can be found in the directory <code>build/website</code> (under the course root  directory). You can use your favorite web browser “Open File” command to  view any of the HTML files that have been generated.</dd>
+</dl><p>The <code>build</code> target is the default. If you don’t specify a target at the command line, <code>build</code> is run.</p>
+    <dl>
+  <dt>pdf</dt>
+  <dd>Build the website by processing the document sets. If the <code>Directory/outline</code>  document exists and has been generated in scroll format, it and all primary  documents linked from it (that also have scroll formats) are combined  into a single document and used to produce PDF summaries of the website  suitable, with some limitations, for reading off-line.
+    <p>PDFs can be generated in a variety of page sizes. By default, generated PDFs are</p>
+    
+    <ul>
+      <li>A <a href="../../letter.pdf">letter</a> page (8.5 in by 11in) version</li>
+      <li>A <a href="../../4x3.pdf">4x3</a> page format for larger tablets.</li>
+      <li>An <a href="../../8x5.pdf">8x5</a> page format for tables designed for viewing “wide-screen” video.</li>
+    </ul>
+    <p>The generated PDFs are placed in the root directory of the website.</p>
+    
+    <p>PDF generation is only avilable on machines with the <code>npm</code> program for retrieving Javascrip modules. </p>
+    
+  </dd>
+  <dt>clean</dt>
+  <dd>Delete all files that can be reconstructed via the <code>build</code> target. This is  done by deleting the entire <code>build</code> directory.
+    <p>As noted earlier, you can “clean” a project by simply deleting the <code>build</code> directory via normal operating system commands.</p>
+    
+  </dd>
+</dl><a id="deployingthewebsite"/><h2 id="deploying-the-website">2.2 Deploying the Website</h2><p>“Deploying” a website means to copy it onto the server where it will be hosted. Three options are supported for this. The relevant targets are:</p>
+    <div class="noFloat"> </div><div class="sidebar pct66">
+<p><strong>course root build.gradle:</strong></p>
+    
+<pre><code>course {
+    courseName        = 'CS 350'
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'
+    instructor        = 'Steven J Zeil'
+    email             = 'zeil@cs.odu.edu'  
+    copyright         = '2016, Old Dominion Univ.'
+    homeURL           = '../../Directory/outline/index.html'
+    <span class='hli'>deployDestination = '/home/zeil/secure_html/cs350/f16/'</span>
+}
+</code></pre>
+</div><dl>
+  <dt>deploy</dt>
+  <dd>Synchronize the <code>build/website</code> with a directory specified in the course  configuration (<code>build.gradle</code>) as <code>deployDestination</code>.
+    <p>This works only if the destination directory is on the same local file system as the machine on which you are working.</p>
+    
+  </dd>
+</dl><div class="noFloat"> </div><div class="sidebar pct66">
+<p><strong>course root build.gradle:</strong></p>
+    
+<pre><code>course {
+    courseName        = 'CS 350'
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'
+    instructor        = 'Steven J Zeil'
+    email             = 'zeil@cs.odu.edu'  
+    copyright         = '2016, Old Dominion Univ.'
+    homeURL           = '../../Directory/outline/index.html'
+    <span class='hli'>sshDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/cs350/f16/'
+    sshDeployKey      = 'courseKey.rsa'</span>
+}
+</code></pre>
+</div><dl>
+  <dt>deployBySsh</dt>
+  <dd>Deploy the <code>build/website</code> to a directory on a remote machine  configuration (<code>build.gradle</code>) as <code>sshDeployURL</code>.
+    <ul>
+      <li>You may optionally also specify an SSH key for access to that  remote machine as <code>sshDeployKey</code>.</li>
+      <li>If no such key is used, this use any  ssh key agent you might have running to authenticate  on the remote machine.
+        <ul>
+          <li>There is currently no option for supplying a simple password.  (Coming?)</li>
+        </ul>
+      </li>
+      <li>Currently this deployment is done by packing the entire website  into a Zip file archive, sending that file to the remote  directory, and remotely issuing an <code>unzip</code> command there.
+        <p>If the website is large and only a few files have been changed, this can be quite slow. </p>
+    
+      </li>
+    </ul>
+  </dd>
+</dl><div class="noFloat"> </div><div class="sidebar pct66">
+<p><strong>course root build.gradle:</strong></p>
+    
+<pre><code>course {
+    courseName        = 'CS 350'
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'
+    instructor        = 'Steven J Zeil'
+    email             = 'zeil@cs.odu.edu'  
+    copyright         = '2016, Old Dominion Univ.'
+    homeURL           = '../../Directory/outline/index.html'
+    <span class='hli'>rsyncDeployURL      = 'zeil@atria.cs.odu.edu:/home/zeil/secure_html/cs350/f16/'
+    rsyncDeployKey      = 'courseKey.rsa'</span>
+}
+</code></pre>
+</div><dl>
+  <dt>deployByRsync</dt>
+  <dd>Synchronize the <code>build/website</code> with a directory on a remote machine  configuration (<code>build.gradle</code>) as <code>rsyncDeployURL</code> using the  <code>rsync</code> protocol.
+    <ul>
+      <li>This can only be done if the machine on which you are running  has the <code>rsync</code> command installed.</li>
+      <li>You may optionally also specify an SSH key for access to that  remote machine as <code>rsyncDeployKey</code>.</li>
+      <li>If no such key is used, this will still take advantage of any  ssh key agent you might have running.</li>
+      <li>The <code>rsync</code> protocol will only transfer files that have been  changed since the last deployment. For large files in which  only small portions have changed, <code>rsync</code> will try to transfer  only the changed portions. This makes <code>rsync</code> ideal for  updating websites after only a few things have been changed.</li>
+    </ul>
+  </dd>
+</dl><p>All deployment commands will do a <code>build</code> first, if necessary.</p>
+    <a id="packagingthewebsite"/><h2 id="packaging-the-website">2.3 Packaging the Website</h2><p><em>Packaging</em> refers to packing up the entire website into a single file that can later be uploaded to a particular server. All packages are deposited in the <code>build/packages</code> directory.</p>
+    <p>CoWeM cab build both “fat” and “thin” packages. A <em>fat</em> package contains the entire website. A <em>thin</em> package contains navigation items that link back to a deployed version of the full website elsewhere. </p>
+    <p>Build options are:</p>
+    <dl>
+  <dt>zip</dt>
+  <dd>Package the website as a Zip archive.
+    <p>This can be unpacked in any directory managed by a web server to make the course content available. This includes a <a href="#importing-a-zip-package">Blackboard content collection</a>. </p>
+    
+  </dd>
+  <dt>bb</dt>
+  <dd><em>Deprecated in favor of</em> <code>scorm</code> <em>(see below)</em>.
+    <p>Package the website as a fat Blackboard module that can be imported into a Blackboard course. Content included is</p>
+    
+    <ul>
+      <li>The entire website is exported to the Blackboard course  Content Area.</li>
+      <li>All links from the <code>Directory/navigation</code> document set are added  to the navigation panel of the Blackboard course.</li>
+      <li>All dates found in items in the course outline  (<code>Directory/outline</code>) are added to the Blackboard calendar.</li>
+    </ul>
+    <p>Brief instructions on importing Blackboard packages is given <a href="#importing-a-bb-or-bbthin-package">below</a>.</p>
+    
+  </dd>
+</dl><div class="noFloat"> </div><div class="sidebar pct66">
+<p><strong>course root build.gradle:</strong></p>
+    
+<pre><code>course {
+    courseName        = 'CS 350'
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'
+    instructor        = 'Steven J Zeil'
+    email             = 'zeil@cs.odu.edu'  
+    copyright         = '2016, Old Dominion Univ.'
+    homeURL           = '../../Directory/outline/index.html'
+    <span class='hli'>baseURL      = 'https://www.cs.odu.edu:/~zeil/cs350/f16/'</span>
+}
+</code></pre>
+</div><dl>
+  <dt>bbthin</dt>
+  <dd>Package the website as a Blackboard module that can be imported into  a Blackboard course. Content included is
+    <ul>
+      <li>All links from the <code>Directory/navigation</code> document set are added  to the navigation panel of the Blackboard course. These are  resolved to absolute URLs to a deployed version of the course  website whose root directory is located at the <code>baseURL</code>.</li>
+      <li>All dates found in items in the course outline  (<code>Directory/outline</code>) are added to the Blackboard calendar.</li>
+    </ul>
+    <p>Brief instructions on importing Blackboard packages is given <a href="#importing-a-bb-or-bbthin-package">below</a>.</p>
+    
+  </dd>
+  <dt>scorm</dt>
+  <dd>Package the website as a SCORM 1.2 package that can be imported into  Blackboard or most other Learning Management Systems.
+    <p>Brief instructions on importing a SCORM package into Blackboard is given <a href="#importing-a-scorm-package">below</a>.</p>
+    
+    <p>The SCORM format does not include calendar updates in Blackboard, but calendar entries can be generated and imported as a <code>bbthin</code> target.</p>
+    
+  </dd>
+</dl><a id="buildingaspecificdocumentsetdirectory"/><h2 id="building-a-specific-document-set-directory">2.4 Building a Specific Document Set Directory</h2><p>If you are working intensively on a single document or document set, you can instruct CoWeM to build or deploy only that one document set, saving some time.</p>
+    <p>There are several ways to do this:</p>
+    <ul>
+  <li>
+  <p>If working in the Gradle GUI, you will see your CoWem groups as expandable  items in the list of targets. Expanding one of those groups will give you a  list of the document sets in that group. Expand one of those document sets  and you can select a target to be applied to that document set.</p>
+    </li>
+  <li>
+    <p>Working at the command line, if you <code>cd</code> into the document set directory,  you can specify the build targets just as you would at the top. The one  caution is that you must invoke <code>gradlew</code> via the path back to the  document root. For example, to rebuild a course syllabus, you might do</p>
+    
+    <pre><code>cd Public/syllabus
+../../gradlew build 
+</code></pre>
+  </li>
+</ul><p>in Linux or OS/X. In Windows, you would do the same excpet using “" instead  of ”/".</p>
+    <ul>
+  <li>Working at the command line, but <code>cd</code>’d into the course root directory, you  can specify a target on a specific document set using the format  <code>:</code>_group_<code>:</code>_documentset_<code>:</code>_target_. For example, to rebuild a course  syllabus you could say
+    <pre><code>./gradlew :Public:syllabus:build
+</code></pre>
+  </li>
+</ul><p>The targets that can be launched for a single document set are:</p>
+    <dl>
+  <dt>build</dt>
+  <dd>Same as the yop-level <code>build</code> target, but builds only the  indicated document set.</dd>
+  <dt>deployDoc</dt>
+  <dd>Like the top-level <code>deploy</code>, this builds the document set and copies it  to the appropriate deployment directory on the same machine.</dd>
+  <dt>deployDocBySsh</dt>
+  <dd>Like the top-level <code>deployBySsh</code>, this builds the document set and copies it  to a remote machine via secure shell.</dd>
+  <dt>deployDocByRsync</dt>
+  <dd>Like the top-level <code>deployByRsync</code>, this builds the document set and copies it  to a remote machine via an <code>rsync</code> command.</dd>
+</dl><a id="importingcowempackagesintoblackboard"/><h1 id="importing-cowem-packages-into-blackboard">3 Importing CoWeM Packages into Blackboard</h1><a id="importingazippackage"/><h2 id="importing-a-zip-package">3.1 Importing a Zip Package</h2><ol>
+  <li>Create a <em>zip package</em> using the <em>zip</em> build target, as described above.</li>
+  <li>Go to your course on Blackboard, and enter a content collection area,  either the course content area (visible only to students in that course)  or your user content area (potentially visible to everyone on Blackboard).</li>
+  <li>Use the Blackboard controls to enter the folder where you want to put  the course materials, or to create a new folder to hold them.</li>
+  <li><img align="right" src="uploadZipPackage.png" style="max-width: 66%;"/> In the <code>Upload</code> menu,  select “Upload Zip Package”.</li>
+  <li>Click the “Choose file” button, and select the Zip package you  created in step 1. You’ll find it in your course’s  <code>build/packages/</code> directory.</li>
+  <li>Click “Submit”.
+    <p>The Zip package will be uploaded, and after it has been uploaded, Blackboard will unpack it into the Content Collection folder you had selected.</p>
+    
+  </li>
+</ol><p>Using the Blackboard controls, you can navigate to any items you like (e.g., the course outline), then copy the URL from your web browser’s address bar and paste it into a document available to your students.</p>
+    <p>You can also add any item uploaded this way into your Blackboard course’s navigation bar by clicking the “+” at the upper left of the navigation bar and selecting <code>Course Link</code>. </p>
+    <a id="importingascormpackage"/><h2 id="importing-a-scorm-package">3.2 Importing a SCORM package</h2><ol>
+  <li>
+  <p>Use the <em>scorm</em> build target,  as described above, to produce a package stored in  <code>build/packages/scorm</code>…<code>.zip</code></p>
+    </li>
+  <li>
+  <p>Enter your Blackboard course. Select (or create) a content area, such  as the “Outline” area, and enter that area.</p>
+    </li>
+  <li>
+  <p>from the “<code>BuildContent</code>” menu, select “<code>Content package
+   (SCORM)</code>” and follow the instructions to upload your newly generated  <code>scorm</code>…<code>.zip</code> file.</p>
+    </li>
+  <li>
+    <p>There is no “grading” associated with these packages. So choose the following  settings:</p>
+    
+    <ul>
+      <li>Make SCORM Availabble; yes</li>
+      <li>Number of Attempts: Allow unlimited attempts</li>
+      <li>Track Number of Views: whatever you like</li>
+      <li>Grade SCORM: No Grading</li>
+      <li>Grade SCOS: No</li>
+    </ul>
+  </li>
+</ol><a id="importingabborbbthinpackage"/><h2 id="importing-a-bb-or-bbthin-package">3.3 Importing a bb or bbthin Package</h2><blockquote>
+  <p><strong>Important</strong>: When you use the Blackboard “import package” procedure, content is <em>added</em> to your Blackboard course but never <em>replaces</em> existing content. You can not <em>update</em> existing imported materials. </p>
+    
+  <p>It’s important, therefore, that whenever you import material for the second (or third or …) time, you delete the old versions first. Otherwise you are likely to wind up with really <em>ugly</em> calendars and navigation bars and your content collection area will get increasingly large and confusing. </p>
+    
+</blockquote><ol>
+  <li>Create a <em>bb</em> or <em>bbthin</em> package using the corresponding build target,  as described above.</li>
+  <li><div class="noFloat"> </div>
+    <img src="importPackage1.png" style="float: right; max-width: 67%;"/> Go to your course on Blackboard,  select “<code>Import Package</code>” under <code>Packages 
+   and Utilities</code>, then select “Import Package”.</li>
+  <li><div class="noFloat"> </div>
+    <img src="importPackage2.png" style="float: right; max-width: 67%;"/> Click the “Browse My Computer” button and  select the <em>bb</em> or <em>bbthin</em> package you  created in step 1. You’ll find it in your course’s  <code>build/packages/</code> directory.</li>
+  <li>In the <code>Select Course Materials</code> area, choose the items you want to  import:
+    <ul>
+      <li>
+        <p>Select <code>Calendar</code> if you want to add calendar entries from  your course outline to the Blackboard calendar for your course.  Leave this unselected if you have no dates in your outline, or  if you have already imported calendar entries and have no need  to change them, or if oyu have not yet finalized your dates and  want to wait a little while.</p>
+    
+        <p>(Deleting calendar entries in Blackboard is particularly  tedious, so I generally do this only when I am pretty sure I  have nailed down all of my important dates.)</p>
+    
+      </li>
+      <li>
+        <p>Select <code>Content Areas</code> and <code>Navigation Settings</code> to update  course content (<code>bb</code> packages) and the Blackboard navigation  bar (both <code>bb</code> and <code>bbthin</code>).</p>
+    
+        <p><div class="noFloat"> </div>
+    <img src="importPackage3.png" style="float: right; max-width: 67%;"/>  Entries from your CoWeM navigation document will be added to  the main Blackboard course navigation bar. For a fat <code>bb</code>  package, these entries will point to the copy of the website  uploaded into the course Content Collection area. For the  <code>bbthin</code> package, these entries will point to the “real”  external website indicated by your course’s <code>baseURL</code>  parameter. </p>
+    
+      </li>
+    </ul> No other entries in this area will have any effect.
+  </li>
+  <li>
+    <p>Click “Submit”. Blackboard will upload the package you specified and  will queue up a background job to process it.</p>
+    
+    <p>Processing typically takes several minutes, but can take quite a long time if you have a very large website or if many other people have background jobs queued. (For example, requests to copy materials from one Blackboard course to another are also handled as background jobs, and are quite common in the weeks leading up to a new semester.)</p>
+    
+  </li>
+  <li>
+  <p>After the import has completed, you may want to rearrange the new navigation  bar entries. (New entries are always added to the bottom of the bar.)</p>
+    </li>
+</ol></div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Building%20the%20Website"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

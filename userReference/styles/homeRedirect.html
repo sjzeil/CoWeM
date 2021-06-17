@@ -1,0 +1,40 @@
+<html>
+<!--  This file is copied into the top directory of the website to
+      redirect viewers to the starting page. -->
+<head>
+  <title>Redirecting...</title>
+</head>
+<body>
+  <script>
+	const params = new URLSearchParams(window.location.search);
+    if (params.has('doc')) {
+	    var docName = params.get('doc');
+	    var xmlhttp = new XMLHttpRequest();
+	    xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var mappingData = JSON.parse(this.responseText);
+				var url = "./Directory/outline/index.html";
+                for (var i in mappingData.mapping) {
+					var item = mappingData.mapping[i];
+					if (item.doc == docName) {
+						var url = './' + item.url;
+						if (params.has('anchor')) {
+							var anchor = params.get('anchor');
+							if (anchor != '') {
+								url = url + '#' + anchor;
+							}
+						}
+						break;
+					}
+	            }
+				document.location = url;
+	      }
+	    };
+	    xmlhttp.open("GET", "styles/documentMap.json", true);
+	    xmlhttp.send();
+	} else {
+	    document.location = "./Directory/outline/index.html";
+	}
+  </script>
+</body>
+</html>

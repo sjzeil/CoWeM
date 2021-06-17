@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Course Website Overview and Instructions</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Website%20Overview%20and%20Instructions"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Course Website Overview and Instructions</h1><h2 class="author">Steven Zeil</h2><div class="date">Last modified: Jul 3, 2016</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#the-main-directories">1 The Main Directories</a></div><div class="toc-h1"><a href="#document-formats">2 Document Formats</a></div><div class="toc-h2"><a href="#primary-documents">2.1 Primary Documents</a></div><div class="toc-h2"><a href="#secondary-documents">2.2 Secondary Documents</a></div><div class="toc-h1"><a href="#building-the-website">3 Building the Website</a></div><div class="toc-h1"><a href="#customizing-the-website">4 Customizing the Website</a></div><div class="toc-h2"><a href="#course-properties">4.1 course.properties</a></div><div class="toc-h2"><a href="#directory-outline-xml">4.2 Directory/outline.xml</a></div></div><p>Some words of explanation about how I organize and maintain course websites.</p>
+    <p>The website is a collection of primary and secondary documents.</p>
+    <p><em>Primary documents</em> carry lots of content and are stored with each in its own directory. Primary documents can be converted from source documents in <a href="../markdown/index.html">Markdown</a> into a variety of a variety of HTML-based output formats.</p>
+    <p>Also, supported, but deprecated, is support for source documents in DocBook or LaTeX, converted into HTML or PDF.</p>
+    <p><em>Secondary documents</em> are shorter documents that are often intended to accompany a primary document. For example, a set of lecture notes (a primary document) on sorting algorithms might be accompanied by several C++ source code files, each of which will be converted to an HTML document residing in the same directory as the primary.</p>
+    <a id="themaindirectories"/><h1 id="the-main-directories">1 The Main Directories</h1><iframe align="right" height="600px" scrolling="auto" src="treeOverview.html" width="60%"> </iframe><p>There are three major directories relating to course content:</p>
+    <dl>
+  <dt><em>Directory</em></dt>
+  <dd>Holds the “directory pages” of the website, including the topics outline, library page, search page, etc. These are the pages that are readily identified by the column of navigation buttons down the left edge.</dd>
+  <dt><em>Public</em></dt>
+  <dd>The collection of non-directory documents that are available to everyone who reaches the website. Typically, these include lecture notes, policy documents, ungraded labs, etc.
+    <p>Within the <em>Public</em> directory will be a number of subdirectories, one per primary document.</p>
+    
+  </dd>
+</dl><dl>
+  <dt><em>Protected</em></dt>
+  <dd>The collection of documents that will be restricted to students  enrolled in the course. Assignments and assignment solutions  generally go here.
+    <p>Within the <em>Protected</em> directory will be a number of subdirectories,  one per primary document. In addition, a directory <em>Assts</em> is used  to hold an arbitrary collection of HTML pages for course assignments.</p>
+    
+  </dd>
+</dl><p>When deployed on an Apache-style web server, you will need to enforce content protection by placing an appropriate <code>.htaccess</code> file in the <em>Protected</em> directory of the server.</p>
+    <p>If the entire website is being hosted in a Learning Management System (e.g., Blackboard) where the entire site will be limited to enrolled students, then there is, in effect, no difference between the <em>Public</em> and <em>Protected</em> directories and no special <code>.htaccess</code> file would be necessary.</p>
+    <p>There several other directories in the website as well (_templates_, <em>styles</em>, <em>graphics</em>). These are generated automatically when the website is built.</p>
+    <a id="documentformats"/><h1 id="document-formats">2 Document Formats</h1><a id="primarydocuments"/><h2 id="primary-documents">2.1 Primary Documents</h2><p>Primary documents can be written in</p>
+    <ul>
+  <li>
+    <p>Markdown: specifically the  <a href="http://fletcher.github.io/MultiMarkdown-4/">MultiMarkdown</a> dialect.</p>
+    
+    <p>Currently, this is my favorite, because it’s very easy to prepare documents that generate good looking output, and does so very quickly.</p>
+    
+    <p>before processing, I run the documents through a pre-processor, allowing me to do some macros and conditional text markup.</p>
+    
+  </li>
+  <li>
+  <p>XML: Used for the course outline only.</p>
+    </li>
+</ul><p>A primary document stored in the directory <em>primaryDoc</em> would appear in files:</p>
+    <table>
+  <thead>
+    <tr>
+      <th align="center">Input format </th>
+      <th align="left">Content Files </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Markdown </td>
+      <td align="left"><em>primaryDoc</em><code>.md</code></td>
+    </tr>
+    <tr>
+      <td align="center">XML </td>
+      <td align="left"><code>outline.xml</code></td>
+    </tr>
+  </tbody>
+</table><p>The available output formats are:</p>
+    <ul>
+  <li>
+    <p>from Markdown:</p>
+    
+    <ul>
+      <li><em>html</em> : the entire document in a single page of HTML</li>
+      <li><em>pages</em> : the entire document, split into pages at section and  subsection boundaries.</li>
+      <li><em>slidy</em> : The document formatted as slides. New slides begin at  each #, ##, and ### header, and also at each horizontal rule in the  document that is not nested within a list or other nested  formatting block.</li>
+      <li><em>epub</em> : An e-book collection of the web pages nad associated  graphics and style files, suitable for viewing in an ebook  reader. Selecting this option results in ebooks generated in  both <code>.epub</code> and <code>.mobi</code> formats.
+        <p>A single ebook is generated for the entire site. Marking a particular document with this output option indicates that the document should be included within the ebook.</p>
+    
+      </li>
+      <li>
+      <p><em>canvas</em> : A simplified version of the <em>html</em> format, suitable for  import into the Canvas LMS as a (wiki) “Page” </p>
+    </li>
+    </ul>
+  </li>
+  <li>
+    <p>from XML:</p>
+    
+    <ul>
+      <li><em>modules</em> The course outline presetned in HTML as a collapsed arrangement of modules. Expanding a module reveals a linear list of activities associated with that module,</li>
+      <li><em>topics</em> The same course outline presented on an HTML page as a multi-column table.</li>
+      <li><em>epub</em> : An e-book collection generated in  both <code>.epub</code> and <code>.mobi</code> formats.</li>
+    </ul>
+  </li>
+</ul><a id="selectingthedesiredformats"/><h3 id="selecting-the-desired-formats">2.1.1 Selecting the desired formats</h3><p>In the directory for a primary document, the output formats are controlled by the <code>build.xml</code> file. A typical such file is</p>
+    <pre><code>&lt;project name="docs" default="build"&gt;
+
+  &lt;import file="../../commonBuild.xml"/&gt;
+
+  &lt;target name="documents" depends="setup"&gt;
+    <span class='hli'>&lt;docformat from="md" format="html"/&gt;
+    &lt;docformat from="md" format="pages"/&gt;
+    &lt;docformat from="md" format="slidy"/&gt;</span>
+  &lt;/target&gt;
+
+
+&lt;/project&gt;
+</code></pre><p>The highlighted <code>docformat</code> instructions are the key. The <code>from</code> attribute indicates the input format (<code>md</code>, <code>tex</code>, or <code>dbk</code>) and the <code>format</code> attribute names the desired output format.</p>
+    <p>The first <code>docformat</code> listed becomes the “default” document for the directory – it is copied into an <code>index.html</code> file for that directory. The choice of default document can be overridden with an explicit <code>index</code> attribute:</p>
+    <pre><code>&lt;project name="docs" default="build"&gt;
+
+  &lt;import file="../../commonBuild.xml"/&gt;
+
+  &lt;target name="documents" depends="setup"&gt;
+    &lt;docformat from="md" format="html"/&gt;
+    &lt;docformat from="md" format="pages"/&gt;
+    &lt;docformat from="md" format="slidy" <span class='hli'>index="1"</span>/&gt;
+  &lt;/target&gt;
+
+
+&lt;/project&gt;
+</code></pre><a id="secondarydocuments"/><h2 id="secondary-documents">2.2 Secondary Documents</h2><p>Secondary documents are logically associated with the primary or main document in a directory. Usually, the primary document will link to them, and they are often not referenced from anywhere else.</p>
+    <table>
+  <thead>
+    <tr>
+      <th align="center" colspan="3">Secondary Documents </th>
+    </tr>
+    <tr>
+      <th align="center">source format </th>
+      <th align="center">input file extension </th>
+      <th align="center">processed file extension </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Markdown </td>
+      <td align="center">.mmd </td>
+      <td align="center">.mmd.html </td>
+    </tr>
+    <tr>
+      <td align="center">C++ source code </td>
+      <td align="center">.cpp </td>
+      <td align="center">.cpp.html </td>
+    </tr>
+    <tr>
+      <td align="center">C++ source code </td>
+      <td align="center">.h </td>
+      <td align="center">.h.html </td>
+    </tr>
+    <tr>
+      <td align="center">Java source code </td>
+      <td align="center">.java </td>
+      <td align="center">.java.html </td>
+    </tr>
+    <tr>
+      <td align="center">preformatted text </td>
+      <td align="center">.listing </td>
+      <td align="center">.listing.html </td>
+    </tr>
+    <tr>
+      <td align="center">simple HTML </td>
+      <td align="center">.html.xml </td>
+      <td align="center">.html (deprecated) </td>
+    </tr>
+  </tbody>
+</table><h3 id="graphics">2.2.1 Graphics</h3><p>As a general rule, graphics for use with HTML output formats should be in PNG format. Graphics to be imported into PDF output formats should themselves be in PDF files.</p>
+    <p>If graphics are present in <code>.gif</code> or <code>.eps</code> formats, they will be automatically converted into these other formats.</p>
+    <p>Similarly, diagrams produced by <code>xfig</code> or <code>dia</code> are autmatically exported as PNG and PDF files.</p>
+    <h3 id="html">2.2.2 HTML</h3><p>In most cases, all primary documents when rendered into a non-slides format will have a standard “footer” attached that provides a link back to the course home and a link to either a course email address or to a related section of a course Forum.</p>
+    <p>The same footer can be added to secondary HTML documents by storing the document as a .html.xml file (and making sure that its contents are valid XML, e.g., each <code>&lt;p&gt;</code> element must have a closing <code>&lt;/p&gt;</code>, elements with no nested content must end in <code>/&gt;</code> as in <code>&lt;br/&gt;</code> or <code>&lt;img src=.../&gt;</code>,).</p>
+    <a id="sourcecodelistings"/><h3 id="source-code-listings">2.2.3 Source Code Listings</h3><p>Source code listings can be “dropped” into a primary document directory and will be converted to a separate HTML file with syntax highlighting. Any file ending in <code>.h</code>, <code>.cpp</code>, <code>.java</code>, or <code>.listing</code> will be handled in this manner. The resulting files will have the same name with <code>.html</code> appended (e.g., <code>foo.cpp</code> will yield <code>foo.cpp.html</code>).</p>
+    <p>In addition, there are some standard markups supported:</p>
+    <ul>
+  <li><code>/*</code>…<code>*/</code> will be replaced by a vertical ellipsis <code>&#x22ee;</code></li>
+  <li><code>/*</code>1<code>*/</code>, <code>/*</code>2<code>*/</code>, etc., will be replaced callout symbols <code>&#x2780;</code>,  <code>&#x2781;</code>, etc.</li>
+  <li><code>/*</code>+<code>*/</code> and <code>/*</code>-<code>*/</code> can be used to <span class="hli">highlight</span> regions  of code.
+    <p>Actually, that’s a shorthand.</p>
+    
+    <ul>
+      <li><code>/*</code>+1<code>*/</code> and <code>/*</code>-1<code>*/</code> produce <span class="hli">this highlight</span>.</li>
+      <li><code>/*</code>+2<code>*/</code> and <code>/*</code>-2<code>*/</code> produce <span class="hlii">this highlight</span>.</li>
+      <li><code>/*</code>+3<code>*/</code> and <code>/*</code>-3<code>*/</code> produce <span class="hliii">this highlight</span>.</li>
+      <li><code>/*</code>+4<code>*/</code> and <code>/*</code>-4<code>*/</code> produce <span class="hliv">this highlight</span>.</li>
+    </ul>
+  </li>
+</ul><p>Similar markups are available within each of the input formats. For Markdown, in particular, these same markups are available.</p>
+    <a id="buildingthewebsite"/><h1 id="building-the-website">3 Building the Website</h1><p>The build manager is <a href="http://ant.apache.org/">Apache Ant</a>.</p>
+    <p>The website can be build by giving an appropriate <code>ant</code> command. A log of the build output will be written to a file <code>ant.log</code>.</p>
+    <p>If you are working on a single primary document, then <code>cd</code> to that document’s directory and give the appropriate <code>ant</code> command there. To build the entire website, cd up to the top (the directory containing <em>Directory</em>, <em>Public</em>, and <em>Protected</em>) and give the command there.</p>
+    <p>The commands/targets that are provided are:</p>
+    <dl>
+  <dt><code>ant</code></dt>
+  <dd>builds the primary document in all requested output formats and builds/converts secondary documents as necessary.</dd>
+  <dt><code>ant deploy</code></dt>
+  <dd>does <code>ant</code>, and then syncs the entire website with the deployment destination (the actual server copy in a <code>public_html</code> or, if any content is to be protected, a <code>secure_html</code> directory).</dd>
+  <dt><code>ant zip</code></dt>
+  <dd>does <code>ant</code>, and then creates a <code>.zip</code> file of the website contents. This can be uploaded to another server or to a content collection on Blackboard.</dd>
+  <dt><code>ant imscc</code></dt>
+  <dd>builds the course documents and creates a course cartridge file  that could be imported by most Learning Management Systems (LMS)</dd>
+  <dt><code>ant bb</code></dt>
+  <dd>builds the course documents and creates a course cartridge file  that could be imported into BlackBoard. This cartridge features the  entire course contents, a set of Learning Modules reflecting the  basic course outline, and calendar events for all dated items  in the outline.</dd>
+  <dt><code>ant bbthin</code></dt>
+  <dd>builds the course documents and creates a course cartridge file  that could be imported into BlackBoard. This cartridge features  a set of Learning Modules reflecting the basic course outline,  and calendar events for all dated items in the outline.
+    <p>This “thin” cartridge does not, however, include the actual  course documents. Those are presumed to have been deployed to  a separate web server. The imported Blackboard modules will  link to those documents.</p>
+    
+  </dd>
+  <dt><code>ant canvas</code></dt>
+  <dd>builds the course documents and creates a course cartridge file  that could be imported into Canvas. This cartridge features the  entire course contents, a set of Modules reflecting the  basic course outline, and calendar events for all dated items  in the outline. In addition, documents built with a “canvas”  output format will be exported as Canvas (wiki) Pages.</dd>
+  <dt><code>ant canvasthin</code></dt>
+  <dd>builds the course documents and creates a course cartridge file  that could be imported into Canvas. This cartridge features  a set of Modules reflecting the basic course outline,  and calendar events for all dated items in the outline.  In addition, documents built with a “canvas”  output format will be exported as Canvas (wiki) Pages.
+    <p>This “thin” cartridge does not, however, include the actual course documents. Those are presumed to have been deployed to a separate web server. The imported Blackboard modules will link to those documents.</p>
+    
+  </dd>
+</dl><dl>
+  <dt><code>ant clean</code></dt>
+  <dd>Removes most of the temporary files produced as a side effect of building the site. Temporary files that are particularly time consuming to produce (or that affect cross references between documents) are kept. All generated HTML and PDF is kept.</dd>
+  <dt><code>ant cleaner</code></dt>
+  <dd>Does <code>clean</code> and all generated HTML and PDF is kept.</dd>
+  <dt><code>ant cleanest</code></dt>
+  <dd>Does <code>cleaner</code> and removes temporary files that are time-consuming to regenerate.</dd>
+</dl><a id="customizingthewebsite"/><h1 id="customizing-the-website">4 Customizing the Website</h1><p>Besides creating and editing document content, some key files used to customize the site are:</p>
+    <a id="courseproperties"/><h2 id="course-properties">4.1 course.properties</h2><p>This file defined website-wide properties. Here is an example:</p>
+    <pre><code>courseName=CS350
+courseTitle=Introduction to Software Engineering
+semester=Spring 2014
+sem=s14
+instructor=Steven J Zeil
+instructorEmail=zeil@cs.odu.edu
+copyright=2014, Old Dominion Univ.
+baseurl=https://secweb.cs.odu.edu/~zeil/cs350/s14
+homeurl=https://secweb.cs.odu.edu/~zeil/cs350/s14/Directory/topics.html
+deploymentDestination=/home/zeil/secure_html/cs350/s14/
+email=zeil@cs.odu.edu
+forum=
+bbURL=
+forums=
+delivery=1
+MathJaxURL=https://www.cs.odu.edu/~zeil/styles/MathJax
+highlightjsURL=https://www.cs.odu.edu/~zeil/styles/highlight.js
+slidyURL=https://www.cs.odu.edu/~zeil/styles/Slidy2
+</code></pre><p>The first few entries are self-explanatory.</p>
+    <p>The <code>baseurl</code> indicates where the course website will be deployed. Most of the intra-course links are expressed as relative URLs, but there are a few circumstnaces where the absolute URL is required. In particular, “thin” targets that allow an LMS (Blackboard or Canvas) to link to a website for course documents will use this to inform the LMS of the location of that website. On the other hand, the “fat” export formats (<code>imscc</code>, <code>bb</code>, and <code>canvas</code>) should ignore this entirely. </p>
+    <p>The <code>homeurl</code> and <code>email</code> values are used in the footer information at the bottom of most pages.</p>
+    <p>The <code>bbURL</code> and <code>forums</code> entries are used to interface with a Blackboard course. The proper value for the <code>bbURL</code> should be the link to a specific course on Blackboard (go to your list of courses for the semester, right-click and copy the link). Similarly, the proper value for <code>forums</code> can be found by right-clicking and saving the link of any “tool link” in Blackboard. If non-empty, each of these adds another icon and link to the navigation header/footer for all documents.</p>
+    <p>That <code>bbURL</code> entry is also important because it sets up “smart” linking for Blackboard. Most Blackboard URLs cannot be simply copied and pasted from a browser into a webpage link and used later frm outside of Blackboard. But both the <code>forums</code> URL and most links within documents preceded by “bb:” will be rewritten, using the value of <code>bbURL</code>, into a legal external Blackboard URL.</p>
+    <p>The <code>deploymentDestination</code> names the directory to which the final content is copied when <code>ant deploy</code> is run.</p>
+    <p>The last three entries are used to locate important Javascript and CSS resources. I find it useful, for performance reasons, to keep these on the same server as the one serving the course website, though they can be shared by multiple course websites on that same server.</p>
+    <a id="directoryoutlinexml"/><h2 id="directory-outline-xml">4.2 Directory/outline.xml</h2><p>This file contains an outline of the course and is used ot prodice the course outline/topics page.</p>
+    <p>The outline divides the course into topic areas. Within each topic can be subtopics and items. Items are of varying kinds, such as “lecture”, “lab”, or “asst”. The kind names are largely arbitrary, but are used bot to arrange the items into columns on the course outline page and also to name an icon to be displayed alongside the icon.</p>
+    <p>Here is a portion of a course outline:</p>
+    <pre><code>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;outline xmlns:axle="http://www.cs.odu.edu/~zeil/axle"&gt;
+  &lt;!-- Sample course outline: The outline is divided into topics.
+       Topics are titled and may be nested inside other topics. 
+       Topics may also include items. Each item is a short 
+       descriptive text, with optional date, kind, and href attributes.
+       --&gt;
+
+  &lt;preamble&gt;
+    &lt;info&gt;
+      &lt;title&gt;CS350 Introduction to Software Engineering&lt;/title&gt;
+    &lt;/info&gt;
+  &lt;/preamble&gt;
+
+  &lt;topic title="Introduction"&gt;
+    &lt;item kind="slides" targetdoc="introduction"/&gt;
+  &lt;/topic&gt;
+  &lt;topic title="The Software Development Process"&gt;
+    &lt;topic title="Process Models"&gt;
+      &lt;item kind="slides" targetdoc="processModels"/&gt;
+      &lt;item kind="text" href="http://proquest.safaribooksonline.com/book/software-engineering-and-development/9781934015551?bookview=overview"&gt;Agarwal , Ch.2&lt;/item&gt;
+      &lt;item kind="text" href="http://proquest.safaribooksonline.com/book/software-engineering-and-development/9780470031469"&gt;van Vliet, Sect. 3.2, 3.3&lt;/item&gt;
+    &lt;/topic&gt;
+    &lt;topic title="Staffing"&gt;
+      &lt;item kind="slides" targetdoc="staffing"/&gt;
+      &lt;item kind="text" href="http://proquest.safaribooksonline.com/book/software-engineering-and-development/9780470031469"&gt;van Vliet, Sect. 5.2&lt;/item&gt;
+      &lt;item kind="lab" targetdoc="lab1" date="2013-02-14"&gt;Introductory lab&lt;/item&gt;
+    &lt;/topic&gt;
+  &lt;/topic&gt;
+   &#x22ee;
+
+ &lt;presentation&gt;
+    &lt;column title="Topics" kinds="topics"/&gt;
+    &lt;column title="Lectures" kinds="lecture slides event exam"/&gt;
+    &lt;column title="Readings" kinds="text"/&gt;
+    &lt;column title="Labs/Assignments" kinds="exam asst lab unix TA"/&gt;
+  &lt;/presentation&gt;
+
+  &lt;postscript&gt;
+     &#x22ee;
+  &lt;/postscript&gt;
+
+  &lt;appendix&gt;
+	  &lt;item kind="lecture" targetdoc="syllabus"/&gt;
+      &lt;item kind="lecture" targetdoc="grading"/&gt;
+  &lt;/appendix&gt;
+
+&lt;/outline&gt;
+</code></pre><p>The heart of the outline is the collection of <code>&lt;topic</code> and <code>&lt;item</code> elements.</p>
+    <ul>
+  <li>Topics divide the course and are titled.</li>
+  <li>Items generate a line in the outline page.
+    <ul>
+      <li>Each item has a kind.</li>
+      <li>Items may link to course content. A link can appear as
+        <ul>
+          <li>an <code>href</code> attribute (as in the HTML <code>&lt;a&gt;</code> element)</li>
+          <li>a <code>targetdoc</code> attribute names a primary document in  the <em>Public</em> area.
+            <p>If ebooks are being generated, then anything with a <code>targetdoc</code> link is copied into the ebook. If, for some reason, a document appears multiple times within the outline, it can have at most one <code>targetdoc</code> link. </p>
+    
+          </li>
+          <li>
+            <p>a <code>target</code> attribute names a primary document in  the <em>Public</em> area.</p>
+    
+            <p><code>target</code> links do not force the  copying of a document into the ebook.</p>
+    
+          </li>
+          <li>
+          <p>an <code>assignment</code> attribute names a secondary document with a  <code>.mmd.html</code> extension in the <em>Protected/Assts</em> directory.</p>
+    </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Item elements can contain text. If the text is omitted/empty and the  item contains a <code>targetdoc</code> or <code>target</code> link, the title of the  document is extracted and used as the link text.</p>
+    
+    <ul>
+      <li>Other optional attributes include <code>date=</code> and <code>due=</code>, which add  a date to the listing. The attribute <code>time=</code> can be used to add  a time.</li>
+    </ul>
+  </li>
+</ul><p>The <code>&lt;preamble&gt;</code> and <code>&lt;postscript&gt;</code> sections provide HTML content that should appear above and below the course outline.</p>
+    <p>The <code>&lt;presentation&gt;</code> section indicates how many titles should be used to present the outline, and what kinds of items go into each column.</p>
+    <p>The <code>&lt;appendix&gt;</code> section adds primary documents to the ebook that are not named in earlier <code>targetdoc</code> links.</p>
+    </div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Website%20Overview%20and%20Instructions"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

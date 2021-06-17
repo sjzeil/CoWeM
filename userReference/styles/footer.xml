@@ -1,0 +1,10 @@
+<div class="footer">styles footer
+  <script src="@baseurl@/styles/communications.js"> </script>
+  <div style="text-align: center; border-top: solid #000040; margin-top: 40px;">
+     <a class="imgLink" href="@homeurl@"><img src="@graphicsURL@/home.png"/></a>
+     <a class="imgLink" href="@forums@"><img src="@graphicsURL@/forum.png"/></a>
+     <a id="contactByEmail" href="javascript:footerEmail('@email@','@courseName@')"><img src="@graphicsURL@/email.png"/></a>
+  </div>
+  <div id="commentary" class="commentary"> </div>
+   <script>loadCommentsInto("@forum@", "commentary", "contactByEmail");</script>
+</div>

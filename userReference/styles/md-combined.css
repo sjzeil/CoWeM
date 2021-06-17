@@ -1,0 +1,36 @@
+body {
+	-webkit-print-color-adjust: exact;
+}
+
+.booktitleblock {
+}
+
+div.booktitleblock h1 { color: #0000A0; text-align: center;}
+div.booktitleblock h2 { color: #0000A0; text-align: center;}
+div.booktitleblock h3 { text-align: center;}
+
+
+.titleblock {
+	page-break-before: always;
+}
+
+div.slideshowslide {
+   page-break-before: always;
+   border-bottom: 1px dotted black;
+   display: block;
+}
+
+div.slideshow {
+	border-style: none;
+}
+
+div.detailsBody {
+   page-break-before: always;
+}
+
+img.right {float: right;}
+img.left {float: left;}
+img.center {display: block; margin-left: auto; margin-right: auto;}
+span.right {float: right;}
+span.left {float: left;}
+span.center {display: block; margin-left: auto; margin-right: auto;}

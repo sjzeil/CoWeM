@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>unittest.cpp</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20unittest.cpp"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="unittest__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">unittest.cpp</h1></div><pre><code>#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+
+#include "unittest.h"
+
+using namespace std;
+
+long UnitTest::numSuccesses = 0L;
+long UnitTest::numFailures = 0L;
+long UnitTest::DETAIL_LIMIT = 64L;
+long UnitTest::NOTICE_INTERVAL = 10L;
+
+void UnitTest::checkTest (bool condition, const char* conditionStr,
+           const char* fileName, int lineNumber)
+{
+  if (condition)
+    {
+      ++numSuccesses;
+    }
+  else
+    {
+      ++numFailures;
+      if (numFailures &lt; DETAIL_LIMIT)
+    {
+      cerr &lt;&lt; "UnitTest: " &lt;&lt; "Failed test #" 
+           &lt;&lt; numFailures + numSuccesses &lt;&lt; ": "
+           &lt;&lt; conditionStr &lt;&lt; ", in line "
+           &lt;&lt; lineNumber &lt;&lt; " of " &lt;&lt; fileName &lt;&lt; endl;
+    }
+    }
+  long total = numFailures + numSuccesses;
+  if (total % NOTICE_INTERVAL == 0)
+    cerr &lt;&lt; "UnitTest: completed " &lt;&lt; total &lt;&lt; " tests so far" &lt;&lt; endl;
+  if (total == NOTICE_INTERVAL * 10L)
+    NOTICE_INTERVAL = 10L * NOTICE_INTERVAL;
+}
+
+void UnitTest::checkTest (bool condition, const string&amp; conditionStr,
+           const char* fileName, int lineNumber)
+{
+  checkTest(condition, conditionStr.c_str(), fileName, lineNumber);
+}
+
+
+
+// Print a simple summary report
+void UnitTest::report (std::ostream&amp; out)
+{
+  out &lt;&lt; "UnitTest: passed " &lt;&lt; numSuccesses &lt;&lt; " out of " 
+      &lt;&lt; getNumTests() &lt;&lt; " tests, for a success rate of "
+      &lt;&lt; std::showpoint &lt;&lt; std::fixed &lt;&lt; std::setprecision(1)
+      &lt;&lt; (100.0 * numSuccesses)/(float)getNumTests() 
+      &lt;&lt; "%" &lt;&lt; endl;
+}
+</code></pre><p><a href="unittest.cpp">unformatted source</a></p>
+    </div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20unittest.cpp"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="unittest__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

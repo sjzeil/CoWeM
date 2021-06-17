@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-slides.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-slides-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-slides.js" type="text/javascript"> </script><script src="../../styles/md-slides-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>MarkDown Extensions in CoWeM</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 18};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"><a class="slideshowcontrol" onclick="sshow2start(sshowControl0)" title="start"><img alt="first" src="../../graphics/first.png"/></a><span style="minWidth: 2ex;">  </span><a class="slideshowcontrol" onclick="sshowback(sshowControl0)" title="previous"><img alt="prev" src="../../graphics/prev.png"/></a></td><td class="slideshowcontrolMiddle"><span id="slideshowpositionA0">1 of 17</span>
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20MarkDown%20Extensions%20in%20CoWeM"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="markdownExtensions__scroll.html"><img src="../../graphics/scroll.png" title="single-page HTML version"/></a></td><td class="slideshowcontrolRight"><a class="slideshowcontrol" onclick="sshowforward(sshowControl0)" title="next"><img alt="next" src="../../graphics/next.png"/></a><span style="minWidth: 2ex;">  </span><a class="slideshowcontrol" onclick="sshow2end(sshowControl0)" title="last"><img alt="last" src="../../graphics/last.png"/></a></td></tr></table></div><div class="page" id="slide-0-0"><div class="titleblock"><h1 class="title">MarkDown Extensions in CoWeM</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jun 9, 2020</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#inline-mark-up">1 Inline mark-up</a></div><div class="toc-h2"><a href="#incremental-lists">1.1 Incremental Lists</a></div><div class="toc-h2"><a href="#firstterm-and-emph">1.2 firstterm and emph</a></div><div class="toc-h2"><a href="#highlighting-and-callouts">1.3 Highlighting and Callouts</a></div><div class="toc-h1"><a href="#block-mark-ups">2 Block mark-ups</a></div><div class="toc-h2"><a href="#examples">2.1 Examples</a></div><div class="toc-h2"><a href="#sidebars">2.2 Sidebars</a></div><div class="toc-h2"><a href="#slideshows">2.3 Slideshows</a></div><div class="toc-h2"><a href="#splitting-into-columns">2.4 Splitting into Columns</a></div><div class="toc-h1"><a href="#hiding-and-revealing-text">3 Hiding and Revealing Text</a></div><div class="toc-h1"><a href="#graphics">4 Graphics</a></div><div class="toc-h2"><a href="#positioning-graphics">4.1 Positioning Graphics</a></div><div class="toc-h2"><a href="#generated-graphics-plantuml-mermaid-">4.2 Generated Graphics (PlantUML &amp; Mermaid)</a></div><div class="toc-h1"><a href="#code-markup">5 Code Markup</a></div></div></div><div class="page" id="slide-0-1" style="display: none;"><p>CoWeM pre-processes Markdown documents using a <a class="doc" href="../../Public/macros/index.html" target="CoWeM_Public">macro processor</a> described in more detail later. Using that, I have added a number of extensions to the basic Markdown. Theme may not always adhering to the Markdown goal of keeping the source text looking suggestive of the formatted results, but they do add facilitiesthat I find particularly useful.</p>
+    <a id="inlinemarkup"/><h1 id="inline-mark-up">1 Inline mark-up</h1><p>These extensions can be applied to text inside a paragraph: </p>
+    </div><!--end page 1--><div class="page" id="slide-0-2" style="display: none;"><h2>1.1 Incremental Lists</h2><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>* Lists can be marked as 
+  incremental &gt;&gt;&gt; 
+* so that, when documents are presented
+  in the _pages_ or 1_ format, 
+* the list elements will be revealed
+  one at a time.
+</code></pre>
+</div><ul>
+  
+  
+  
+</ul></div><!--end page 2--><div class="page" id="slide-0-3" style="display: none;"><h2>1.1 Incremental Lists</h2><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>* Lists can be marked as 
+  incremental &gt;&gt;&gt; 
+* so that, when documents are presented
+  in the _pages_ or 1_ format, 
+* the list elements will be revealed
+  one at a time.
+</code></pre>
+</div><ul>
+  <li>
+  <p>Lists can be marked as incremental <span class="incremental"> </span></p>
+    </li>
+  
+  
+</ul></div><!--end page 3--><div class="page" id="slide-0-4" style="display: none;"><h2>1.1 Incremental Lists</h2><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>* Lists can be marked as 
+  incremental &gt;&gt;&gt; 
+* so that, when documents are presented
+  in the _pages_ or 1_ format, 
+* the list elements will be revealed
+  one at a time.
+</code></pre>
+</div><ul>
+  <li>
+  <p>Lists can be marked as incremental <span class="incremental"> </span></p>
+    </li>
+  <li>
+  <p>so that, when documents are presented in the 1_ format, </p>
+    </li>
+  
+</ul></div><!--end page 4--><div class="page" id="slide-0-5" style="display: none;"><a id="incrementallists"/><h2 id="incremental-lists">1.1 Incremental Lists</h2><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>* Lists can be marked as 
+  incremental &gt;&gt;&gt; 
+* so that, when documents are presented
+  in the _pages_ or 1_ format, 
+* the list elements will be revealed
+  one at a time.
+</code></pre>
+</div><ul>
+  <li>
+  <p>Lists can be marked as incremental <span class="incremental"> </span></p>
+    </li>
+  <li>
+  <p>so that, when documents are presented in the 1_ format, </p>
+    </li>
+  <li>the list elements will be revealed one at a time.</li>
+</ul><p>You can view <a href="markdownExtensions_1.html">this document</a> as slides to see this in action.</p>
+    </div><!--end page 5--><div class="page" id="slide-0-6" style="display: none;"><a id="firsttermandemph"/><h2 id="firstterm-and-emph">1.2 firstterm and emph</h2><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>I have a markup for \firstterm{new terms} being
+introduced for the first time in a document, and for
+\emph{very strong emphasis}.  
+</code></pre>
+</div><p>I have a markup for <span class="firstterm">new terms</span> being introduced for the first time in a document, and for <span class="emph">very strong emphasis</span>. </p>
+    </div><!--end page 6--><div class="page" id="slide-0-7" style="display: none;"><a id="highlightingandcallouts"/><h2 id="highlighting-and-callouts">1.3 Highlighting and Callouts</h2><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>I also have a set of markups for highlighting text
+in \hli{one}, \hlii{two}, \hliii{three},
+and \hliv{four colors}.
+I have commands to generate callout numbers \co1 ,
+\co2 , ..., \co9 . Both the callout
+numbers and color highlighting are generally used
+in conjunction with
+the code markups discussed [later](#post-processing).
+</code></pre>
+</div><p>I also have a set of markups for highlighting text in <span class="hli">one</span>, <span class="hlii">two</span>, <span class="hliii">three</span>, and <span class="hliv">four colors</span>. I have commands to generate callout numbers <span>➀</span> , <span>➁</span> , …, <span>➈</span> . Both the callout numbers and color highlighting are generally used in conjunction with the code markups discussed <a href="#post-processing">later</a>.</p>
+    </div><!--end page 7--><div class="page" id="slide-0-8" style="display: none;"><a id="blockmarkups"/><h1 id="block-mark-ups">2 Block mark-ups</h1><p>Block mark-ups flag a block of paragraphs for special formatting. Most of these are begin by a <code>\b</code>… command and terminated by a matching <code>\e</code>command. </p>
+    </div><!--end page 8--><div class="page" id="slide-0-9" style="display: none;"><h2 id="examples">2.1 Examples</h2><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>\bExample{An Example of Examples}
+
+For example, you can introduce numbered
+examples.
+
+\eExample
+</code></pre>
+</div><blockquote class="example" id="example1"><div class="exampleTitle">Example 1: An Example of Examples</div>
+<p>For example, you can introduce numbered examples.</p>
+    
+</blockquote><p>As a general rule, these <code>\b</code>… and <code>\e</code>… commands should be entered on a separate line, as if they constitute a separate paragraph. (This was required in older versions of this software. It’s more relaxed in the current version, but it is probably still a good idea if only because it improves the visibility of the commands and helps you make sure that, for every <code>\b</code>… you have a corresponding <code>\e</code>… </p>
+    </div><!--end page 9--><div class="page" id="slide-0-10" style="display: none;"><h2 id="sidebars">2.2 Sidebars</h2><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code><br/>\bSidebar
+
+I do like an occasional sidebar.
+
+\eSidebar
+</code></pre>
+</div><p>I do like an occasional sidebar.</p>
+    <div class="noFloat"> </div><div class="sidebar pct33">
+<pre><code>\bSidebar{33}
+
+Sidebars can be width-constrained
+so that they will not extend
+horizontally past a certain
+percentage of the page width.
+Any multiple of 5 can be given as
+a maximum with. 33 and 67 are also
+suppported.
+
+If no value is
+given, the default is 50.
+
+If the sidebar contents have a
+"natural" width less than the value
+given, it will stay that wide.
+The value is only used to set a maximum
+width.
+
+\eSidebar`
+</code></pre>
+</div><p>Sidebars can be width-constrained so that they will not extend horizontally past a certain percentage of the page width. Any multiple of 5 can be given as a maximum with. 33 and 67 are also supported.</p>
+    <p>If no value is given, the default is 50.</p>
+    <p>If the sidebar contents have a “natural” width less than the value given, it will stay that wide. the value is only used to set a maximum width.</p>
+    </div><!--end page 10--><div class="page" id="slide-0-11" style="display: none;"><h2 id="slideshows">2.3 Slideshows</h2><div class="noFloat"> </div><div class="sidebar pct40">
+<pre><code>\bSlideshow
+
+\bSlide
+
+You can insert an internal "slideshow".
+
+Clicking on the controls below...
+
+\eSlide
+
+\bSlide
+
+...will move you from "slide" to "slide"...
+
+\eSlide
+
+\bSlide
+
+...to "slide".
+
+\eSlide
+
+
+\eSlideshow
+</code></pre>
+</div><div class="slideshow">
+<div class="slideshowslide" id="slide-1-0">
+<p>You can insert an internal “slideshow”.</p>
+    
+<p>Clicking on the controls below…</p>
+    
+</div>
+<div class="slideshowslide" id="slide-1-1" style="display: none;">
+<p>…will move you from “slide” to “slide”…</p>
+    
+</div>
+<div class="slideshowslide" id="slide-1-2" style="display: none;">
+<p>…to “slide”.</p>
+    
+</div>
+<div id="slideshowControl1"><script>sshowControl1 = { counter: 1,
+             showNumber: 1, max: 3};
+             </script><table class="slideshowcontrol"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"><a class="slideshowcontrol" onclick="sshow2start(sshowControl1)" title="start"><img alt="first" src="../../graphics/small-first.png"/></a><span> </span><a class="slideshowcontrol" onclick="sshowback(sshowControl1)" title="previous"><img alt="prev" src="../../graphics/small-prev.png"/></a></td><td class="slideshowcontrolMiddle"><span id="slideshowposition1">1 of 3</span></td><td class="slideshowcontrolRight"><a class="slideshowcontrol" onclick="sshowforward(sshowControl1)" title="next"><img alt="next" src="../../graphics/small-next.png"/></a><span> </span><a class="slideshowcontrol" onclick="sshow2end(sshowControl1)" title="last"><img alt="last" src="../../graphics/small-last.png"/></a></td></tr></table></div></div></div><!--end page 11--><div class="page" id="slide-0-12" style="display: none;"><a id="splittingintocolumns"/><h2 id="splitting-into-columns">2.4 Splitting into Columns</h2><div class="splitColumns"><div class="leftColumn">
+<p>Every now and then, I like to present two columns of material, side-by-side.</p>
+    
+</div><div class="rightColumn">
+<pre><code>// Do something
+void foo();
+</code></pre>
+</div></div><div class="noFloat"> </div><div class="sidebar pct40">
+<p>\bSplitColumns</p>
+    
+<p>Every now and then, I like to present two columns of material, side-by-side.</p>
+    
+<p>\splitColumn</p>
+    
+<pre><code>// Do something
+void foo();
+</code></pre>
+<p>\eSplitColumns</p>
+    
+</div><div class="splitColumns"><div class="leftColumn">
+<p>Like this, for example. The right column will wind up getting bumped down below the left.</p>
+    
+</div><div class="rightColumn">
+<pre><code>// Do something
+void foo();
+</code></pre>
+</div></div><p>This is not a particularly robust formatting, however, and things get ugly if the content is a bit too wide for the screen.</p>
+    </div><!--end page 12--><div class="page" id="slide-0-13" style="display: none;"><a id="hidingandrevealingtext"/><h1 id="hiding-and-revealing-text">3 Hiding and Revealing Text</h1><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>^^^[click to reveal]
+
+The three carets introduce an HTML5-style details 
+element, which allows click-to-reveal behavior.
+
+As it happens, neither of the Microsoft browsers (IE or Edge) 
+support this element yet, so this is currently
+simulated via Javascript. 
+^^^
+</code></pre>
+</div><div class="details"><span class="summary">click to reveal</span> <input id="but_details_d7e258" onclick="toggleDisplay('_details_d7e258')" type="button" value="+"/><div class="detailsBody" id="_details_d7e258" style="display: none;">
+<p>The three carets introduce an HTML5-style details element, which allows click-to-reveal behavior.</p>
+    
+<p>The three carets introduce an HTML5-style details element, which allows click-to-reveal behavior.</p>
+    
+<p>As it happens, neither of the Microsoft browsers (IE or Edge) support this element yet, so this is currently simulated via Javascript. </p>
+    
+</div></div><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>A variation on this is the ability to load long code listings,
+contained in a separate file providing both a link to the code as a
+separate HTML page and a click-to-reveal button to expand the listing
+in place.
+
+\loadlisting{unittest.h}
+
+Files processed in this way can end with `.h`, `.cpp`, `.java`, or
+`.listing` file names.
+</code></pre>
+</div><p>A variation on this is the ability to load long code listings, contained in a separate file providing both a link to the code as a separate HTML page and a click-to-reveal button to expand the listing in place.</p>
+    <div class="details"><span class="summary"><a href="unittest.h" target="listing">unittest.h</a></span> <input id="but_details_d7e272" onclick="toggleDisplay('_details_d7e272')" type="button" value="+"/><div class="detailPart" id="_details_d7e272"><pre><code id="_details_d7e272_code">#ifndef UNITTEST_H
+#define UNITTEST_H
+
+#include &lt;string&gt;
+
+/*
+ *  This class helps support self-checking unit tests.
+ *  
+ *  A small collection of test assertions (inspired by the JUNIT
+ *  package for Java is supported). The number of successes and failures
+ *  of these assertions are tallied and can be accessed at any time (typically
+ *  at the end of the test suite).
+ *
+ *  In addition, detailed error messages are printed for the first
+ *  DETAIL_LIMIT failures. (After that additional failures are tallied
+ *  but not printed.)
+ *
+ */
+
+class UnitTest {
+private:
+  static long numSuccesses;
+  static long numFailures;
+  static long DETAIL_LIMIT;
+  static long NOTICE_INTERVAL;
+
+public:
+  // The main test function - normally called via one of the macros
+  // declared following this class.
+  static void checkTest (bool condition, const char* conditionStr,
+			 const char* fileName, int lineNumber);
+  static void checkTest (bool condition, const std::string&amp; conditionStr,
+			 const char* fileName, int lineNumber);
+
+
+  // Summary info about tests conducted so far
+  static long getNumTests()     {return numSuccesses + numFailures;} 
+  static long getNumFailures()  {return numFailures;} 
+  static long getNumSuccesses() {return numSuccesses;} 
+  
+  // Change the number of detailed messages to be printed.
+  static void setDetailLimit (long limit) {DETAIL_LIMIT = limit;}
+
+  // Start a fresh tally.
+  static void reset() {numSuccesses = numFailures = 0L; NOTICE_INTERVAL = 10L;}
+
+  // Print a simple summary report
+  static void report (std::ostream&amp; out);
+};
+
+
+/**
+ *   Macros - actual tests will invoke one of these
+ */
+
+#define assertTrue(cond) UnitTest::checkTest (cond, #cond, __FILE__, __LINE__)
+#define assertFalse(cond) UnitTest::checkTest (!(cond), "!( ## cond ## )", __FILE__, __LINE__)
+
+#define assertEqual( x, y ) UnitTest::checkTest ((x)==(y),\
+                            "assertEqual("  #x "," #y ")", \
+                            __FILE__, __LINE__)
+
+#define assertNotEqual( x , y ) assertFalse ((x)==(y))
+
+#define assertNull(x) checkTest ((x)==0)
+
+#define assertNotNull(x) checkTest ((x)!=0)
+
+#define succeed UnitTest::checkTest (true, "succeed", __FILE__, __LINE__)
+
+#define fail UnitTest::checkTest (false, "fail", __FILE__, __LINE__)
+
+
+
+
+#endif
+</code></pre></div></div><p>A link is included to the unmodified source code file (to facilitate downloading), so that file should be one of the support files for the document set. </p>
+    </div><!--end page 13--><div class="page" id="slide-0-14" style="display: none;"><h1 id="graphics">4 Graphics</h1><a id="positioninggraphics"/><h2 id="positioning-graphics">4.1 Positioning Graphics</h2><div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code>As noted earlier,
+Markdown already has support for
+inserting graphics into a page. You
+can place graphics inline
+like this: ![lab icon](lab.png "lab"). 
+
+You can also type HTML `img` tags directly, 
+&lt;img src="bookarray.png" align='right'/&gt; which makes
+it possible to use the "`align`" attribute
+to position your graphics. 
+
+&lt;img src="bookLL.png" align='right'/&gt;
+A problem with this can occur when long
+vertical graphics are
+accompanied by relatively short text 
+(particularly when viewed on a
+wide screen).  
+
+&lt;img src="bookarray.png" align='right'/&gt;The
+floating graphics
+can stack up on one another,
+leading to a confusing layout.
+
+</code></pre>
+</div><p>As noted earlier, Markdown already has support for inserting graphics into a page. You can place graphics inline like this: <img alt="lab icon" src="lab.png" title="lab"/>. </p>
+    <p>You can also type HTML <code>img</code> tags directly, <img align="right" src="bookarray.png"/> which makes it possible to use the “<code>align</code>” attribute to position your graphics. </p>
+    <img align="right" src="bookLL.png"/><p>A problem with this can occur when long vertical graphics are accompanied by relatively short text (particularly when viewed on a wide screen). </p>
+    <p><img align="right" src="bookarray.png"/>The floating graphics can stack up on one another, leading to a confusing layout.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>&lt;img src="bookarray.png" align='right'/&gt; As
+a fix for this, I provide a CSS style
+class  `noFloat` with the attribute clear:both.  This
+can be inserted as an empty paragraph:
+
+&lt;div class="noFloat"&gt; &lt;/div&gt;
+
+&lt;img src="bookLL.png" align='right'/&gt; This
+has the effect of forcing any following
+ text and graphics to be positioned after the end of
+ floating graphics, sidebars, or other floating content.
+
+</code></pre>
+</div><p><img align="right" src="bookarray.png"/> As a fix for this, I provide a CSS style class <code>noFloat</code> with the attribute clear:both. This can be inserted as an empty paragraph:</p>
+    <div class="noFloat"> </div>
+    <p><img align="right" src="bookLL.png"/> This has the effect of forcing any following text and  graphics to be positioned after the end of floating graphics,  sidebars, or other floating content.</p>
+    <p>However, I find that I often wind up using the same graphics sequences over and over, so I have some shortcut commands. The command <code>\picOnRight(</code>_filename_<code>,</code>_pct_<code>)</code> is equivalent to</p>
+    <pre><code>&lt;div class="noFloat"&gt;&lt;/div&gt;
+&lt;img src="filename.png" align="right"
+     style="max-width: pct%/&gt;"
+</code></pre><p>It drops below any existing floating content, then inserts a floating graphic on the right, reducing the graphic’s size only if it exceeds a width of <em>pct</em>%.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>\picOnLeft(bookarray,25)
+
+Similarly, I can insert graphics on the left
+instead of on the right.
+</code></pre>
+</div><p><div class="noFloat"> </div>
+    <img src="bookarray.png" style="float: left; max-width: 25%;"/></p>
+    <p>Similarly, I can insert graphics on the left instead of on the right.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>\centerPic(bookLL,50)
+
+Or I can put them centered with nothing flowing around them.
+
+</code></pre>
+</div><p><div class="noFloat"> </div>
+    <div style="text-align: center'"><img align="center" src="bookLL.png" style="max-width: 50%;"/></div>
+    </p>
+    <p>Or I can put them centered with nothing flowing around them.</p>
+    </div><!--end page 14--><div class="page" id="slide-0-15" style="display: none;"><a id="generatedgraphicsplantumlmermaid"/><h2 id="generated-graphics-plantuml-mermaid-">4.2 Generated Graphics (PlantUML &amp; Mermaid)</h2><h3 id="plantuml">4.2.1 PlantUML</h3><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>```plantuml
+
+class Book {
+    title: String
+    authors: list&lt;Author&gt;
+    getLocation(): Shelf
+}
+
+Publication &lt;|- Book
+Shelf o- Book
+```
+</code></pre>
+</div><p>If a code block (introduced with three back-ticks) is labeled with the language name “<code>plantuml</code>”, then the code block will be replaced by a graphic representing a UML diagram as interpreted by <a href="https://plantuml.com">PlantUML</a>. (This mechanism is similar to the support for PlantUML in the GitHub dialect of Markdown.)</p>
+    
+      <div class="noFloat"> </div><pre id="pred7e370" style="display:none"><code class="plantuml">class Book {
+    title: String
+    authors: list&lt;Author&gt;
+    getLocation(): Shelf
+}
+
+Publication &lt;|- Book
+Shelf o- Book
+</code></pre><img class="" id="imgd7e370" src=""/><script>plantuml("pred7e370", "imgd7e370");
+      	</script><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>```plantuml class=right
+skinparam style strictuml
+hide empty members
+
+Publication &lt;|-down- Book
+Shelf o- "*" Book
+```  
+</code></pre>
+</div><p>It is possible to add CSS styles to the generated image using the <code>class=</code> modifier. The most obvious application of this is to cause the image to float on the right or left.</p>
+    
+      <div class="noFloat"> </div><pre id="pred7e382" style="display:none"><code class="plantuml class=right">skinparam style strictuml
+hide empty members
+
+Publication &lt;|-down- Book
+Shelf o- "*" Book
+</code></pre><img class="right" id="imgd7e382" src=""/><script>plantuml("pred7e382", "imgd7e382");
+      	</script><p>Change the “right” to “left” to float on the other side.</p>
+    <p>Change to “center” for a centered, non-floating figure.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>```plantuml classes='left foobar'
+skinparam style strictuml
+skinparam shadowing true
+hide empty members
+
+caption Figure 1
+
+title
+Class Relationships
+endtitle
+
+Author --&gt; Book : writes
+```  
+</code></pre>
+</div><p>It is actually possible to add multiple CSS class names (inside single-quotes).</p>
+    
+      <div class="noFloat"> </div><pre id="pred7e394" style="display:none"><code class="plantuml classes='left foobar'">skinparam style strictuml
+skinparam shadowing true
+hide empty members
+
+caption Figure 1
+
+title
+Class Relationships
+endtitle
+class Author {
+}
+
+class Book {
+}
+
+Author --&gt; Book : writes
+</code></pre><img class="left foobar" id="imgd7e394" src=""/><script>plantuml("pred7e394", "imgd7e394");
+      	</script><p>(Although you would have to examine the generated HTML to see that the useless class “foobar” is attached to the image.)</p>
+    </div><!--end page 15--><div class="page" id="slide-0-16" style="display: none;"><h3 id="mermaid">4.2.2 Mermaid</h3><p>Support is also available for Mermaid, another Markdown-friendly graphics processor.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>```mermaid
+graph TD
+  need[Need a graphic]
+  inUML{Is it UML?}
+  need --&gt; inUML
+  thenPart[I prefer PlantUML]
+  inUML --yes--&gt; thenPart
+  elsePart[Use Mermaid]
+  inUML --no--&gt; elsePart
+  joined([done])
+  thenPart --&gt; joined
+  elsePart --&gt; joined
+```
+</code></pre>
+</div><p>If a code block (introduced with three back-ticks) is labeled with the language name “<code>mermaid</code>”, then the code block will be replaced by a graphic representing a diagram as interpreted by <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid</a>. </p>
+    
+      <div class="noFloat"/><span class=""><code class="mermaid">graph TD
+  need[Need a graphic]
+  inUML{Is it UML?}
+  need --&gt; inUML
+  thenPart[I prefer PlantUML]
+  inUML --yes--&gt; thenPart
+  elsePart[Use Mermaid]
+  inUML --no--&gt; elsePart
+  joined([done])
+  thenPart --&gt; joined
+  elsePart --&gt; joined
+</code></span><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>```mermaid class=right
+stateDiagram
+    [*] --&gt; Test
+    Test --&gt; [*]: working
+    Test --&gt; Debug: broken
+    Debug --&gt; Fix
+    Fix --&gt; Test
+```
+</code></pre>
+</div><p>As with the PlantUML diagrams, class info can be attached to alter the formatting.</p>
+    
+      <div class="noFloat"/><span class="right"><code class="mermaid">stateDiagram
+	[*] --&gt; Test
+	Test --&gt; [*]: working
+    Test --&gt; Debug: broken
+    Debug --&gt; Fix
+    Fix --&gt; Test
+</code></span></div><!--end page 16--><div class="page" id="slide-0-17" style="display: none;"><a id="codemarkup"/><h1 id="code-markup">5 Code Markup</h1><p>To facilitate discussing programming code, I have some special markups that can be inserted into C++ or Java code as comments. This way it does not affect the syntactic integrity of the code. You can load it into a programming editor or run it through a compiler with no ill effects. But when the HTML is generated, these comments are converted to appropriate markup.</p>
+    <p>If a <code>/* */</code> style comment contains only a single digit number, e.g., <code>/*</code>1<code>*/</code>, it is converted to the corresponding callout symbol, which can then be discussed in the text:</p>
+    <blockquote>
+  <p><strong>Anatomy of a for loop</strong></p>
+    
+  <pre><code class="c++">for (int i = 0&#x2780;; i &lt; n&#x2781;; ++i&#x2782;)
+   cout &lt;&lt; a[i] &lt;&lt; endl; &#x2783;
+</code></pre>
+  <p><span>➀</span> represents the initialization of the loop.</p>
+    
+  <p><span>➁</span> is the loop condition.</p>
+    
+  <p><span>➂</span> is the repeat action.</p>
+    
+  <p><span>➃</span> is the loop body.</p>
+    
+</blockquote><p>Similarly, if a <code>/* */</code> style comment contains only +1, +2, +3, or +4, this turns on a background color for highlighting. This highlighting is turned off with -1 , -2, -3, and -4, respectively. Also, + and - by themselves are shorthand for +1 and -1.</p>
+    <blockquote>
+  <p><strong>Anatomy of a for loop</strong></p>
+    
+  <pre><code class="c++">for (<span class='hli'>int i = 0</span>; <span class='hlii'>i &lt; n</span>; <span class='hliii'>++i</span>)
+   <span class='hliv'>cout &lt;&lt; a[i] &lt;&lt; endl; </span>
+</code></pre>
+  <p>Here we see the <span class="hli">initialization</span>, <span class="hlii">condition</span>, <span class="hliii">repeat action</span>, and <span class="hliv">body</span> components of the loop.</p>
+    
+</blockquote></div><!--end page 17--><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 18};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"><a class="slideshowcontrol" onclick="sshow2start(sshowControl0)" title="start"><img alt="first" src="../../graphics/first.png"/></a><span> </span><a class="slideshowcontrol" onclick="sshowback(sshowControl0)" title="previous"><img alt="prev" src="../../graphics/prev.png"/></a></td><td class="slideshowcontrolMiddle"><span id="slideshowposition0">1 of 17</span>
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20MarkDown%20Extensions%20in%20CoWeM"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="markdownExtensions__scroll.html"><img src="../../graphics/scroll.png" title="single-page HTML version"/></a></td><td class="slideshowcontrolRight"><a class="slideshowcontrol" onclick="sshowforward(sshowControl0)" title="next"><img alt="next" src="../../graphics/next.png"/></a><span> </span><a class="slideshowcontrol" onclick="sshow2end(sshowControl0)" title="last"><img alt="last" src="../../graphics/last.png"/></a></td></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div><script>collectID('slide-0-1', 1);
+collectID('inline-mark-up', 1);
+collectID('slide-0-2', 2);
+collectID('slide-0-3', 3);
+collectID('slide-0-4', 4);
+collectID('slide-0-5', 5);
+collectID('incremental-lists', 5);
+collectID('slide-0-6', 6);
+collectID('firstterm-and-emph', 6);
+collectID('slide-0-7', 7);
+collectID('highlighting-and-callouts', 7);
+collectID('slide-0-8', 8);
+collectID('block-mark-ups', 8);
+collectID('slide-0-9', 9);
+collectID('examples', 9);
+collectID('slide-0-10', 10);
+collectID('sidebars', 10);
+collectID('slide-0-11', 11);
+collectID('slideshows', 11);
+collectID('slide-0-12', 12);
+collectID('splitting-into-columns', 12);
+collectID('slide-0-13', 13);
+collectID('hiding-and-revealing-text', 13);
+collectID('slide-0-14', 14);
+collectID('graphics', 14);
+collectID('positioning-graphics', 14);
+collectID('slide-0-15', 15);
+collectID('generated-graphics-plantuml-mermaid-', 15);
+collectID('plantuml', 15);
+collectID('slide-0-16', 16);
+collectID('mermaid', 16);
+collectID('slide-0-17', 17);
+collectID('code-markup', 17);
+</script></body></html>

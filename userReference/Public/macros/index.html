@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Macros</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Macros"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Macros</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jul 19, 2016</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#the-macro-commands">1 The Macro Commands</a></div><div class="toc-h1"><a href="#defining-and-using-macros">2 Defining and Using Macros</a></div><div class="toc-h1"><a href="#adding-new-macros">3 Adding New Macros</a></div></div><p>The first stage in processing a CoWeM document is to pass it through a macro processor. The macro processor allows extension of the notation supported by CoWeM beyond the basics of Markdown. </p>
+    <p>Nearly all of the <a class="doc" href="../../Public/markdownExtensions/index.html" target="CoWeM_Public">Markdown extensions described here</a> rely on the macro processor. CoWeM provides a standard set of macros for this purpose, but document authors can add their own.</p>
+    <a id="themacrocommands"/><h1 id="the-macro-commands">1 The Macro Commands</h1><p>The macro processor provides the following commands:</p>
+    <dl>
+  <dt><tt>%</tt><tt>define</tt>
+  </dt>
+  <dd>declares new macros. The use of this command is the subject of the remainder of this document.</dd>
+  <dt><tt>%</tt><tt>if</tt>…<tt>%</tt><tt>else</tt>…<tt>%</tt><tt>endif</tt>
+  </dt>
+  <dd>Allows text to be included or ignored based upon whether a macro has been defined. The use of this command is the subject of <a class="doc" href="../../Public/conditionalText/index.html" target="CoWeM_Public">Conditional Text</a>.</dd>
+  <dt><tt>%</tt><tt>ifnot</tt>…<tt>%</tt><tt>else</tt>…<tt>%</tt><tt>endif</tt>
+  </dt>
+  <dd>Allows text to be included or ignored based upon whether a macro has not been defined. The use of this command is the subject of <a class="doc" href="../../Public/conditionalText/index.html" target="CoWeM_Public">Conditional Text</a>.</dd>
+</dl><a id="definingandusingmacros"/><h1 id="defining-and-using-macros">2 Defining and Using Macros</h1><p>Macros are defined using the <code>&lt;tt&gt;&amp;#x25;&lt;/tt&gt;&lt;tt&gt;define&lt;/tt&gt;</code> command, which has the form:</p>
+    <p><tt>%</tt><tt>define</tt> <code>{</code> <em>name</em> <code>} {</code> <em>parameters</em> <code>} {</code> <em>body</em> <code>}</code></p>
+    <ul>
+  <li>The <code>{ }</code> brackets can be replaced by <code>[ ]</code>, <code>( )</code>, or <code>&lt; &gt;</code>, whichever is convenient.</li>
+  <li>The <em>name</em> can be any ASCII string not inclduing blanks, control characters, or either of the bracketing  characters surrounding the name.</li>
+  <li>
+  <p>The <em>parameters</em> is a comma-separated list of zero or more parameters - names that will be replaced  in the body based upon how the macro was called.</p>
+    </li>
+  <li>The <em>body</em> is the text that will be inserted in place of the macro call. The body can span multiple  lines, and can contain any characters except the ones used for the outer bracket (which is why it is useful  to be able to choosethe characters actually used for bracketing.</li>
+</ul><p>A macro is used by simply writing the macro name followed immediately by a bracket pair (same options as above) contining a comma-separated list of parameter strings. These may contain any character except a comma and the slected bracketing characters. If a macro is declared to take no parameters, it is called by simply writing its name.</p>
+    <blockquote class="example" id="example1"><div class="exampleTitle">Example 1: A Macro With No Parameters</div>
+<p>One of the predefined macros is <tt>\</tt><tt>firstterm</tt>, which is declared as</p>
+    
+<p><tt>%</tt><tt>define</tt> <tt>&lt;</tt><tt>\</tt><tt>firstterm</tt>&gt; <code>{newterm} {</code><tt>&lt;</tt><code>span class="firstterm"&gt;newterm</code><tt>&lt;</tt><code>/span&gt;}</code></p>
+    
+<p>and called as <tt>\</tt><tt>firstterm</tt><code>{something}</code> or <tt>\</tt><tt>firstterm</tt><code>[something]</code> or  <tt>\</tt><tt>firstterm</tt><code>&lt;something&gt;</code> or <tt>\</tt><tt>firstterm</tt><code>(something)</code> to produce “<span class="firstterm">something</span>”. More precisely, it produces an HTML <code>span</code> element with CSS class “firstterm”.  The Markdown processor will pass this HTML content through unchanged, and the standard CoWeM dictates the appearance of “firstterm” class elements.</p>
+    
+</blockquote><blockquote class="example" id="example2"><div class="exampleTitle">Example 2: A Macro with Multiple Parameters</div>
+<p>Another predefined macro is <tt>\</tt><tt>picOnRight</tt>, which typsets a <code>.png</code> graphic on the right of the screen with a stipulation that it grow no wider than a specified percentage of the total width of the document.</p>
+    
+<p>It is defined as:</p>
+    
+<p><tt>%</tt><tt>define</tt> <tt>&lt;</tt><tt>\</tt><tt>bPicOnRight</tt><code>&gt; (file,pctwidth) {</code><tt>&lt;</tt><code>div class="noFloat"&gt;&amp;nbsp;</code><tt>&lt;</tt><code>/div&gt;</code>  <tt>&lt;</tt><code>img src="file.png" style="float: right; max-width: pctwidth%;"/&gt;}</code> </p>
+    
+<p>Examining the body, you can see how both the <code>file</code> and <code>pctWidth</code> paramters are inserted into the generated HTML.</p>
+    
+</blockquote><blockquote class="example" id="example3"><div class="exampleTitle">Example 3: A Macro with No Parameters</div>
+<p>The macro <tt>\</tt><tt>co1</tt> is used to insert a “callout symbol” containing a “1” : <span>➀</span> .</p>
+    
+<p>It is declared as</p>
+    
+<p><tt>%</tt><tt>define</tt> <tt>&lt;</tt><tt>\</tt><tt>co1</tt><code>&gt;</code><tt>&lt;</tt><code>&gt; [</code><tt>&lt;</tt><code>span&gt;&amp;#x2780;</code><tt>&lt;</tt><code>/span&gt;]</code></p>
+    
+<p>Because this macro is delcared to take no parameters, it is called by writing it without a following bracket: <tt>\</tt><tt>co1</tt> produces <span>➀</span> .</p>
+    
+</blockquote><a id="addingnewmacros"/><h1 id="adding-new-macros">3 Adding New Macros</h1><p>Macros can be added to a document by simply typing the <tt>%</tt><tt>define</tt> command into the document.</p>
+    <p>A file of macros can be added by listing it in the metadata for a document, e.g.,</p>
+    <pre><code>Title: My Document
+Author: John Doe
+Macros: myMacros.md
+
+# Introduction
+</code></pre></div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Macros"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

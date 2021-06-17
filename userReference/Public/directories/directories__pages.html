@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-pages.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-pages-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-pages.js" type="text/javascript"> </script><script src="../../styles/md-pages-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Directories and Files</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 11};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"><a class="slideshowcontrol" onclick="sshow2start(sshowControl0)" title="start"><img alt="first" src="../../graphics/first.png"/></a><span style="minWidth: 2ex;">  </span><a class="slideshowcontrol" onclick="sshowback(sshowControl0)" title="previous"><img alt="prev" src="../../graphics/prev.png"/></a></td><td class="slideshowcontrolMiddle"><span id="slideshowpositionA0">1 of 10</span>
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Directories%20and%20Files"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="directories__scroll.html"><img src="../../graphics/scroll.png" title="single-page HTML version"/></a>
+<a class="imgLink" href="directories__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"><a class="slideshowcontrol" onclick="sshowforward(sshowControl0)" title="next"><img alt="next" src="../../graphics/next.png"/></a><span style="minWidth: 2ex;">  </span><a class="slideshowcontrol" onclick="sshow2end(sshowControl0)" title="last"><img alt="last" src="../../graphics/last.png"/></a></td></tr></table></div><div class="page" id="slide-0-0"><div class="titleblock"><h1 class="title">Directories and Files</h1><h2 class="author">Steven Zeil</h2><div class="date">Last modified: Jun 9, 2020</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#directory-overview">1 Directory Overview</a></div><div class="toc-h1"><a href="#document-sets">2 Document Sets</a></div><div class="toc-h2"><a href="#primary-document-formats">2.1 Primary Document Formats</a></div><div class="toc-h2"><a href="#the-build-gradle-file">2.2 The build.gradle File</a></div><div class="toc-h1"><a href="#document-set-groups">3 Document Set Groups</a></div><div class="toc-h2"><a href="#the-build-gradle-file">3.1 The build.gradle File</a></div><div class="toc-h1"><a href="#the-course">4 The Course</a></div><div class="toc-h2"><a href="#settings-gradle">4.1 settings.gradle</a></div><div class="toc-h2"><a href="#build-gradle">4.2 build.gradle</a></div></div></div><div class="page" id="slide-0-1" style="display: none;"><p>This document presents an overview of the directory and file structure of a CoWeM website.</p>
+    <p>The directory structure, both of the input documents and of the generated website, is kept purposely simple. This allows easy development of the content and easy interlinking between documents in the generated website. On the other hand, the logical structure of the website, and revealed via the navigation links, can be as complicated as you need it to be.</p>
+    </div><!--end page 1--><div class="page" id="slide-0-2" style="display: none;"><a id="directoryoverview"/><h1 id="directory-overview">1 Directory Overview</h1><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>course root/
+|- settings.gradle
+|- build.gradle
+|- gradlew
+|- gradlew.bat
+|- gradlew-gui.bat
+|- gradle/
+|- Directory/
+|--|- outline/
+|--|--navigation/
+|--|--policies/
+|--|--library/
+|- Public/
+|--|- syllabus/
+|--|--orientation/
+|--|--lecture1/
+|--|--lecture2/
+|- Protected/
+|--|- assignment1/
+|--|--assignment2/
+|--|--project/
+|- graphics/
+|- styles/
+|- build/
+|--|- website/
+|--|- packages/
+</code></pre>
+</div><p>The overall directory structure is shown in the diagram on the right. The “course root” is the top directory for the course website content.</p>
+    <p>The first several files and directories, the ones that contain “gradle” in their name, provide the software and configuration that actually builds the website. Some of these are discussed in the sections that follow, and a more detailed discussion is in <a class="doc" href="../../Public/buildingTheWebsite/index.html" target="CoWeM_Public">Building the Website</a>.</p>
+    <p>The <code>Directory</code>, <code>Public</code>,and <code>Protected</code> directories are examples of <em>document set groups</em>, or <em>groups</em> for short. Each group contains an arbitrary number of <em>document sets</em>. Document sets are described in the next section, and groups in <a href="#document-set-groups">Document Set Groups</a>.</p>
+    <p>The next two directories, <code>graphics</code> and <code>styles</code>, are optional in the input but will be present in the generated website. The <code>graphics</code> directory contains icons that are used in multiple places in the website, and the <code>styles</code> directory contains CSS and Javascript files that control the appearance and behavior of pages on the site. If you provide either of these in your input directories, the content you place there will appear in the corresponding direcotires in the generated website. This can be used to extend the standard offerings {e.g., adding new icons) or to override the defaults (e.g., to alter the CSS used for some pages)., This is discussed in the later documents on <a class="doc" href="../../Directory/outline/index.html" target="CoWeM_Directory">customizing the website</a>.</p>
+    <p>The <code>build</code> directory contains work areas and output areas and is created when you generate the website. The generated website istelf will appear in <code>build/website/</code> and you can preview the website before deploying it by opening any of the HTML files in <code>build/website/...</code> with your web browser. If you request construction of a <em>package</em>, such as a zip archive of the generated website, you will find that in <code>build/packages</code>.</p>
+    <blockquote>
+  <p>Everything in the <code>build</code> directory can be reconstructed quickly and easily. It is safe to delete any subdirectory in there, or the entire <code>build</code> directory. In fact, that is the easiest way to “reset” the build process back to a clean state.</p>
+    
+</blockquote></div><!--end page 2--><div class="page" id="slide-0-3" style="display: none;"><a id="documentsets"/><h1 id="document-sets">2 Document Sets</h1><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>course root/
+|--&#x22ee;
+|--|--lecture1/           &#x2780;
+|--|--|- lecture1.md      &#x2781;
+|--|--|- extraNotes.mmd   &#x2782;
+|--|--|- listing1.cpp     &#x2783;
+|--|--|- listing2.md      &#x2783;
+|--|--|- diagram.png      &#x2784;
+|--|--|- build.gradle     &#x2785;
+|--|--lecture2/
+|- &#x22ee;
+</code></pre>
+</div><p>A document set <span>➀</span> consists of</p>
+    <ul>
+  <li>one primary document,<span>➁</span> <a class="doc" href="../../Public/markdown/index.html" target="CoWeM_Public">written in Markdown</a>, which  is rendered in one or more HTML-based <em>formats</em> on the website.
+    <ul>
+      <li>By default, the primary document in a document set directory  named “foo” would be in a file named <code>foo.md</code>.</li>
+    </ul>
+  </li>
+  <li>any number of secondary documents,<span>➂</span> written in Markdown, which  are rendered as web pages using the <em>scroll</em> format.
+    <ul>
+      <li>By default, any files ending in <code>.md</code> or <code>.mmd</code>, other than the  primary document, will be treated as secondary documents.</li>
+    </ul>
+  </li>
+  <li>
+    <p>any number of listings,<span>➃</span> which are rendered as basic web pages  preserving all line breaks, indentation, and spacing.</p>
+    
+    <ul>
+      <li>By default, files ending in<code>.h</code>, <code>.cpp</code>, <code>.java</code>, or <code>.listing</code>  are treated as listings.</li>
+      <li>Syntax highlighting (coloring) as applied to these listings.</li>
+    </ul>
+  </li>
+  <li>
+    <p>any number of support files,<span>➄</span> which are copied to the website  without modification. Examples of support files would be graphics,  document-specific CSS, or data files that you want to link to.</p>
+    
+    <ul>
+      <li>By default, common graphics formats and files ending in <code>.css</code>,  <code>.js</code>, and <code>.html</code> are treated as support files.</li>
+    </ul>
+  </li>
+  <li>a configuration file named <code>build.gradle</code> <span>➅</span>
+    <ul>
+      <li>Among other things, this configuration can augment or override  any of the defaults listed above.</li>
+    </ul>
+  </li>
+</ul></div><!--end page 3--><div class="page" id="slide-0-4" style="display: none;"><a id="primarydocumentformats"/><h2 id="primary-document-formats">2.1 Primary Document Formats</h2><p>Primary documents can be rendered in several <em>formats</em>. Currently supported formats are</p>
+    <p>The three major formats are:</p>
+    <dl>
+  <dt>scroll</dt>
+  <dd>The entire document rendered as a single web page.
+    <p>You can view the <em>scroll</em> format of this document by clicking the <img src="../../graphics/scroll.png"/> symbol at the top or bottom of this page.</p>
+    
+  </dd>
+</dl><dl>
+  <dt>pages</dt>
+  <dd>The document is split into multiple pages with next-page and previous-page controls. New pages are started at each new section, sub-section, or sub-sub-section. A new page is also started at any horizontal rule that is not nested inside a sidebar, example, or other text organizational unit.
+    <p>You are currently reading the 1_ format of this document.</p>
+    
+  </dd>
+</dl><dl>
+  <dt>slides</dt>
+  <dd>The document is split as in the pages format, but the formatting (CSS) uses larger fonts and colored background suitable for slides in a lecture. These “slides” can be longer vertically than the screen, and so may require some scrolling. This is contrary to the practice of more conventional slide formats, but I actually regard that as a major advantage, as it allows the presentation of programming code, mathematics, or diagrams that don’t require shrinking or being artificially chopped into short segments.
+    <p>You can view the <em>slides</em> format of this document by clicking the <img src="../../graphics/slides.png"/> symbol at the top or bottom of this page.</p>
+    
+    <ul>
+      <li>Navigation through both the 1_ and <em>slides</em> formats can be accomplished by clicking on the <img src="../../graphics/prev.png"/> and <img src="../../graphics/next.png"/> symbols at the top and bottom of each page or, on most system, using the left and right arrow keys. It is possible to change the bindings to use other keys and events (e.g., click/Enter to advance) by a fairly simple <a href="doc:graphicsAndStyles">modification of the Javascript in the <code>styles/</code> directory</a>.</li>
+    </ul>
+  </dd>
+</dl><p>You may notice that the text above changes slightly as you move from one format to another. You can use <a class="doc" href="../../Public/conditionalText/index.html" target="CoWeM_Public">conditional text</a> to select paragraphs of text based upon, among other things, the format into which the document is being rendered. My most common use for conditional text is to omit paragraphs of explanatory text from slides that represent things I will actually say in class when discussing a slide, but allow that text to appear in the lecture notes that I provide for students to review or for publication in a web version of the same course.</p>
+    <p>There are also a number of more specialized formats:</p>
+    <dl>
+  <dt>directory</dt>
+  <dd>This is used for the major organizational pages in the website. It is a  single web page with a navigation panel on the left. The navigation panel  provides links, usually to the various directory pages.
+    <ul>
+      <li>
+      <p><a class="doc" href="../../Directory/library/index.html" target="CoWeM_Directory">Here</a> is an example of a page in <em>directory</em>  format.</p>
+    </li>
+    </ul>
+  </dd>
+  <dt>navigation</dt>
+  <dd>This is the format used to prepare the navigation panel that appears in  all directory pages.
+    <ul>
+      <li>
+      <p><a class="doc" href="../../Directory/navigation/index.html" target="CoWeM_Directory">Here</a> is an example of a page in <em>navigation</em>  format. This is generally not viewed separately, but as included  in directory pages.</p>
+    </li>
+    </ul>
+  </dd>
+</dl><dl>
+  <dt>modules</dt>
+  <dd>A special format for presenting the course outline. It renders as a single  page with collapsible sections.
+    <ul>
+      <li>
+      <p><a class="doc" href="../../Directory/outline/index.html" target="CoWeM_Directory">Here</a> is an example of a page in <em>modules</em>  format.</p>
+    </li>
+    </ul>
+  </dd>
+</dl><dl>
+  <dt>topics</dt>
+  <dd>Another special format for presenting the course outline. It renders as a  table with different columns for different types of activities.
+    <ul>
+      <li>
+      <p><a href="../../Directory/outline/outline__topics.html">Here</a> is an  example of a page in <em>topics</em>  format.</p>
+    </li>
+    </ul>
+  </dd>
+  <dt>calendar</dt>
+  <dd>Yet another format for presenting the course outline. It renders as a  simple list of those activities in the outline that have been given  dates, with formatting assigned based upon whther the event is in  the past, is currently running, or is in the future. It is  intended to serve as a notice of upcoming events.
+    <p>This list can appear as a component of the “modules” format listing but can also be used separately, e.g. by inserting an <code>iframe</code> into a Blackboard item.</p>
+    
+  </dd>
+</dl><p>Early versions of CoWeM also supported and <em>epub</em> format for preparing documents for publication in an e-book. That option is not currently supported, but may be restored in future versions.</p>
+    </div><!--end page 4--><div class="page" id="slide-0-5" style="display: none;"><a id="thebuildgradlefile"/><h2 id="the-build-gradle-file">2.2 The build.gradle File</h2><p>Each document set must have a file named “<code>build.gradle</code>”. Unless you are <a class="doc" href="../../Public/buildOptions/index.html#document-set-options" target="CoWeM_Public">overriding the default document processing options</a>, this can consist of a single line:</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cowem.Documents' 
+</code></pre></div><!--end page 5--><div class="page" id="slide-0-6" style="display: none;"><a id="documentsetgroups"/><h1 id="document-set-groups">3 Document Set Groups</h1><div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>course root/
+|- &#x22ee;
+|- Directory/
+|- build.gradle
+|--|- outline/
+|--|--navigation/
+|--|--policies/
+|--|--library/
+|- Public/
+|--|- syllabus/
+|--|--orientation/
+|--|--lecture1/
+|--|--lecture2/
+|- Protected/
+|--|- assignment1/
+|--|--assignment2/
+|--|--project/
+</code></pre>
+</div><p>A document set group, or group for short, is a directory containing one or more document sets.</p>
+    <p>A group gathers together document sets that are to share some common processing or policy. For example, a <em>Directory</em> group might specify that all of its document sets will, be default, render their primary document using the <em>directory</em> format, while the Public group might set a default that its primary documents will be rendered using both <em>scroll</em> and <em>slides</em> formats.</p>
+    <p>I often separate my non-directory documents into Public and Private groups and, when deploying the website to an Apache web server, set the Private directory to be accessible only to students who supply a valid username and password.</p>
+    </div><!--end page 6--><div class="page" id="slide-0-7" style="display: none;"><a id="thebuildgradlefile"/><h2 id="the-build-gradle-file">3.1 The build.gradle File</h2><p>A group may optionally have a file named “<code>build.gradle</code>”. </p>
+    <p>You would add such a file to the group directory if you wanted to establish some default processing options for all document sets in that group. The details are discussed <a href="doc:groupOptions">later</a>. But as an example, to establish a default that all documents in the <code>Directory</code> group should be processed using the <em>directory</em> format, I would put this into a <code>build.gradle</code> file in my <code>Directory/</code> folder:</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cowem.Group'
+
+subprojects {
+    documents {
+        formats = ['directory']
+    }
+}
+</code></pre><p>Similarly, in my <code>Public/</code> directory, I would place this in a <code>build.gradle</code> file during a semester when I am teaching a live course:</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cowem.Group'
+
+subprojects {
+    documents {
+        formats = ['scroll', 'slides']
+    }
+}
+</code></pre><p>to indicate that I wanted document sets in the Public group to be processed into both lecture notes (scroll) and slides for in-class presentations. In a semester when I offer the same couse as a web-based offering, I would change this to</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cowem.Group'
+
+subprojects {
+    documents {
+        formats = ['scroll']
+    }
+}
+</code></pre><p>and eliminate the slides, since the lecture notes (scroll) version usually <a class="doc" href="../../Public/conditionalText/index.html" target="CoWeM_Public">includes more detailed information</a>.</p>
+    </div><!--end page 7--><div class="page" id="slide-0-8" style="display: none;"><a id="thecourse"/><h1 id="the-course">4 The Course</h1><p>The top-level directory of the course has two files of particular interest.</p>
+    </div><!--end page 8--><div class="page" id="slide-0-9" style="display: none;"><a id="settingsgradle"/><h2 id="settings-gradle">4.1 settings.gradle</h2><p>One is the <code>settings.gradle</code> file. This establishes the top-level directory as the “root” of a project that is spread over multiple directories. It looks like</p>
+    <pre><code>pluginManagement {
+    repositories {
+        ivy { // Use my own CS dept repo
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+        gradlePluginPortal()        
+        mavenCentral()
+    }
+}
+
+def includeFrom = {
+    dir -&gt;  new File(rootDir,dir).eachFileRecurse { f -&gt;
+        if ( f.name == "build.gradle" ) {
+            String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
+            String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
+            include projectName
+        }
+   }
+}
+
+// Don't touch anything abode this line
+
+rootProject.name = 'CS350'   // any short descriptive word or phrase - no blanks  
+
+
+// The following lines establish the course groups.
+includeFrom('Directory')
+includeFrom('Public')
+includeFrom('Protected')
+
+</code></pre><p>In general, you need at least one group, but can have as many as you like. The only restrictions:</p>
+    <ul>
+  <li>
+  <p>If you have any pages in <em>directory</em>, <em>modules</em>, or <em>topics</em> format,  you need a <code>Directory</code> group and a <em>navigation</em> document set within  that group.</p>
+    </li>
+  <li>
+  <p>If you intend to export your course website to Blackboard, you need  a <code>Directory</code> group and a <em>navigation</em> document set within that  group.</p>
+    </li>
+</ul><p>That said, most websites will have a <code>Directory</code> group and both <em>outline</em> and <em>navigation</em> document sets within that group.</p>
+    </div><!--end page 9--><div class="page" id="slide-0-10" style="display: none;"><a id="buildgradle"/><h2 id="build-gradle">4.2 build.gradle</h2><p>The <code>build.gradle</code> file in the top directory identifies this as a CoWeM project and provides a basic set of information about the course.</p>
+    <div class="noFloat"> </div><div class="sidebar pct66">
+<pre><code>// Top-level build.gradle for a course.
+
+plugins {
+   id 'edu.odu.cs.cowem.course' version '1.16'
+}
+
+                   &#x2780;
+
+course {
+    courseName        = 'CS 350'     &#x2781;
+    courseTitle       = 'Introduction to Software Engineering'
+    semester          = 'Fall 2016'
+    sem               = 'f16'             &#x2782;
+    instructor        = 'Steven J Zeil'   &#x2783;
+    email             = 'zeil@cs.odu.edu' &#x2784;  
+    copyright         = '2016, Old Dominion Univ.'  &#x2785;
+    homeURL           = '../../Directory/outline/index.html' &#x2786;
+}
+
+
+</code></pre>
+</div><p><span>➀</span> : Everything above this line should be reproduced exactly as shown.</p>
+    <p><span>➁</span> : The first few lines of the course description should be easy to understand.</p>
+    <p><span>➂</span> : An abbreviates form for the <code>semester</code>, sometimes inserted into  generated file names to help distinguish different offerings of the  course.</p>
+    <p><span>➃</span> : Again, no mystery. It’s worth noting, however, that each of the  items being defined here can be inserted into course documents  automatically. For example, the text “<code>@</code>instructor<code>@</code>” will be  replaced by the name of the instructor as defined here, which can be  useful in a syllabus for a course that gets handed from one  instructor to another in different semesters.</p>
+    <p><span>➄</span> : In addition to providing another convenient tag that can be  automatically be substituted into courses, if this is given a  non-empty value, then a <img src="../../graphics/email.png"/> icon is  added in the navigation bar for most pages that, when clicked upon,  opens up an email to that address.</p>
+    <p><span>➅</span> : This will be added to bottom of most pages.</p>
+    <p><span>➆</span> : If this is non-empty, a “home” <img src="../../graphics/home.png"/> icon  is added to most pages that takes the reader to the indicated URL.  Because of the “flat” directory structure, this can often be done as  relative URL as shown in this example, or an absolute URL can be  given when the “real” deployment URL is known.</p>
+    </div><!--end page 10--><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 11};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"><a class="slideshowcontrol" onclick="sshow2start(sshowControl0)" title="start"><img alt="first" src="../../graphics/first.png"/></a><span> </span><a class="slideshowcontrol" onclick="sshowback(sshowControl0)" title="previous"><img alt="prev" src="../../graphics/prev.png"/></a></td><td class="slideshowcontrolMiddle"><span id="slideshowposition0">1 of 10</span>
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Directories%20and%20Files"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="directories__scroll.html"><img src="../../graphics/scroll.png" title="single-page HTML version"/></a>
+<a class="imgLink" href="directories__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"><a class="slideshowcontrol" onclick="sshowforward(sshowControl0)" title="next"><img alt="next" src="../../graphics/next.png"/></a><span> </span><a class="slideshowcontrol" onclick="sshow2end(sshowControl0)" title="last"><img alt="last" src="../../graphics/last.png"/></a></td></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div><script>collectID('slide-0-1', 1);
+collectID('slide-0-2', 2);
+collectID('directory-overview', 2);
+collectID('slide-0-3', 3);
+collectID('document-sets', 3);
+collectID('slide-0-4', 4);
+collectID('primary-document-formats', 4);
+collectID('slide-0-5', 5);
+collectID('the-build-gradle-file', 5);
+collectID('slide-0-6', 6);
+collectID('document-set-groups', 6);
+collectID('slide-0-7', 7);
+collectID('the-build-gradle-file', 7);
+collectID('slide-0-8', 8);
+collectID('the-course', 8);
+collectID('slide-0-9', 9);
+collectID('settings-gradle', 9);
+collectID('slide-0-10', 10);
+collectID('build-gradle', 10);
+</script></body></html>

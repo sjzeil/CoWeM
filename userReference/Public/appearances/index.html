@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Modifying Appearances and Behaviors</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Modifying%20Appearances%20and%20Behaviors"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Modifying Appearances and Behaviors</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Aug 6, 2018</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#css">1 CSS</a></div><div class="toc-h2"><a href="#modifying-all-documents-in-a-format">1.1 Modifying All Documents in a Format</a></div><div class="toc-h2"><a href="#modifying-individual-documents">1.2 Modifying Individual Documents</a></div><div class="toc-h1"><a href="#graphics">2 Graphics</a></div><div class="toc-h1"><a href="#javascript">3 Javascript</a></div></div><p>Appearances and behaviors of documents are controlled by</p>
+    <ul>
+  <li>CSS and Javascript files in the<code>styles/</code> directory,</li>
+  <li>Graphics in the <code>graphics/</code> directory.</li>
+</ul><p>The general rule is that anything placed in a course’s <code>styles/</code> or <code>graphics/</code> directory will be copied in to the corresponding dirctory of the webite. If you place a file there that has the same name as any of the CoWeM defaults, it ill replace the default file.</p>
+    <h1 id="css">1 CSS</h1><a id="modifyingalldocumentsinaformat"/><h2 id="modifying-all-documents-in-a-format">1.1 Modifying All Documents in a Format</h2><p>When a primary or secondary document is processed using a <em>format</em>, the generated web page loads CSS from</p>
+    <dl>
+  <dt><code>styles/md-</code><i>format</i><code>.css</code>
+  </dt>
+  <dd>This contains all of the default CSS for that format. You can override the CSS for all documents  in the website that use that <em>format</em> by supplying your own version of that file. Do this only if  you need to override all or most of the default CSS. You would probably  want to build the website first, get a copy of the default from the generated <code>styles/</code> directory,  and modify that to make your own version.</dd>
+  <dt><code>styles/md-</code><i>format</i><code>-ext.css</code>
+  </dt>
+  <dd>This is loaded after the <code>styles/md-</code><i>format</i><code>.css</code> file, and so can extend or override  any of the default CSS. The default version of this file is empty. So, if you only want to  change a few items in the CSS, supply your own version of this file with just those CSS items.</dd>
+</dl><blockquote class="example" id="example1"><div class="exampleTitle">Example 1: Changing the background of slides</div>
+<p>The default slide background can be seen <a href="../directories/directories__slides.html">here</a>.</p>
+    
+<p>Suppose that we want to change that for all slides in a course.</p>
+    
+<p>The CSS for the <em>slides</em> format is in files <code>styles/md-slides.css</code> and the initially empty <code>styles/md-slides.css</code>. A look at the default <code>styles/md-slides.css</code> shows that the background is set in this rule:</p>
+    
+<pre><code>body
+{
+  font-size: 28pt;
+  font-family: "Arial", "Helvetica", "sans-serif";
+  margin-left: 4ex;
+  margin-right: 4ex;
+  width: 95%;
+  max-width: 95%;
+  overflow: false;
+
+  background: #c6c6c6; /* Old browsers */
+  background: -moz-linear-gradient(top, #0484ef 0%, #f7f7f7 9%, #c6c6c6 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0484ef), color-stop(9%,#f7f7f7),  color-stop(100%,#c6c6c6)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #0484ef 0%,#f7f7f7 9%,#c6c6c6 100%); /* W3C */
+}
+</code></pre>
+<p>The background clauses define a gradient. You can google “HTML CSS gradient generators” and find any number of online tools that would allow you to generate replacements for these.</p>
+    
+<p>For now, however, let’s assume that we simply wanted to replace the background by a solid, light-gray color.</p>
+    
+<p>Since only one CSS rule is affected, we could accomplish this by</p>
+    
+<ol>
+  <li>
+  <p>Creating a <code>styles</code> directory in the course root directory, if we don’t  have one already.</p>
+    </li>
+  <li>
+    <p>In that directory, create a file <code>md-slides-ext.css</code> containing  the single rule:</p>
+    
+    <pre><code>body
+{
+ font-size: 28pt;
+ font-family: "Arial", "Helvetica", "sans-serif";
+ margin-left: 4ex;
+ margin-right: 4ex;
+ width: 95%;
+ max-width: 95%;
+ overflow: false;
+
+ <span class='hli'>background: #c0c0c0;</span>
+}
+</code></pre>
+  </li>
+</ol>
+<p>The next time that the course website is deployed, the new CSS will take effect.</p>
+    
+</blockquote><blockquote class="example" id="example2"><div class="exampleTitle">Example 2: Changing the background of directory pages (using a background graphic)</div>
+<p>The default directory background can be seen <a class="doc" href="../../Directory/library/index.html" target="CoWeM_Directory">here</a>.</p>
+    
+<p>Suppose that we want to change that for all directory pages in a course to <a href="doc:directory330">this</a>. This uses a graphic that I created to suggest a theme of “interacting objects” for my course in object-oriented programming and design. </p>
+    
+<p>The CSS for the <em>directory</em> format is in files <code>styles/md-directory.css</code> and the initially empty <code>styles/md-directory.css</code>. A look at the default <code>styles/md-directory.css</code> shows that the background is set in this rule:</p>
+    
+<pre><code>body    {
+background: #cfeff9; /* Old browsers */
+background: -moz-linear-gradient(left, #cfeff9 0%, #aae6f7 6%, #37c4ef 6%, #aae6f7 8%, #cfeff9 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(left, #cfeff9 0%,#aae6f7 5%,#37c4ef 6%,#aae6f7 8%,#cfeff9 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to right, #cfeff9 0%,#aae6f7 5%,#37c4ef 6%,#aae6f7 8%,#cfeff9 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+padding-left: 175px;
+background-attachment: fixed;
+}
+</code></pre>
+<p>Again, with only one rule affected, the easiest route is to override that single rule in an <code>-ext.css</code> file:</p>
+    
+<ol>
+  <li>
+  <p>Create <code>styles/</code> and <code>graphics/</code> directories in the course root directory,  if we don’t have them already.</p>
+    </li>
+  <li>
+    <p>In the <code>styles/</code> directory, create a file <code>md-directory-ext.css</code> containing  the single rule:</p>
+    
+    <pre><code>body
+{
+ background-color: #ebcda5;  
+ background-image: url(../graphics/cs330-border2.png); 
+ background-repeat: repeat-y;}
+ padding-left: 175px;
+}
+</code></pre>
+  </li>
+  <li>Place the file <a href="../../Directory/directory330/cs330-border2.png">cs330-border2.png</a>  into the <code>graphics/</code> directory.</li>
+</ol>
+<p>In practice, I would probably then also change some of the other CSS entries to change the dark blues to shades of brown.</p>
+    
+<p>For visual consistency, I would also want to make similar changes to the backgrounds of the <em>modules</em> and <em>topics</em> styles. </p>
+    
+</blockquote><a id="modifyingindividualdocuments"/><h2 id="modifying-individual-documents">1.2 Modifying Individual Documents</h2><p>You can add additional CSS files that affect only a single document by listing CSS URLs (relative or absolute) in <code>CSS:</code> lines in the document’s opening metadata.</p>
+    <h1 id="graphics">2 Graphics</h1><p>There are a number of graphics files stored in the default <code>graphics/</code> directory. You can supply your own versions of any of these or augment the common graphics pool by adding your own.</p>
+    <p>Most of the default graphics are</p>
+    <ul>
+  <li>
+  <p>The activity kind icons <em>activity</em><code>-kind.png</code> mark the various activities in the course outline.  Examples are <code>lab-kind.png</code> <img src="../../graphics/lab-kind.png"/> and <code>lecture-kind.png</code>  <img src="../../graphics/lecture-kind.png"/>.</p>
+    </li>
+  <li>
+  <p>The navigation icons that appear at the top and bottom of most pages: <img src="../../graphics/prev.png"/>, <img src="../../graphics/home.png"/>, <img src="../../graphics/slides.png"/>, etc.</p>
+    </li>
+</ul><blockquote class="example" id="example3"><div class="exampleTitle">Example 3: Adding a New Activity Kind</div>
+<p>Suppose that we wished to add a a new “fieldTrip” activity kind to our course outline, so that we could designate activity items like this:</p>
+    
+<pre><code>4. [ ](fieldTrip) Visit a local museum.
+</code></pre>
+<p>In fact, all that is necessary to support this is to</p>
+    
+<ol>
+  <li>
+  <p>Create a <code>graphics/</code> directory in the course root directory,  if we don’t have it already.</p>
+    </li>
+  <li>
+  <p>Create an appropriate icon in a <code>graphics/fieldTrip-kind.png</code> file.<br/> Typically, these would be  about 32x32 pixels.</p>
+    </li>
+</ol>
+</blockquote><h1 id="javascript">3 Javascript</h1><p>When a primary or secondary document is processed using a <em>format</em>, the generated web page loads Javascript from <code>styles/md-</code><i>format</i><code>.js</code>.</p>
+    <blockquote class="example" id="example4"><div class="exampleTitle">Example 4: Changing Keyboard Bindings for Advancing Pages/Slides</div>
+<p>In the <em>slides</em> and <em>pages</em> formats, a reader can advance to the next slide/page using the right-arrow key, down-arrow, or space keys.</p>
+    
+<p>This binding can be found in the <code>md-slides.js</code> file:</p>
+    
+<pre><code>function doKeyPressed (e) {
+   // alert ("key pressed " + e.keyCode);
+   if (e.keyCode == 39 || e.keyCode == 40) {
+       sshowforward(sshowControl0);
+   } else 
+   &#x22ee;
+}
+
+document.addEventListener("keydown", doKeyPressed, false);
+</code></pre>
+<p>To add the Enter key to that list, we would:</p>
+    
+<ol>
+  <li>
+  <p>Create a <code>styles/</code> directory in the course root directory,  if we don’t have it already.</p>
+    </li>
+  <li>
+  <p>make a copy of the default <code>md-slides.js</code> in that directory.</p>
+    </li>
+  <li>
+    <p>Edit the <code>if</code> line above to </p>
+    
+    <pre><code>if (e.keyCode == 39 || e.keyCode == 40 || e.keyCode == 13) {
+</code></pre>
+  </li>
+</ol>
+</blockquote><blockquote class="example" id="example5"><div class="exampleTitle">Example 5: Click to Advance Slides</div>
+<p>Many people are used to clicking on a Powerpoint slide to advance it. I dislike this behavior myself, as I often click-and-drag the mouse across text to select/highlight it during lectures, and I often wind up advancing to the next slide by accident.</p>
+    
+<p>But if you want this behavior, it’s fairly simple to add.</p>
+    
+<ol>
+  <li>
+  <p>Create a <code>styles/</code> directory in the course root directory,  if we don’t have it already.</p>
+    </li>
+  <li>
+  <p>make a copy of the default <code>md-slides.js</code> in that directory.</p>
+    </li>
+  <li>
+    <p>Add to the end of that file:</p>
+    
+    <pre><code>document.addEventListener("click", function(){
+   sshowforward(sshowControl0);
+});
+</code></pre>
+  </li>
+</ol>
+</blockquote></div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Modifying%20Appearances%20and%20Behaviors"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

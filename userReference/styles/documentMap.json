@@ -1,0 +1,76 @@
+{ "mapping" : 
+  [
+    {
+      "doc" : "appearances",
+      "url" : "Public/appearances/index.html"
+    },
+    {
+      "doc" : "buildOptions",
+      "url" : "Public/buildOptions/index.html"
+    },
+    {
+      "doc" : "buildingTheWebsite",
+      "url" : "Public/buildingTheWebsite/index.html"
+    },
+    {
+      "doc" : "conditionalText",
+      "url" : "Public/conditionalText/index.html"
+    },
+    {
+      "doc" : "courseWebsite",
+      "url" : "Public/courseWebsite/index.html"
+    },
+    {
+      "doc" : "courseWebsite2.mmd",
+      "url" : "Public/courseWebsite/courseWebsite2.mmd.html"
+    },
+    {
+      "doc" : "designNotes",
+      "url" : "Public/designNotes/index.html"
+    },
+    {
+      "doc" : "directories",
+      "url" : "Public/directories/index.html"
+    },
+    {
+      "doc" : "examples",
+      "url" : "Directory/examples/index.html"
+    },
+    {
+      "doc" : "library",
+      "url" : "Directory/library/index.html"
+    },
+    {
+      "doc" : "macros",
+      "url" : "Public/macros/index.html"
+    },
+    {
+      "doc" : "markdown",
+      "url" : "Public/markdown/index.html"
+    },
+    {
+      "doc" : "markdownExtensions",
+      "url" : "Public/markdownExtensions/index.html"
+    },
+    {
+      "doc" : "navigation",
+      "url" : "Directory/navigation/index.html"
+    },
+    {
+      "doc" : "outline",
+      "url" : "Directory/outline/index.html"
+    },
+    {
+      "doc" : "prepared.mmd",
+      "url" : "Public/courseWebsite/prepared.mmd.html"
+    },
+    {
+      "doc" : "theOutline",
+      "url" : "Public/theOutline/index.html"
+    },
+    {
+      "doc" : "urlShortcuts",
+      "url" : "Public/urlShortcuts/index.html"
+    }
+  ]
+}

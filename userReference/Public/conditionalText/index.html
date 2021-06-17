@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Conditional Text</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Conditional%20Text"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="conditionalText__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Conditional Text</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jun 3, 2019</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#special-case-slide-markup">1 Special Case - Slide Markup</a></div><div class="toc-h2"><a href="#never-in-slides">1.1 Never in Slides</a></div><div class="toc-h2"><a href="#slides-only">1.2 Slides Only</a></div><div class="toc-h1"><a href="#the-general-case">2 The General Case</a></div><div class="toc-h2"><a href="#macro-conditional-commands">2.1 Macro Conditional Commands</a></div><div class="toc-h2"><a href="#predefined-macros-for-conditional-text">2.2 Predefined Macros for Conditional Text</a></div><div class="toc-h1"><a href="#hybrid-course-documents">3 Hybrid Course Documents</a></div></div><p>The CoWeM macro processor provides support for conditional text, allowing a single source document to serve for both abbreviated slides and a lengthier full-text version.</p>
+    <a id="specialcaseslidemarkup"/><h1 id="special-case-slide-markup">1 Special Case - Slide Markup</h1><a id="neverinslides"/><h2 id="never-in-slides">1.1 Never in Slides</h2><p>The markers <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt> can be used to surround text that will only appear in any output format <strong>except</strong> <code>Slides</code>.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<p><tt>{</tt><tt>{{</tt></p>
+    
+<pre><code>This paragraph will appear in
+
+* scrolls
+* pages
+* but not in slides.
+</code></pre>
+<p><tt>}</tt><tt>}}</tt></p>
+    
+</div><p>This paragraph will appear in</p>
+    <ul>
+  <li>scrolls</li>
+  <li>pages</li>
+  <li>but not in slides.</li>
+</ul><p>(Look <a href="conditionalText__slides.html#special-case-slide-markup">here</a> to see the slides.)</p>
+    <div class="noFloat"> </div><div class="sidebar pct20">
+<p>For the purpose of this example, I am typing <code>{({</code> and <code>})}</code> instead of <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt> so that the CoWeM processing does not make conditional markers disappear.</p>
+    
+</div><p>There are a few limitations on the placements of these markers.</p>
+    <div class="noFloat"> </div><div class="sidebar pct60">
+<pre><code><br/>* If only a single paragraph is affected, the markers can be placed at
+  the beginning and end of that paragraph.
+
+    {({E.g., like this.})}
+
+* If more than one paragraph is affected, the markers must go in
+  separate paragraphs.
+
+    {({
+
+    * Like this.
+
+    * Notice that the paragraph form "respects" the indentation
+      of the regular Markdown text.
+
+        * In fact, the closing marker can never appear at a different
+          indentation than the opening one.
+
+    })}
+
+</code></pre>
+</div><ul>
+  <li>
+  <p>If only a single paragraph is affected, the markers can be placed at  the beginning and end of that paragraph.</p>
+    </li>
+  <li>
+    <p>If more than one paragraph is affected, the markers must go in  separate paragraphs.</p>
+    
+    <ul>
+      <li>
+      <p>Like this.</p>
+    </li>
+      <li>
+        <p>Notice that the paragraph form “respects” the indentation  of the regular Markdown text.</p>
+    
+        <ul>
+          <li>
+          <p>In fact, the closing marker can never appear at a different  indentation than the opening one.</p>
+    </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul><a id="slidesonly"/><h2 id="slides-only">1.2 Slides Only</h2><p>Conversely, the markers <tt>[</tt><tt>[</tt><tt>[</tt> and <tt>]</tt><tt>]</tt><tt>]</tt> can be used to surround text that will appear <strong>only</strong> in <code>Slides</code>.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<p><tt>[</tt><tt>[</tt><tt>[</tt></p>
+    
+<pre><code>This paragraph will appear in
+
+* slides
+* but not in scrolls and pages
+</code></pre>
+<p><tt>]</tt><tt>]</tt><tt>]</tt></p>
+    
+</div><p>(Look <a href="conditionalText__slides.html#special-case-slide-markup">here</a> to see the slides.)</p>
+    <p>The placement rules for these markers are the same as for the preceding everywhere-except-slides markers. </p>
+    <a id="thegeneralcase"/><h1 id="the-general-case">2 The General Case</h1><a id="macroconditionalcommands"/><h2 id="macro-conditional-commands">2.1 Macro Conditional Commands</h2><p>The macro commands that allow this are </p>
+    <dl>
+  <dt><tt>%</tt><tt>if</tt> <em>macroName</em> …<tt>%</tt><tt>else</tt>…<tt>%</tt><tt>endif</tt>
+  </dt>
+  <dd>If <em>macroName</em> has been defined as a macro, then include the text after the <tt>%</tt><tt>if</tt> and exclude the text after the <tt>%</tt><tt>else</tt>. If <em>macroName</em> has not been defined as a macro, then ignore the text after the <tt>%</tt><tt>if</tt> and include the text after the <tt>%</tt><tt>else</tt>.</dd>
+</dl><ul>
+  <li>The <tt>%</tt><tt>else</tt> part can be omitted if it is empty.</li>
+</ul><dl>
+  <dt><tt>%</tt><tt>ifnot</tt> <em>macroName</em> …<tt>%</tt><tt>else</tt>…<tt>%</tt><tt>endif</tt>
+  </dt>
+  <dd>If <em>macroName</em> has not been defined as a macro, then include the text after the <tt>%</tt><tt>if</tt> and exclude the text after the <tt>%</tt><tt>else</tt>. If <em>macroName</em> has been defined as a macro, then ignore the text after the <tt>%</tt><tt>if</tt> and include the text after the <tt>%</tt><tt>else</tt>.</dd>
+</dl><ul>
+  <li>The <tt>%</tt><tt>else</tt> part can be omitted if it is empty.</li>
+</ul><blockquote class="example" id="example1"><div class="exampleTitle">Example 1: Selecting Text</div>
+<p>I might include the following in a course syllabus:</p>
+    
+<hr/>
+<p><tt>%</tt><tt>define</tt> <code>[summerSemester] [] [1]</code><br/><code>&#x22ee;</code><br/><tt>%</tt><tt>if</tt> <code>summerSemester</code></p>
+    
+<p><code>The final exam is held on the last day of classes.</code></p>
+    
+<p><tt>%</tt><tt>else</tt></p>
+    
+<p><code>The final exam is held during exam week, according to the</code><br/><code>scheduled published by the Registrar's office.</code></p>
+    
+<p><tt>%</tt><tt>endif</tt></p>
+    
+<hr/>
+<p>By removing or restoring the <tt>%</tt><tt>define</tt> line, I can quickly switch between summer and regular-semester versions of the yllabus.</p>
+    
+</blockquote><blockquote class="example" id="example2"><div class="exampleTitle">Example 2: Suppressing Text</div>
+<p>Sometimes I have old text that I don’t actually want to delete, but don’t want to appear in the current website. I can “comment out” such text like this ….</p>
+    
+<hr/>
+<p><tt>%</tt><tt>if</tt> <code>_ignore</code><br/><code>&#x22ee;</code><br/>…text that won’t appear in the website…<br/><code>&#x22ee;</code><br/><tt>%</tt><tt>endif</tt></p>
+    
+<hr/>
+<p>Of course, I <em>never</em> define a macro names “<code>_ignore</code>”.</p>
+    
+</blockquote><a id="predefinedmacrosforconditionaltext"/><h2 id="predefined-macros-for-conditional-text">2.2 Predefined Macros for Conditional Text</h2><p>There are two macros that are pre-defined when processing primary documents:</p>
+    <ol>
+  <li>
+    <p>The <em>format</em> (scroll, slides, pages, directory, …) in which the document  is being processed is added as a macro named with a leading underscore, e.g.,  <code>_slides</code>.</p>
+    
+    <p>In fact, the <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt> markers introduced earlier are just macros providing a convenient shorthand for <tt>%</tt><code>ifnot _slides</code> and <tt>%</tt><code>endif</code>.</p>
+    
+  </li>
+  <li>
+    <p>In the course configuration <code>build.gradle</code>, you can specify a property “<code>delivery</code>”, e.g.,</p>
+    
+    <pre><code>course {
+    courseName        = 'CS 361'
+    courseTitle       = 'Advanced Data Structures and Algorithms'
+    &#x22ee;
+    delivery          = 'online'
+}
+</code></pre>
+    <p>Whatever value is given to this property is declared as a macro, again named with a leading underscore. In this example, a macro named <tt>_</tt><code>online</code> would be declared.</p>
+    
+    <p>This property could be any string, but I usually use either “online” or “live”.</p>
+    
+  </li>
+</ol><a id="hybridcoursedocuments"/><h1 id="hybrid-course-documents">3 Hybrid Course Documents</h1><p>I teach many courses in both live and web versions.</p>
+    <p>In a typical live course, I prepare slides which contain a lot of terse bulleted lists, in which I fill in the details while speaking during the lectures. For example:</p>
+    <p>When preparing a web version of the course, I revisit those lists, and insert an approximation of what I would have said during lectures, but make this additional text conditional on <strong>not</strong> being processed in <em>slides</em> format.</p>
+    <p>For example, the original slide</p>
+    <hr/><pre><code># Integration Testing
+
+
+\firstterm{Integration testing} is testing that combines
+    several modules, but still falls short of exercising the entire program
+    all at once. 
+
+
+*  Integration testing usually combines a small number of
+    modules that call upon one another.
+   
+
+*  Integration testing can be conducted 
+    *  \firstterm{bottom-up}
+        *   relieves the need for stubs
+
+    *  or \firstterm{top-down} 
+
+</code></pre><hr/><p>might become</p>
+    <hr/><div class="noFloat"> </div><div class="sidebar pct20">
+<p>Again, for the purpose of this example, I am typing <code>{({</code> and <code>})}</code> instead of <tt>{</tt><tt>{{</tt> and <tt>}</tt><tt>}}</tt> so that the CoWeM processing does not make conditional markers disappear.</p>
+    
+</div><pre><code># Integration Testing
+
+
+\firstterm{Integration testing} is testing that combines
+    several modules, but still falls short of exercising the entire program
+    all at once. 
+
+
+*  Integration testing usually combines a small number of
+    modules that call upon one another.
+   
+
+*  Integration testing can be conducted 
+    *  \firstterm{bottom-up }
+
+        {({
+        (start by unit-testing the modules that don't call anything
+        else, then add the modules that call those starting modules
+        and thest the combination, then add the modules that call
+        those, and so on until you are ready to test
+        &lt;span class="function"&gt;main()&lt;/span&gt;.)
+        })}
+
+
+        *   relieves the need for stubs
+
+    *  or \firstterm{top-down} 
+
+        {({
+
+        (start by unit-testing &lt;span class="function"&gt;main()&lt;/span&gt; with stubs for
+        everything it calls, then replace those stubs by the real
+        code, but leaving in stubs for anything called from the
+        replacement code, then replacng those stubs, and so on, until
+        you have assembled and tested the entire program).
+
+        })}
+
+{({It's worth noting that unit testing and integration testing can
+sometimes use some of the same test inputs (and maybe the same
+expected outputs), because we are testing the software in different
+configurations.})}
+
+
+</code></pre><hr/><p>The upshot of this is that my original slides remain and can still be used for live presentations. But the <em>scroll</em> format will contain the more detailed text, and can be deployed as the web course content or as lecture notes for students in the live version.</p>
+    </div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Conditional%20Text"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
+<a class="imgLink" href="conditionalText__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

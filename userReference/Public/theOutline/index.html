@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Preparing a Course Outline</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Preparing%20a%20Course%20Outline"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Preparing a Course Outline</h1><h2 class="author">Steven J. Zeil</h2></div><p>This document review the two documents that serve mainly to enable easy navigation of the website, the navigation bar and the outline.</p>
+    <p>It’s possible to use CoWeM to build a website without either of these special documents, with a few exceptions:</p>
+    <ul>
+  <li>
+  <p>If you will have any documents prepared using the <em>directory</em>,  <em>modules</em>, or <em>topics</em> formats, then  you <strong>must</strong> have a navigation document.</p>
+    </li>
+  <li>
+  <p>If you will be preparing export packages for Blackboard (or, in future CoWeM  version, other Learning Management Systems), you <strong>must</strong> have a  navigation document.</p>
+    </li>
+  <li>
+  <p>If you will be preparing export packages for Blackboard (or, in future CoWeM  version, other Learning Management Systems), and wish to have dates exported  into the Calendar, you <strong>must</strong> have an outline document.</p>
+    </li>
+</ul><a id="thenavigationbar"/><h1 id="the-navigation-bar">1 The Navigation Bar</h1><p>The navigation document supplies the navigation bar found to the left of directory pages like <a class="doc" href="../../Directory/library/index.html" target="CoWeM_Directory">this one</a>.</p>
+    <ul>
+  <li>The navigation document must be in group <code>Directory</code>.</li>
+  <li>It must be the primary document for the document set must be named  “<code>navigation</code>”. (In other words, it will be written in  <code>Directory/navigation/navigation.md</code>.</li>
+  <li>It must be processed in the <em>navigation</em> format.</li>
+</ul><p>The document itself consists of a markdown document containing a simple item list of (usually) links to be placed into a navigation bar.</p>
+    <p>Here for example, is the navigation document for this website:</p>
+    <div class="details"><span class="summary"><a href="../../Directory/navigation/navigation.md" target="listing">../../Directory/navigation/navigation.md</a></span> <input id="but_details_d5e61" onclick="toggleDisplay('_details_d5e61')" type="button" value="+"/><div class="detailPart" id="_details_d5e61"><pre><code id="_details_d5e61_code">
+* [Outline](doc:outline)
+* [Library](doc:library)
+* [Example Sites](doc:examples)
+</code></pre></div></div><p>Not much to it, is there? (The “<code>doc:</code>” links are examples of <a class="doc" href="../../Public/urlShortcuts/index.html" target="CoWeM_Public">URL shortcuts</a>, described in a later document.</p>
+    <p>To guarantee that this is processed in the proper format, the accompanying <code>build.gradle</code> file is </p>
+    <div class="details"><span class="summary"><a href="../../Directory/navigation/build.gradle" target="listing">../../Directory/navigation/build.gradle</a></span> <input id="but_details_d5e75" onclick="toggleDisplay('_details_d5e75')" type="button" value="+"/><div class="detailPart" id="_details_d5e75"><pre><code id="_details_d5e75_code">apply plugin: edu.odu.cs.cowem.Documents
+
+ 
+documents {
+    formats = ['navigation']
+}
+</code></pre></div></div><a id="theoutlinedocument"/><h1 id="the-outline-document">2 The Outline Document</h1><p>The outline document is a Markdown document that presents a hierarchically organized collection of links to other documents in the website.</p>
+    <p>The outline document plays a special role when preparing export packages for Blackboard and other LMSs. For those purposes, it should be in group <code>Directory</code>, document set <code>outline</code>. </p>
+    <ul>
+  <li>If desired, you could have multiple outlines presenting different  organizations of the same website. But only <code>Directory/outline/outline.md</code>  will be used to collect Calendar entries.</li>
+</ul><p>Despite it’s special nature, the outline document is, first and foremost, still a Markdown document. There are special formats for presenting an outline:</p>
+    <ul>
+  <li>
+  <p><em>modules</em> format yields a collapsible list format, like  <a href="../../Directory/outline/outline__modules.html">this</a>.</p>
+    </li>
+  <li>
+  <p><em>topics</em> format yields a tabular format, like  <a href="../../Directory/outline/outline__topics.html">this</a>.</p>
+    </li>
+</ul><p>However, the outline can still be processed with the more basic format. In fact, preparing it as a 1_ may be a useful way to visualize the content as you are adding it. Here is <a href="../../Directory/outline/outline_1.html">the same outline in 1_ format</a>.</p>
+    <a id="preparingtheoutline"/><h2 id="preparing-the-outline">2.1 Preparing the outline</h2><h3 id="organization">2.1.1 Organization</h3><p>Prepare the basic outline using the normal Markdown headers <code>#</code>, <code>##</code>, <code>###</code>, etc., to divide the outline as sections, subsections, etc.</p>
+    <p>If a section/subsection is going to be further subdivided, do not add any text in the enclosing level.</p>
+    <blockquote class="example" id="example1"><div class="exampleTitle">Example 1: Dividing the Outline into Sections</div>
+<pre><code>Title: CoWeM Outline
+Author: v1.16, June 2020
+
+# Getting Started
+
+&#x22ee; 
+
+  
+
+# Regular Languages
+
+## Finite Automata
+
+&#x22ee; 
+
+## Regular Expressions
+
+&#x22ee; 
+
+## Properties of Regular Languages
+
+&#x22ee; 
+
+</code></pre>
+</blockquote><a id="descriptivematerial"/><h3 id="descriptive-material">2.1.2 Descriptive material</h3><p>A section (or subsection or subsubsection or…) that is not further subdivided can have descriptive content. This material will appear in the <em>modules</em> view, but not the more compace <em>topics</em> view.</p>
+    <blockquote class="example" id="example2"><div class="exampleTitle">Example 2: Adding Descriptive Material</div>
+<pre><code>## Finite Automata
+
+**Overview**
+    
+ A finite automaton (FA) is a mathematical model of a machine that
+ switches among a limited number of different states each time it is
+ fed a new piece of input.
+    
+    
+ This is the most basic and the least powerful of the automata that we
+ will examine this semester. It is, however, still capable of
+ performing a variety of useful tasks, and its very simplicity makes
+ it something that many people can work with intuitively.
+    
+      
+**Objectives**
+
+* Understand the basic definitions and concepts of finite
+     automata and how they can be used to recognize languages.
+       
+* Construct FAs for some simple languages and determine what
+     strings a given FA will accept. 
+       
+* Apply the pumping lemma to determine what languages can be
+     recognized by finite automata.
+       
+* Modify a FA to minimize the number of states.
+       
+      
+**Relevance**
+
+    
+ Despite their simplicity, finite automata can process a number of
+ useful languages.  Because of their simplicity, programmers find FAs
+ intuitive enough that they are often used to model high-level
+ behaviors in large systems and in complicated programs (even though
+ FAs are not powerful enough to model program behaviors in general.)
+
+&#x22ee; 
+
+## Regular Expressions
+
+**Overview**
+    
+ For every interesting group of automata, there is a corresponding set
+ of languages that can be recognized by those automata. In this
+ module, we examine the regular languages, the set of languages
+ recognized by FAs. We look at regular expressions, a common notation
+ for describing such languages, and one that should already be
+ familiar to most students.
+    
+    
+ Moving back and forth between FAs and their corresponding regular
+ expressions is easier if we allow the FA to be in multiple states
+ simultaneously. This leads us to the idea of non-determinism. We will
+ distinguish between deterministic FAs (DFAs) and non-deterministic
+ FAs (NFAs) and will explore how to convert from one to the other.
+    
+      
+**Objectives**
+
+* Read and write regular expressions for desired regular languages.
+       
+* Construct NFAs corresponding to a regular expression and
+     regular expressions describing a given NFA.
+       
+* Convert NFAs to DFAs.
+       
+      
+**Relevance**
+
+    
+ Regular expressions are pervasive in programming. They are a common
+ tool in string searching, and students should recall their
+ introduction in CS252 for that purpose. They are popular enough to be
+ included in the standard libraries for both C++ and Java.
+    
+    
+ Regular expressions are also widely employed in programming language
+ compilers. The first phase of a typical compiler (the "scanner" or
+ "lexical analyzer") compresses the input by reducing a string of
+ characters to a string of tokens. Those tokens are typically
+ recognized by a FA, which may have thousands of states. Compiler
+ developers use automated tools to generate these FAs from a
+ collection of regular expressions.
+
+
+&#x22ee; 
+ 
+</code></pre>
+</blockquote><h3 id="activities">2.1.3 Activities</h3><p>The core content of the outline is a list of activities in each of the undivided sections.</p>
+    <p>The activities are introduced by a horizontal rule in the section (typed in Markdown as a line containing three hyphens).</p>
+    <p>The activities are placed in ordered (numbered) lists. (Remember that Markdown will renumber the items, so the exact number you type are not important.) You can have multiple numbered lists in a section, separated by a simple a paragraph.</p>
+    <p>Here is an example of a complete section of a course outline , with multiple activities:</p>
+    <blockquote class="example" id="example3"><div class="exampleTitle">Example 3: Adding Activities</div>
+<pre><code><br/># Finite Automata
+
+    
+**Overview**
+    
+ A finite automaton (FA) is a mathematical model of a machine that
+ switches among a limited number of different states each time it is
+ fed a new piece of input.
+    
+    
+ This is the most basic and the least powerful of the automata that we
+ will examine this semester. It is, however, still capable of
+ performing a variety of useful tasks, and its very simplicity makes
+ it something that many people can work with intuitively.
+    
+      
+**Objectives**
+
+* Understand the basic definitions and concepts of finite
+     automata and how they can be used to recognize languages.
+       
+* Construct FAs for some simple languages and determine what
+     strings a given FA will accept. 
+       
+* Apply the pumping lemma to determine what languages can be
+     recognized by finite automata.
+       
+* Modify a FA to minimize the number of states.
+       
+      
+**Relevance**
+
+    
+ Despite their simplicity, finite automata can process a number of
+ useful languages.  Because of their simplicity, programmers find FAs
+ intuitive enough that they are often used to model high-level
+ behaviors in large systems and in complicated programs (even though
+ FAs are not powerful enough to model program behaviors in general.)
+    
+      
+---
+
+
+1. [ ](reading) Hopcroft, 2.1
+
+2. [ ](lab) [JFlap: Finite State Automata](doc:fsa-jflap)
+    
+3. [ ](reading) Hopcroft, 2.2
+
+4. [ ](lecture) [Finite State Automata](doc:fsa)
+
+5. [ ](selfassess) FSAs (in Blackboard)
+
+88. [ ](quiz) FSAs (in Blackboard) [2016-09-21](due:)
+
+**At the end of the week**
+
+1. [ ](survey) Take the module 2 feedback survey. 
+
+</code></pre>
+</blockquote><p>Each activity begins with a “fake” Markdown link <code>[text](url)</code>.</p>
+    <p>For this fake link, the URL part designates the “kind” of activity. In the item above, one kind is “lecture”. This will be rendered using a small icon <img src="../../graphics/lecture-kind.png"/> <code>lecture-kind.png</code> loaded from the website’s <code>graphics/</code> directory. </p>
+    <p>In the <em>modules</em> format, if the text part of the fake link is blank (must have at least 1 blank character), then the presentation table (described <a href="#presentation">below</a> is checked to see if there is a standard prefix for that “kind”. If so, that prefix text is inserted. If the text part is non-blank, it overrides the standard prefix, e.g.,</p>
+    <pre><code>5. [Take the self-assessment](self-assess) FSAs (in Blackboard)  
+</code></pre><p>After that, the rest of the item is treated as text in any CoWeM document. Many items will be links to documents, though references to off-line content such as textbook chapters will usually be in plain text.</p>
+    <p>The “quiz” item in the example above contains an example of a <a class="doc" href="../../Public/urlShortcuts/index.html" target="CoWeM_Public">shortcut URL</a> for recording a date. Dates recorded in this manner may be picked up in export packages for automatic inclusion in a calendar. </p>
+    <a id="specialsections"/><h2 id="special-sections">2.2 Special Sections</h2><p>Following the main outline are one to three special sections that receive distinct processing in the <em>modules</em> and <em>topics</em> formats. </p>
+    <a id="thepreamble"/><h3 id="the-preamble">2.2.1 The Preamble</h3><p>A section titled “Preamble” provides content that appears aobve the outline in either the <em>modules</em> or <em>topics</em> format.</p>
+    <blockquote>
+  <p>It is actually a bug that this section must appear after the main outline sections. Ideally, you should be able to put it anywhere, but, currently, placing it above the outline causes incorrect section numbering in the outline itself.</p>
+    
+</blockquote><p>The preamble is typically used to provide general navigation instructions to students entering the website.</p>
+    <a id="upcomingevents"/><h4 id="upcoming-events">Upcoming Events</h4><p>If a metadata item</p>
+    <pre><code>Calendar: yes
+</code></pre><p>has been added to the top of the <code>outline.md</code> document, and if the “calendar” format has been generated for the outline, then an “Upcoming Events” section is displayed in the “modules” view immediately following the preamble.</p>
+    <a id="thepostscript"/><h3 id="the-postscript">2.2.2 The Postscript</h3><p>A section titled “Postscript” provides content that appears below the outline in either the <em>modules</em> or <em>topics</em> format.</p>
+    <p>Typical content in the postscript might include a symbol key for the various kinds of activities listed in the main outline, or a “All times in this schedule are given in ”… time zone notice.</p>
+    <a id="thepresentation"/><h3 id="the-presentation">2.2.3 The Presentation</h3><p>A final section, titled “Presentation” is a required element in the outline.</p>
+    <p>This section will contain two tables that provide formatting information used in the <em>topics</em> and <em>modules</em> formats, respectively.</p>
+    <p>The first table controls the number of columns in the <em>topics</em> view, the headings of those columns, and the arrangement of activities within those columns.</p>
+    <p>For example, this table,</p>
+    <table>
+  <thead>
+    <tr>
+      <th>Topics </th>
+      <th>Lecture Notes </th>
+      <th>Readings </th>
+      <th>Assignments &amp; Other Events </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>topics </td>
+      <td>slides video lecture construct </td>
+      <td>text </td>
+      <td>quiz asst selfassess exam event </td>
+    </tr>
+  </tbody>
+</table><p>which can be typed in Markdown like this:</p>
+    <pre><code>| Topics | Lecture Notes  | Readings | Assignments &amp; Other Events |
+|--------|----------------|----------|----------------------------|
+| topics | slides lecture | text     | quiz asst selfassess exam  |
+</code></pre><p>indicates that topics headings go into the first column, that <code>slides</code> and <code>lecture</code> activities appear in the second column, <code>text</code> activities in the third, and that various kinds of tests and assignments appear in the fourth column.</p>
+    <p>The second table controls wording inserted before activity items in the _modules view. For example, this table</p>
+    <table>
+  <thead>
+    <tr>
+      <th>Document Kind </th>
+      <th>Prefix </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>lecture </td>
+      <td>Read: </td>
+    </tr>
+    <tr>
+      <td>lab </td>
+      <td>In the lab: </td>
+    </tr>
+    <tr>
+      <td>event </td>
+      <td>Attend </td>
+    </tr>
+  </tbody>
+</table><p>which can be typed in Markdown as</p>
+    <pre><code>| Document Kind | Prefix        |
+|---------------|---------------|
+| lecture       | Read:         |
+| lab           | In the lab:   |
+| event         | Attend        |
+</code></pre><p>indicates that any <code>lecture</code> activity has the “Read:” appearing in front of it by default. These default prefixes are used only when no text is supplied when the activity kind is set. For example, the activities</p>
+    <pre><code>1. [ ](lecture) Notes on getting started.
+2. [Join](lecture) orientation session by net-conference
+</code></pre><p>would appear in the <em>modules</em> listing as:</p>
+    <pre><code>1. Read: Notes on getting started
+2. Join orientation session by net-conference 
+</code></pre></div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Preparing%20a%20Course%20Outline"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+             window.MathJax = {
+               tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               processEscapes: true
+             }
+           };
+           </script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"> </script><title>Modifying Build Options</title></head><body><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Modifying%20Build%20Options"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Modifying Build Options</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jan 8, 2018</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#document-set-options">1 Document Set Options</a></div><div class="toc-h1"><a href="#group-options">2 Group Options</a></div><div class="toc-h1"><a href="#course-options">3 Course Options</a></div><div class="toc-h2"><a href="#adding-and-removing-groups">3.1 Adding and Removing Groups</a></div><div class="toc-h2"><a href="#course-options">3.2 Course Options</a></div></div><p>The <code>build.gradle</code> files in each directory of the website source control a variety of options as to how the website will be built.</p>
+    <p>For the most part, these have been provided with reasonable defaults. But when the default behavior is not what you want, you have options.</p>
+    <a id="documentsetoptions"/><h1 id="document-set-options">1 Document Set Options</h1><p>Each document set will have a <code>build.grade</code> file in its directory. At a minimum, this will consist of a single line:</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cowem.Documents' 
+</code></pre><p>More generally, this file would have the form:</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cowem.Documents' 
+
+documents {
+   &#x22ee;
+}
+</code></pre><p>with any of the following appearing in the <code>documents</code> area:</p>
+    <dl>
+  <dt><code>primary</code> = <em>fileName</em>
+  </dt>
+  <dd>indicates that the name of the primary document will not be the same as  the name of the directory holding the document set ( followed by “<code>.md</code>”),  but will be _fileName-.[^This feature has not been extensively tested.]
+</dd>
+  <dt><code>formats = [</code> <em>list-of-formats</em> <code>]</code>
+  </dt>
+  <dd>Sets the list of formats in which the the primary document will  be generated. Possibilities are: 1_, <em>pages</em>, <em>slides</em>,  <em>directory</em>, <em>navigation</em>, <em>modules</em>, and  <em>topics</em>.
+    <p>Example: <code>formats = [slides, scroll]</code></p>
+    
+    <p>A primary document <code>foo.md</code> produces a webpage <code>foo__</code>_format_<code>.html</code> for each <em>format</em> listed. There are two underscore characters between the document name and the format (to reduce the chances of an accidental conflict with support file names. </p>
+    
+  </dd>
+</dl><p><code>index =</code> <em>format</em>  : One format of the primary document is designated as the “index” of the  document set. It can be accessed as <code>index.html</code>, and this is the format  that other documents will l8ink to when using the <code>doc:</code> URL shortcut.</p>
+    <pre><code> By default, the first format named in the `formats =` specification is the
+ index format.
+</code></pre><dl>
+  <dt><code>docs</code> <em>file-specification</em>
+  </dt>
+  <dd>Adds some files to the list of secondary documents for this document set.  Secondary documents will be converted to ‘scroll’ format.
+    <p>By default, the secondary documents are all <code>*.mmd</code> and <code>*.md</code> files (excluding the primary document).</p>
+    
+    <p>A secondary document <code>foo.mmd</code> produces a webpage <code>foo.mmd.html</code>.</p>
+    
+    <p>To add a single file <code>secondary.mtxt</code> to the list of secondary documents, just say</p>
+    
+    <pre><code>docs 'secondary.mtxt'
+</code></pre>
+    <p>To add all files ending in ‘<code>.mtxt</code>’ use the <code>fileTree</code> construct of Gradle:</p>
+    
+    <pre><code>docs  fileTree('.').include('*.mtxt')
+</code></pre>
+    <p>It is also possible to add a <code>.exclude(</code>_pattern_‘)’ to exclude selected files. Intead of the <code>'.'</code>, the current document set directory, secondary documents could be loaded from a subdirectory.</p>
+    
+  </dd>
+</dl><p><code>clearDocs()</code> : Clears the entire list of secondary documents. Not even the normal  defaults will be retained.</p>
+    <dl>
+  <dt><code>listings</code> <em>file-specification</em>
+  </dt>
+  <dd>Adds some files to the list of listing documents for this document set.  Listings are processed into ‘scroll’ format while preserving all  indentation and line breaks.
+    <p>By default, the listing documents are all <code>*.h</code>, <em>.cpp<code>,</code></em>.java<code>and
+</code>*.listing` files. </p>
+    
+    <p>A secondary document <code>foo.cpp</code> produces a webpage <code>foo.cpp.html</code>.</p>
+    
+    <p>To add a single file <code>bar.pl</code> to the list of listing documents, just say</p>
+    
+    <pre><code>listings 'bar.pl'
+</code></pre>
+    <p><code>fileTree</code>s can also be used to add multiple listing files at a time, as described for secondary documents, above.</p>
+    
+  </dd>
+</dl><p><code>clearListings()</code> : Clears the entire list of listing documents. Not even the normal  defaults will be retained.</p>
+    <dl>
+  <dt><code>support</code> <em>file-specification</em>
+  </dt>
+  <dd>Adds some files to the list of support documents for this document set.  Support documents are copied, unchanged, to the website.
+    <p>By default, the support documents are all <code>*.html</code>, <em>.css<code>,</code></em>.js` and most common graphics format files. </p>
+    
+    <p>To add a single file <code>bar.gif</code> to the list of listing documents, just say</p>
+    
+    <pre><code>support 'bar.gif'
+</code></pre>
+    <p><code>fileTree</code>s can also be used to add multiple listing files at a time, as described for secondary documents, above.</p>
+    
+  </dd>
+</dl><dl>
+  <dt><code>filtered</code> <em>file-specification</em>
+  </dt>
+  <dd>Adds some files to the list of filtered documents for this document set.  Support documents are copied to the website after changing all  tokens of the form <code>@propertyName@</code> by the corresponding property.
+    <p>For example, if the main course <code>build.gradle</code> said</p>
+    
+    <pre><code>course {
+    courseName        = 'CS252'
+    courseTitle       = 'Introduction to Unix for Programmers'
+    semester          = 'Spring 2017'
+    sem               = 's17'
+    instructor        = 'Steven J Zeil'
+      &#x22ee;
+</code></pre>
+    <p>and we had a file named <code>tag.txt</code> containing</p>
+    
+    <pre><code>CoWeM will be taught by Steven J Zeil
+in v1.16, June 2020.
+</code></pre>
+    <p>Then adding</p>
+    
+    <pre><code>filtered 'tag.txt'
+</code></pre>
+    <p>to the document <code>build.gradle</code> would cause that file to be copied to the website as</p>
+    
+    <pre><code>CS252 will be taught by Steven J Zeil
+in Spring 2017.
+</code></pre>
+    <p>By default, the filtered documents list is empty.</p>
+    
+  </dd>
+</dl><dl>
+  <dt><code>clearListings()</code></dt>
+  <dd>Clears the entire list of listing documents. Not even the normal defaults will be retained.</dd>
+</dl><dl>
+  <dt><code>math =</code>_mode_
+  </dt>
+  <dd>Sets the mode used for mathematics processing.  Valid values are:
+    <ul>
+      <li><code>latex</code>: Detect and render LaTeX mathematics</li>
+      <li><code>ascii</code>: Detect and render AsciiMath mathematics</li>
+      <li><code>none</code> : Do not use MathJax to render mathematics</li>
+    </ul>
+  </dd>
+</dl><a id="groupoptions"/><h1 id="group-options">2 Group Options</h1><p>Document groups (the directories containing one or more document sets) are not required to have a <code>build.gradle</code> file. They can, however, use one to establish defaults for all document sets within the group.</p>
+    <p>Such a group <code>build.gradle</code> would take the form:</p>
+    <pre><code>apply plugin: 'edu.odu.cs.cwm.Group'
+
+subprojects {
+    project.documents {
+        &#x22ee;
+    }
+}
+</code></pre><p>Within the <code>project.documents</code> area, you can place any of the document set options described in the previous section. These will become the defaults for all document sets within the group. They can still be overidden by the <code>build.gradle</code> specification for individual document sets.</p>
+    <p>One difference is that any uses of <code>fileTree</code> must now be written as <code>project.fileTree</code> and placed in side <code>{ }</code> brackets.</p>
+    <p>For example:</p>
+    <pre><code> apply plugin: 'edu.odu.cs.cwm.Group'
+
+subprojects {
+    project.documents {
+        formats = ['scroll', 'slides']
+        support {
+            project.fileTree('.').include('*.zip')
+        }
+    }
+}
+</code></pre><a id="courseoptions"/><h1 id="course-options">3 Course Options</h1><a id="addingandremovinggroups"/><h2 id="adding-and-removing-groups">3.1 Adding and Removing Groups</h2><p>The number and name of the document groups is established within the <code>settings.gradle</code> file in the root directory.</p>
+    <pre><code>def includeFrom = {
+    dir -&gt;  new File(rootDir,dir).eachFileRecurse { f -&gt;
+        if ( f.name == "build.gradle" ) {
+            String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
+            String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
+            include projectName
+        }
+   }
+}
+
+// Don't touch anything abode this line
+
+rootProject.name = 'CS350'   // any short descriptive word or phrase - no blanks  
+
+
+// The following lines establish the course groups.
+includeFrom('Directory')
+includeFrom('Public')
+includeFrom('Protected')
+
+</code></pre><p>In general, you need at least one group, but can have as many as you like. The only restrictions:</p>
+    <ul>
+  <li>
+  <p>If you have any pages in <em>directory</em>, <em>modules</em>, or <em>topics</em> format,  you need a <code>Directory</code> group and a <em>navigation</em> document set within  that group.</p>
+    </li>
+  <li>
+  <p>If you intend to export your course website to Blackboard, you need  a <code>Directory</code> group and a <em>navigation</em> document set within that  group.</p>
+    </li>
+</ul><p>That said, most websites will have a <code>Directory</code> group and both <em>outline</em> and <em>navigation</em> document sets within that group.</p>
+    <a id="courseoptions"/><h2 id="course-options">3.2 Course Options</h2><p>The root directory’s <code>build.gradle</code> file describes the course for which the website is being built.</p>
+    <pre><code>// Top-level build.gradle for a course.
+
+
+buildscript { 
+     repositories {
+         jcenter()
+         mavenCentral()
+ 
+        ivy { // Use my own CS dept repo
+            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
+        }
+     }
+     dependencies {
+         classpath 'org.hidetake:gradle-ssh-plugin:2.3.0+'
+         classpath 'edu.odu.cs.zeil:cowem-plugin:1.0+'
+     }
+}
+
+
+apply plugin: 'edu.odu.cs.cowem.CourseWebsite'    
+
+
+course {
+    &#x22ee;
+}
+
+</code></pre><p>Within the <code>course</code> area, any of the following can be specified</p>
+    <a id="requiredproperties"/><h3 id="required-properties">3.2.1 Required Properties</h3><dl>
+  <dt><code>courseName =</code> <em>string</em>
+  </dt>
+  <dd>The short name of course, generally in DeptNumber form.</dd>
+</dl><dl>
+  <dt><code>courseTitle =</code> <em>string</em>
+  </dt>
+  <dd>The full name of course.</dd>
+</dl><dl>
+  <dt><code>semester =</code> <em>string</em>
+  </dt>
+  <dd>The semester of this offering.</dd>
+  <dt><code>sem =</code> <em>string</em>
+  </dt>
+  <dd>Abbreviated name for the semester of this offering.</dd>
+</dl><dl>
+  <dt><code>instructor =</code> <em>string</em>
+  </dt>
+  <dd>The instructor name.</dd>
+</dl><a id="optionalparameterscourseproperties"/><h3 id="optional-parameters-course-properties">3.2.2 Optional Parameters: Course properties</h3><dl>
+  <dt><code>email =</code> <em>string</em>
+  </dt>
+  <dd>The email address for inquiries about the course. This appears as a <code>mailto:</code>  link at the top and bottom of most pages.</dd>
+</dl><dl>
+  <dt><code>copyright =</code> <em>string</em>
+  </dt>
+  <dd>A copyright notification.</dd>
+  <dt><code>delivery =</code> <em>string</em>
+  </dt>
+  <dd>The course delivery style, commonly used in conditional text within documents  to select variant text for web versus face to face courses.
+    <p>Typical values are “online” or “live”</p>
+    
+  </dd>
+  <dt><code>homeURL =</code> <em>URL</em>
+  </dt>
+  <dd>URL used in “home” links from documents (generally in document footers).  If omitted, such links should be suppressed.</dd>
+</dl><a id="optionalparametersdeployment"/><h3 id="optional-parameters-deployment">3.2.3 Optional Parameters: Deployment</h3><dl>
+  <dt><code>baseURL =</code> <em>URL</em>
+  </dt>
+  <dd>The URL at which the root directory of the website will be located.  This is only used when preparing “thin” packages that allow Blackboard  or other Learning Management Systems to link to a course website.
+    <p>Currently used only with the Gradle <code>bbthin</code> target.</p>
+    
+  </dd>
+</dl><p><code>deployDestination =</code> _local-directory`<br/>: A directory on the local machine to which course materials  should be copied to deploy the website.</p>
+    <pre><code> Used only with the Gradle `deploy` target. 
+</code></pre><dl>
+  <dt><code>sshDeployURL =</code> <em>URL</em>
+  </dt>
+  <dd>An ssh URL, usually on a remote machine, to which course materials  should be copied to deploy the website.
+    <p>Used only with the Gradle <code>deployBySsh</code> target. </p>
+    
+  </dd>
+</dl><dl>
+  <dt><code>sshDeployKey =</code> <em>file</em>
+  </dt>
+  <dd>An ssh key used for deploying to a remote machine.
+    <p>Used only with the Gradle <code>deployBySsh</code> target. </p>
+    
+  </dd>
+</dl><dl>
+  <dt><code>rsyncDeployURL =</code> <em>URL</em>
+  </dt>
+  <dd>An ssh URL, usually on a remote machine, to which course materials  should be copied to deploy the website.
+    <p>Used only with the Gradle <code>deployByRsync</code> target. </p>
+    
+  </dd>
+</dl><dl>
+  <dt><code>rsyncDeployKey =</code> <em>file</em>
+  </dt>
+  <dd>An ssh key used for deploying to a remote machine.
+    <p>Used only with the Gradle <code>deployByRsync</code> target. </p>
+    
+  </dd>
+</dl><a id="optionalpropertieswebsite"/><h3 id="optional-properties-website">3.2.4 Optional Properties; Website</h3><dl>
+  <dt><code>mathjaxURL =</code> <em>URL</em>
+  </dt>
+  <dd>The URL used for mathematics rendering. Defaults  to <code>https://cdn.mathjax.org/mathjax/latest</code></dd>
+  <dt><code>highlightjsURL =</code> <em>URL</em>
+  </dt>
+  <dd>The URL used for code highlighting.</dd>
+</dl></div><script>sshowControl0 = { counter: 1,
+             showNumber: 0, max: 1};
+             window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
+<a class="imgLink" href="https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Modifying%20Build%20Options"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>
