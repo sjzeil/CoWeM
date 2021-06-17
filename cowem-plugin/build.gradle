@@ -14,6 +14,7 @@ plugins {
     id 'pmd'
     id "com.github.node-gradle.node" version "2.2.4"
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
+    id 'org.ajoberstar.git-publish' version '2.1.3'
 }
 
 group 'edu.odu.cs.zeil'
@@ -48,6 +49,7 @@ repositories {
     maven {
         url "https://plugins.gradle.org/m2/"
     }
+    
 }
 
 
@@ -89,14 +91,6 @@ tasks.withType(Test) {
 
 check.dependsOn integrationTest
 
-/*
-configurations {
-    instrumentedJars {
-        canBeConsumed = true
-        canBeResolved = false
-    }
-}
-*/
 
 jar {
     manifest {
@@ -110,31 +104,51 @@ jar {
 task install (dependsOn: ['jar', 'publishToMavenLocal']) {
 }
 
-/*
-artifacts {
-    pluginJars(jar.outputFile) {
-        builtBy(jar)
+
+gitPublish {
+    // where to publish to (repo must exist)
+    repoUri = 'git@github.com:sjzeil/CoWeM.git'  // or https:: ? 
+
+    // where to fetch from prior to fetching from the remote (i.e. a local repo to save time)
+    //referenceRepoUri = 'file://../'
+
+    // branch will be created if it doesn't exist
+    branch = 'gh-pages'
+
+    // repoDir = file("$buildDir/gitPublish")   // default
+
+    // what to publish, this is a standard CopySpec
+    contents {
+        from (rootProject.projectDir) {
+            include 'ReleaseNotes.md'
+        }
+
+        from 'src/main/html'
+        from("$buildDir/reports") {
+            into 'reports'
+        }
     }
+
+    // what to keep in the existing branch (include=keep)
+
+    preserve {
+        include '_config.yml'
+        include 'referenceManual/**'
+        // exclude '1.0.0/temp.txt'
+    }
+
+    commitMessage = 'Publishing build reports'
 }
-*/
+
+gitPublishCopy.dependsOn("reports")
+
+task deployReports (dependsOn: 'gitPublishPush') {
+    
+}
 
 
 ////////  Website report Generation ///////////////////
 
-/*
-checkstyle {
-    ignoreFailures = true
-    showViolations = false
-    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
-    //configProperties = [ "suppressionFile" : file('config/checkstyle/checkstyle.suppressions.xml')]
-}
-
-tasks.withType(Checkstyle) {
-    reports {
-        html.destination project.file("build/reports/checkstyle/main.html")
-    }
-}
-*/
 
 
 
@@ -145,7 +159,6 @@ pmd {
 }
 
 test.ignoreFailures=true
-//checkstyleTest.enabled = false
 pmdTest.enabled = false
 check.dependsOn htmlDependencyReport
 

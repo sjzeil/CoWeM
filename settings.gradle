@@ -4,6 +4,10 @@ pluginManagement {
             url "https://plugins.gradle.org/m2/"
         }
 		mavenCentral()
+        maven {
+            name = 'ajoberstar-backup'
+            url = 'https://ajoberstar.org/bintray-backup/'
+        }
 	}
 }
 
