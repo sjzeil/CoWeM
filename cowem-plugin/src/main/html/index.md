@@ -28,8 +28,72 @@ Learning Management Systems.
 
 * [Release Notes](./ReleaseNotes.html)
 
-* [Users' Reference Manual](./referenceManual/index.html)
+* [Users' Reference Manual](./userReference/index.html)
 
 * [Project development reports](./reports/reportsSummary/projectReports.html)
 
   
+# Usage
+
+_settings.gradle_
+
+```
+pluginManagement {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        ivy { // Use my own CS dept repo
+            url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+        }
+        mavenCentral()
+    }
+}
+
+def includeFrom = {
+    dir ->  new File(rootDir,dir).eachFileRecurse { f ->
+        if ( f.name == "build.gradle" ) {
+            String relativePath = f.parentFile.absolutePath - rootDir.absolutePath
+            String projectName = relativePath.replaceAll("[\\\\\\/]", ":")
+            include projectName
+        }
+   }
+}
+
+// Don't touch anything above this line
+
+rootProject.name = 'CS199'   // any short descriptive word or phrase - no blanks  
+
+
+// The following lines establish the course groups.
+includeFrom('Directory')
+includeFrom('Public')
+includeFrom('Protected')
+```
+
+_build.gradle_
+```
+plugins {
+     id 'edu.odu.cs.cowem.course' version '1.19.0'
+  }
+
+
+
+course {
+	courseName        = 'CS199'
+	courseTitle       = 'Introduction to Software Testing'
+	semester          = 'Spring 2021'
+	sem               = 's21'
+	instructor        = 'John Q. Instructor'
+	email             = 'jqins001@whatever.edu'
+	copyright         = '2015-2021, Whatever Univ.'
+	baseURL           = 'https://whatever.edu/cs350/s21/'
+	homeURL           = '../../Directory/outline/index.html'
+	deployDestination = '/home/jqins001/secure_html/cs199/s21/'
+	sshDeployURL      = 'jqins001@www.whatever.edu:/home/jqins001/secure_html/cs199/s21/'
+    delivery          = 'online'
+}
+
+```
+
+For more details, refer to the [User Reference Manual](https://sjzeil.github.io/CoWeM/userReference/index.html)

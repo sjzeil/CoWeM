@@ -24,13 +24,5 @@ jobs:
     - name: Build the plugin
       working-directory: ./cowem-plugin
       run: ../gradlew build
-    - name: Build the reference manual
-      working-directory: ./userReference
-      run: ../gradlew build
-    - name: make docs available
-      run: |
-        mkdir docs
-        cp -rf cowem-plugin/build/reports docs/
-        mv userReference/build/website docs/
-        cp README.md docs/index.md
+    
         
