@@ -9,7 +9,7 @@ CoWeM has been used to support both traditional face-to-face and web courses,
 examples of which can be found [here](./examples.html).
 
 The primary input document format for course content is Markdown --
-specifically [multimarkdown](http://fletcherpenney.net/multimarkdown/). 
+specifically [pegDown](https://github.com/sirthias/pegdown). 
 
 Course content can be portrayed in various HTML-based formats,
 including single and multi-page documents and slides. Conditional text allows
@@ -28,7 +28,7 @@ Learning Management Systems.
 
 * [Release Notes](./ReleaseNotes.html)
 
-* [Users' Reference Manual](./referenceManual/index.html)
+* [Users' Reference Manual](./userReference/index.html)
 
 * [Project development reports](./reports/reportsSummary/projectReports.html)
 
