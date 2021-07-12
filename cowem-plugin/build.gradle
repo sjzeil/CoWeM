@@ -13,7 +13,7 @@ plugins {
     id 'pmd'
     id "com.github.node-gradle.node" version "2.2.4"
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
-    id 'org.ajoberstar.git-publish' version '2.1.3'
+    id "org.xbib.gradle.plugin.git" version "2.0.0"
     id 'maven-publish'
     id 'signing'
 }
@@ -105,9 +105,9 @@ publishing {
                             }
                         }
                         scm {
-                            <connection>scm:git:https://github.com/sjzeil/CoWeM.git</connection>
-                            <developerConnection>scm:git:ssh:git@github.com:sjzeil/CoWeM.git</developerConnection>
-                            <url>https://github.com/sjzeil/CoWeM</url>
+                            connection = 'scm:git:https://github.com/sjzeil/CoWeM.git'
+                            developerConnection = 'scm:git:ssh:git@github.com:sjzeil/CoWeM.git'
+                            url = 'https://github.com/sjzeil/CoWeM'
                         }
                     }
                 }
@@ -137,11 +137,11 @@ dependencies {
 	implementation "com.github.node-gradle:gradle-node-plugin:2.2.4"
 	
 	testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.1"
-	testRuntime "org.junit.jupiter:junit-jupiter-engine:5.6.1"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.1"
 	
     testImplementation 'org.hamcrest:hamcrest-library:2.2'
-//    testRuntime 'edu.odu.cs.zeil:report_accumulator:1.3+'
-    testRuntime 'org.slf4j:slf4j-simple:1.7.30'
+//    testRuntimeOnly 'edu.odu.cs.zeil:report_accumulator:1.3+'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.30'
 }
 
 testSets { integrationTest }
@@ -169,46 +169,6 @@ task install (dependsOn: ['jar', 'publishToMavenLocal']) {
 }
 
 
-gitPublish {
-    // where to publish to (repo must exist)
-    repoUri = 'git@github.com:sjzeil/CoWeM.git'  // or https:: ? 
-
-    // where to fetch from prior to fetching from the remote (i.e. a local repo to save time)
-    //referenceRepoUri = 'file://../'
-
-    // branch will be created if it doesn't exist
-    branch = 'gh-pages'
-
-    // repoDir = file("$buildDir/gitPublish")   // default
-
-    // what to publish, this is a standard CopySpec
-    contents {
-        from (rootProject.projectDir) {
-            include 'ReleaseNotes.md'
-        }
-
-        from 'src/main/html'
-        from("$buildDir/reports") {
-            into 'reports'
-        }
-    }
-
-    // what to keep in the existing branch (include=keep)
-
-    preserve {
-        include '_config.yml'
-        include 'referenceManual/**'
-        // exclude '1.0.0/temp.txt'
-    }
-
-    commitMessage = 'Publishing build reports'
-}
-
-gitPublishCopy.dependsOn("reports")
-
-task deployReports (dependsOn: 'gitPublishPush') {
-    
-}
 
 
 ////////  Website report Generation ///////////////////
@@ -271,3 +231,52 @@ task deployReports (type: Copy) {
 }
 
 */
+
+////////  Website publication on GitHub pages ///////////////////
+
+
+task clonePages() {
+    doLast {
+        mkdir 'build/gh-pages'
+        def thisRepo = rootProject.projectDir.toString()
+        def pagesDir = "$buildDir/gh-pages"
+        project.delete {
+            delete pagesDir
+        }
+        def grgit = git.clone {
+            dir = pagesDir
+            uri = 'file:' + thisRepo
+            bare = false
+            refToCheckout = 'gh-pages'
+        }
+        grgit.checkout {
+            branch = 'gh-pages'
+        }
+    }
+}
+
+task copyReports (type: Copy, dependsOn: ['reports', 'clonePages']) {
+    from "$buildDir/reports"
+    into "$buildDir/gh-pages/reports"
+}
+
+task updateGHPages (dependsOn: 'copyReports') {
+    group = "Reporting"
+    description  'Copies reports to the gh-pages branch in preparation for a future push to GitHub'
+    doLast {
+        exec {
+            workingDir "$buildDir/gh-pages/reports"
+            commandLine '/bin/sh', '-c', 'date > date.txt'
+        }
+        def pagesDir = "$buildDir/gh-pages"
+        def grgit = git.open {
+            dir = pagesDir + "/.git"
+        }
+        grgit.add (update: false, patterns: ['reports/'])
+        grgit.add (update: true, patterns: ['reports/'])
+        grgit.commit {
+            message = "Updating web pages"
+        }
+        grgit.push {}
+    }
+}
