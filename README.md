@@ -1,24 +1,8 @@
 # CoWeM: Course Websites from Markdown
 
-This is a static site generator for for building course websites, including lecture notes, 
-slides & organizational pages, from Markdown documents. 
-CoWeM has been used in the [Old Dominion University CS Department](https://www.cs.odu.edu/)
-to support both traditional face-to-face and web courses, 
-including the course sites
-for [the CS 250 pretest](https://www.cs.odu.edu/~zeil/cs250PreTest/latest/), 
-[CS 252](https://www.cs.odu.edu/~zeil/cs252/latest/),
-300 (in development), 
-[CS 330](https://www.cs.odu.edu/~tkennedy/cs330/s17/), 
-[CS 333](https://www.cs.odu.edu/~zeil/cs333/latest/), 
-[CS 350]((https://www.cs.odu.edu/~zeil/cs350/latest/)), 
-[CS 361](https://www.cs.odu.edu/~zeil/cs361/latest/),
-[CS 382](https://www.cs.odu.edu/~zeil/cs382/latest/),
-[CS 390](https://www.cs.odu.edu/~zeil/cs390/latest/),
-[CS 410](https://www.cs.odu.edu/~tkennedy/cs410/s17/), and
-[CS 411w](https://www.cs.odu.edu/~tkennedy/cs411/s17/).
-
-The primary input document format for course content is Markdown --
-specifically [multimarkdown](http://fletcherpenney.net/multimarkdown/). 
+CoWeM is a static site generator for for building course websites, including lecture notes, 
+slides & organizational pages, from Markdown documents. The CoWeM system itself is a small
+collection of Gradle plug-ins and associated support libraries.
 
 Course content can be portrayed in various HTML-based formats,
 including single and multi-page documents and slides. Conditional text allows
@@ -27,69 +11,19 @@ notes with explanations and a sparser set of slides.  Support is provided
 for automatic pretty-printing of program source code and for the rendering
 of mathematics from LaTeX expressions.
 
-This content can be deployed as an ordinary website or as an 
-export package suitable for importing into Blackboard or other
+This content can be deployed as an ordinary website or as a 
+SCORM package suitable for importing into Blackboard or other
 Learning Management Systems.
 
-# Project Status
+* Currently in version 1.19.0
 
-> The project is currently being moved from a Departmental GitLab to hosting on GitHub.
+* [Website](https://sjzeil.github.io/CoWeM/)
 
-* [Users' Reference Manual](https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html)
-
-* [Project development reports](http://www.cs.odu.edu/~zeil/gitlab/cowem/reports/reportsSummary/projectReports.html)
-
-* Currently in version 1.19.
+* [User Reference Manual](https://sjzeil.github.io/CoWeM/userReference/index.html)
   
 * The CoWeM system itself is a small collection of Gradle plug-ins and
   associated support libraries.  Courses built in CoWeM include a small
   set of files that will "bootstrap" the fetching of CoWeM code and the
   Gradle build manager onto nearly any system with a working Java runtime
   environment without requiring a special installation procedure.
-
-# New in v1.19
-
-* Bug fix affecting repostitories searched for 3rd party libraries
-* Bug fix breaking PDF generation ("no usuable sandbox" error from Puppeteer
-
-
-# New in v1.18
-
-* Bug fix affecting operation in Windows
-* Force Java compatibility to Java 11
-
-# New in v1.17
-
-* Bug fixes affecting slides
-
-# New in v1.16
-
-* Added ability to use doc: URL shorcuts to reference documents in other CoWeM-generated
-  websites.
-* Cross-group document links (doc: shortcuts) now open in a separate tab/window.
-
-# New in v1.15
-
-* [Mermaid diagrams](https://mermaid-js.github.io/mermaid/#/) can be
-  embedded by giving a code block (in the three back-tick form, not
-  the indented form) with "mermaid" as the programming langauge.
-* Improved prformance when processing intra-website `doc:` links.
-* Updated code to Java 11 & Gradle 1.6.5
-
-# New in v1.14
-
-* Javascript can be extended by placing a `md-`_formatName_`-ext.js` file in
-  the styles directory.
-
-# New in v1.13
-
-* PlantUML diagrams can be embedded by giving a code block (in the
-  three back-tick form, not the indented form) with "plantuml" as the
-  programming langauge.
-
-
-# New in v1.12
-
-* Courses can be published as a SCORM 1.2 package for easy import into
-  Blackboard and other Learning Management Systems.
 
