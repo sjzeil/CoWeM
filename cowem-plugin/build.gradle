@@ -14,7 +14,7 @@ plugins {
     id "com.github.node-gradle.node" version "2.2.4"
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
     id "org.xbib.gradle.plugin.git" version "2.0.0"
-    id 'maven-publish'
+    id 'maven'
     id 'signing'
 }
 
@@ -55,74 +55,15 @@ repositories {
     maven {
         url "https://plugins.gradle.org/m2/"
     }
-    
 }
 
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from(components.java)
-            pom {
-                name = 'CoWeM'
-                description = 'A static site generator for course websites from MarkDown.'
-                url = 'https://github.com/sjzeil/CoWeM'
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://github.com/sjzeil/CoWeM/blob/main/LICENSE.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = "sjzeil"
-                        name = 'Steven Zeil'
-                        email = 'zeil@cs.odu.edu'
-                    }
-                }
-            }
-        }    
-    }
-    afterEvaluate {
-            publications {
-                withType(MavenPublication) {
-                // customize all publications here
-                    pom {
-                        name = 'CoWeM'
-                        description = 'A static site generator for course websites from MarkDown.'
-                        url = 'https://github.com/sjzeil/CoWeM'
-                        licenses {
-                            license {
-                                name = 'MIT License'
-                                url = 'https://github.com/sjzeil/CoWeM/blob/main/LICENSE.txt'
-                            }
-                        }
-                        developers {
-                            developer {
-                                id = "sjzeil"
-                                name = 'Steven Zeil'
-                                email = 'zeil@cs.odu.edu'
-                            }
-                        }
-                        scm {
-                            connection = 'scm:git:https://github.com/sjzeil/CoWeM.git'
-                            developerConnection = 'scm:git:ssh:git@github.com:sjzeil/CoWeM.git'
-                            url = 'https://github.com/sjzeil/CoWeM'
-                        }
-                    }
-                }
-            }
-        }
-    repositories {
-        maven {
-            name = "oducs"
-            url = layout.buildDirectory.dir("repo")
-        }
-    }
+artifacts {
+    archives javadocJar, sourcesJar
 }
 
 signing {
-    sign publishing.publications.mavenJava
+    sign configurations.archives
 }
 
 
@@ -165,10 +106,56 @@ jar {
 }
 
 
-task install (dependsOn: ['jar', 'publishToMavenLocal']) {
+//task install (dependsOn: ['jar', 'publishToMavenLocal']) {
+//}
+
+
+uploadArchives {
+
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'CoWeM'
+                description 'A static site generator for course websites from MarkDown.'
+                packaging 'jar'
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'https://github.com/sjzeil/CoWeM/blob/main/LICENSE.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id "sjzeil"
+                        name 'Steven Zeil'
+                        email 'zeil@cs.odu.edu'
+                    }
+                }
+                scm {
+                    connection 'scm:git:https://github.com/sjzeil/CoWeM.git'
+                    developerConnection 'scm:git:ssh:git@github.com:sjzeil/CoWeM.git'
+                    url 'https://github.com/sjzeil/CoWeM'
+                }
+            }
+        }
+        /*
+        maven {
+            name = "oducs"
+            url = layout.buildDirectory.dir("repo")
+        }
+        */
+    }
 }
-
-
 
 
 ////////  Website report Generation ///////////////////
