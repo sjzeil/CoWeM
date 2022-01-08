@@ -21,6 +21,11 @@ public class SourceCodeSubstitutions implements TextSubstitutions {
     /**
      * Special substitutions defined for this website processing. These deal
      * mainly with highlighting and inserting callouts into code listings.
+     * 
+     * This class also implements a "delayed ampersand substitution" in which
+     * "@amp@" is replaced by "&".  This is a workaround for PegDown's tendency
+     * to step on ampersands that appear within URLs.
+
      */
     private static final String[] SUBSTITUTION_VALUES = {
             "/*...*/", "&#x22ee;",
@@ -49,7 +54,8 @@ public class SourceCodeSubstitutions implements TextSubstitutions {
             "/*-=*/", CLOSE_SPAN,
             "\\%", "%",
             "[_", "<span class='userinput'>",
-            "_]", CLOSE_SPAN
+            "_]", CLOSE_SPAN,
+            "@amp@", "&"
     };
 
     /**

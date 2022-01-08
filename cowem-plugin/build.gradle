@@ -127,6 +127,7 @@ uploadArchives {
             pom.project {
                 name 'CoWeM'
                 description 'A static site generator for course websites from MarkDown.'
+                url 'https://sjzeil.github.io/CoWeM/'
                 packaging 'jar'
                 licenses {
                     license {
