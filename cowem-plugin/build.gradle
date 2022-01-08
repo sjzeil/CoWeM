@@ -11,7 +11,6 @@ plugins {
     id 'project-report'
     id 'jacoco'
     id 'pmd'
-//    id "com.github.node-gradle.node" version "2.2.4"
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
     id "org.xbib.gradle.plugin.git" version "2.0.0"
     id 'maven'
@@ -75,7 +74,6 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'net.sf.saxon:Saxon-HE:10.5'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.6.0.201912101111-r'
-	implementation "com.github.node-gradle:gradle-node-plugin:2.2.4"
 	
 	testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.1"
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.1"
