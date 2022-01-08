@@ -10,3 +10,4 @@
 .settings/
 .gradle/
 /**/.project
+/**/.vscode/

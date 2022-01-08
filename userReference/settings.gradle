@@ -3,8 +3,6 @@
 
 pluginManagement {
 	repositories {
-		mavenLocal()
-
 		mavenCentral()
 
 		maven {
@@ -16,9 +14,9 @@ pluginManagement {
             url = 'https://ajoberstar.org/bintray-backup/'
         }
 
-         flatDir {
-            dirs '../cowem-plugin/build/libs'
-         }
+        ivy { // Use my own CS dept repo
+            url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+        }
 
 	}
 }

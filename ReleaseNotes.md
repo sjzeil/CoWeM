@@ -1,5 +1,13 @@
 = Release Notes
 
+== v1.20.0 Jan 8, 2022
+
+* Organisation name changed to `edu.odu.cs` - should not affect most projects.
+* Support for PDF generation dropped -- too fragile and unwieldy for
+  the little benefit it offered
+* @amp@ added as a "delayed ampersand" to counter the Markdown
+  engine's tendency to step of ampersands appearing within URLs.
+
 == v1.19 Jan 6, 2021
 
 * Bug fix affecting repostitories searched for 3rd party libraries

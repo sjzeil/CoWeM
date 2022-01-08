@@ -6,6 +6,7 @@
 
 plugins {
     id 'groovy'
+    id 'ivy-publish'
     id 'java'
     id 'java-gradle-plugin'
     id 'project-report'
@@ -13,12 +14,11 @@ plugins {
     id 'pmd'
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
     id "org.xbib.gradle.plugin.git" version "2.0.0"
-    id 'maven'
     id 'signing'
 }
 
-group 'edu.odu.cs.zeil'
-version '1.19.0'
+group 'edu.odu.cs'
+version '1.20.0'
 
 sourceCompatibility = "1.11"
 targetCompatibility = "1.11"
@@ -32,27 +32,42 @@ java {
 gradlePlugin {
     plugins {
         CourseWebsite {
-            id="edu.odu.cs.zeil.cowem.course"
+            id="edu.odu.cs.cowem.course"
             implementationClass = "edu.odu.cs.cowem.CourseWebsite"
         }
         Group {
-            id="edu.odu.cs.zeil.cowem.group"
+            id="edu.odu.cs.cowem.group"
             implementationClass = "edu.odu.cs.cowem.Group"
         }
         Documents {
-            id="edu.odu.cs.zeil.cowem.documents"
+            id="edu.odu.cs.cowem.documents"
             implementationClass = "edu.odu.cs.cowem.Documents"
         }
     }
 }
 
 
+// Credentials are loaded from ~/.gradle/gradle.properties
+if(project.hasProperty("ivyRepoUser")){
+    ext.ivyRepoUser = "$ivyRepoUser";
+} else {
+    ext.ivyRepoUser = "user";
+}
+if(project.hasProperty("ivyRepoPass")){
+    ext.ivyRepoPass = "$ivyRepoPass";
+} else {
+    ext.ivyRepoPass = "password";
+}
 
 
 repositories {
     mavenCentral()
     maven {
         url "https://plugins.gradle.org/m2/"
+    }
+        // Use my own CS dept repo
+    ivy {
+        url 'https://www.cs.odu.edu/~zeil/ivyrepo'
     }
 }
 
@@ -107,54 +122,32 @@ jar {
 //task install (dependsOn: ['jar', 'publishToMavenLocal']) {
 //}
 
+publishing {
+    publications {
+        ivyJava(IvyPublication) {
+            organisation 'edu.odu.cs'
+            module 'cowem-plugin'
+            revision project.version
+            descriptor.status = 'integration'   // milestone, release
+            descriptor.branch = 'v1'
 
-uploadArchives {
+            from components.java
+        }
+    }
 
     repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                name 'CoWeM'
-                description 'A static site generator for course websites from MarkDown.'
-                url 'https://sjzeil.github.io/CoWeM/'
-                packaging 'jar'
-                licenses {
-                    license {
-                        name 'MIT License'
-                        url 'https://github.com/sjzeil/CoWeM/blob/main/LICENSE.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id "sjzeil"
-                        name 'Steven Zeil'
-                        email 'zeil@cs.odu.edu'
-                    }
-                }
-                scm {
-                    connection 'scm:git:https://github.com/sjzeil/CoWeM.git'
-                    developerConnection 'scm:git:ssh:git@github.com:sjzeil/CoWeM.git'
-                    url 'https://github.com/sjzeil/CoWeM'
-                }
+        ivy {
+            name 'ivyRepo'
+            url 'sftp://linux.cs.odu.edu:22/home/zeil/secure_html/ivyrepo'
+            // Readable via https://www.cs.odu.edu/~zeil/ivyrepo
+            credentials {
+                username project.ivyRepoUser
+                password project.ivyRepoPass
             }
         }
-        /*
-        maven {
-            name = "oducs"
-            url = layout.buildDirectory.dir("repo")
-        }
-        */
     }
 }
+
 
 
 ////////  Website report Generation ///////////////////

@@ -5,8 +5,8 @@ TOC: yes
 
 CoWeM uses [Gradle](https://gradle.org) to automate the process of building the website.
 
-Gradle is a build manager for software projects. Although a websiote may not involvr programming
-in the usual sense, it can certainly be regarded as a software system. If ypur only experience with
+Gradle is a build manager for software projects. Although a website may not involve programming
+in the usual sense, it can certainly be regarded as a software system. If your only experience with
 with build managers has been the ones built in to a programming IDE or the venerable Unix `make` utility,
 you may be surprised at the range of features provided by Gradle.  Of particular relevance to CoWeM:
 
@@ -117,24 +117,6 @@ build
 The `build` target is the default. If you don't specify a target at the
 command line, `build` is run.
 
-pdf
-: Build the website by processing the document sets. If the `Directory/outline` 
-  document exists and has been generated in scroll format, it and all primary
-  documents linked from it (that also have scroll formats) are combined
-  into a single document and used to produce PDF summaries of the website
-  suitable, with some limitations, for reading off-line.
-  
-    PDFs can be generated in a variety of page sizes. By default, generated
-    PDFs are
-  
-    * A [letter](../../letter.pdf) page (8.5 in by 11in) version
-    * A [4x3](../../4x3.pdf) page format for larger tablets.
-    * An [8x5](../../8x5.pdf) page format for tables designed for viewing "wide-screen" video. 
-
-    The generated PDFs are placed in the root directory of the website.
-    
-    PDF generation is only avilable on machines with the `npm` program for
-    retrieving Javascrip modules. 
 
 clean
 : Delete all files that can be reconstructed via the `build` target. This is
@@ -354,7 +336,7 @@ There are several ways to do this:
         cd Public/syllabus
         ../../gradlew build 
   
-  in Linux or OS/X. In Windows, you would do the same excpet using "\" instead
+  in Linux or OS/X. In Windows, you would do the same except using "\" instead
   of "/".
 
   
@@ -429,7 +411,7 @@ the navigation bar and selecting `Course Link`.
 4. There is no "grading" associated with these packages. So choose the following
    settings:
    
-    * Make SCORM Availabble; yes
+    * Make SCORM Available; yes
     * Number of Attempts: Allow unlimited attempts
     * Track Number of Views: whatever you like
     * Grade SCORM: No Grading
