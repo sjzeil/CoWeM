@@ -63,7 +63,6 @@
 							select="sectionDescription/node()" />
 					</div>
 					<div class="moduleActivities" id='{$activitiesID}'>
-						<b>Activities</b>
 						<xsl:apply-templates select="sectionContent/*"
 							mode="activities" />
 					</div>

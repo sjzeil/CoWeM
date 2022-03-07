@@ -1,5 +1,12 @@
 = Release Notes
 
+== v1.21.0 March 7, 2022
+
+* Added LMS format for course outlines.  This provides for easy
+  integration into Canvas "modules" by providing a URL that can be
+  placed into an `iframe` in a Canvas page to display CoWeM-generated
+  module info from the CoWeM outline page,
+
 == v1.20.0 Jan 8, 2022
 
 * Organisation name changed to `edu.odu.cs` - should not affect most projects.
