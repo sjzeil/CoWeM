@@ -52,8 +52,8 @@ public class TestDocumentDating {
         
         String modDate = doc.getModificationDate(source);
 
-        assertThat (modDate, containsString("2021"));
-        assertThat (modDate, containsString("Jul"));
+        assertThat (modDate, containsString("2022"));
+        assertThat (modDate, containsString("Feb"));
     }
     
     @Test

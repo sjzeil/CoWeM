@@ -2,6 +2,6 @@ apply plugin: edu.odu.cs.cowem.Documents
 
  
 documents {
-	formats = ['modules', 'topics', 'scroll']
+	formats = ['modules', 'topics', 'scroll', 'LMS']
 }
 

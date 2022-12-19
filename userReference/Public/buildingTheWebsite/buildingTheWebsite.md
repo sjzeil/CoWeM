@@ -65,12 +65,6 @@ directory, and run
 
 The possible _targets_ are discussed in the next section.
 
-To run in GUI mode, do the same and run
-
-`gradlew-gui`
-
-or simply view the course root root directory in the Windows File Explorer and
-double-click the `gradle-gui.bat` file.
 
 ## Linux  
 
@@ -81,23 +75,9 @@ directory, and run
 
 The possible _targets_ are discussed in the next section.
 
-To run in GUI mode, do the same and run
-
-`./gradlew --gui &`
- 
 
 
-## The GUI Mode
 
-\picOnRight{gradle-gui, 66}
-
-In GUI mode, Gradle displays a list of possible build targets
-(in the top panel), which
-will include those discussed in the next section plus a variety of "generic"
-Gradle targets.
-
-You can click on any of them to select it, then click the small green "run"
-button at the top of the upper panel to execute that target.    
 
 
 
@@ -114,8 +94,8 @@ build
   directory).   You can use your favorite web browser "Open File" command to
   view any of the HTML files that have been generated. 
 
-The `build` target is the default. If you don't specify a target at the
-command line, `build` is run.
+  The `build` target is the default. If you don't specify a target at the
+  command line, `build` is run.
 
 
 clean
@@ -254,54 +234,9 @@ zip
     to make the course content available. This includes a
     [Blackboard content collection](#importing-a-zip-package). 
 
-bb
-: _Deprecated in favor of_ `scorm` _(see below)_.
 
-    Package the website as a fat Blackboard module that can
-    be imported into a Blackboard course.  Content included is
-  
-    * The entire website is exported to the Blackboard course 
-      Content Area.
-    * All links from the `Directory/navigation` document set are added
-      to the navigation panel of the Blackboard course.
-    * All dates found in items in the course outline 
-      (`Directory/outline`) are added to the Blackboard calendar. 
 
-    Brief instructions on importing Blackboard packages is given
-    [below](#importing-a-bb-or-bbthin-package).
 
-\bSidebar{66}
-
-**course root build.gradle:**
-
-    course {
-        courseName        = 'CS 350'
-        courseTitle       = 'Introduction to Software Engineering'
-        semester          = 'Fall 2016'
-        sem               = 'f16'
-        instructor        = 'Steven J Zeil'
-        email             = 'zeil@cs.odu.edu'  
-        copyright         = '2016, Old Dominion Univ.'
-        homeURL           = '../../Directory/outline/index.html'
-        /*+*/baseURL      = 'https://www.cs.odu.edu:/~zeil/cs350/f16/'/*-*/
-    }
-    
-\eSidebar
-
-bbthin
-: Package the website as a Blackboard module that can be imported into
-  a Blackboard course.  Content included is
-  
-    * All links from the `Directory/navigation` document set are added
-      to the navigation panel of the Blackboard course. These are
-      resolved to absolute URLs to a deployed version of the course
-      website whose root directory is located at the `baseURL`.
-    * All dates found in items in the course outline 
-      (`Directory/outline`) are added to the Blackboard calendar. 
-
-    Brief instructions on importing Blackboard packages is given
-    [below](#importing-a-bb-or-bbthin-package).
-    
 scorm
 : Package the website as a SCORM 1.2 package that can be imported into
   Blackboard or most other Learning Management Systems.
@@ -366,34 +301,35 @@ deployDocByRsync
 : Like the top-level `deployByRsync`, this builds the document set and copies it
   to a remote machine via an `rsync` command. 
   
-#  Importing CoWeM Packages into Blackboard
+#  Integrating CoWeM Content into an LMS
 
-## Importing a Zip Package
+## Linking to CoWeM Content
 
-1. Create a _zip package_ using the _zip_ build target, as described above.
-2. Go to your course on Blackboard, and enter a content collection area,
-   either the course content area (visible only to students in that course)
-   or your user content area (potentially visible to everyone on Blackboard).
-3. Use the Blackboard controls to enter the folder where you want to put
-   the course materials, or to create a new folder to hold them.
-4. <img src='uploadZipPackage.png' align='right' style='max-width: 66%;'/> In the `Upload` menu, 
-   select "Upload Zip Package". 
-5. Click the "Choose file" button, and select the Zip package you
-   created in step 1.  You'll find it in your course's
-   `build/packages/` directory.
-6. Click "Submit".
+One of the easiest ways to integrate CoWeM content into an LMS is to simply link to your CoWeM-generated website from your LMS's.  For example, Blackboard and Canvas allow you to put links to external URLs i a course's navigation panel. In my own courses, I will typically add navigation links to
 
-    The Zip package will be uploaded, and after it has been uploaded,
-    Blackboard will unpack it into the Content Collection folder you
-    had selected.
+* my syllabus
+* the main course outline
+* a policies page, and
+* a library or resources page
 
-Using the Blackboard controls, you can navigate to any items you like
-(e.g., the course outline), then copy the URL from your web browser's address
-bar and paste it into a document available to your students.
+replacing any similarly-named entries already in the LMS navigation panel.
 
-You can also add any item uploaded this way into your
-Blackboard course's navigation bar by clicking the "+" at the upper left of
-the navigation bar and selecting `Course Link`.  
+## LMS Modules and the CoWeM Outline
+
+Both Blackboard and Canvas encourage organizing content into modules.  These LMS modules cna display information from the CoWeM outline page via an `<iframe>` element.
+
+1. Add the [LMS format](doc:directories#formats-for-the-outline) to the course outline document set.
+2. In the LMS, add modules pages for module overviews (if provided in the outline) and activities, using HTML code similar to this:
+
+        <iframe src="/*+i*/URL-for-course/*-i*//Directory/outline/outline_LMS.html?reveal=overview1" width="600" height="400"></iframe>
+
+    The `?reveal=` parameter determines what will be displayed.
+    
+    * Use "overview" for the module overview section (if present in
+    the outline) and 'activities" for the activities section.
+    * Follow that with the module number $k$, $k = 1, 2, \ldots$.
+
+
 
 ## Importing a SCORM package
 
@@ -401,15 +337,16 @@ the navigation bar and selecting `Course Link`.
    as described above, to produce a package stored in
    `build/packages/scorm`...`.zip`
    
-2. Enter your Blackboard course. Select (or create) a content area, such
+2. Enter your LMS.  Follow its procedure for importing a SCORM package. Blackboard course. Select (or create) a content area, such
    as the "Outline" area, and enter that area.
    
+
 3. from the "`BuildContent`" menu, select "`Content package
    (SCORM)`" and follow the instructions to upload your newly generated
    `scorm`...`.zip` file.
 
 4. There is no "grading" associated with these packages. So choose the following
-   settings:
+   settings in Blackboard (and similar ones for Canvas):
    
     * Make SCORM Available; yes
     * Number of Attempts: Allow unlimited attempts
@@ -418,65 +355,3 @@ the navigation bar and selecting `Course Link`.
     * Grade SCOS: No 
     
 
-## Importing a bb or bbthin Package
-
-> **Important**:  When you use the Blackboard "import package" procedure,
-> content is _added_ to your Blackboard course but never _replaces_ existing
-> content.  You can not _update_ existing imported materials.  
-> 
-> It's important, therefore, that whenever you import material for the second
-> (or third or ...) time, you delete the old versions first. Otherwise
-> you are likely to wind up with really _ugly_ calendars and navigation bars
-> and your content collection area will get increasingly large and confusing.  
-
-1. Create a _bb_ or _bbthin_ package using the corresponding build target, 
-   as described above.
-2. \picOnRight{importPackage1,67} Go to your course on Blackboard, 
-   select "`Import Package`" under `Packages 
-   and Utilities`, then select "Import Package".
-3. \picOnRight{importPackage2,67} Click the "Browse My Computer" button and 
-   select the _bb_ or _bbthin_ package you
-   created in step 1.  You'll find it in your course's
-   `build/packages/` directory.
-4. In the `Select Course Materials` area, choose the items you want to
-   import:
-    * Select `Calendar` if you want to add calendar entries from
-      your course outline to the Blackboard calendar for your course.
-      Leave this unselected if you have no dates in your outline, or
-      if you have already imported calendar entries and have no need
-      to change them, or if oyu have not yet finalized your dates and
-      want to wait a little while.
-      
-        (Deleting calendar entries in Blackboard is particularly
-         tedious, so I generally do this only when I am pretty sure I
-         have nailed down all of my important dates.)
-         
-     * Select `Content Areas` and  `Navigation Settings` to update
-       course content (`bb` packages) and the Blackboard navigation
-       bar (both `bb` and `bbthin`).
-       
-         \picOnRight{importPackage3,67}
-         Entries from your CoWeM navigation document will be added to
-         the main Blackboard course navigation bar.  For a fat `bb`
-         package, these entries will point to the copy of the website
-         uploaded into the course Content Collection area. For the
-         `bbthin` package, these entries will point to the "real"
-         external website indicated by your course's `baseURL`
-         parameter.  
-      
-      No other entries in this area will have any effect.
-      
-      
-6. Click "Submit".  Blackboard will upload the package you specified and
-   will queue up a background job to process it.
-   
-    Processing typically takes several minutes, but can take quite a
-    long time if you have a very
-    large website or if many other people have background jobs queued. 
-    (For example, requests to copy materials from one Blackboard
-    course to another are also handled as background jobs, and are
-    quite common in the weeks
-    leading up to a new semester.)
-     
-7. After the import has completed, you may want to rearrange the new navigation
-   bar entries. (New entries are always added to the bottom of the bar.)

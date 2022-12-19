@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  */
 public class TestLMSFormatting {
 
-	private static final String FORMAT = "modules";
+	private static final String FORMAT = "LMS";
 
 	public String lastTransformed;
 	
@@ -156,7 +156,7 @@ public class TestLMSFormatting {
 		Element root = basicHtml.getDocumentElement();
 		String htmlContent = root.getTextContent();
 
-		assertTrue (htmlContent.contains("Section 1"));
+		assertFalse (htmlContent.contains("Section 1"));
 		
 		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
 
@@ -174,32 +174,26 @@ public class TestLMSFormatting {
 		Element item5 = getElementById(basicHtml, "li5");
 		assertNotNull (item5);
 		
-		Element moduleOf1 = (Element)xPath.evaluate("./ancestor::div[@class='module']", item1, XPathConstants.NODE);
+		Element moduleOf1 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']", item1, XPathConstants.NODE);
 		assertNotNull (moduleOf1);
-		Element moduleOf2 = (Element)xPath.evaluate("./ancestor::div[@class='module']", item2, XPathConstants.NODE);
+		assertEquals("activities1", moduleOf1.getAttribute("id"));
+		Element moduleOf2 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']", item2, XPathConstants.NODE);
 		assertNotNull (moduleOf2);
-		Element moduleOf3 = (Element)xPath.evaluate("./ancestor::div[@class='module']", item3, XPathConstants.NODE);
+        assertEquals("activities1", moduleOf2.getAttribute("id"));
+		Element moduleOf3 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']", item3, XPathConstants.NODE);
 		assertNotNull (moduleOf3);
-		Element moduleOf4 = (Element)xPath.evaluate("./ancestor::div[@class='module']", item4, XPathConstants.NODE);
+        assertEquals("activities2", moduleOf3.getAttribute("id"));
+		Element moduleOf4 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']", item4, XPathConstants.NODE);
 		assertNotNull (moduleOf4);
-		Element moduleOf5 = (Element)xPath.evaluate("./ancestor::div[@class='module']", item5, XPathConstants.NODE);
+        assertEquals("activities2", moduleOf4.getAttribute("id"));
+		Element moduleOf5 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']", item5, XPathConstants.NODE);
 		assertNotNull (moduleOf5);
-		
+        assertEquals("activities3", moduleOf5.getAttribute("id"));
+
 		assertSame(moduleOf1, moduleOf2);
 		assertNotSame(moduleOf2, moduleOf3);
 		assertSame(moduleOf3, moduleOf4);
 		assertNotSame(moduleOf4, moduleOf5);
-		
-		Element priorSectionof1 = (Element)xPath.evaluate("./preceding::div[1]", moduleOf1, XPathConstants.NODE);
-		assertNotNull(priorSectionof1);
-		assertTrue(priorSectionof1.getTextContent().contains("Section 1"));
-		
-		Element priorSubsectionof3 = (Element)xPath.evaluate("./preceding::div[1]", moduleOf3, XPathConstants.NODE);
-		assertNotNull(priorSubsectionof3);
-		assertTrue(priorSubsectionof3.getTextContent().contains("Subsection 1"));
-		Element priorSectionof3 = (Element)xPath.evaluate("./preceding::div[normalize-space(.) != ''][1]", priorSubsectionof3, XPathConstants.NODE);
-		System.err.println("text:" + priorSectionof3.getTextContent());
-		assertTrue(priorSectionof3.getTextContent().contains("Section 2"));
 		
 	}
 
@@ -243,28 +237,13 @@ public class TestLMSFormatting {
 		Element root = basicHtml.getDocumentElement();
 		String htmlContent = root.getTextContent();
 
-		assertTrue (htmlContent.contains("Section 1"));
+		assertFalse (htmlContent.contains("Section 1"));
 		assertFalse (htmlContent.contains("presentation text"));
-		assertTrue (htmlContent.contains("preamble text"));
+		assertFalse (htmlContent.contains("preamble text"));
 		assertFalse (htmlContent.contains("Preamble"));
-		assertTrue (htmlContent.contains("postscript text"));
+		assertFalse (htmlContent.contains("postscript text"));
 		assertFalse (htmlContent.contains("Postscript"));
 
-		XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
-
-		
-		Element preamblePar = getElementById(basicHtml, "p1");
-		assertNotNull (preamblePar);
-		Element item1 = (Element)xPath.evaluate("./following::*[@id='li1']", preamblePar, XPathConstants.NODE);
-		assertNotNull (item1);
-		
-		Element postscriptPar = getElementById(basicHtml, "p2");
-		assertNotNull (postscriptPar);
-		Element item5 = (Element)xPath.evaluate("./preceding::*[@id='li5']", postscriptPar, XPathConstants.NODE);
-		assertNotNull (item5);
-		
-		Element presentationPar = getElementById(basicHtml, "p3");
-		assertNull(presentationPar);
 	}
 
 	
@@ -274,19 +253,19 @@ public class TestLMSFormatting {
             ParserConfigurationException, SAXException, IOException {
         
         String[] htmlInput = {
-                "<html test='sectioning'>",
+                "<html>",
                 "<head>",
                 "<title>Document Title</title>",
                 "</head>",
                 "<body>",
                 "<p id='par1'>A preamble</p>",           // section 0, depth 1
                 "<h1 id='h11'>Title 1</h1>",             // section 1, depth 1
-                "   <h2 id='h21'>Subitle 1</h2>",        // section 2, depth 2
+                "   <h2 id='h21'>Subtitle 1</h2>",        // section 2, depth 2
                 "      <p id='par2'>Some text</p>",
                 "      <p id='par3'>Some text</p>",
                 "      <hr/>",
                 "      <p id='par4'>Some text</p>",      
-                "   <h2 id='h22'>Subitle 2</h2>",        // section 3, depth 2    
+                "   <h2 id='h22'>Subtitle 2</h2>",        // section 3, depth 2    
                 "      <h3 id='h31'>Subsubtitle 1</h3>", // section 4, depth 3
                 "         <p id='par5'>Some text</p>",
                 "      <h3 id='h32'>Subsubtitle 2</h3>", // section 5, depth 3
@@ -297,70 +276,38 @@ public class TestLMSFormatting {
                 "</html>"   
         };
 
-        String[] ids = {
-                "h11", "h12", 
-                "h21", "h22",
-                "h31", "h32",
-                "par2", "par3", "par4", "par5", "par6", "par7"
-        };
-
-        int[] shouldBeInSection = {
-                0, 5, 
-                1, 2,
-                3, 4,
-                1, 1, 1, 3, 4, 5
-        };
-
-        int[] shouldBeAtDepth = {
-                1, 1, 
-                2, 2,
-                3, 3,
-                2, 2, 2, 3, 3, 1
-        };
 
         org.w3c.dom.Document basicHtml = formatHTML (htmlInput); 
         Element root = basicHtml.getDocumentElement();
         String htmlContent = root.getTextContent();
 
         assertFalse (htmlContent.contains("A preamble"));
-        assertTrue (htmlContent.contains("Subsubtitle 2"));
+        assertFalse (htmlContent.contains("Subsubtitle 2"));
         assertTrue (htmlContent.contains("Closing text"));
 
         XPath xPath = new net.sf.saxon.xpath.XPathFactoryImpl().newXPath();
         assertEquals ("html", root.getLocalName());
         
-        String actualTitle = (String)xPath.evaluate("/html/head/title", root);
-        assertEquals ("Document Title", actualTitle);
 
         Node par1 = getElementById(basicHtml, "par1");
         assertNull (par1);
         
         Node par5 = getElementById(basicHtml, "par5");
-        assertEquals ("sectionContent", par5.getParentNode().getLocalName());
+        Element moduleOf5 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']",par5, XPathConstants.NODE);
+        assertNotNull (moduleOf5);
+        assertEquals("activities2", moduleOf5.getAttribute("id"));
 
+        
         Node par3 = getElementById(basicHtml, "par3");
-        assertEquals ("sectionDescription", par3.getParentNode().getLocalName());
+        Element moduleOf3 = (Element)xPath.evaluate("./ancestor::div[@class='moduleDescription']",par3, XPathConstants.NODE);
+        assertNotNull (moduleOf3);
+        assertEquals("overview1", moduleOf3.getAttribute("id"));
 
         Node par4 = getElementById(basicHtml, "par4");
-        assertEquals ("sectionContent", par4.getParentNode().getLocalName());
+        Element moduleOf4 = (Element)xPath.evaluate("./ancestor::div[@class='moduleActivities']",par4, XPathConstants.NODE);
+        assertNotNull (moduleOf4);
+        assertEquals("activities1", moduleOf4.getAttribute("id"));
 
-        NodeList sections = root.getElementsByTagName("section");
-
-        for (int i = 0; i < ids.length; ++i) {
-            //System.err.println("i=" + i + " id =" + ids[i]);
-            Node n = getElementById(basicHtml, ids[i]);
-            assertNotNull(n);
-            Element parent = (Element)n.getParentNode();
-            if ("sectionContent".equals(parent.getLocalName())) {
-                parent = (Element)parent.getParentNode();   
-            } else if ("sectionDescription".equals(parent.getLocalName())) {
-                parent = (Element)parent.getParentNode();   
-            } 
-            assertSame (parent, sections.item(shouldBeInSection[i]));
-            assertEquals (shouldBeAtDepth[i], Integer.parseInt(parent.getAttribute("depth"))); 
-        }
-        
-        assertEquals (6, sections.getLength());
     }
 	
 
