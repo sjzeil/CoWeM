@@ -72,6 +72,7 @@ class CourseWebsite implements Plugin<Project> {
                 include 'edu/odu/cs/cowem/core/graphics/**'
                 include 'edu/odu/cs/cowem/core/styles/**'
             }
+            duplicatesStrategy = 'include'
         }
 
 
@@ -82,6 +83,7 @@ class CourseWebsite implements Plugin<Project> {
             into 'build/website'
             include 'graphics/**'
             include 'styles/**'
+            duplicatesStrategy = 'include'
         }
 
         project.task ('setup_copy_graphics_overrides',
@@ -89,6 +91,7 @@ class CourseWebsite implements Plugin<Project> {
         ) {
                 from 'graphics'
                 into 'build/website/graphics'
+                duplicatesStrategy = 'include'
         }
         
         project.task ('setup_copy_styles_overrides',
@@ -96,6 +99,7 @@ class CourseWebsite implements Plugin<Project> {
         ) {
                 from 'styles'
                 into 'build/website/styles'
+                duplicatesStrategy = 'include'
         }
 		
 		
@@ -252,6 +256,7 @@ class CourseWebsite implements Plugin<Project> {
             into { return project.course.deployDestination; }
             dirMode 0775
             includeEmptyDirs true
+            duplicatesStrategy = 'include'
         }
 
         project.task ('deployBySsh', dependsOn: 'zip') {

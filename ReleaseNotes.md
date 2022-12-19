@@ -1,5 +1,9 @@
 = Release Notes
 
+== v1.22.0 Dec 18, 2022
+
+* Updated for compatibility with Gradle 1.7.6
+
 == v1.21.0 March 7, 2022
 
 * Added LMS format for course outlines.  This provides for easy

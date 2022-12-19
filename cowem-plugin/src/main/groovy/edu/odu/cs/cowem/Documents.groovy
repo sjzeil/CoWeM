@@ -60,6 +60,7 @@ class Documents implements Plugin<Project> {
 			from {return project.documents.supportDocuments
 					+ project.documents.listingDocuments}
 			into websiteArea
+            duplicatesStrategy = 'include'
 		}
 		project.task (type: Copy,
 		        dependsOn: project.rootProject.tasks['setup'],
@@ -78,6 +79,7 @@ class Documents implements Plugin<Project> {
 		                      propFilters;
 		                    }()
 		                   )
+                    duplicatesStrategy = 'include'
 		        }
 		
 		project.task ('doc_mainDoc',
@@ -251,6 +253,7 @@ class Documents implements Plugin<Project> {
                      project.parent.name + '/' + project.name; }
             dirMode 0775
             includeEmptyDirs true
+            duplicatesStrategy = 'include'
         }
 
         
