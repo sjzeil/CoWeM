@@ -111,7 +111,7 @@ A document set \co1  consists of
     * By default, the primary document in a document set directory
       named "foo" would be in a file named `foo.md`.
 * any number of secondary documents,\co3  written in Markdown, which
-  are rendered as web pages using the _scroll_ format.
+  are rendered as web pages using the _<span/>scroll_ format.
     * By default, any files ending in `.md` or `.mmd`, other than the
       primary document, will be treated as secondary documents.
     
@@ -119,7 +119,7 @@ A document set \co1  consists of
   preserving all line breaks, indentation, and spacing.
     * By default, files ending in`.h`, `.cpp`, `.java`, or `.listing`
       are treated as listings.
-    * Syntax highlighting (coloring) as applied to these listings.
+    * Syntax highlighting (coloring) is applied to these listings.
     
 * any number of support files,\co5  which are copied to the website
   without modification. Examples of support files would be graphics,
@@ -134,6 +134,8 @@ A document set \co1  consists of
 
 Primary documents can be rendered in several _formats_. Currently
 supported formats are
+
+### The Major Formats
 
 The three major formats are:
 
@@ -214,6 +216,7 @@ actually say in class when discussing a slide, but allow that text to appear in
 the lecture notes that I provide for students to review or for publication in a
 web version of the same course.
 
+### Specialized Formats
 
 There are also a number of more specialized formats:
 
@@ -233,10 +236,12 @@ navigation
       format. This is generally not viewed separately, but as included
       in directory pages.
 
+### Formats for the Outline
 
+Finally, there are several formats used only for presenting the course outline:
 
 modules
-: A special format for presenting the course outline. It renders as a single
+: This renders the outline as a single
    page with collapsible sections.
    
     * [Here](doc:outline) is an example of a page in _modules_
@@ -244,7 +249,7 @@ modules
    
 
 topics
-: Another special format for presenting the course outline. It renders as a
+: This renders the outline as a
   table with different columns for different types of activities.
 
     * [Here](../../Directory/outline/outline__topics.html) is an
@@ -252,20 +257,34 @@ topics
       format. 
 
 calendar
-: Yet another format for presenting the course outline. It renders as a
+: This format renders as a
   simple list of those activities in the outline that have been given
-  dates, with formatting assigned based upon whther the event is in
+  dates, with formatting assigned based upon whether the event is in
   the past, is currently running, or is in the future.   It is
   intended to serve as a notice of upcoming events.
 
     This list can appear as a component of the "modules" format
     listing but can also be used separately, e.g. by inserting an
     `iframe` into a Blackboard item.
+    
+LMS
+: This renders individual
+  modules of the outline in a format that can be incorporated into Canvas (and
+  potentially other LMS systems) via an `<iframe>` element.
+  
+  For example, compare the [outline page](doc:outline) for this site to
+  the LMS format renderings of the following URLs:
+  
+  * [../../Directory/outline/outline__LMS.html?reveal=overview1](../../Directory/outline/outline__LMS.html?reveal=overview1)
+  * [../../Directory/outline/outline__LMS.html?reveal=activities1](../../Directory/outline/outline__LMS.html?reveal=activities1)
+  * [../../Directory/outline/outline__LMS.html?reveal=overview2](../../Directory/outline/outline__LMS.html?reveal=overview2)
+  * [../../Directory/outline/outline__LMS.html?reveal=activities2](../../Directory/outline/outline__LMS.html?reveal=activities2)
+  * [../../Directory/outline/outline__LMS.html?reveal=overview3](../../Directory/outline/outline__LMS.html?reveal=overview3)
+  * [../../Directory/outline/outline__LMS.html?reveal=activities3](../../Directory/outline/outline__LMS.html?reveal=activities3)
+  * [../../Directory/outline/outline__LMS.html?reveal=overview4](../../Directory/outline/outline__LMS.html?reveal=overview4)
+  * [../../Directory/outline/outline__LMS.html?reveal=activities4](../../Directory/outline/outline__LMS.html?reveal=activities4)
 
 
-Early versions of CoWeM also supported and _epub_ format for preparing
-documents for publication in an e-book. That option is not currently
-supported, but may be restored in future versions.
 
 ## The build.gradle File
 

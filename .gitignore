@@ -9,3 +9,5 @@
 **/bin/
 .settings/
 .gradle/
+/**/.project
+/**/.vscode/

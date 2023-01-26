@@ -1,5 +1,24 @@
 = Release Notes
 
+== v1.22.0 Dec 18, 2022
+
+* Updated for compatibility with Gradle 1.7.6
+
+== v1.21.0 March 7, 2022
+
+* Added LMS format for course outlines.  This provides for easy
+  integration into Canvas "modules" by providing a URL that can be
+  placed into an `iframe` in a Canvas page to display CoWeM-generated
+  module info from the CoWeM outline page,
+
+== v1.20.0 Jan 8, 2022
+
+* Organisation name changed to `edu.odu.cs` - should not affect most projects.
+* Support for PDF generation dropped -- too fragile and unwieldy for
+  the little benefit it offered
+* @amp@ added as a "delayed ampersand" to counter the Markdown
+  engine's tendency to step of ampersands appearing within URLs.
+
 == v1.19 Jan 6, 2021
 
 * Bug fix affecting repostitories searched for 3rd party libraries

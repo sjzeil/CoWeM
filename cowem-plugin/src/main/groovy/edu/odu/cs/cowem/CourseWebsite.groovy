@@ -1,7 +1,5 @@
 package edu.odu.cs.cowem
 
-import com.moowork.gradle.node.task.NodeTask;
-
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -26,7 +24,6 @@ class CourseWebsite implements Plugin<Project> {
     void apply (Project project) {
         
         new org.hidetake.gradle.ssh.plugin.SshPlugin().apply(project);
-        project.getPluginManager().apply(com.moowork.gradle.node.NodePlugin.class);
         
         // Add a Course object as a property of the project
         project.extensions.create ("course", Course);
@@ -75,6 +72,7 @@ class CourseWebsite implements Plugin<Project> {
                 include 'edu/odu/cs/cowem/core/graphics/**'
                 include 'edu/odu/cs/cowem/core/styles/**'
             }
+            duplicatesStrategy = 'include'
         }
 
 
@@ -85,6 +83,7 @@ class CourseWebsite implements Plugin<Project> {
             into 'build/website'
             include 'graphics/**'
             include 'styles/**'
+            duplicatesStrategy = 'include'
         }
 
         project.task ('setup_copy_graphics_overrides',
@@ -92,6 +91,7 @@ class CourseWebsite implements Plugin<Project> {
         ) {
                 from 'graphics'
                 into 'build/website/graphics'
+                duplicatesStrategy = 'include'
         }
         
         project.task ('setup_copy_styles_overrides',
@@ -99,6 +99,7 @@ class CourseWebsite implements Plugin<Project> {
         ) {
                 from 'styles'
                 into 'build/website/styles'
+                duplicatesStrategy = 'include'
         }
 		
 		
@@ -210,41 +211,6 @@ class CourseWebsite implements Plugin<Project> {
             doc.generate();
         }
 
-        project.node {  
-            version = '14.15.4' // current LTS version
-            workDir = project.file("${project.buildDir}/nodejs")
-            npmWorkDir = project.file("${project.buildDir}")
-            nodeModulesDir = project.file("${project.buildDir}")
-            download = true  // download node
-        }
-        
-        project.build.doLast {
-            project.copy {
-                from 'build/website/styles/'
-                include 'pdf-package.json'
-                into 'build/'
-                rename '.+', 'package.json'
-            }
-        }
-        project.npm_install.dependsOn('build')
-        
-        project.task ('pdfScript', type: Copy, dependsOn: 'build') {
-            from "build/website/styles/pdfScript.js"
-            into "build"
-            filter(ReplaceTokens, 
-                   tokens: [scrollFile: project.rootDir.toString().replace("\\", "/") + '/build/combined/outline/index.html'
-                            ])
-        }
-
-        project.task ('pdf', type: NodeTask, 
-                dependsOn: ['npm_install', 'singleScroll', 'pdfScript']) {
-            script = project.file('build/pdfScript.js')
-        }
-        project.pdf.doLast {
-            project.delete('build/pdfScript.js')
-        }
-        
-        
         
         
         
@@ -290,6 +256,7 @@ class CourseWebsite implements Plugin<Project> {
             into { return project.course.deployDestination; }
             dirMode 0775
             includeEmptyDirs true
+            duplicatesStrategy = 'include'
         }
 
         project.task ('deployBySsh', dependsOn: 'zip') {
