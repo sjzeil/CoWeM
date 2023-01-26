@@ -31,6 +31,14 @@
 	</xsl:template>
 
 
+	<xsl:template match="head">
+		<xsl:copy>
+			<xsl:copy-of select="@*" />
+			<xsl:copy-of select="*" />
+			<base target="_blank" />
+		</xsl:copy>
+	</xsl:template>
+
 	<xsl:template match="body">
 		<xsl:copy>
 			<xsl:copy-of select="@*" />

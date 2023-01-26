@@ -162,6 +162,9 @@ public class TestLMSFormatting {
 
 		assertEquals ("html", root.getLocalName());
 
+		//Element head = (Element)(root.getChildNodes().item(1));
+		//assertEquals ("head", head.getLocalName());
+
 		
 		Element item1 = getElementById(basicHtml, "li1");
 		assertNotNull (item1);
