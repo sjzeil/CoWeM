@@ -31,13 +31,13 @@
 	</xsl:template>
 
 
-	<xsl:template match="head">
+	<!-- xsl:template match="head">
 		<xsl:copy>
 			<xsl:copy-of select="@*" />
-			<xsl:copy-of select="*" />
+			<xsl:apply-templates select="*|text()" />
 			<base target="_blank" />
 		</xsl:copy>
-	</xsl:template>
+	</xsl:template -->
 
 	<xsl:template match="body">
 		<xsl:copy>
@@ -165,6 +165,16 @@
 				<xsl:apply-templates select="node()" />
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template match="a">
+		<xsl:copy>
+			<xsl:attribute name="target">
+				<xsl:text>_blank</xsl:text>
+			</xsl:attribute>
+			<xsl:copy-of select="@*[name() != 'target']"/>
+			<xsl:apply-templates select="*|text()"/>
+		</xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="*|text()" mode="activities">

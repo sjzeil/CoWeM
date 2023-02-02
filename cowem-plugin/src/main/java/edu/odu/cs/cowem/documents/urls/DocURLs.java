@@ -100,7 +100,9 @@ public class DocURLs implements SpecialURL {
 	        		siteURL = siteURL + "index.html?doc=" + documentName
 	        				+ "&anchor=" + anchor;
 	        		link.setAttribute(linkAttr, siteURL);
-	        		link.setAttribute("target", siteName);
+					if (link.getAttribute("target").equals("")) {
+	        			link.setAttribute("target", siteName);
+					}
 	        	} else {
 	        		logger.warn(
                             "Could not find external site for URL shorthand: @"
@@ -119,7 +121,9 @@ public class DocURLs implements SpecialURL {
                     link.setAttribute(linkAttr, newLink);
                     String groupName = getGroupName(targetDocSet);
                     String targetAttr = project.getCourseName() + "_" + groupName;
-                    link.setAttribute("target", targetAttr);
+                    if (link.getAttribute("target").equals("")) {
+						link.setAttribute("target", targetAttr);
+					}
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
                     }
@@ -142,7 +146,9 @@ public class DocURLs implements SpecialURL {
                     link.setAttribute(linkAttr, newLink);
                     String groupName = getGroupName(targetFile);
                     String targetAttr = project.getCourseName() + "_" + groupName;
-                    link.setAttribute("target", targetAttr);
+                    if (link.getAttribute("target").equals("")) {
+						link.setAttribute("target", targetAttr);
+					}
                     if (url.startsWith("doc:")) {
                         link.setAttribute("class", "doc");
                     }
