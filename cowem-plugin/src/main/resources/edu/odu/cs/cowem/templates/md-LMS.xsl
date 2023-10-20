@@ -25,18 +25,81 @@
 		</xsl:variable>
 		
 		<html>
-			<xsl:apply-templates select='head' />
+			<xsl:apply-templates select='head' mode="LMS"/>
 			<xsl:apply-templates select="$sectioned" />
 		</html>
 	</xsl:template>
 
 
-	<xsl:template match="head">
-		<xsl:copy>
-			<xsl:copy-of select="@*" />
-			<xsl:copy-of select="*" />
-			<base target="_blank" />
-		</xsl:copy>
+	<xsl:template match="head" mode="LMS">
+	    <xsl:copy>
+          <xsl:copy-of select="@*"/>
+          <meta charset="UTF-8"/>
+          <link rel="stylesheet" type="text/css" media="screen, projection, print"
+            href="{$stylesURL}/md-{$format}.css" />
+          <link rel="stylesheet" type="text/css" media="screen, projection, print"
+            href="{$stylesURL}/md-{$format}-ext.css" />
+          <xsl:call-template name="generateCSSLinks"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1"/> 
+          <link rel="stylesheet" 
+            href="@highlightjsURL@/styles/googlecode.css"/>
+          <script src="@highlightjsURL@/highlight.pack.js">
+            <xsl:text> </xsl:text>
+          </script>
+          <script>hljs.initHighlightingOnLoad();</script>
+          <script type="text/javascript"
+              src="{$stylesURL}/md-{$format}.js">
+              <xsl:text> </xsl:text>
+          </script>
+          <script type="text/javascript"
+              src="{$stylesURL}/md-{$format}-ext.js">
+              <xsl:text> </xsl:text>
+          </script>
+          <script type="text/javascript"
+              src="{$stylesURL}/rawdeflate.js">
+              <xsl:text> </xsl:text>
+          </script>
+          <script type="text/javascript"
+              src="{$stylesURL}/plantuml.js">
+              <xsl:text> </xsl:text>
+          </script>
+          <script type="text/javascript"
+              src="{$stylesURL}/mermaid.min.js">
+              <xsl:text> </xsl:text>
+          </script>
+          <xsl:choose>
+            <xsl:when test="lower-case($mathSupport) = 'latex'">
+               <script type="text/javascript"><xsl:text>
+                 window.MathJax = {
+                   tex2jax: {
+                   inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                   processEscapes: true
+                 }
+               };
+               </xsl:text></script>
+               <script type="text/javascript"
+                 src="{$mathJaxURL}/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+                 <xsl:text> </xsl:text>
+               </script>
+            </xsl:when>
+            <xsl:when test="lower-case($mathSupport) = 'ascii'">
+               <script type="text/javascript"><xsl:text>
+                 window.MathJax = {
+                   asciimath2jax: {
+                     delimiters: [ ['$','$'], ['`', '`']],
+                   processEscapes: true
+                 }
+               };
+               </xsl:text></script>
+               <script type="text/javascript"
+                 src="{$mathJaxURL}/MathJax.js?config=AM_HTMLorMML">
+                  <xsl:text> </xsl:text>
+               </script>
+            </xsl:when>
+          </xsl:choose>
+	      <base target="_blank" />
+          <xsl:copy-of select="*"/>
+        </xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="body">
@@ -165,6 +228,16 @@
 				<xsl:apply-templates select="node()" />
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template match="a">
+		<xsl:copy>
+			<xsl:attribute name="target">
+				<xsl:text>_blank</xsl:text>
+			</xsl:attribute>
+			<xsl:copy-of select="@*[name() != 'target']"/>
+			<xsl:apply-templates select="*|text()"/>
+		</xsl:copy>
 	</xsl:template>
 
 	<xsl:template match="*|text()" mode="activities">
