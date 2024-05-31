@@ -1,5 +1,11 @@
 = Release Notes
 
+== v1.22.3 May 31, 2024
+
+* Fixed bug in SCORM generation.
+* Removed hard-coded references to ODU websites
+* Publication is now to a GitHub-hosted repository
+
 == v1.22.0 Dec 18, 2022
 
 * Updated for compatibility with Gradle 1.7.6
