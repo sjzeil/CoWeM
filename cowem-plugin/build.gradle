@@ -11,7 +11,6 @@ plugins {
     id 'project-report'
     id 'jacoco'
     id 'pmd'
-	id 'org.unbroken-dome.test-sets' version '4.0.0'
     //id "org.xbib.gradle.plugin.git" version "2.2.0"
     //id 'signing'
     id 'maven-publish'
@@ -92,7 +91,28 @@ dependencies {
     testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.6'
 }
 
-testSets { integrationTest }
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest
+
 
 tasks.withType(Test) {
     useJUnitPlatform()

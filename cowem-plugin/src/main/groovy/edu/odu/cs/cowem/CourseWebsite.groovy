@@ -172,7 +172,7 @@ class CourseWebsite implements Plugin<Project> {
             group 'Packaging'
             from 'build/website'
             //into '.'
-            destinationDir = project.file('build/packages')
+            destinationDirectory = project.file('build/packages')
             archiveName 'website.zip'
             dirMode 0775
             fileMode 0664
