@@ -13,7 +13,7 @@ class Course {
     /**
      *  URL used for code highlighting.
      */
-    URL highlightjsURL = new URL("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js");
+    URL highlightjsURL = new URL("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js");
     
 
     // Course Attributes

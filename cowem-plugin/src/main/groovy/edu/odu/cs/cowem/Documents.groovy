@@ -266,7 +266,7 @@ class Documents implements Plugin<Project> {
             include "${project.parent.name}/${project.name}/**"
             
             destinationDirectory = project.file('../../build/packages')
-            archiveName "website-${project.name}.zip"
+            archiveFileName = "website-${project.name}.zip"
             dirMode 0775
             fileMode 0664
             includeEmptyDirs true

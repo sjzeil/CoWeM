@@ -42,8 +42,8 @@
           <xsl:call-template name="generateCSSLinks"/>
           <meta name="viewport" content="width=device-width, initial-scale=1"/> 
           <link rel="stylesheet" 
-            href="@highlightjsURL@/styles/googlecode.css"/>
-          <script src="@highlightjsURL@/highlight.pack.js">
+            href="@highlightjsURL@/../styles/googlecode.css"/>
+          <script src="@highlightjsURL@">
             <xsl:text> </xsl:text>
           </script>
           <script>hljs.initHighlightingOnLoad();</script>
