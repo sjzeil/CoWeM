@@ -6,26 +6,20 @@
 
 plugins {
     id 'groovy'
-    id 'ivy-publish'
     id 'java'
     id 'java-gradle-plugin'
     id 'project-report'
     id 'jacoco'
     id 'pmd'
-	id 'org.unbroken-dome.test-sets' version '4.0.0'
     //id "org.xbib.gradle.plugin.git" version "2.2.0"
-    id 'signing'
+    //id 'signing'
+    id 'maven-publish'
 }
 
 group 'edu.odu.cs'
 
 sourceCompatibility = "1.11"
 targetCompatibility = "1.11"
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
 
 
 gradlePlugin {
@@ -64,16 +58,16 @@ repositories {
     maven {
         url "https://plugins.gradle.org/m2/"
     }
-        // Use my own CS dept repo
-    ivy {
-        url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+    maven {
+        url 'https://github.com/sjzeil/mvnrepo/raw/main'
     }
 }
 
-
+/*
 artifacts {
     archives javadocJar, sourcesJar
 }
+*/
 
 /*signing {
     sign configurations.archives
@@ -97,7 +91,28 @@ dependencies {
     testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.6'
 }
 
-testSets { integrationTest }
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest
+
 
 tasks.withType(Test) {
     useJUnitPlatform()
@@ -123,26 +138,36 @@ jar {
 
 publishing {
     publications {
-        ivyJava(IvyPublication) {
-            organisation 'edu.odu.cs'
-            module 'cowem-plugin'
-            revision project.version
-            descriptor.status = 'integration'   // milestone, release
-            descriptor.branch = 'v1'
-
+        cowemLibrary(MavenPublication) {
             from components.java
+            groupId = 'edu.odu.cs'
+            artifactId = project.name
+            version = project.version
+            pom {
+                name = "cowem-plugin"
+                description = 'Static generator for course websites'
+                url = 'https://github.com/sjzeil/CoWeM'
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://github.com/sjzeil/CoWeM/blob/main/LICENSE.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'sjzeil'
+                        name = 'Steven Zeil'
+                        email = 'szeil@odu.edu'
+                    }
+                }
+            }
         }
     }
 
     repositories {
-        ivy {
-            name 'ivyRepo'
-            url 'sftp://europa.cs.odu.edu:22/home/zeil/secure_html/ivyrepo'
-            // Readable via https://www.cs.odu.edu/~zeil/ivyrepo
-            credentials {
-                username project.ivyRepoUser
-                password project.ivyRepoPass
-            }
+        maven {
+            name = 'Zeil-maven-repo'
+            url = '../../mvnrepo'
         }
     }
 }

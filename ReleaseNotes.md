@@ -1,5 +1,19 @@
 = Release Notes
 
+== v1.22.4 June 22, 2024
+
+* Fixed incompatibility with Gradle 8.x (change in how Zip tasks
+  are configured) allowing CoWeM to be used with Gradle 8.x and
+  JDK 21 (requires Gradle 8.5+)
+* Internally: reconfigured integration test setup for compatibility 
+  with Gradle 8.x. No longer uses test-sets plugin.
+
+== v1.22.3 May 31, 2024
+
+* Fixed bug in SCORM generation.
+* Removed hard-coded references to ODU websites
+* Publication is now to a GitHub-hosted repository
+
 == v1.22.0 Dec 18, 2022
 
 * Updated for compatibility with Gradle 1.7.6

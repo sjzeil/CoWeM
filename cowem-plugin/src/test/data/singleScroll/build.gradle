@@ -5,13 +5,10 @@
 
 buildscript { 
      repositories {
+         mavenLocal()
          jcenter()
          mavenCentral()
- 
-        ivy { // Use my own CS dept repo
-            url 'https://secweb.cs.odu.edu/~zeil/ivyrepo'
-   	    }         
-     }
+      }
      dependencies {
          classpath 'org.hidetake:gradle-ssh-plugin:2.3.0+'
          classpath 'edu.odu.cs.zeil:cowem-plugin:latest.integration'

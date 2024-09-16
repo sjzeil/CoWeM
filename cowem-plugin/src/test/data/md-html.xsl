@@ -54,8 +54,8 @@
 	<xsl:text> </xsl:text>
       </script>
       <link rel="stylesheet" 
-	    href="{$highlightjsURL}/styles/googlecode.css"/>
-      <script src="{$highlightjsURL}/highlight.pack.js">
+	    href="{$highlightjsURL}/../styles/googlecode.css"/>
+      <script src="{$highlightjsURL}">
 	<xsl:text> </xsl:text>
       </script>
       <script>hljs.initHighlightingOnLoad();</script>

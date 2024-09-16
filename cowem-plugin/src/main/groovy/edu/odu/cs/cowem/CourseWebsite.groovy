@@ -49,11 +49,10 @@ class CourseWebsite implements Plugin<Project> {
                 maven {
                     url "https://plugins.gradle.org/m2/"
                 }
-                
-                // Use my own CS dept repo
-                ivy {
-                    url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+                maven { 
+                    url 'https://github.com/sjzeil/mvnrepo/raw/main'
                 }
+
             }
         }
         project.configurations {
@@ -173,8 +172,8 @@ class CourseWebsite implements Plugin<Project> {
             group 'Packaging'
             from 'build/website'
             //into '.'
-            destinationDir = project.file('build/packages')
-            archiveName 'website.zip'
+            destinationDirectory = project.file('build/packages')
+            archiveFileName = 'website.zip'
             dirMode 0775
             fileMode 0664
             includeEmptyDirs true

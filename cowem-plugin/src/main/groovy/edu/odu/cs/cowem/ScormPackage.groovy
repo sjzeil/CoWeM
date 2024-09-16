@@ -175,12 +175,12 @@ class ScormPackage {
     {
         File bbDir = project.file("build/temp/scorm")
         Path bbBase = bbDir.toPath();
-        ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(destination));
-        zout.close();
+        Map<String, String> env = new HashMap<>(); 
+        env.put("create", "true");
         Path zipfile = destination.toPath();
         Queue<File> q = new LinkedList<File>();
         q.push(bbDir);
-        FileSystem zipfs = FileSystems.newFileSystem(zipfile, null);
+        FileSystem zipfs = FileSystems.newFileSystem(zipfile, env);
         if (zipfs == null) {
             logger.error ("Could not create zip file system at " + zipfile)
         }

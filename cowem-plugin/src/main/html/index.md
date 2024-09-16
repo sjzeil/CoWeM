@@ -43,8 +43,8 @@ pluginManagement {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
-        ivy { // Use my own CS dept repo
-            url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+        maven { 
+            url 'https://github.com/sjzeil/mvnRepo/raw/main'
         }
         mavenCentral()
     }
