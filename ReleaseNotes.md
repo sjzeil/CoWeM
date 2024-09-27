@@ -1,5 +1,9 @@
 = Release Notes
 
+== v1.22.5 Sept 16, 2024
+
+* Temporarily (?) turn off the use of highlight.js.  Current version is now removing all explicit code highlighting.
+
 == v1.22.4 June 22, 2024
 
 * Fixed incompatibility with Gradle 8.x (change in how Zip tasks
