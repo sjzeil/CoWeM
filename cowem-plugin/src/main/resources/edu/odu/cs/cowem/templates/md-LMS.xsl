@@ -10,7 +10,10 @@
 
 	<xsl:param name="format" select="'modules'" />
 	<xsl:param name="Calendar" select="''" />
-
+    <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
+    <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
+    <xsl:param name="highlightjsCSSURL" select="'@highlightjsCSSURL@'"/>
+  
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="*|text()" />
@@ -42,7 +45,7 @@
           <xsl:call-template name="generateCSSLinks"/>
           <meta name="viewport" content="width=device-width, initial-scale=1"/> 
           <link rel="stylesheet" 
-            href="@highlightjsURL@/../styles/googlecode.css"/>
+            href="@highlightjsCSSURL@"/>
           <script src="@highlightjsURL@">
             <xsl:text> </xsl:text>
           </script>

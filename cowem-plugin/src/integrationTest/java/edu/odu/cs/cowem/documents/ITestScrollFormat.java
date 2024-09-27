@@ -271,7 +271,24 @@ public class ITestScrollFormat {
 	    }
 
 	
-	
-	
+        @Test
+        public void testCodeFormatting() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+            String mdInput = String.join(System.getProperty("line.separator"),
+                    "Title: Title of Document", 
+                    "Author: John Doe",
+                    "",
+                    "```java",
+                    "x = 0; // comment",
+                    "```"
+                    );
+            MarkdownDocument doc = new MarkdownDocument(source, proj, properties, mdInput);
+            
+            String htmlContent = doc.transform(FORMAT);
+            
+            assertTrue(htmlContent.contains("highlight.min.js"));
+            assertTrue(htmlContent.contains("googlecode.css"));
+        }
+        
+
 	
 }

@@ -34,6 +34,7 @@
   <xsl:param name="mathSupport" select="'latex'"/>
   <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
   <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
+  <xsl:param name="highlightjsCSSURL" select="'@highlightjsCSSURL@'"/>
 
   <xsl:param name="baseURL" select="'../../'"/>
   <xsl:param name="homeURL" select="'../../index.html'"/>
@@ -59,7 +60,7 @@
       <xsl:call-template name="generateCSSLinks"/>
       <meta name="viewport" content="width=device-width, initial-scale=1"/> 
       <link rel="stylesheet" 
-        href="@highlightjsURL@/../styles/googlecode.css"/>
+        href="@highlightjsCSSURL@"/>
       <script src="@highlightjsURL@">
     <xsl:text> </xsl:text>
       </script>
