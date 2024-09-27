@@ -64,7 +64,7 @@
       <script src="@highlightjsURL@">
     <xsl:text> </xsl:text>
       </script>
-      <script>/*hljs.initHighlightingOnLoad();*/</script>
+      <script>hljs.initHighlightingOnLoad();</script>
       <script type="text/javascript"
           src="{$stylesURL}/md-{$format}.js">
           <xsl:text> </xsl:text>

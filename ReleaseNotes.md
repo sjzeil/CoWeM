@@ -1,5 +1,9 @@
 = Release Notes
 
+== v1.22.6 Sept 27, 2024
+
+* Syntax highlighting restored by rolling back to version 10 of highlight.js.
+
 == v1.22.5 Sept 16, 2024
 
 * Temporarily (?) turn off the use of highlight.js.  Current version is now removing all explicit code highlighting.
