@@ -10,10 +10,7 @@
 
 	<xsl:param name="format" select="'modules'" />
 	<xsl:param name="Calendar" select="''" />
-    <xsl:param name="mathJaxURL" select="'@mathJaxURL@'"/>
-    <xsl:param name="highlightjsURL" select="'@highlightjsURL@'"/>
-    <xsl:param name="highlightjsCSSURL" select="'@highlightjsCSSURL@'"/>
-  
+    
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="*|text()" />
