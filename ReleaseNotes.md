@@ -1,5 +1,15 @@
 = Release Notes
 
+== v1.23.0 Oct 23, 2025
+
+* Imported document sets, if not provided a website URL, will teat the location as a CSV file containing lines of the form:
+
+        documentName,URL
+
+    Intention is to allow downloading of a collection of URLs from an LMS
+
+* Updated gradle version & plugin unit testing libraries
+
 == v1.22.6 Sept 27, 2024
 
 * Syntax highlighting restored by rolling back to version 10 of highlight.js.
