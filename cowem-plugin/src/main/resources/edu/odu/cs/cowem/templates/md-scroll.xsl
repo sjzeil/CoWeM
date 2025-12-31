@@ -4,6 +4,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
+  <xsl:param name="FirstSection" select="'1'"/>
+
   <xsl:include href="md-common.xsl"/>
   <xsl:include href="normalizeHeaders.xsl"/>
   <xsl:include href="sectionNumbering.xsl"/>

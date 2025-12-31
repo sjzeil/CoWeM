@@ -4,13 +4,14 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 >
 
+  <xsl:param name="FirstSection" select="'1'"/>
+
   <xsl:include href="normalizeHeaders.xsl"/>
   <xsl:include href="sectionNumbering.xsl"/>
   <xsl:include href="sectioning.xsl"/>
   <xsl:include href="md-common.xsl"/>
   
   <xsl:param name="format" select="'calendar'"/>
-
   
 
   <xsl:template match="/">

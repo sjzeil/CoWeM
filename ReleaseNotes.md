@@ -1,5 +1,11 @@
 = Release Notes
 
+== v1.24.0 Dec 31, 2025
+
+* Added document metadata option FirstSection to change the number of the first top-level section (defaults to 1)
+
+    Motivation is to allow course outlines to have a "Getting Started" module numbered 0.
+
 == v1.23.0 Oct 23, 2025
 
 * Imported document sets, if not provided a website URL, will teat the location as a CSV file containing lines of the form:

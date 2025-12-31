@@ -1,6 +1,7 @@
 Title: @courseName@ User Reference Manual
 Author: Steven J. Zeil
 Date: @docModDate@
+FirstSection: 1
 
 # Preamble
 

@@ -480,7 +480,10 @@ Macros
 : Followed by a file path, adds that file to the set of [macros](doc:macros)
   used to process the document. This field may be specified multiple times to
   add more than one macro set.
- 
+
+FirstSection
+: Followed by a number, uses that number as the number of the first top-level section in the document. (Defaults to 1.)
+
 
 You can actually add other metadata fields, but the above are the only ones
 that affect document processing at present.

@@ -3,6 +3,7 @@
 
 pluginManagement {
 	repositories {
+        mavenLocal()
 		mavenCentral()
 
 		maven {
@@ -15,8 +16,8 @@ pluginManagement {
         }
 
 
-        ivy { // Use my own CS dept repo
-            url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+        maven { 
+            url 'https://github.com/sjzeil/mvnrepo/raw/main'
         }
 
 	}
