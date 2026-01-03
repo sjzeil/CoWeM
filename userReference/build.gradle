@@ -11,7 +11,7 @@ buildscript {
 
 
 plugins {
-    id 'edu.odu.cs.cowem.course' version '1.24.0'
+    id 'edu.odu.cs.cowem.course' version '1.24.1'
 	id 'org.ajoberstar.git-publish' version '2.1.3'
 }
 

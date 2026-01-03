@@ -7,7 +7,7 @@ pluginManagement {
 		mavenCentral()
 
 		maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
 
 		maven {
@@ -17,7 +17,7 @@ pluginManagement {
 
 
         maven { 
-            url 'https://github.com/sjzeil/mvnrepo/raw/main'
+            url = 'https://github.com/sjzeil/mvnrepo/raw/main'
         }
 
 	}

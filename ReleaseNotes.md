@@ -1,5 +1,9 @@
 = Release Notes
 
+== v1.24.1 Jan 3, 2026
+
+* Now compatible with gradle 9 (tested with 9.2.1)
+
 == v1.24.0 Dec 31, 2025
 
 * Added document metadata option FirstSection to change the number of the first top-level section (defaults to 1)

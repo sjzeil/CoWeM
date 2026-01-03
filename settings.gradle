@@ -6,7 +6,7 @@ pluginManagement {
 		mavenCentral()
 
 		maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
 
 		maven {
@@ -14,7 +14,7 @@ pluginManagement {
             url = 'https://ajoberstar.org/bintray-backup/'
         }
         ivy { // Use my own CS dept repo
-            url 'https://www.cs.odu.edu/~zeil/ivyrepo'
+            url = 'https://www.cs.odu.edu/~zeil/ivyrepo'
         }
 
 

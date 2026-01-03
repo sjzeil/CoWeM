@@ -15,7 +15,7 @@ This content can be deployed as an ordinary website or as a
 SCORM package suitable for importing into Blackboard or other
 Learning Management Systems.
 
-* Currently in version 1.24.0
+* Currently in version 1.24.1
 
 * [Website](https://sjzeil.github.io/CoWeM/)
 

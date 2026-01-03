@@ -55,8 +55,8 @@ class Documents implements Plugin<Project> {
 				+ project.parent.name + "/" + project.name + '/')
 
 		project.task (type: Copy,
-		dependsOn: project.rootProject.tasks['setup'],
-		'doc_setup') {
+                        dependsOn: project.rootProject.tasks['setup'],
+                        'doc_setup') {
 			from {return project.documents.supportDocuments
 					+ project.documents.listingDocuments}
 			into websiteArea
@@ -234,8 +234,8 @@ class Documents implements Plugin<Project> {
 			            project.doc_secondaryDocs,
 			            project.doc_Listings]
 		  ) {
-			description 'Prepare document set output'
-			group 'Build'
+			description = 'Prepare document set output'
+			group = 'Build'
 			dependsOn ':setup'
 		}
 
@@ -245,21 +245,27 @@ class Documents implements Plugin<Project> {
         
         
         project.task ('deployDoc', type: Copy, dependsOn: 'build') {
-            description 'Copy this document set to a local deployDestination directory.'
-            group 'Deployment'
+            description = 'Copy this document set to a local deployDestination directory.'
+            group = 'Deployment'
             from websiteArea
             into { return project.course.deployDestination +
                 ((project.course.deployDestination.endsWith('/'))? '' : '/')  +
                      project.parent.name + '/' + project.name; }
-            dirMode 0775
-            includeEmptyDirs true
+            filePermissions {
+                unix('664')
+            }
+            dirPermissions {
+                unix('775')
+            }
+
+            includeEmptyDirs = true
             duplicatesStrategy = 'include'
         }
 
         
         project.task ('doczip', type: Zip, dependsOn: 'build') {
             // description 'Prepare a zip file of the website.'
-            group 'Packaging'
+            // group = 'Packaging'
             //onlyIf {true}
             
             from "../../build/website"
@@ -267,15 +273,19 @@ class Documents implements Plugin<Project> {
             
             destinationDirectory = project.file('../../build/packages')
             archiveFileName = "website-${project.name}.zip"
-            dirMode 0775
-            fileMode 0664
-            includeEmptyDirs true
+            filePermissions {
+                unix('664')
+            }
+            dirPermissions {
+                unix('775')
+            }
+            includeEmptyDirs = true
         }
     
 
         project.task ('deployDocBySsh', dependsOn: 'doczip') {
-            description 'Copy course website to a remote machine.'
-            group 'Deployment'
+            description = 'Copy course website to a remote machine.'
+            group = 'Deployment'
             inputs.file 'build/packages/website.zip'
         } .doLast {
             int k0 = project.course.sshDeployURL.indexOf('@')
@@ -308,8 +318,8 @@ class Documents implements Plugin<Project> {
 
         project.task ('deployDocByRsync', dependsOn: 'build') {
             // Deloy by rsync requires an external installation of rsync and ssh.
-            description 'Copy course website to a remote machine by rsync'
-            group 'Deployment'
+            description = 'Copy course website to a remote machine by rsync'
+            group = 'Deployment'
             inputs.dir 'build/website'
         } .doLast {
             if (project.course.rsyncDeployURL == null) {
