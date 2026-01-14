@@ -315,7 +315,7 @@ class Documents implements Plugin<Project> {
         }
 
 
-
+/*
         project.task ('deployDocByRsync', dependsOn: 'build') {
             // Deloy by rsync requires an external installation of rsync and ssh.
             description = 'Copy course website to a remote machine by rsync'
@@ -357,7 +357,7 @@ class Documents implements Plugin<Project> {
             }
         }
 
-
+*/
 
 		project.task('listProperties') .doLast {
 			println "All docSet properties:\n" + project.documents.properties.collect{it}.join('\n')

@@ -307,7 +307,7 @@ class CourseWebsite implements Plugin<Project> {
 
 
         project.task ('deployByRsync', dependsOn: 'build') {
-            // Deloy by rsync requires an external installation of rsync and ssh.
+            // Deploy by rsync requires an external installation of rsync and ssh.
             description = 'Copy course website to a remote machine by rsync'
             group = 'Deployment'
             inputs.dir 'build/website'
@@ -342,14 +342,12 @@ class CourseWebsite implements Plugin<Project> {
                     sourceDir,
                     project.course.rsyncDeployURL
                     ]
-
-            println ("Issuing rsync command\n" + cmd.iterator().join(" "))
-            project.exec {
-                commandLine cmd
-                if (project.course.rsyncDeployKey != null) {
-                    environment ('SSH_AGENT_PID', '')
-                    environment ('SSH_AUTH_SOCK', '')
-                }
+            def cmdLine = cmd.iterator().join(" ")
+            println ("Issuing rsync command\n" + cmdLine)
+            def process = cmdLine.execute()
+            process.waitForProcessOutput(System.out, System.err)
+            if (process.exitValue() != 0) {
+                throw new org.gradle.api.GradleException("Command failed with exit code: ${process.exitValue()}")
             }
         }
 

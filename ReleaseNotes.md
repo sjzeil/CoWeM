@@ -1,5 +1,9 @@
 = Release Notes
 
+== v1.24.2 Jan 14, 2026
+
+* Fixed bug in deployByRsync cause by Gradle v9's change in project.exec() 
+
 == v1.24.1 Jan 3, 2026
 
 * Now compatible with gradle 9 (tested with 9.2.1)
