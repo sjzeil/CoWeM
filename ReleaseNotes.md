@@ -1,5 +1,10 @@
 = Release Notes
 
+== v1.25.0 Jan 25 2026
+
+* Added graphics command variants \picOnLeftA, \picOnRightA, and \picInlineA that allow the addition of alt-text to graphics.
+
+
 == v1.24.2 Jan 14, 2026
 
 * Fixed bug in deployByRsync cause by Gradle v9's change in project.exec() 

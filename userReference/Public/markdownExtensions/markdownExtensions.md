@@ -489,17 +489,32 @@ Similarly, I can insert graphics on the left instead of on the right.
 \bSidebar
 
 ```
-\\{}centerPic(bookLL,50)
 
-Or I can put them centered with nothing flowing around them.
+Or I can put them inline \\{}picInline(bookLL,10) within the text.
 
 ```
 
 \eSidebar
 
-\centerPic(bookLL,50)
+Or I can put them inline \picInline(bookLL,10) within the text.
 
-Or I can put them centered with nothing flowing around them.
+\bSidebar
+
+```
+\\{}picOnLeftA(bookarray,25,an array of books)
+
+The 'A' variants of these commands add simple 
+(no double-quotations  or commas) 
+alt-text for accessibility.
+
+```
+
+\eSidebar
+
+\picOnLeftA(bookarray,25,an array of books)
+
+The 'A' variants of these commands add simple (no double-quotations or commas) alt-text for accessibility.
+
 
 
 ## Generated Graphics (PlantUML & Mermaid)
