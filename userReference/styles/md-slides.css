@@ -53,6 +53,12 @@ code.cpp {
 code.java {
   background-color: #F0F0F0;
 }
+code.python {
+  background-color: #F0F0F0;
+}
+code.rust {
+  background-color: #F0F0F0;
+}
 
 div.navHeader {text-align: center; 
                border-bottom: solid #000040;

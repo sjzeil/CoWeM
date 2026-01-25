@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/googlecode.css" rel="stylesheet"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
              window.MathJax = {
                tex2jax: {
                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
@@ -9,7 +9,7 @@
              showNumber: 0, max: 1};
              window.onhashchange = hashHasChanged;</script><div class="navHeader" id="slideshowControlA0"><table class="navHeader"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
 <a class="imgLink" href="../../Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
-<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Documents%20from%20MarkDown"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Course Documents from MarkDown</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Jan 8, 2018</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#markdown-basic-text">1 Markdown: Basic Text</a></div><div class="toc-h1"><a href="#links-and-graphics">2 Links and Graphics</a></div><div class="toc-h1"><a href="#section-headings">3 Section Headings</a></div><div class="toc-h2"><a href="#a-subsection-heading">3.1 A Subsection Heading</a></div><div class="toc-h1"><a href="#mathematics">4 Mathematics</a></div><div class="toc-h1"><a href="#syntax-highlighting-of-source-code">5 Syntax Highlighting of Source Code</a></div><div class="toc-h1"><a href="#metadata">6 Metadata</a></div></div><p><em>Markdown</em> is a popular language for easy production of electronic documents. For course development, I find that it serves well as a way to prepare high-quality documents quickly that can be easily maintained and modified. </p>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Documents%20from%20MarkDown"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="mainBody"><div class="titleblock"><h1 class="title">Course Documents from MarkDown</h1><h2 class="author">Steven J Zeil</h2><div class="date">Last modified: Dec 31, 2025</div></div><div class="toc">Contents:<div class="toc-h1"><a href="#markdown-basic-text">1 Markdown: Basic Text</a></div><div class="toc-h1"><a href="#links-and-graphics">2 Links and Graphics</a></div><div class="toc-h1"><a href="#section-headings">3 Section Headings</a></div><div class="toc-h2"><a href="#a-subsection-heading">3.1 A Subsection Heading</a></div><div class="toc-h1"><a href="#mathematics">4 Mathematics</a></div><div class="toc-h1"><a href="#syntax-highlighting-of-source-code">5 Syntax Highlighting of Source Code</a></div><div class="toc-h1"><a href="#metadata">6 Metadata</a></div></div><p><em>Markdown</em> is a popular language for easy production of electronic documents. For course development, I find that it serves well as a way to prepare high-quality documents quickly that can be easily maintained and modified. </p>
     <ul>
   <li>I don’t like typing in HTML directly.</li>
   <li>Editing in Word and saving as HTML results in grungy HTML that is  hard to modify and unstable if any post-processing (e.g., XSL) is  desired.</li>
@@ -233,7 +233,7 @@ be added to code:
     <p>An empty line separates the metadata from the start of the Markdown text proper. For example, the <a href="markdown.md">Markdown source of this document</a> begins with</p>
     <pre><code>Title: Course Documents from MarkDown
 Author: Steven J Zeil
-Date: Jan 8, 2018
+Date: Dec 31, 2025
 TOC: yes
 
 _Markdown_ is a popular language for easy production of electronic
@@ -257,14 +257,16 @@ _Markdown_ is a popular language for easy production of electronic
   <dd>Followed by a URL, links to a CSS file to adjust the document’s appearance.  This field may be specified multiple times to add more than one CSS file.</dd>
   <dt>Macros</dt>
   <dd>Followed by a file path, adds that file to the set of <a class="doc" href="../../Public/macros/index.html" target="CoWeM_Public">macros</a>  used to process the document. This field may be specified multiple times to  add more than one macro set.</dd>
+  <dt>FirstSection</dt>
+  <dd>Followed by a number, uses that number as the number of the first top-level section in the document. (Defaults to 1.)</dd>
 </dl><p>You can actually add other metadata fields, but the above are the only ones that affect document processing at present.</p>
     <p>All metadata fields can be inserted into your document text, however, by surrounding the field name with ‘@’ characters.</p>
     <div class="noFloat"> </div><div class="sidebar pct60">
 <p><code>For example,</code><span><tt> @</tt></span><code>Author@ last modified this</code> <code>document on</code><span><tt> @</tt></span><code>Date@.</code></p>
     
-</div><p>For example, Steven J Zeil last modified this document on Jan 8, 2018.</p>
+</div><p>For example, Steven J Zeil last modified this document on Dec 31, 2025.</p>
     </div><script>sshowControl0 = { counter: 1,
              showNumber: 0, max: 1};
              window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
 <a class="imgLink" href="../../Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
-<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Documents%20from%20MarkDown"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>
+<a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20Course%20Documents%20from%20MarkDown"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2026, Old Dominion Univ.</div></body></html>

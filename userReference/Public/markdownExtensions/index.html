@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://www.cs.odu.edu/~zeil/styles/highlight.js/styles/googlecode.css" rel="stylesheet"/><script src="https://www.cs.odu.edu/~zeil/styles/highlight.js/highlight.pack.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
+<?xml version="1.0" encoding="UTF-8"?><html><head><meta charset="UTF-8"/><link href="../../styles/md-scroll.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><link href="../../styles/md-scroll-ext.css" media="screen, projection, print" rel="stylesheet" type="text/css"/><meta content="width=device-width, initial-scale=1" name="viewport"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/googlecode.css" rel="stylesheet"/><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"> </script><script>hljs.initHighlightingOnLoad();</script><script src="../../styles/md-scroll.js" type="text/javascript"> </script><script src="../../styles/md-scroll-ext.js" type="text/javascript"> </script><script src="../../styles/rawdeflate.js" type="text/javascript"> </script><script src="../../styles/plantuml.js" type="text/javascript"> </script><script src="../../styles/mermaid.min.js" type="text/javascript"> </script><script type="text/javascript">
              window.MathJax = {
                tex2jax: {
                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
@@ -173,7 +173,7 @@ support this element yet, so this is currently
 simulated via Javascript. 
 ^^^
 </code></pre>
-</div><div class="details"><span class="summary">click to reveal</span> <input id="but_details_d5e202" onclick="toggleDisplay('_details_d5e202')" type="button" value="+"/><div class="detailsBody" id="_details_d5e202" style="display: none;">
+</div><div class="details"><span class="summary">click to reveal</span> <input id="but_details_d6e202" onclick="toggleDisplay('_details_d6e202')" type="button" value="+"/><div class="detailsBody" id="_details_d6e202" style="display: none;">
 <p>The three carets introduce an HTML5-style details element, which allows click-to-reveal behavior.</p>
     
 <p>The three carets introduce an HTML5-style details element, which allows click-to-reveal behavior.</p>
@@ -192,7 +192,7 @@ Files processed in this way can end with `.h`, `.cpp`, `.java`, or
 `.listing` file names.
 </code></pre>
 </div><p>A variation on this is the ability to load long code listings, contained in a separate file providing both a link to the code as a separate HTML page and a click-to-reveal button to expand the listing in place.</p>
-    <div class="details"><span class="summary"><a href="unittest.h" target="listing">unittest.h</a></span> <input id="but_details_d5e216" onclick="toggleDisplay('_details_d5e216')" type="button" value="+"/><div class="detailPart" id="_details_d5e216"><pre><code id="_details_d5e216_code">#ifndef UNITTEST_H
+    <div class="details"><span class="summary"><a href="unittest.h" target="listing">unittest.h</a></span> <input id="but_details_d6e216" onclick="toggleDisplay('_details_d6e216')" type="button" value="+"/><div class="detailPart" id="_details_d6e216"><pre><code id="_details_d6e216_code">#ifndef UNITTEST_H
 #define UNITTEST_H
 
 #include &lt;string&gt;
@@ -330,15 +330,21 @@ instead of on the right.
     <img src="bookarray.png" style="float: left; max-width: 25%;"/></p>
     <p>Similarly, I can insert graphics on the left instead of on the right.</p>
     <div class="noFloat"> </div><div class="sidebar pct50">
-<pre><code>\centerPic(bookLL,50)
+<pre><code><br/>Or I can put them inline \picInline(bookLL,10) within the text.
 
-Or I can put them centered with nothing flowing around them.
+</code></pre>
+</div><p>Or I can put them inline <img src="bookLL.png" style="max-width: 10%;"/> within the text.</p>
+    <div class="noFloat"> </div><div class="sidebar pct50">
+<pre><code>\picOnLeftA(bookarray,25,an array of books)
+
+The 'A' variants of these commands add simple 
+(no double-quotations  or commas) 
+alt-text for accessibility.
 
 </code></pre>
 </div><p><div class="noFloat"> </div>
-    <div style="text-align: center'"><img align="center" src="bookLL.png" style="max-width: 50%;"/></div>
-    </p>
-    <p>Or I can put them centered with nothing flowing around them.</p>
+    <img alt="an array of books" src="bookarray.png" style="float: left; max-width: 25%;"/></p>
+    <p>The ‘A’ variants of these commands add simple (no double-quotations or commas) alt-text for accessibility.</p>
     <a id="generatedgraphicsplantumlmermaid"/><h2 id="generated-graphics-plantuml-mermaid-">4.2 Generated Graphics (PlantUML &amp; Mermaid)</h2><h3 id="plantuml">4.2.1 PlantUML</h3><div class="noFloat"> </div><div class="sidebar pct50">
 <pre><code>```plantuml
 
@@ -354,7 +360,7 @@ Shelf o- Book
 </code></pre>
 </div><p>If a code block (introduced with three back-ticks) is labeled with the language name “<code>plantuml</code>”, then the code block will be replaced by a graphic representing a UML diagram as interpreted by <a href="https://plantuml.com">PlantUML</a>. (This mechanism is similar to the support for PlantUML in the GitHub dialect of Markdown.)</p>
     
-      <div class="noFloat"> </div><pre id="pred5e314" style="display:none"><code class="plantuml">class Book {
+      <div class="noFloat"> </div><pre id="pred6e324" style="display:none"><code class="plantuml">class Book {
     title: String
     authors: list&lt;Author&gt;
     getLocation(): Shelf
@@ -362,7 +368,7 @@ Shelf o- Book
 
 Publication &lt;|- Book
 Shelf o- Book
-</code></pre><img class="" id="imgd5e314" src=""/><script>plantuml("pred5e314", "imgd5e314");
+</code></pre><img class="" id="imgd6e324" src=""/><script>plantuml("pred6e324", "imgd6e324");
       	</script><div class="noFloat"> </div><div class="sidebar pct50">
 <pre><code>```plantuml class=right
 skinparam style strictuml
@@ -374,12 +380,12 @@ Shelf o- "*" Book
 </code></pre>
 </div><p>It is possible to add CSS styles to the generated image using the <code>class=</code> modifier. The most obvious application of this is to cause the image to float on the right or left.</p>
     
-      <div class="noFloat"> </div><pre id="pred5e326" style="display:none"><code class="plantuml class=right">skinparam style strictuml
+      <div class="noFloat"> </div><pre id="pred6e336" style="display:none"><code class="plantuml class=right">skinparam style strictuml
 hide empty members
 
 Publication &lt;|-down- Book
 Shelf o- "*" Book
-</code></pre><img class="right" id="imgd5e326" src=""/><script>plantuml("pred5e326", "imgd5e326");
+</code></pre><img class="right" id="imgd6e336" src=""/><script>plantuml("pred6e336", "imgd6e336");
       	</script><p>Change the “right” to “left” to float on the other side.</p>
     <p>Change to “center” for a centered, non-floating figure.</p>
     <div class="noFloat"> </div><div class="sidebar pct50">
@@ -399,7 +405,7 @@ Author --&gt; Book : writes
 </code></pre>
 </div><p>It is actually possible to add multiple CSS class names (inside single-quotes).</p>
     
-      <div class="noFloat"> </div><pre id="pred5e337" style="display:none"><code class="plantuml classes='left foobar'">skinparam style strictuml
+      <div class="noFloat"> </div><pre id="pred6e347" style="display:none"><code class="plantuml classes='left foobar'">skinparam style strictuml
 skinparam shadowing true
 hide empty members
 
@@ -415,7 +421,7 @@ class Book {
 }
 
 Author --&gt; Book : writes
-</code></pre><img class="left foobar" id="imgd5e337" src=""/><script>plantuml("pred5e337", "imgd5e337");
+</code></pre><img class="left foobar" id="imgd6e347" src=""/><script>plantuml("pred6e347", "imgd6e347");
       	</script><p>(Although you would have to examine the generated HTML to see that the useless class “foobar” is attached to the image.)</p>
     <h3 id="mermaid">4.2.2 Mermaid</h3><p>Support is also available for Mermaid, another Markdown-friendly graphics processor.</p>
     <div class="noFloat"> </div><div class="sidebar pct50">
@@ -494,4 +500,4 @@ stateDiagram
              window.onhashchange = hashHasChanged;</script><div class="navFooter" id="slideshowControl0"><table class="navFooter"><tr class="slideshowcontrol"><td class="slideshowcontrolLeft"/><td class="slideshowcontrolMiddle">
 <a class="imgLink" href="../../Directory/outline/index.html" title="Course home/outline"><img src="../../graphics/home.png"/></a>
 <a href="mailto:zeil@cs.odu.edu?subject=CoWeM%2C%20MarkDown%20Extensions%20in%20CoWeM"><img src="../../graphics/email.png" title="Email to instructor"/></a><span style="margin: 0 32px;"/>
-<a class="imgLink" href="markdownExtensions__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2020, Old Dominion Univ.</div></body></html>
+<a class="imgLink" href="markdownExtensions__slides.html"><img src="../../graphics/slides.png" title="Slides for lectures"/></a></td><td class="slideshowcontrolRight"/></tr></table></div><div class="copyright">© 2016-2026, Old Dominion Univ.</div></body></html>
