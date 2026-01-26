@@ -31,8 +31,8 @@ course {
 	email             = 'zeil@cs.odu.edu'
 	copyright         = '2016-2026, Old Dominion Univ.'
 	homeURL           = '../../Directory/outline/index.html'
-	deployDestination = 'N/A'
-	sshDeployURL      = 'N/A'
+	deployDestination = 'https://www.cs.odu.edu/~zeil/cowem/Directory/outline/index.html'
+	sshDeployURL      = 'zeil@io.cs.odu.edu:/home/zeil/secure_html/cowem/'
     baseURL           = 'https://sjzeil.github.io/CoWeM/userReference/'
 	
 	importing ('manual', 'https://www.cs.odu.edu/~zeil/cowem/')

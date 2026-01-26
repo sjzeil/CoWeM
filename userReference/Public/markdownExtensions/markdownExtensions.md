@@ -5,9 +5,11 @@ TOC: yes
 
 CoWeM pre-processes Markdown documents using a [macro processor](doc:macros)
 described in more detail later. Using that, I have added a number of extensions
-to the basic Markdown. Theme may not always adhering to the Markdown goal
+to the basic Markdown. These may not always adhere to the Markdown goal
 of keeping the source text looking suggestive of the formatted
-results, but they do add facilitiesthat I find particularly useful.
+results, but they do add facilities that I find particularly useful.
+
+
 
 # Inline mark-up 
 
@@ -379,9 +381,15 @@ As noted earlier,
 Markdown already has support for
 inserting graphics into a page. You
 can place graphics inline
-like this: ![lab icon](lab.png "lab"). 
+like this: ![lab icon](lab.png "lab").
 
-You can also type HTML `img` tags directly, 
+A little more challenging, however, is the
+use of "floating" images that move to one side
+of the page while text flows down the other side.
+Markdown doesn't really have a way to deal with
+this.
+
+You can type HTML `img` tags directly, 
 <img src="bookarray.png" align='right'/> which makes
 it possible to use the "`align`" attribute
 to position your graphics. 
@@ -406,9 +414,15 @@ As noted earlier,
 Markdown already has support for
 inserting graphics into a page. You
 can place graphics inline
-like this: ![lab icon](lab.png "lab"). 
+like this: ![lab icon](lab.png "lab").
 
-You can also type HTML `img` tags directly, 
+A little more challenging, however, is the
+use of "floating" images that move to one side
+of the page while text flows down the other side.
+Markdown doesn't really have a way to deal with
+this.
+
+You can do this by typing HTML `img` tags directly, 
 <img src="bookarray.png" align='right'/> which makes
 it possible to use the "`align`" attribute
 to position your graphics. 
@@ -431,14 +445,14 @@ leading to a confusing layout.
 \bSidebar
 
 ```
-<img src="bookarray.png" align='right'/> As
-a fix for this, I provide a CSS style
+<img src="bookLL.png" align='right'/> As
+a fix for this, CoWeM provides a CSS style
 class  `noFloat` with the attribute clear:both.  This
 can be inserted as an empty paragraph:
 
 <div class="noFloat"> </div>
 
-<img src="bookLL.png" align='right'/> This
+<img src="bookarray.png" align='right'/> This
 has the effect of forcing any following
  text and graphics to be positioned after the end of
  floating graphics, sidebars, or other floating content.
@@ -447,73 +461,66 @@ has the effect of forcing any following
 
 \eSidebar
 
-<img src="bookarray.png" align='right'/> As a fix for this, I provide a CSS style class  `noFloat`
+<img src="bookLL.png" align='right'/> As a fix for this, CoWeM provides a CSS style class  `noFloat`
 with the attribute clear:both.  This can be inserted as an empty paragraph:
 
 <div class="noFloat"> </div>
 
-<img src="bookLL.png" align='right'/> This has the effect of forcing any following text and
+<img src="bookarray.png" align='right'/> This has the effect of forcing any following text and
  graphics to be positioned after the end of floating graphics,
  sidebars, or other floating content.
  
-However, I find that I often wind up using the same graphics sequences
-over and over, so I have some shortcut commands. The command
-`\\{}picOnRight(`_filename_`,`_pct_`)` is equivalent to
+As a shortcut, this can also be written as: `\\{}noFloat`
+
+CoWeM provides CSS options that use tags to indicate that an image should float to one side and should be shrunk, if necessary, to be no wider than a set percentage of the page width.
+
+The markdown notation:
 
 ```
+![alt-text](imageFile#right35)
+```
+    
+is equivalent to
+
+```html
 <div class="noFloat"></div>
-<img src="filename.png" align="right"
-     style="max-width: pct%/>"
+<img src="imageFile"
+     style="float: right; max-width: 35%; margin-left=1rem; margin-bottom=1rem;"  
+     alt="alt-text">"
 ```
 
+CoWeM allows max widths of $5, 10, 15, \ldots, 100$ and can float to `left` or `right`.
 
-It drops below any existing floating content, then inserts a floating
-graphic on the right, reducing the graphic's size only if it exceeds a
-width of _pct_%.
+
+You would usually combine this notation with `\\{}noFloat` to prevent graphics from bumping into each other.
+
+
+
+For example,
+
 
 \bSidebar
 
-```
-\\{}picOnLeft(bookarray,25)
+\noFloat
 
-Similarly, I can insert graphics on the left
-instead of on the right.
+```
+\\{}noFloat
+![a book data object with an array](bookarray.png#left25)
+
+_I can insert graphics on the left
+instead of on the right._
 ```
 
 \eSidebar
 
-\picOnLeft(bookarray,25)
+![a book data object with an array](bookarray.png#left25)
 
-Similarly, I can insert graphics on the left instead of on the right.
+_I can insert graphics on the left instead of on the right._
 
-\bSidebar
 
-```
+Earlier versions of CoWEM provided commands `\picOnRight`, `\picOnLeft`, and `picInline` which allowed floating graphics with a max width, but omitted the alt-text option. These are deprecated and may disappear in the future,as the inclusion of alt-text is considered standard good practice.
 
-Or I can put them inline \\{}picInline(bookLL,10) within the text.
 
-```
-
-\eSidebar
-
-Or I can put them inline \picInline(bookLL,10) within the text.
-
-\bSidebar
-
-```
-\\{}picOnLeftA(bookarray,25,an array of books)
-
-The 'A' variants of these commands add simple 
-(no double-quotations  or commas) 
-alt-text for accessibility.
-
-```
-
-\eSidebar
-
-\picOnLeftA(bookarray,25,an array of books)
-
-The 'A' variants of these commands add simple (no double-quotations or commas) alt-text for accessibility.
 
 
 

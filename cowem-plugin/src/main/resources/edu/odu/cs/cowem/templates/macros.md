@@ -90,14 +90,6 @@ Image processing:
 %define <\ePicOnLeft> () <>
 
 
-Updated image processing: allow adding alt-text.
-
-%define <\picOnRightA> (file,pctwidth,altText) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: right; max-width: pctwidth%;" alt="altText"/>}
-%define <\picOnLeftA> (file,pctwidth,altText) {<div class="noFloat">&nbsp;</div><img src="file.png" style="float: left; max-width: pctwidth%;" alt="altText"/>}
-%define <\picInlineA> (file,pctwidth,altText) {<img src="file.png" style="max-width: pctwidth%;" alt="altText"/>}
-
-
-
 
 Listings:
 %define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)

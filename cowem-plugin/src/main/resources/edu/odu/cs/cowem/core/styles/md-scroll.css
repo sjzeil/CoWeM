@@ -248,3 +248,323 @@ div.rightColumn {display: inline-block; vertical-align: top; max-width: 47.5%; m
      display: block;
   }
 }
+
+img[src*='#right5'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 5%;
+}
+
+img[src*='#right10'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 10%;
+}
+
+img[src*='#right15'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 10%;
+}
+
+img[src*='#right20'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 10%;
+}
+
+img[src*='#right25'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 25%;
+}
+
+img[src*='#right30'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 30%;
+}
+
+img[src*='#right35'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 35%;
+}
+
+img[src*='#right40'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 40%;
+}
+
+img[src*='#right45'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 45%;
+}
+
+img[src*='#right50'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 50%;
+}
+
+img[src*='#right55'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 55%;
+}
+
+img[src*='#right60'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 60%;
+}
+
+img[src*='#right65'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 65%;
+}
+
+img[src*='#right70'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 70%;
+}
+
+img[src*='#right75'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 75%;
+}
+
+img[src*='#right80'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 80%;
+}
+
+img[src*='#right85'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 85%;
+}
+
+img[src*='#right90'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 90%;
+}
+
+img[src*='#right95'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 95%;
+}
+
+img[src*='#right100'] {
+  display: block;
+  float: right;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+img[src*='#left5'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 5%;
+}
+
+img[src*='#left10'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 10%;
+}
+
+img[src*='#left15'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 10%;
+}
+
+img[src*='#left20'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 10%;
+}
+
+img[src*='#left25'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 25%;
+}
+
+img[src*='#left30'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 30%;
+}
+
+img[src*='#left35'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 35%;
+}
+
+img[src*='#left40'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 40%;
+}
+
+img[src*='#left45'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 45%;
+}
+
+img[src*='#left50'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 50%;
+}
+
+img[src*='#left55'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 55%;
+}
+
+img[src*='#left60'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 60%;
+}
+
+img[src*='#left65'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 65%;
+}
+
+img[src*='#left70'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 70%;
+}
+
+img[src*='#left75'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 75%;
+}
+
+img[src*='#left80'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 80%;
+}
+
+img[src*='#left85'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 85%;
+}
+
+img[src*='#left90'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 90%;
+}
+
+img[src*='#left95'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 95%;
+}
+
+img[src*='#left100'] {
+  display: block;
+  float: left;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
