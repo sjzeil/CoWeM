@@ -309,12 +309,10 @@ things get ugly if the content is a bit too wide for the screen.
 ```
 \rev{}[click to reveal]
 
-The three carets introduce an HTML5-style details 
-element, which allows click-to-reveal behavior.
+The three carets introduce an HTML5 details element, which
+allows click-to-reveal behavior.
 
-As it happens, neither of the Microsoft browsers (IE or Edge) 
-support this element yet, so this is currently
-simulated via Javascript. 
+
 \rev{}
 ```
 
@@ -324,15 +322,8 @@ simulated via Javascript.
 
 ^^^[click to reveal]
 
-The three carets introduce an HTML5-style details element, which
+The three carets introduce an HTML5 details element, which
 allows click-to-reveal behavior.
-
-The three carets introduce an HTML5-style details 
-element, which allows click-to-reveal behavior.
-
-As it happens, neither of the Microsoft browsers (IE or Edge) 
-support this element yet, so this is currently
-simulated via Javascript. 
 
 ^^^
 

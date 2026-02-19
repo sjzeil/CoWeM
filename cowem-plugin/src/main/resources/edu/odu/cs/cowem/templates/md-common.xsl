@@ -410,23 +410,12 @@
   </xsl:template>
 
   <xsl:template match="details">
-    <div class="details">
-      <xsl:variable name="idValue"
-            select="concat('_details_', generate-id())"/>
-      <span class="summary">
-        <xsl:value-of select="@summary"/>
-      </span>
-      <xsl:text> </xsl:text>
-      <input id="but{$idValue}" type="button" value="+"
-        onclick="toggleDisplay('{$idValue}')"
-        />
-      <div class="detailsBody" style="display: none;">
-    <xsl:attribute name="id">
-      <xsl:value-of select="$idValue"/>
-    </xsl:attribute>
-    <xsl:apply-templates select="node()"/>
-      </div>
-    </div>
+    <details>
+        <summary>
+            <xsl:value-of select="@summary"/>
+        </summary>
+        <xsl:apply-templates select="node()"/>
+    </details>
   </xsl:template>
 
 	<xsl:template match="example">
@@ -557,27 +546,15 @@
   </xsl:template>
 
   <xsl:template match="longlisting">
-    <div class="details">
-      <xsl:variable name="idValue"
-            select="concat('_details_', generate-id())"/>
-      <span class="summary">
-        <a href="{@file}" target="listing">
+    <details>
+       <summary><a href="{@file}" target="listing">
           <xsl:value-of select="@file"/>
-        </a>
-      </span>
-      <xsl:text> </xsl:text>
-      <input id="but{$idValue}" type="button" value="+"
-        onclick="toggleDisplay('{$idValue}')"
-        />
-      <div class="detailPart">
-      <xsl:attribute name="id">
-        <xsl:value-of select="$idValue"/>
-      </xsl:attribute>
-      <pre><code id="{$idValue}_code">
+        </a></summary>
+
+      <pre><code>
       <xsl:copy-of select="text()"/>
       </code></pre>
-      </div>
-    </div>    
+    </details>    
   </xsl:template>
   
   
