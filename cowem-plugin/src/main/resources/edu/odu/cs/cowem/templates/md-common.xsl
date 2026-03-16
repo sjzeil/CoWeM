@@ -352,10 +352,10 @@
       <xsl:text>
       </xsl:text>
       <div class="noFloat">&#xA0;</div>
-      <pre style="display:none" id="pre{$idValue}">
+      <img class="{$classNames}" src="" id="img{$idValue}" aria-describedby="pre{$idValue}"> </img>
+      <div class="visually-hidden" id="pre{$idValue}"><pre>
          <xsl:copy-of select="code"/>
-      </pre>
-      <img class="{$classNames}" src="" id="img{$idValue}"> </img>
+      </pre></div>
       <script>
       	<xsl:text>plantuml("pre</xsl:text>
       	<xsl:value-of select="$idValue"/>

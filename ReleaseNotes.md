@@ -1,5 +1,13 @@
 = Release Notes
 
+== v1.25.1 Feb 19 2026
+
+* ^^^{click to reveal} and \loadlisting now use HTML <detail> elements instead of Javascript
+
+* Embedded PlantUML diagrams now attach the diagram source text via aria-describedBy for access by screen readers.
+
+* Highlighted text now presents "[begin highlight]" and "[end highlight]" for screen readers.
+
 == v1.25.0 Jan 25 2026
 
 * Added graphics command variants \picOnLeftA, \picOnRightA, and \picInlineA that allow the addition of alt-text to graphics.

@@ -57,7 +57,7 @@ function plantuml(srcID, imgID) {
     var theDiv = document.getElementById(srcID);
     var theImg = document.getElementById(imgID);
 
-    var theCode = theDiv.firstElementChild;
+    var theCode = theDiv.firstElementChild.firstElementChild;
 
     var srcText = theCode.innerHTML;
     srcText = srcText.replace(/&lt;/g,"<");

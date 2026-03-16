@@ -42,17 +42,11 @@ Assorted text decorations (from docbook, originally)
 
 
   Highlighting
-%define <\hli> (highlightedText) {<span class='hli'>highlightedText</span>}
-%define <\hlii> (highlightedText) {<span class='hlii'>highlightedText</span>}
-%define <\hliii> (highlightedText) {<span class='hliii'>highlightedText</span>}
-%define <\hliv> (highlightedText) {<span class='hliv'>highlightedText</span>}
+%define <\hli> (highlightedText) {<span class='visually-hidden'>[begin highlight]</span><span class='hli'>highlightedText</span><span class='visually-hidden'>[begin highlight]</span>}
+%define <\hlii> (highlightedText) {<span class='visually-hidden'>[begin highlight 2]</span><span class='hlii'>highlightedText</span><span class='visually-hidden'>[begin highlight 2]</span>}
+%define <\hliii> (highlightedText) {<span class='visually-hidden'>[begin highlight 3]</span><span class='hliii'>highlightedText</span><span class='visually-hidden'>[begin highlight 3]</span>}
+%define <\hliv> (highlightedText) {<span class='visually-hidden'>[begin highlight 4]</span><span class='hliv'>highlightedText</span><span class='visually-hidden'>[end highlight 4]</span>}
 
-%ifdef _epub
-%define <\hli> (highlightedText) {<span class='hli'>&#x2460;&#8594;highlightedText&#8592;&#x2460;</span>}
-%define <\hlii> (highlightedText) {<span class='hlii'>&#x2461;&#8594;highlightedText&#x2461;&#x27e9;</span>}
-%define <\hliii> (highlightedText) {<span class='hliii'>&#x2462;&#8594;highlightedText&#x2462;&#x27e9;</span>}
-%define <\hliv> (highlightedText) {<span class='hliv'>&#x2463;&#8594;highlightedText&#x2463;&#x27e9;</span>}
-%endif
 
 
 Footnotes
@@ -94,11 +88,8 @@ Image processing:
 Listings:
 %define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)
 
-%ifdef _epub
-%define <\loadlisting> (sourceFile) (<cwm tag='longlisting' file='sourceFile'/>Loading code from sourceFile<cwm tag='/longlisting'/>)
-%endif
 
-<%define <\linklisting> <filePath> <[`filepath`](filePath.html]>
+<%define <\linklisting> <filePath> <[`filepath`](filePath.html)>
 
 
 
