@@ -1,6 +1,6 @@
 = Release Notes
 
-== v1.25.1 Feb 19 2026
+== v1.25.1 Mar 15 2026
 
 * ^^^{click to reveal} and \loadlisting now use HTML <detail> elements instead of Javascript
 
